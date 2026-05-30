@@ -126,6 +126,7 @@ const UI: Record<Lang, Dict> = {
     'memory.resetMsg': 'Koçun seninle ilgili hatırladığı her şey silinecek.',
     'share.button': 'Paylaş',
     'share.title': 'Alıntıyı Paylaş',
+    'wisdom.favorites': 'Favoriler',
   },
 
   // ════════════ ENGLISH ════════════
@@ -225,6 +226,7 @@ const UI: Record<Lang, Dict> = {
     'memory.resetMsg': 'Everything the coach remembers about you will be deleted.',
     'share.button': 'Share',
     'share.title': 'Share Quote',
+    'wisdom.favorites': 'Favorites',
   },
 
   // ════════════ DEUTSCH ════════════
@@ -324,6 +326,7 @@ const UI: Record<Lang, Dict> = {
     'memory.resetMsg': 'Alles, was der Coach über dich weiß, wird gelöscht.',
     'share.button': 'Teilen',
     'share.title': 'Zitat teilen',
+    'wisdom.favorites': 'Favoriten',
   },
 
   // ════════════ РУССКИЙ ════════════
@@ -423,6 +426,7 @@ const UI: Record<Lang, Dict> = {
     'memory.resetMsg': 'Всё, что коуч помнит о вас, будет удалено.',
     'share.button': 'Поделиться',
     'share.title': 'Поделиться цитатой',
+    'wisdom.favorites': 'Избранное',
   },
 };
 

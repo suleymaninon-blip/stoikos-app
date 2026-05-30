@@ -9,10 +9,12 @@ import { useLang, Lang } from '../../constants/i18n';
 import { getQuotes, getConcepts, AUTHORS, Quote, Concept, quoteAudioKey, conceptAudioKey } from '../../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
+import { getFavorites, toggleFavorite } from '../../constants/favorites';
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote, lang, playingKey, onToggle, onShare }: {
+function QuoteItem({ quote, lang, playingKey, onToggle, onShare, isFav, onFav }: {
   quote: Quote; lang: Lang; playingKey: string | null; onToggle: (key: string) => void; onShare: (q: Quote) => void;
+  isFav: boolean; onFav: (id: string) => void;
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -31,6 +33,9 @@ function QuoteItem({ quote, lang, playingKey, onToggle, onShare }: {
           <Text style={styles.quoteAuthor}>{quote.author}</Text>
           <Text style={styles.quoteSource}>{quote.source}</Text>
         </View>
+        <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]}>
+          <Text style={[styles.listenIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
+        </TouchableOpacity>
         {audio && (
           <TouchableOpacity onPress={() => onToggle(key)} style={[styles.listenBtn, playing && styles.listenBtnActive]}>
             <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
@@ -101,9 +106,16 @@ export default function WisdomScreen() {
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [playingKey, setPlayingKey] = useState<string | null>(null);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   const quotes = getQuotes(lang);
   const concepts = getConcepts(lang);
+
+  useEffect(() => { getFavorites().then(setFavorites); }, []);
+
+  async function onFav(id: string) {
+    setFavorites(await toggleFavorite(id));
+  }
 
   // Ekrandan çıkınca / dil değişince sesi durdur
   useEffect(() => { return () => { stopAudio(); }; }, []);
@@ -119,10 +131,17 @@ export default function WisdomScreen() {
     }
   }
 
-  // Filtre chip'leri: Tümü + kanıt düzeyine göre sıralı yazarlar
-  const filterChips = [{ id: 'all', label: t('wisdom.all') }, ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] }))];
+  // Filtre chip'leri: Tümü + Favoriler + kanıt düzeyine göre sıralı yazarlar
+  const filterChips = [
+    { id: 'all', label: t('wisdom.all') },
+    { id: 'fav', label: '♥ ' + t('wisdom.favorites') },
+    ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] })),
+  ];
 
-  const filteredQuotes = filter === 'all' ? quotes : quotes.filter((q) => q.authorId === filter);
+  const filteredQuotes =
+    filter === 'all' ? quotes :
+    filter === 'fav' ? quotes.filter((q) => favorites.includes(q.id)) :
+    quotes.filter((q) => q.authorId === filter);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -166,7 +185,7 @@ export default function WisdomScreen() {
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
-            renderItem={({ item }) => <QuoteItem quote={item} lang={lang} playingKey={playingKey} onToggle={togglePlay} onShare={setShareQuote} />}
+            renderItem={({ item }) => <QuoteItem quote={item} lang={lang} playingKey={playingKey} onToggle={togglePlay} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} />}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
           />
@@ -240,7 +259,9 @@ const styles = StyleSheet.create({
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
   listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
-  listenIcon: { fontSize: 14 },
+  listenIcon: { fontSize: 14, color: Colors.sand },
+  favBtnActive: { backgroundColor: 'rgba(212,146,74,0.2)', borderColor: Colors.accent },
+  favIconActive: { color: Colors.accent },
   modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)', marginTop: 4, marginBottom: 4 },
 
   conceptsGrid: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
