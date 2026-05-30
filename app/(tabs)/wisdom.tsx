@@ -5,149 +5,11 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
-
-// ─── Data ─────────────────────────────────────────────────
-// Kanıt düzeyine göre sıralı: önce eseri/metni günümüze ulaşanlar,
-// sonra sözleri antik kaynaklarda belgelenenler, en sonda öğretisi
-// yalnızca fragmanlardan yeniden kurulanlar.
-const PHILOSOPHERS = [
-  'Tümü',
-
-  // ── Eseri / metni günümüze ulaşanlar ──
-  'Seneca',            // Mektuplar, denemeler (tam korpus)
-  'Epiktetos',         // Söyleşiler + Enchiridion (Arrianus aktarımı)
-  'Marcus Aurelius',   // Meditationes (tam)
-  'Musonius Rufus',    // Söylevler (geniş fragmanlar, Stobaeus)
-  'Kleanthes',         // Zeus'a İlahi (neredeyse tam metin)
-  'Hierokles',         // Etik Unsurlar (papirüs + alıntılar)
-
-  // ── Sözleri antik kaynaklarda belgelenenler ──
-  'Kıbrıslı Zenon',    // Diogenes Laertios aktarımı
-  'Khrysippos',        // geniş fragman ve alıntı külliyatı
-  'Genç Cato',         // Plutarkhos (örnek kişi)
-  'Athenodoros',       // Plutarkhos
-
-  // ── Öğretisi fragmanlardan yeniden kurulanlar ──
-  'Panaitios',
-  'Poseidonios',
-  'Sakızlı Ariston',
-  'Babilli Diogenes',
-];
-
-const QUOTES = [
-  { id: '1', text: 'Bugün ölebilirdin; bunun yerine hâlâ hayattasın. Bu zamanı bilgelikle kullan.', author: 'Marcus Aurelius', source: 'Meditationes' },
-  { id: '2', text: 'İnsanları rahatsız eden şeyler değil, şeyler hakkındaki düşünceleridir.', author: 'Epiktetos', source: 'Enchiridion' },
-  { id: '3', text: 'Hayatını değiştirmek istiyorsan, düşüncelerini değiştir. Bu kadar basit, bu kadar zor.', author: 'Marcus Aurelius', source: 'Meditationes' },
-  { id: '4', text: 'Kendine dönük yolculuk, tüm yolculukların en uzunudur.', author: 'Seneca', source: 'Epistulae Morales' },
-  { id: '5', text: 'Özgürlük, istediğini elde etmek değil; istemediğin şeyden korkmamaktır.', author: 'Epiktetos', source: 'Discourses' },
-  { id: '6', text: 'Kayıplarını değil, sahip olduklarını say.', author: 'Marcus Aurelius', source: 'Meditationes' },
-  { id: '7', text: 'Vakit en değerli şeydir; onu harcarken bile tasarruflu ol.', author: 'Seneca', source: 'Epistulae Morales' },
-  { id: '8', text: 'Başkalarının söyledikleri onların kontrolünde; onlara nasıl tepki vereceğin senin.', author: 'Epiktetos', source: 'Enchiridion' },
-  { id: '9', text: 'Gelecek için kaygılanmak, henüz yaşanmamış bir acıyı iki kez yaşamaktır.', author: 'Seneca', source: 'Epistulae Morales' },
-  { id: '10', text: 'Kendi ruhunu değiştirmek, dünyanın geri kalanını değiştirmekten daha zordur.', author: 'Marcus Aurelius', source: 'Meditationes' },
-  { id: '11', text: 'Az isteyen çok sahiptir. Çok isteyen hiçbir zaman yeterince sahip değildir.', author: 'Seneca', source: 'De Vita Beata' },
-  { id: '12', text: 'Bilgelik; neyin senin kontrolünde olduğunu, neyin olmadığını bilmektir.', author: 'Epiktetos', source: 'Discourses' },
-
-  // ─── Kıbrıslı Zenon (Stoacılığın kurucusu, MÖ 334–262) ───
-  { id: '13', text: 'İki kulağımız ve tek bir ağzımız var; bu yüzden daha çok dinleyip daha az konuşmalıyız.', author: 'Kıbrıslı Zenon', source: 'Diogenes Laertios' },
-  { id: '14', text: 'İyi insanlar yasalardan değil, erdemden ötürü doğru davranır.', author: 'Kıbrıslı Zenon', source: 'Fragmanlar' },
-  { id: '15', text: 'Doğayla uyum içinde yaşamak — işte hayatın amacı budur.', author: 'Kıbrıslı Zenon', source: 'Diogenes Laertios' },
-  { id: '16', text: 'Mutluluk, akışı düzgün bir yaşamdır.', author: 'Kıbrıslı Zenon', source: 'Fragmanlar' },
-
-  // ─── Musonius Rufus ("Romalı Sokrates", MS ~30–100) ───
-  { id: '17', text: 'Erdemli yaşamak için zenginliğe değil, yalnızca akla ihtiyacın var.', author: 'Musonius Rufus', source: 'Söylevler' },
-  { id: '18', text: 'İyi yaşamayı öğrenmek, tüm hayatı öğrenmektir; çünkü her an doğru davranma fırsatıdır.', author: 'Musonius Rufus', source: 'Söylevler' },
-  { id: '19', text: 'Zorluğa katlanmayı seçen kişi, hazza teslim olandan daha özgürdür.', author: 'Musonius Rufus', source: 'Söylevler' },
-
-  // ─── Khrysippos (Stoacılığın ikinci kurucusu, MÖ ~279–206) ───
-  { id: '20', text: 'Yaşamak, erdemi öğrenmek için verilmiş bir okuldur.', author: 'Khrysippos', source: 'Fragmanlar' },
-  { id: '21', text: 'Hiçbir şey rastlantı değildir; her şey aklın düzeni içinde olur.', author: 'Khrysippos', source: 'Fragmanlar' },
-  { id: '22', text: 'Bilge kişi hiçbir şeye muhtaç değildir, ama her şeyi kullanabilir.', author: 'Khrysippos', source: 'Fragmanlar' },
-
-  // ─── Kleanthes (2. okul başkanı, MÖ ~330–230) ───
-  { id: '23', text: 'Beni yönet ey Zeus, ve sen ey Kader, bana çizdiğiniz yola. Tereddütsüz izleyeceğim; istemesem bile gitmem gerekir.', author: 'Kleanthes', source: 'Zeus\'a İlahi' },
-  { id: '24', text: 'İsteyeni kader yöneltir, istemeyeni sürükler.', author: 'Kleanthes', source: 'Fragmanlar' },
-
-  // ─── Sakızlı Ariston (Zenon\'un öğrencisi, MÖ 3. yy) ───
-  { id: '25', text: 'Bilge kişi, hangi rolü oynarsa oynasın onu iyi oynayan usta bir oyuncuya benzer.', author: 'Sakızlı Ariston', source: 'Fragmanlar' },
-  { id: '26', text: 'Erdem ile kötülük dışında her şey kayıtsızdır; gerisi ne iyi ne kötüdür.', author: 'Sakızlı Ariston', source: 'Fragmanlar' },
-
-  // ─── Babilli Diogenes (Orta Stoa, MÖ ~230–150) ───
-  { id: '27', text: 'Doğayla uyumlu yaşamak, her seçimde sağduyuya kulak vermektir.', author: 'Babilli Diogenes', source: 'Fragmanlar' },
-
-  // ─── Panaitios (Stoacılığı Roma\'ya taşıdı, MÖ ~185–110) ───
-  { id: '28', text: 'Her insanın doğası gereği üstlendiği görevler vardır; erdem bunları eksiksiz yerine getirmektir.', author: 'Panaitios', source: 'Görevler Üzerine' },
-  { id: '29', text: 'Onurlu olan ile yararlı olan asla çatışmaz; çatışıyor görünüyorsa, yanılıyoruzdur.', author: 'Panaitios', source: 'Görevler Üzerine' },
-
-  // ─── Poseidonios (filozof-bilim insanı, MÖ ~135–51) ───
-  { id: '30', text: 'Tek bir evren vardır ve onu saran her şey karşılıklı bir sempati ile birbirine bağlıdır.', author: 'Poseidonios', source: 'Fragmanlar' },
-  { id: '31', text: 'Bir gün bilgelikle yaşadıysan, bütün bir ömrü yaşamış sayılırsın.', author: 'Poseidonios', source: 'Fragmanlar' },
-
-  // ─── Athenodoros (Augustus\'un hocası, MÖ 1. yy) ───
-  { id: '32', text: 'Öfkelendiğinde, konuşmadan ya da harekete geçmeden önce alfabenin tüm harflerini içinden say.', author: 'Athenodoros', source: 'Plutarkhos' },
-
-  // ─── Genç Cato (Stoacı örnek kişi, MÖ 95–46) ───
-  { id: '33', text: 'Özgür bir insan ancak kendi erdemiyle yenilebilir; düşmanıyla değil.', author: 'Genç Cato', source: 'Plutarkhos' },
-  { id: '34', text: 'Doğru olanı yap; sonucu kadere bırak.', author: 'Genç Cato', source: 'Plutarkhos' },
-
-  // ─── Hierokles (Geç Stoa, MS 2. yy) ───
-  { id: '35', text: 'Önce kendini, sonra aileni, sonra şehrini, en sonunda tüm insanlığı kucaklayan halkalar çiz; ve bu halkaları sürekli merkeze doğru çekmeye çalış.', author: 'Hierokles', source: 'Etik Unsurlar' },
-  { id: '36', text: 'İnsan doğası gereği topluluk için yaratılmıştır; başkasına iyilik, kendine iyiliktir.', author: 'Hierokles', source: 'Etik Unsurlar' },
-];
-
-const CONCEPTS = [
-  {
-    latin: 'Amor Fati',
-    tr: 'Kaderini Sev',
-    icon: '♾',
-    color: 'rgba(212,146,74,0.15)',
-    desc: 'Her olayı — acı veren ya da keyifli — olması gerektiği gibi kabul etmek. Nietzsche\'nin Stoacılıktan aldığı bu kavram, dirençten değil kabulden güç doğduğunu söyler.',
-    example: 'İşini kaybettiğinde "Bu beni nasıl daha güçlü yapabilir?" diye sormak Amor Fati\'dir.',
-  },
-  {
-    latin: 'Memento Mori',
-    tr: 'Ölümü Hatırla',
-    icon: '⧗',
-    color: 'rgba(180,120,80,0.15)',
-    desc: 'Ölümlülüğünü hatırlamak seni karamsarlığa değil, uyanıklığa iter. Sınırlı zamanın olduğunu bilmek, her anı daha değerli kılar.',
-    example: '"Bu sabah uyandığımda ölmemiştim" — bu düşünce her günü hediye olarak görmeni sağlar.',
-  },
-  {
-    latin: 'Premeditatio Malorum',
-    tr: 'Kötülükleri Önceden Düşün',
-    icon: '◈',
-    color: 'rgba(100,140,180,0.15)',
-    desc: 'Olası zorlukları zihinsel olarak prova etmek, onlarla karşılaştığında hazırlıklı olmanı sağlar. Bu korku değil, hazırlıktır.',
-    example: 'Bir sunum öncesi "Ya yanılırsam? Ya teknik aksaklık olursa?" diye sormak — ve cevabını düşünmek.',
-  },
-  {
-    latin: 'Dichotomy of Control',
-    tr: 'Kontrol Dairesi',
-    icon: '◎',
-    color: 'rgba(80,160,120,0.15)',
-    desc: 'Her şeyi iki kategoriye ayır: kontrolündeki (düşünceler, kararlar, tepkiler) ve kontrolün dışındaki (başkalarının eylemleri, sonuçlar, geçmiş). Enerjini yalnızca birincisine ver.',
-    example: 'Trafik sıkışıklığı kontrolünde değil. Ama sakin kalıp müzik dinlemek senin elinde.',
-  },
-  {
-    latin: 'Eudaimonia',
-    tr: 'İyi Yaşam',
-    icon: '✦',
-    color: 'rgba(196,169,106,0.15)',
-    desc: 'Stoacılıkta mutluluk dış koşullara değil, erdemli yaşamaya dayanır. Gerçek huzur sahip olduklarından değil, kim olduğundan gelir.',
-    example: 'Zenginlik, ün veya güzellik olmadan da tam bir insan olunabilir — erdemi seçmek yeterli.',
-  },
-  {
-    latin: 'Sympatheia',
-    tr: 'Evrensel Bağ',
-    icon: '∞',
-    color: 'rgba(160,100,180,0.15)',
-    desc: 'Her şey birbirine bağlıdır. Başkalarına zarar vermek kendine zarar vermektir. Evrenin küçük ama önemli bir parçasısın.',
-    example: 'Birine yardım ettiğinde sadece onu değil, bütünün dengesini iyileştiriyorsun.',
-  },
-];
+import { useLang } from '../../constants/i18n';
+import { getQuotes, getConcepts, AUTHORS, Quote, Concept } from '../../constants/content';
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote }: { quote: typeof QUOTES[0] }) {
+function QuoteItem({ quote }: { quote: Quote }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
@@ -165,20 +27,22 @@ function QuoteItem({ quote }: { quote: typeof QUOTES[0] }) {
 }
 
 // ─── ConceptCard ───────────────────────────────────────────
-function ConceptCard({ concept, onPress }: { concept: typeof CONCEPTS[0]; onPress: () => void }) {
+function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPress: () => void; moreLabel: string }) {
   return (
     <TouchableOpacity style={[styles.conceptCard, { backgroundColor: concept.color }]} onPress={onPress} activeOpacity={0.8}>
       <Text style={styles.conceptIcon}>{concept.icon}</Text>
       <Text style={styles.conceptLatin}>{concept.latin}</Text>
-      <Text style={styles.conceptTr}>{concept.tr}</Text>
+      <Text style={styles.conceptTr}>{concept.name}</Text>
       <Text style={styles.conceptPreview} numberOfLines={2}>{concept.desc}</Text>
-      <Text style={styles.conceptMore}>Daha fazla →</Text>
+      <Text style={styles.conceptMore}>{moreLabel}</Text>
     </TouchableOpacity>
   );
 }
 
 // ─── Concept Modal ─────────────────────────────────────────
-function ConceptModal({ concept, onClose }: { concept: typeof CONCEPTS[0] | null; onClose: () => void }) {
+function ConceptModal({ concept, onClose, exampleLabel, closeLabel }: {
+  concept: Concept | null; onClose: () => void; exampleLabel: string; closeLabel: string;
+}) {
   if (!concept) return null;
   return (
     <Modal transparent animationType="fade" onRequestClose={onClose}>
@@ -186,15 +50,15 @@ function ConceptModal({ concept, onClose }: { concept: typeof CONCEPTS[0] | null
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <Text style={styles.modalIcon}>{concept.icon}</Text>
           <Text style={styles.modalLatin}>{concept.latin}</Text>
-          <Text style={styles.modalTr}>{concept.tr}</Text>
+          <Text style={styles.modalTr}>{concept.name}</Text>
           <View style={styles.modalDivider} />
           <Text style={styles.modalDesc}>{concept.desc}</Text>
           <View style={styles.modalExampleBox}>
-            <Text style={styles.modalExampleLabel}>ÖRNEK</Text>
+            <Text style={styles.modalExampleLabel}>{exampleLabel}</Text>
             <Text style={styles.modalExample}>{concept.example}</Text>
           </View>
           <TouchableOpacity style={styles.modalClose} onPress={onClose}>
-            <Text style={styles.modalCloseText}>Kapat</Text>
+            <Text style={styles.modalCloseText}>{closeLabel}</Text>
           </TouchableOpacity>
         </Pressable>
       </Pressable>
@@ -204,13 +68,18 @@ function ConceptModal({ concept, onClose }: { concept: typeof CONCEPTS[0] | null
 
 // ─── Main ──────────────────────────────────────────────────
 export default function WisdomScreen() {
+  const { t, lang } = useLang();
   const [tab, setTab] = useState<'quotes' | 'concepts'>('quotes');
-  const [filter, setFilter] = useState('Tümü');
-  const [selectedConcept, setSelectedConcept] = useState<typeof CONCEPTS[0] | null>(null);
+  const [filter, setFilter] = useState('all'); // 'all' veya authorId
+  const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
 
-  const filteredQuotes = filter === 'Tümü'
-    ? QUOTES
-    : QUOTES.filter((q) => q.author === filter);
+  const quotes = getQuotes(lang);
+  const concepts = getConcepts(lang);
+
+  // Filtre chip'leri: Tümü + kanıt düzeyine göre sıralı yazarlar
+  const filterChips = [{ id: 'all', label: t('wisdom.all') }, ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] }))];
+
+  const filteredQuotes = filter === 'all' ? quotes : quotes.filter((q) => q.authorId === filter);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -223,23 +92,17 @@ export default function WisdomScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Bilgelik</Text>
-        <Text style={styles.subtitle}>Antik öğretiler, modern hayat</Text>
+        <Text style={styles.title}>{t('wisdom.title')}</Text>
+        <Text style={styles.subtitle}>{t('wisdom.subtitle')}</Text>
       </View>
 
       {/* Tab switcher */}
       <View style={styles.tabs}>
-        <TouchableOpacity
-          style={[styles.tabBtn, tab === 'quotes' && styles.tabBtnActive]}
-          onPress={() => setTab('quotes')}
-        >
-          <Text style={[styles.tabBtnText, tab === 'quotes' && styles.tabBtnTextActive]}>Alıntılar</Text>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'quotes' && styles.tabBtnActive]} onPress={() => setTab('quotes')}>
+          <Text style={[styles.tabBtnText, tab === 'quotes' && styles.tabBtnTextActive]}>{t('wisdom.tabQuotes')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tabBtn, tab === 'concepts' && styles.tabBtnActive]}
-          onPress={() => setTab('concepts')}
-        >
-          <Text style={[styles.tabBtnText, tab === 'concepts' && styles.tabBtnTextActive]}>Kavramlar</Text>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'concepts' && styles.tabBtnActive]} onPress={() => setTab('concepts')}>
+          <Text style={[styles.tabBtnText, tab === 'concepts' && styles.tabBtnTextActive]}>{t('wisdom.tabConcepts')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -247,13 +110,13 @@ export default function WisdomScreen() {
         <>
           {/* Filter chips */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll} contentContainerStyle={styles.filterContent}>
-            {PHILOSOPHERS.map((p) => (
+            {filterChips.map((p) => (
               <TouchableOpacity
-                key={p}
-                style={[styles.filterChip, filter === p && styles.filterChipActive]}
-                onPress={() => setFilter(p)}
+                key={p.id}
+                style={[styles.filterChip, filter === p.id && styles.filterChipActive]}
+                onPress={() => setFilter(p.id)}
               >
-                <Text style={[styles.filterChipText, filter === p && styles.filterChipTextActive]}>{p}</Text>
+                <Text style={[styles.filterChipText, filter === p.id && styles.filterChipTextActive]}>{p.label}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -267,13 +130,18 @@ export default function WisdomScreen() {
         </>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid}>
-          {CONCEPTS.map((c) => (
-            <ConceptCard key={c.latin} concept={c} onPress={() => setSelectedConcept(c)} />
+          {concepts.map((c) => (
+            <ConceptCard key={c.latin} concept={c} onPress={() => setSelectedConcept(c)} moreLabel={t('wisdom.more')} />
           ))}
         </ScrollView>
       )}
 
-      <ConceptModal concept={selectedConcept} onClose={() => setSelectedConcept(null)} />
+      <ConceptModal
+        concept={selectedConcept}
+        onClose={() => setSelectedConcept(null)}
+        exampleLabel={t('wisdom.exampleLabel')}
+        closeLabel={t('wisdom.close')}
+      />
     </SafeAreaView>
   );
 }
@@ -286,7 +154,6 @@ const styles = StyleSheet.create({
   title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
 
-  // Tabs
   tabs: {
     flexDirection: 'row', marginHorizontal: 24, marginBottom: 16,
     backgroundColor: Colors.stone2, borderRadius: 12,
@@ -297,7 +164,6 @@ const styles = StyleSheet.create({
   tabBtnText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
   tabBtnTextActive: { color: Colors.sand2 },
 
-  // Filter
   filterScroll: { maxHeight: 44, marginBottom: 12 },
   filterContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
   filterChip: {
@@ -309,7 +175,6 @@ const styles = StyleSheet.create({
   filterChipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
   filterChipTextActive: { color: Colors.sand2 },
 
-  // Quote list
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   quoteCard: {
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 18,
@@ -320,7 +185,6 @@ const styles = StyleSheet.create({
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
 
-  // Concepts grid
   conceptsGrid: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   conceptCard: {
     borderRadius: 18, padding: 20,
@@ -332,7 +196,6 @@ const styles = StyleSheet.create({
   conceptPreview: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 18, marginBottom: 10 },
   conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.accent, letterSpacing: 0.3 },
 
-  // Modal
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.75)',
     justifyContent: 'center', alignItems: 'center', padding: 24,

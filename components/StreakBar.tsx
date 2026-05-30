@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Fonts } from '../constants/theme';
+import { useLang } from '../constants/i18n';
 
 interface Props {
   streak: number;
@@ -8,12 +9,13 @@ interface Props {
 }
 
 export function StreakBar({ streak, weekDays }: Props) {
+  const { t } = useLang();
   return (
     <View style={styles.container}>
       <View style={styles.left}>
         <Text style={styles.flame}>🔥</Text>
         <View>
-          <Text style={styles.label}>GÜNLÜK SERİ</Text>
+          <Text style={styles.label}>{t('home.streak')}</Text>
           <Text style={styles.count}>{streak}</Text>
         </View>
       </View>

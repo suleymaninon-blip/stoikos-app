@@ -1,16 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Fonts } from '../constants/theme';
-import { Quote } from '../constants/quotes';
+import { Quote } from '../constants/content';
+import { useLang } from '../constants/i18n';
 
 interface Props {
   quote: Quote;
 }
 
 export function QuoteCard({ quote }: Props) {
+  const { t } = useLang();
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>GÜNÜN ALINTISI</Text>
+      <Text style={styles.label}>{t('home.quoteLabel')}</Text>
       <Text style={styles.bigQuote}>"</Text>
       <Text style={styles.quoteText}>{quote.text}</Text>
       <Text style={styles.author}>— {quote.author}, <Text style={styles.source}>{quote.source}</Text></Text>

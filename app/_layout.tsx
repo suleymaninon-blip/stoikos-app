@@ -8,6 +8,7 @@ import { Jost_300Light, Jost_400Regular, Jost_500Medium } from '@expo-google-fon
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_KEY_STORAGE } from './setup';
+import { LanguageProvider } from '../constants/i18n';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -45,12 +46,12 @@ export default function RootLayout() {
   if (!fontsLoaded || !checked) return null;
 
   return (
-    <>
+    <LanguageProvider>
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="setup" options={{ animation: 'fade' }} />
       </Stack>
-    </>
+    </LanguageProvider>
   );
 }

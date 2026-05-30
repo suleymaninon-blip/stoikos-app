@@ -17,6 +17,8 @@ import { Colors, Fonts } from '../../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_KEY_STORAGE } from '../setup';
 import * as Speech from 'expo-speech';
+import { useLang, localeOf } from '../../constants/i18n';
+import { coachSystemPrompt, COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -26,43 +28,10 @@ interface Message {
   timestamp: Date;
 }
 
-// ─── Constants ────────────────────────────────────────────
 const CHAT_HISTORY_KEY = 'stoikos_chat_history';
 
-const SYSTEM_PROMPT = `Sen Stoikos'sun — antik Stoacı felsefesini modern hayata taşıyan bir bilgelik rehberisin.
-
-Görevin:
-- Kullanıcının sorunlarını, kaygılarını veya duygularını Stoacı perspektifle ele almak
-- Marcus Aurelius, Epiktetos ve Seneca'nın öğretilerini pratik tavsiyeye dönüştürmek
-- Her yanıta uygun bir Stoacı alıntı eklemek (Türkçe)
-- Kısa, öz ve derin yanıtlar vermek — vaaz değil, rehberlik
-
-Temel Stoacı kavramlar:
-- Dichotomy of Control: Kontrolündeki vs. kontrolün dışındaki
-- Negative Visualization: Kaybetme ihtimalini düşünmek
-- Memento Mori: Ölümlülüğü hatırlamak
-- Amor Fati: Kaderini sevmek
-- Premeditatio Malorum: Kötülükleri önceden düşünmek
-
-Yanıt formatı:
-1. Empati ile başla (1-2 cümle)
-2. Stoacı çerçeve sun (2-3 cümle)
-3. Pratik tavsiye ver (1-2 cümle)
-4. Alıntı ekle şu formatta: [ALINTI: "alıntı metni" — Yazar, Kaynak]
-
-Türkçe yaz. Sıcak ama güçlü bir ton kullan.`;
-
-const INITIAL_MESSAGE: Message = {
-  id: '0',
-  role: 'assistant',
-  content: 'Merhaba. Bugün sana nasıl yardımcı olabilirim? Yaşadığın zorluğu veya hissettiğin duyguyu bana anlat — birlikte Stoacı bir bakış açısı geliştirelim.\n\n[ALINTI: "Kendine dönük yolculuk, tüm yolculukların en uzunudur." — Seneca, Epistulae]',
-  timestamp: new Date(),
-};
-
-const SUGGESTIONS = ['İşte başarısız oldum', 'Kaygı içindeyim', 'Birileri beni eleştiriyor', 'Geleceğim belirsiz', 'Öfkeyi nasıl yönetirim?'];
-
 // ─── API ──────────────────────────────────────────────────
-async function sendToClaudeText(messages: Message[]): Promise<string> {
+async function sendToClaudeText(messages: Message[], system: string): Promise<string> {
   const apiKey = await AsyncStorage.getItem(API_KEY_STORAGE);
   const apiMessages = messages.map((m) => ({ role: m.role, content: m.content }));
   const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -76,7 +45,7 @@ async function sendToClaudeText(messages: Message[]): Promise<string> {
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
       max_tokens: 1000,
-      system: SYSTEM_PROMPT,
+      system,
       messages: apiMessages,
     }),
   });
@@ -97,15 +66,17 @@ function parseResponse(text: string): { body: string; quote: string | null } {
 
 function getSpeakableText(text: string): string {
   const { body, quote } = parseResponse(text);
-  return quote ? `${body} Alıntı: ${quote}` : body;
+  return quote ? `${body} ${quote}` : body;
 }
 
 // ─── MessageBubble ────────────────────────────────────────
-function MessageBubble({ message, speakingId, onSpeak, onStop }: {
+function MessageBubble({ message, speakingId, onSpeak, onStop, listenLabel, stopLabel }: {
   message: Message;
   speakingId: string | null;
   onSpeak: (msg: Message) => void;
   onStop: () => void;
+  listenLabel: string;
+  stopLabel: string;
 }) {
   const isUser = message.role === 'user';
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -125,7 +96,7 @@ function MessageBubble({ message, speakingId, onSpeak, onStop }: {
           <Text style={styles.userText}>{message.content}</Text>
         </View>
         <Text style={styles.timeMeta}>
-          {message.timestamp.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </Animated.View>
     );
@@ -144,7 +115,7 @@ function MessageBubble({ message, speakingId, onSpeak, onStop }: {
         >
           <Text style={styles.speakIcon}>{speaking ? '⏹' : '🔊'}</Text>
           <Text style={[styles.speakBtnText, speaking && styles.speakBtnTextActive]}>
-            {speaking ? 'Durdur' : 'Dinle'}
+            {speaking ? stopLabel : listenLabel}
           </Text>
         </TouchableOpacity>
       </View>
@@ -157,7 +128,7 @@ function MessageBubble({ message, speakingId, onSpeak, onStop }: {
         )}
       </View>
       <Text style={styles.timeMeta}>
-        {message.timestamp.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </Text>
     </Animated.View>
   );
@@ -192,13 +163,17 @@ function TypingIndicator() {
 
 // ─── Main Screen ──────────────────────────────────────────
 export default function CoachScreen() {
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+  const { t, lang } = useLang();
+  const makeInitial = useCallback((): Message => ({ id: '0', role: 'assistant', content: COACH_INITIAL[lang], timestamp: new Date() }), [lang]);
+
+  const [messages, setMessages] = useState<Message[]>(() => [{ id: '0', role: 'assistant', content: COACH_INITIAL[lang], timestamp: new Date() }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
 
+  // Geçmişi yükle
   useEffect(() => {
     AsyncStorage.getItem(CHAT_HISTORY_KEY).then((raw) => {
       if (raw) {
@@ -208,9 +183,13 @@ export default function CoachScreen() {
         } catch {}
       }
     });
-    // Ekrandan çıkınca konuşmayı durdur
     return () => { Speech.stop(); };
   }, []);
+
+  // Dil değişince ve henüz sohbet başlamadıysa karşılama mesajını güncelle
+  useEffect(() => {
+    setMessages((prev) => (prev.length === 1 && prev[0].id === '0' ? [makeInitial()] : prev));
+  }, [lang, makeInitial]);
 
   useEffect(() => {
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
@@ -225,7 +204,7 @@ export default function CoachScreen() {
     Speech.stop();
     setSpeakingId(msg.id);
     Speech.speak(getSpeakableText(msg.content), {
-      language: 'tr-TR',
+      language: localeOf(lang),
       rate: 0.92,
       pitch: 1.0,
       onDone: () => setSpeakingId(null),
@@ -250,14 +229,14 @@ export default function CoachScreen() {
     saveMessages(withUser);
     setLoading(true);
     try {
-      const reply = await sendToClaudeText(withUser);
+      const reply = await sendToClaudeText(withUser, coachSystemPrompt(lang));
       const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: reply, timestamp: new Date() };
       const final = [...withUser, aiMsg];
       setMessages(final);
       saveMessages(final);
       if (autoSpeak) speakMessage(aiMsg);
     } catch {
-      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: 'Bağlantı hatası oluştu. Lütfen tekrar dene.', timestamp: new Date() }]);
+      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: t('coach.connError'), timestamp: new Date() }]);
     } finally {
       setLoading(false);
     }
@@ -266,9 +245,11 @@ export default function CoachScreen() {
   function clearChat() {
     Speech.stop();
     setSpeakingId(null);
-    setMessages([INITIAL_MESSAGE]);
+    setMessages([makeInitial()]);
     AsyncStorage.removeItem(CHAT_HISTORY_KEY);
   }
+
+  const suggestions = COACH_SUGGESTIONS[lang];
 
   // ─── Render ─────────────────────────────────────────────
   return (
@@ -278,26 +259,25 @@ export default function CoachScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>Stoacı Koç</Text>
+          <Text style={styles.title}>{t('coach.title')}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <View style={styles.statusBadge}>
               <View style={styles.statusDot} />
-              <Text style={styles.statusText}>AKTİF</Text>
+              <Text style={styles.statusText}>{t('coach.active')}</Text>
             </View>
             <TouchableOpacity onPress={clearChat} style={styles.clearBtn}>
-              <Text style={styles.clearBtnText}>Sıfırla</Text>
+              <Text style={styles.clearBtnText}>{t('coach.reset')}</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.subtitleRow}>
-          <Text style={styles.subtitle}>Epiktetos'un bilgeliğiyle rehberlik</Text>
-          {/* Otomatik sesli okuma anahtarı */}
+          <Text style={styles.subtitle}>{t('coach.subtitle')}</Text>
           <TouchableOpacity
             onPress={() => { setAutoSpeak(!autoSpeak); if (autoSpeak) stopSpeaking(); }}
             style={[styles.autoSpeakBtn, autoSpeak && styles.autoSpeakBtnActive]}
           >
             <Text style={[styles.autoSpeakText, autoSpeak && styles.autoSpeakTextActive]}>
-              {autoSpeak ? '🔊 Sesli Okuma: Açık' : '🔇 Sesli Okuma: Kapalı'}
+              {autoSpeak ? t('coach.autoOn') : t('coach.autoOff')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -312,15 +292,15 @@ export default function CoachScreen() {
           </View>
 
           {messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} speakingId={speakingId} onSpeak={speakMessage} onStop={stopSpeaking} />
+            <MessageBubble key={msg.id} message={msg} speakingId={speakingId} onSpeak={speakMessage} onStop={stopSpeaking} listenLabel={t('coach.listen')} stopLabel={t('coach.stop')} />
           ))}
           {loading && <TypingIndicator />}
 
           {messages.length <= 1 && (
             <View style={styles.suggestions}>
-              <Text style={styles.suggestionsLabel}>KONULAR</Text>
+              <Text style={styles.suggestionsLabel}>{t('coach.topics')}</Text>
               <View style={styles.chipsWrap}>
-                {SUGGESTIONS.map((s) => (
+                {suggestions.map((s) => (
                   <TouchableOpacity key={s} style={styles.chip} onPress={() => send(s)} activeOpacity={0.7}>
                     <Text style={styles.chipText}>{s}</Text>
                   </TouchableOpacity>
@@ -331,11 +311,11 @@ export default function CoachScreen() {
         </ScrollView>
 
         <View style={styles.inputArea}>
-          <Text style={styles.inputLabel}>DÜŞÜNCENI YAZ</Text>
+          <Text style={styles.inputLabel}>{t('coach.inputLabel')}</Text>
           <View style={styles.inputRow}>
             <TextInput
               style={styles.input}
-              placeholder="Bugün ne hissediyorsun?"
+              placeholder={t('coach.placeholder')}
               placeholderTextColor={Colors.stone4}
               value={input}
               onChangeText={setInput}

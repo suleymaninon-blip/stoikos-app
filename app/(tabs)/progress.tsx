@@ -8,11 +8,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
 import { API_KEY_STORAGE } from '../setup';
+import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
+import { getExerciseNames } from '../../constants/content';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
 
-// Son 7 günün tarihlerini üret
 function getLast7Days() {
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -20,18 +21,6 @@ function getLast7Days() {
     return d;
   });
 }
-
-function dayLabel(date: Date) {
-  return ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'][date.getDay()];
-}
-
-const ALL_EXERCISES = [
-  { id: 'neg_vis', name: 'Negatif Görselleştirme', category: 'Sabah' },
-  { id: 'intention', name: 'Sabah Niyeti', category: 'Sabah' },
-  { id: 'memento', name: 'Memento Mori', category: 'Sabah' },
-  { id: 'review', name: 'Günün Muhasebesi', category: 'Akşam' },
-  { id: 'gratitude', name: 'Stoacı Şükran', category: 'Akşam' },
-];
 
 // ─── Animated stat box ────────────────────────────────────
 function StatBox({ label, value, sub }: { label: string; value: string; sub?: string }) {
@@ -50,10 +39,11 @@ function StatBox({ label, value, sub }: { label: string; value: string; sub?: st
 
 // ─── Bar chart ─────────────────────────────────────────────
 function WeekChart({ data }: { data: { day: string; count: number; isToday: boolean }[] }) {
+  const { t } = useLang();
   const max = Math.max(...data.map((d) => d.count), 1);
   return (
     <View style={styles.chartWrap}>
-      <Text style={styles.sectionLabel}>SON 7 GÜN</Text>
+      <Text style={styles.sectionLabel}>{t('progress.last7')}</Text>
       <View style={styles.bars}>
         {data.map((d, i) => {
           const heightPct = d.count / max;
@@ -89,11 +79,13 @@ function WeekChart({ data }: { data: { day: string; count: number; isToday: bool
 
 // ─── Exercise breakdown ────────────────────────────────────
 function ExBreakdown({ counts }: { counts: Record<string, number> }) {
+  const { t, lang } = useLang();
   const total7 = 7; // max completions per exercise in 7 days
+  const exercises = getExerciseNames(lang);
   return (
     <View style={styles.breakdownWrap}>
-      <Text style={styles.sectionLabel}>EGZERSİZ DAĞILIMI</Text>
-      {ALL_EXERCISES.map((ex) => {
+      <Text style={styles.sectionLabel}>{t('progress.exBreakdown')}</Text>
+      {exercises.map((ex) => {
         const count = counts[ex.id] || 0;
         const pct = count / total7;
         const barAnim = useRef(new Animated.Value(0)).current;
@@ -110,7 +102,7 @@ function ExBreakdown({ counts }: { counts: Record<string, number> }) {
               <Animated.View
                 style={[
                   styles.exFill,
-                  ex.category === 'Akşam' && styles.exFillEvening,
+                  ex.category === 'evening' && styles.exFillEvening,
                   { width: barAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) },
                 ]}
               />
@@ -124,6 +116,7 @@ function ExBreakdown({ counts }: { counts: Record<string, number> }) {
 
 // ─── Main ──────────────────────────────────────────────────
 export default function ProgressScreen() {
+  const { t, lang, setLang } = useLang();
   const [streak, setStreak] = useState(0);
   const [totalDone, setTotalDone] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
@@ -133,7 +126,7 @@ export default function ProgressScreen() {
   useEffect(() => {
     loadStats();
     Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
-  }, []);
+  }, [lang]);
 
   async function loadStats() {
     const streakVal = parseInt((await AsyncStorage.getItem(STREAK_KEY)) || '0');
@@ -151,7 +144,7 @@ export default function ProgressScreen() {
         const done: string[] = raw ? JSON.parse(raw) : [];
         total += done.length;
         done.forEach((id) => { counts[id] = (counts[id] || 0) + 1; });
-        return { day: dayLabel(d), count: done.length, isToday: d.toDateString() === today };
+        return { day: DAY_LABELS[lang][d.getDay()], count: done.length, isToday: d.toDateString() === today };
       })
     );
 
@@ -162,12 +155,12 @@ export default function ProgressScreen() {
 
   async function resetKey() {
     Alert.alert(
-      'API Key Sıfırla',
-      'Mevcut key silinecek ve kurulum ekranına döneceksin.',
+      t('progress.resetTitle'),
+      t('progress.resetMsg'),
       [
-        { text: 'İptal', style: 'cancel' },
+        { text: t('progress.cancel'), style: 'cancel' },
         {
-          text: 'Sıfırla', style: 'destructive',
+          text: t('progress.reset'), style: 'destructive',
           onPress: async () => {
             await AsyncStorage.removeItem(API_KEY_STORAGE);
             router.replace('/setup');
@@ -195,15 +188,33 @@ export default function ProgressScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
           <View style={styles.header}>
-            <Text style={styles.title}>İlerleme</Text>
-            <Text style={styles.subtitle}>Dönüşümünü izle</Text>
+            <Text style={styles.title}>{t('progress.title')}</Text>
+            <Text style={styles.subtitle}>{t('progress.subtitle')}</Text>
+          </View>
+
+          {/* Dil seçici */}
+          <View style={styles.langWrap}>
+            <Text style={styles.langTitle}>{t('progress.langLabel')}</Text>
+            <View style={styles.langRow}>
+              {LANGUAGES.map((l) => (
+                <TouchableOpacity
+                  key={l.code}
+                  onPress={() => setLang(l.code)}
+                  style={[styles.langChip, lang === l.code && styles.langChipActive]}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.langFlag}>{l.flag}</Text>
+                  <Text style={[styles.langLabel, lang === l.code && styles.langLabelActive]}>{l.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
 
           {/* Stat boxes */}
           <View style={styles.statsRow}>
-            <StatBox label="Günlük Seri" value={`${streak}`} sub="gün" />
-            <StatBox label="Bu Hafta" value={`${totalDone}`} sub="pratik" />
-            <StatBox label="Günlük Ort." value={avgPerDay} sub="pratik/gün" />
+            <StatBox label={t('progress.streak')} value={`${streak}`} sub={t('progress.streakUnit')} />
+            <StatBox label={t('progress.thisWeek')} value={`${totalDone}`} sub={t('progress.weekUnit')} />
+            <StatBox label={t('progress.avg')} value={avgPerDay} sub={t('progress.avgUnit')} />
           </View>
 
           {/* Best day */}
@@ -211,8 +222,8 @@ export default function ProgressScreen() {
             <View style={styles.bestDayCard}>
               <Text style={styles.bestDayIcon}>⭐</Text>
               <View>
-                <Text style={styles.bestDayLabel}>EN İYİ GÜN</Text>
-                <Text style={styles.bestDayValue}>{bestDay.day} — {bestDay.count} pratik</Text>
+                <Text style={styles.bestDayLabel}>{t('progress.bestDay')}</Text>
+                <Text style={styles.bestDayValue}>{t('progress.bestDayValue', { day: bestDay.day, count: bestDay.count })}</Text>
               </View>
             </View>
           )}
@@ -225,15 +236,13 @@ export default function ProgressScreen() {
 
           {/* Motivasyon alıntısı */}
           <View style={styles.quoteBox}>
-            <Text style={styles.quoteText}>
-              "Küçük adımlar atılmaya devam edilirse, büyük mesafeler kat edilir."
-            </Text>
-            <Text style={styles.quoteAuthor}>— Marcus Aurelius</Text>
+            <Text style={styles.quoteText}>"{t('progress.motivQuote')}"</Text>
+            <Text style={styles.quoteAuthor}>{t('progress.motivAuthor')}</Text>
           </View>
 
           {/* API Key reset */}
           <TouchableOpacity style={styles.resetBtn} onPress={resetKey} activeOpacity={0.8}>
-            <Text style={styles.resetText}>🔑 API Key Değiştir</Text>
+            <Text style={styles.resetText}>{t('progress.changeKey')}</Text>
           </TouchableOpacity>
 
         </ScrollView>
@@ -250,6 +259,16 @@ const styles = StyleSheet.create({
   header: { marginBottom: 24, marginTop: 8 },
   title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
+
+  // Dil seçici
+  langWrap: { marginBottom: 20 },
+  langTitle: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
+  langRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  langChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
+  langFlag: { fontSize: 14 },
+  langLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
+  langLabelActive: { color: Colors.accent },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },

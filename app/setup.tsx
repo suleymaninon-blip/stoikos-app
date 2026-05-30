@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../constants/theme';
+import { useLang, LANGUAGES } from '../constants/i18n';
 
 export const API_KEY_STORAGE = 'stoikos_api_key';
 
@@ -34,6 +35,7 @@ async function validateKey(key: string): Promise<boolean> {
 }
 
 export default function SetupScreen() {
+  const { t, lang, setLang } = useLang();
   const [key, setKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,7 +44,7 @@ export default function SetupScreen() {
   async function handleSave() {
     const trimmed = key.trim();
     if (!trimmed.startsWith('sk-ant-')) {
-      setError('Geçersiz format. Key "sk-ant-" ile başlamalı.');
+      setError(t('setup.errFormat'));
       return;
     }
     setError('');
@@ -50,7 +52,7 @@ export default function SetupScreen() {
     const valid = await validateKey(trimmed);
     setLoading(false);
     if (!valid) {
-      setError('API key doğrulanamadı. Key\'i kontrol et.');
+      setError(t('setup.errInvalid'));
       return;
     }
     await AsyncStorage.setItem(API_KEY_STORAGE, trimmed);
@@ -71,7 +73,22 @@ export default function SetupScreen() {
           {/* Logo */}
           <Text style={styles.omega}>Ω</Text>
           <Text style={styles.appName}>STOIKOS</Text>
-          <Text style={styles.tagline}>Stoacı Yaşam Rehberi</Text>
+          <Text style={styles.tagline}>{t('setup.tagline')}</Text>
+
+          {/* Dil seçici */}
+          <View style={styles.langRow}>
+            {LANGUAGES.map((l) => (
+              <TouchableOpacity
+                key={l.code}
+                onPress={() => setLang(l.code)}
+                style={[styles.langChip, lang === l.code && styles.langChipActive]}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.langFlag}>{l.flag}</Text>
+                <Text style={[styles.langLabel, lang === l.code && styles.langLabelActive]}>{l.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
           <View style={styles.divider}>
             <View style={styles.divLine} />
@@ -81,31 +98,28 @@ export default function SetupScreen() {
 
           {/* Açıklama */}
           <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>Başlamak için</Text>
-            <Text style={styles.infoText}>
-              Stoikos, kişisel AI koçun için Anthropic API key kullanır. Key telefonda güvenli şekilde saklanır, hiçbir sunucuya gönderilmez.
-            </Text>
+            <Text style={styles.infoTitle}>{t('setup.startTitle')}</Text>
+            <Text style={styles.infoText}>{t('setup.startInfo')}</Text>
             <TouchableOpacity
               onPress={() => {
-                // Expo Linking
                 const { Linking } = require('react-native');
                 Linking.openURL('https://console.anthropic.com/');
               }}
               style={styles.linkBtn}
             >
-              <Text style={styles.linkText}>→ console.anthropic.com'dan al</Text>
+              <Text style={styles.linkText}>{t('setup.getKey')}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Input */}
-          <Text style={styles.inputLabel}>ANTHROPİC API KEY</Text>
+          <Text style={styles.inputLabel}>{t('setup.keyLabel')}</Text>
           <View style={styles.inputWrap}>
             <TextInput
               style={styles.input}
               placeholder="sk-ant-api03-..."
               placeholderTextColor={Colors.stone4}
               value={key}
-              onChangeText={(t) => { setKey(t); setError(''); }}
+              onChangeText={(txt) => { setKey(txt); setError(''); }}
               secureTextEntry={!showKey}
               autoCapitalize="none"
               autoCorrect={false}
@@ -128,12 +142,12 @@ export default function SetupScreen() {
             {loading ? (
               <ActivityIndicator size="small" color={Colors.stone} />
             ) : (
-              <Text style={styles.saveBtnText}>Doğrula & Başla</Text>
+              <Text style={styles.saveBtnText}>{t('setup.verify')}</Text>
             )}
           </TouchableOpacity>
 
           {/* Güvenlik notu */}
-          <Text style={styles.secNote}>🔒 Key yalnızca bu cihazda, AsyncStorage'da saklanır.</Text>
+          <Text style={styles.secNote}>{t('setup.secNote')}</Text>
 
         </ScrollView>
       </KeyboardAvoidingView>
@@ -147,7 +161,13 @@ const styles = StyleSheet.create({
   scroll: { padding: 32, paddingTop: 60, alignItems: 'center' },
   omega: { fontFamily: Fonts.cinzel, fontSize: 72, color: Colors.sand, opacity: 0.15, lineHeight: 80 },
   appName: { fontFamily: Fonts.cinzelBold, fontSize: 32, letterSpacing: 6, color: Colors.sand2, marginTop: -10 },
-  tagline: { fontFamily: Fonts.jostLight, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginTop: 6, marginBottom: 28 },
+  tagline: { fontFamily: Fonts.jostLight, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginTop: 6, marginBottom: 20 },
+  langRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 24 },
+  langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  langChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
+  langFlag: { fontSize: 14 },
+  langLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
+  langLabelActive: { color: Colors.accent },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12, width: '100%', marginBottom: 28 },
   divLine: { flex: 1, height: 1, backgroundColor: 'rgba(196,169,106,0.15)' },
   divSym: { fontSize: 10, color: Colors.sand, opacity: 0.5 },

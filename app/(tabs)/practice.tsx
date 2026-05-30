@@ -7,53 +7,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
-
-// ─── Data ─────────────────────────────────────────────────
-const MORNING_EXERCISES = [
-  {
-    id: 'neg_vis',
-    name: 'Negatif Görselleştirme',
-    desc: 'Bugün kaybedebileceklerini düşün — sağlık, sevdiklerin, işin. Sahip olduklarının değerini hisset.',
-    duration: '3 dk',
-  },
-  {
-    id: 'intention',
-    name: 'Sabah Niyeti',
-    desc: 'Bugün kontrolümde olan tek şey kendi tepkilerim ve kararlarım. Dışarıdaki her şey benim değil.',
-    duration: '2 dk',
-  },
-  {
-    id: 'memento',
-    name: 'Memento Mori',
-    desc: 'Bu gün tekrar gelmeyecek. Nasıl yaşamak istiyorsun? Ne bırakmak istiyorsun?',
-    duration: '2 dk',
-  },
-];
-
-const EVENING_EXERCISES = [
-  {
-    id: 'review',
-    name: 'Günün Muhasebesi',
-    desc: 'Bugün kontrolündeki şeylerde nasıl davrandın? Nerede daha iyi olabilirdin?',
-    duration: '5 dk',
-  },
-  {
-    id: 'gratitude',
-    name: 'Stoacı Şükran',
-    desc: 'Bugün sıradan görünen ama aslında değerli olan üç şeyi hatırla.',
-    duration: '3 dk',
-  },
-];
-
-const CONCEPTS = [
-  { latin: 'Amor Fati', tr: 'Kaderini Sev', desc: 'Her olayı — acı veren ya da keyifli — olması gerektiği gibi kabul et. Dirençten değil kabulden güç doğar.' },
-  { latin: 'Memento Mori', tr: 'Ölümü Hatırla', desc: 'Ölümlülüğünü hatırlamak, her anı daha bilinçli yaşamanı sağlar. Bu bir karamsarlık değil, uyanıklıktır.' },
-  { latin: 'Premeditatio Malorum', tr: 'Kötülükleri Önceden Düşün', desc: 'Olası zorlukları zihinsel olarak prova etmek, onlarla karşılaştığında hazırlıklı olmanı sağlar.' },
-  { latin: 'Dichotomy of Control', tr: 'Kontrol Dairesi', desc: 'Her şeyi iki kategoriye ayır: kontrolündeki ve kontrolün dışındaki. Enerjini yalnızca birincisine ver.' },
-  { latin: 'Eudaimonia', tr: 'Mutlu Yaşam', desc: 'Stoacılıkta mutluluk dış koşullara değil, erdemli yaşamaya dayanır. Gerçek huzur içten gelir.' },
-  { latin: 'Sympatheia', tr: 'Evrensel Bağ', desc: 'Her şey birbirine bağlıdır. Başkalarına zarar vermek kendine zarar vermektir. Bütünün parçasısın.' },
-  { latin: 'Logos', tr: 'Evrensel Akıl', desc: 'Evreni yöneten bir düzen vardır. Akla uygun yaşamak bu düzenle uyum içinde olmaktır.' },
-];
+import { useLang } from '../../constants/i18n';
+import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const JOURNAL_KEY = 'stoikos_journal_';
@@ -62,7 +17,7 @@ const JOURNAL_KEY = 'stoikos_journal_';
 function ExerciseItem({
   exercise, completed, onToggle,
 }: {
-  exercise: typeof MORNING_EXERCISES[0];
+  exercise: Exercise;
   completed: boolean;
   onToggle: () => void;
 }) {
@@ -96,12 +51,15 @@ function ExerciseItem({
 
 // ─── Main ──────────────────────────────────────────────────
 export default function PracticeScreen() {
+  const { t, lang } = useLang();
   const today = new Date().toDateString();
   const [completed, setCompleted] = useState<Set<string>>(new Set());
-  const [concept, setConcept] = useState(CONCEPTS[0]);
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const { morning: MORNING_EXERCISES, evening: EVENING_EXERCISES } = getExercises(lang, t('unit.min'));
+  const concept = getDailyConcept(lang);
 
   useEffect(() => {
     loadData();
@@ -114,9 +72,6 @@ export default function PracticeScreen() {
 
     const journalRaw = await AsyncStorage.getItem(JOURNAL_KEY + today);
     if (journalRaw) { setJournal(journalRaw); setJournalSaved(true); }
-
-    const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-    setConcept(CONCEPTS[dayOfYear % CONCEPTS.length]);
   }
 
   async function toggleExercise(id: string) {
@@ -155,23 +110,23 @@ export default function PracticeScreen() {
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>Günlük Pratik</Text>
+            <Text style={styles.title}>{t('practice.title')}</Text>
             <Text style={styles.subtitle}>
-              {isMorning ? 'Sabah egzersizleri' : 'Akşam yansıması'}
+              {isMorning ? t('practice.morningSub') : t('practice.eveningSub')}
             </Text>
           </View>
 
           {/* Progress bar */}
           <View style={styles.progressWrap}>
             <View style={styles.progressHeader}>
-              <Text style={styles.progressLabel}>BUGÜNKÜ İLERLEME</Text>
+              <Text style={styles.progressLabel}>{t('practice.todayProgress')}</Text>
               <Text style={styles.progressCount}>{doneCount}/{totalCount}</Text>
             </View>
             <View style={styles.progressTrack}>
               <Animated.View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
             </View>
             {doneCount === totalCount && doneCount > 0 && (
-              <Text style={styles.allDoneText}>✦ Tüm pratikler tamamlandı — iyi iş!</Text>
+              <Text style={styles.allDoneText}>{t('practice.allDone')}</Text>
             )}
           </View>
 
@@ -180,8 +135,8 @@ export default function PracticeScreen() {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionIcon}>🌅</Text>
               <View>
-                <Text style={styles.sectionTag}>SABAH</Text>
-                <Text style={styles.sectionTitle}>Güne Başlarken</Text>
+                <Text style={styles.sectionTag}>{t('practice.morningTag')}</Text>
+                <Text style={styles.sectionTitle}>{t('practice.morningTitle')}</Text>
               </View>
               <View style={styles.sectionBadge}>
                 <Text style={styles.sectionBadgeText}>
@@ -204,8 +159,8 @@ export default function PracticeScreen() {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionIcon}>🌙</Text>
               <View>
-                <Text style={styles.sectionTag}>AKŞAM</Text>
-                <Text style={styles.sectionTitle}>Günü Kapatırken</Text>
+                <Text style={styles.sectionTag}>{t('practice.eveningTag')}</Text>
+                <Text style={styles.sectionTitle}>{t('practice.eveningTitle')}</Text>
               </View>
               <View style={styles.sectionBadge}>
                 <Text style={styles.sectionBadgeText}>
@@ -225,14 +180,14 @@ export default function PracticeScreen() {
 
           {/* Daily journal */}
           <View style={styles.journalCard}>
-            <Text style={styles.journalTag}>GÜNLÜK YANSIMA</Text>
-            <Text style={styles.journalHint}>Bugün ne hissettin? Ne öğrendin? Stoacı bir perspektifle yaz.</Text>
+            <Text style={styles.journalTag}>{t('practice.journalTag')}</Text>
+            <Text style={styles.journalHint}>{t('practice.journalHint')}</Text>
             <TextInput
               style={styles.journalInput}
-              placeholder="Bugünkü düşüncelerini buraya yaz..."
+              placeholder={t('practice.journalPlaceholder')}
               placeholderTextColor={Colors.stone4}
               value={journal}
-              onChangeText={(t) => { setJournal(t); setJournalSaved(false); }}
+              onChangeText={(txt) => { setJournal(txt); setJournalSaved(false); }}
               multiline
               textAlignVertical="top"
             />
@@ -242,15 +197,15 @@ export default function PracticeScreen() {
               disabled={!journal.trim() || journalSaved}
               activeOpacity={0.8}
             >
-              <Text style={styles.journalSaveBtnText}>{journalSaved ? '✓ Kaydedildi' : 'Kaydet'}</Text>
+              <Text style={styles.journalSaveBtnText}>{journalSaved ? t('practice.saved') : t('practice.save')}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Concept of the day */}
           <View style={styles.conceptCard}>
-            <Text style={styles.conceptTag}>GÜNÜN KAVRAMI</Text>
+            <Text style={styles.conceptTag}>{t('practice.conceptTag')}</Text>
             <Text style={styles.conceptLatin}>{concept.latin}</Text>
-            <Text style={styles.conceptTr}>{concept.tr}</Text>
+            <Text style={styles.conceptTr}>{concept.name}</Text>
             <View style={styles.conceptDivider} />
             <Text style={styles.conceptDesc}>{concept.desc}</Text>
           </View>

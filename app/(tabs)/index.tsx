@@ -12,7 +12,8 @@ import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
-import { getTodaysQuote } from '../../constants/quotes';
+import { getTodaysQuote } from '../../constants/content';
+import { useLang, localeOf } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { QuoteCard } from '../../components/QuoteCard';
 import { ModuleCard } from '../../components/ModuleCard';
@@ -22,6 +23,7 @@ const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
 
 export default function HomeScreen() {
+  const { t, lang } = useLang();
   const { streak, weekDays, refresh } = useStreak();
   const [practiceProgress, setPracticeProgress] = useState(0);
 
@@ -36,12 +38,12 @@ export default function HomeScreen() {
   );
 
   const MODULES = [
-    { icon: '🌅', name: 'Günlük Pratik', desc: 'Sabah niyeti & akşam yansıması', route: '/practice', active: practiceProgress > 0 },
-    { icon: '⚡', name: 'AI Koç', desc: 'Stoacı rehberlik al', route: '/coach', active: false },
-    { icon: '📖', name: 'Bilgelik', desc: 'Kavramlar & alıntılar', route: '/wisdom', active: false },
-    { icon: '📊', name: 'İlerleme', desc: 'Dönüşüm takibi', route: '/progress', active: false },
+    { icon: '🌅', name: t('home.mod.practice.name'), desc: t('home.mod.practice.desc'), route: '/practice', active: practiceProgress > 0 },
+    { icon: '⚡', name: t('home.mod.coach.name'), desc: t('home.mod.coach.desc'), route: '/coach', active: false },
+    { icon: '📖', name: t('home.mod.wisdom.name'), desc: t('home.mod.wisdom.desc'), route: '/wisdom', active: false },
+    { icon: '📊', name: t('home.mod.progress.name'), desc: t('home.mod.progress.desc'), route: '/progress', active: false },
   ];
-  const quote = getTodaysQuote();
+  const quote = getTodaysQuote(lang);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
 
@@ -61,7 +63,7 @@ export default function HomeScreen() {
   }, []);
 
   const today = new Date();
-  const dateStr = today.toLocaleDateString('tr-TR', {
+  const dateStr = today.toLocaleDateString(localeOf(lang), {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -69,9 +71,9 @@ export default function HomeScreen() {
 
   const hour = today.getHours();
   const greeting =
-    hour < 12 ? 'Sabahın Bilgeliği' :
-    hour < 17 ? 'Günün Bilgeliği' :
-    'Akşamın Yansıması';
+    hour < 12 ? t('home.morning') :
+    hour < 17 ? t('home.day') :
+    t('home.evening');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,7 +101,7 @@ export default function HomeScreen() {
           <QuoteCard quote={quote} />
 
           {/* Modules */}
-          <Text style={styles.sectionLabel}>MODÜLLER</Text>
+          <Text style={styles.sectionLabel}>{t('home.modules')}</Text>
           <View style={styles.modulesGrid}>
             <View style={styles.moduleRow}>
               <ModuleCard
