@@ -12,12 +12,20 @@
  * Mevcut dosyaları atlar (tekrar çalıştırınca sadece eksikleri üretir).
  */
 import { getAudioItems } from '../constants/content';
+import type { Lang } from '../constants/i18n';
 import * as fs from 'fs';
 import * as path from 'path';
 
 const KEY = process.env.ELEVEN_API_KEY;
-const VOICE = process.env.ELEVEN_VOICE || 'onwK4e9ZLuTAKqWW03F9'; // Daniel
 const MODEL = 'eleven_multilingual_v2';
+
+// Her dile o dilin ana dili konuşan sesi
+const VOICE_BY_LANG: Record<Lang, string> = {
+  tr: 'pMQM2vAjnEa9PmfDvgkY', // Sukru Terzi
+  en: 'DMyrgzQFny3JI1Y1paM5', // Donovan
+  de: 'kaGxVtjLwllv1bi2GFag', // David (de)
+  ru: 'rQOBu7YxCDxGiFdTm28w', // Artem Lebedev (ru)
+};
 
 if (!KEY) {
   console.error('HATA: ELEVEN_API_KEY ortam değişkeni gerekli.');
@@ -29,8 +37,8 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, 'assets', 'audio');
 fs.mkdirSync(OUT, { recursive: true });
 
-async function synth(text: string): Promise<Buffer> {
-  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE}`, {
+async function synth(text: string, voiceId: string): Promise<Buffer> {
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: 'POST',
     headers: { 'xi-api-key': KEY!, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
     body: JSON.stringify({
@@ -56,7 +64,7 @@ async function synth(text: string): Promise<Buffer> {
       continue;
     }
     try {
-      const buf = await synth(it.text);
+      const buf = await synth(it.text, VOICE_BY_LANG[it.lang]);
       fs.writeFileSync(file, buf);
       available.push(it.key);
       made++;

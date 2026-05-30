@@ -487,17 +487,17 @@ export function conceptAudioKey(latin: string, lang: Lang): string {
   return `c${latin.replace(/[^a-zA-Z]/g, '').toLowerCase()}-${lang}`;
 }
 
-// Üretim script'i için: seslendirilecek tüm sabit metinler
-export function getAudioItems(): { key: string; text: string }[] {
-  const items: { key: string; text: string }[] = [];
+// Üretim script'i için: seslendirilecek tüm sabit metinler (dil bilgisiyle)
+export function getAudioItems(): { key: string; lang: Lang; text: string }[] {
+  const items: { key: string; lang: Lang; text: string }[] = [];
   for (const q of QUOTES_RAW) {
     for (const lang of ALL_LANGS) {
-      items.push({ key: quoteAudioKey(q.id, lang), text: `${q.text[lang]} — ${authorName(q.authorId, lang)}` });
+      items.push({ key: quoteAudioKey(q.id, lang), lang, text: `${q.text[lang]} — ${authorName(q.authorId, lang)}` });
     }
   }
   for (const c of CONCEPTS_RAW) {
     for (const lang of ALL_LANGS) {
-      items.push({ key: conceptAudioKey(c.latin, lang), text: `${c.latin}. ${c.name[lang]}. ${c.desc[lang]}` });
+      items.push({ key: conceptAudioKey(c.latin, lang), lang, text: `${c.latin}. ${c.name[lang]}. ${c.desc[lang]}` });
     }
   }
   return items;
