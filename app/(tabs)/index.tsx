@@ -15,6 +15,7 @@ import { Colors, Fonts } from '../../constants/theme';
 import { getTodaysQuote } from '../../constants/content';
 import { useLang, localeOf } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
+import { MOODS, getMoods, setMood } from '../../constants/mood';
 import { QuoteCard } from '../../components/QuoteCard';
 import { ModuleCard } from '../../components/ModuleCard';
 import { StreakBar } from '../../components/StreakBar';
@@ -26,6 +27,8 @@ export default function HomeScreen() {
   const { t, lang } = useLang();
   const { streak, weekDays, refresh } = useStreak();
   const [practiceProgress, setPracticeProgress] = useState(0);
+  const [todayMood, setTodayMood] = useState<number | null>(null);
+  const todayStr = new Date().toDateString();
 
   useFocusEffect(
     useCallback(() => {
@@ -34,8 +37,14 @@ export default function HomeScreen() {
         const done: string[] = raw ? JSON.parse(raw) : [];
         setPracticeProgress(done.length / ALL_EXERCISE_IDS.length);
       });
+      getMoods().then((m) => setTodayMood(m[todayStr] ?? null));
     }, [refresh])
   );
+
+  async function pickMood(id: number) {
+    setTodayMood(id);
+    await setMood(todayStr, id);
+  }
 
   const MODULES = [
     { icon: '🌅', name: t('home.mod.practice.name'), desc: t('home.mod.practice.desc'), route: '/practice', active: practiceProgress > 0 },
@@ -95,6 +104,26 @@ export default function HomeScreen() {
           <View style={styles.greetingBlock}>
             <Text style={styles.dateText}>{dateStr.toUpperCase()}</Text>
             <Text style={styles.greetingText}>{greeting}</Text>
+          </View>
+
+          {/* Mood check-in */}
+          <View style={styles.moodCard}>
+            <Text style={styles.moodQuestion}>{t('mood.question')}</Text>
+            <View style={styles.moodRow}>
+              {MOODS.map((m) => {
+                const active = todayMood === m.id;
+                return (
+                  <TouchableOpacity key={m.id} onPress={() => pickMood(m.id)} style={[styles.moodBtn, active && { borderColor: m.color, backgroundColor: 'rgba(212,146,74,0.12)' }]} activeOpacity={0.8}>
+                    <Text style={[styles.moodEmoji, !active && todayMood !== null && { opacity: 0.35 }]}>{m.emoji}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+            {todayMood !== null && (
+              <Text style={[styles.moodLabel, { color: MOODS.find((x) => x.id === todayMood)!.color }]}>
+                {t('mood.' + todayMood)}
+              </Text>
+            )}
           </View>
 
           {/* Quote */}
@@ -216,6 +245,18 @@ const styles = StyleSheet.create({
   programName: { fontFamily: Fonts.cinzel, fontSize: 15, color: Colors.sand2, letterSpacing: 0.4, marginBottom: 2 },
   programDesc: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.text2 },
   programArrow: { fontFamily: Fonts.cinzel, fontSize: 18, color: Colors.sand },
+  moodCard: {
+    backgroundColor: Colors.stone2, borderRadius: 18, padding: 18, marginBottom: 20,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  },
+  moodQuestion: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.text2, marginBottom: 14, textAlign: 'center' },
+  moodRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  moodBtn: {
+    width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.08)', backgroundColor: Colors.stone3,
+  },
+  moodEmoji: { fontSize: 26 },
+  moodLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, textAlign: 'center', marginTop: 12, letterSpacing: 0.5 },
   modulesGrid: {
     marginBottom: 20,
     gap: 12,

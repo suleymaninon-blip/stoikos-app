@@ -127,6 +127,9 @@ const UI: Record<Lang, Dict> = {
     'share.button': 'Paylaş',
     'share.title': 'Alıntıyı Paylaş',
     'wisdom.favorites': 'Favoriler',
+    'mood.question': 'Bugün nasıl hissediyorsun?',
+    'mood.trend': 'RUH HALİ — SON 7 GÜN',
+    'mood.1': 'Çok zor', 'mood.2': 'Zor', 'mood.3': 'Orta', 'mood.4': 'İyi', 'mood.5': 'Huzurlu',
   },
 
   // ════════════ ENGLISH ════════════
@@ -227,6 +230,9 @@ const UI: Record<Lang, Dict> = {
     'share.button': 'Share',
     'share.title': 'Share Quote',
     'wisdom.favorites': 'Favorites',
+    'mood.question': 'How do you feel today?',
+    'mood.trend': 'MOOD — LAST 7 DAYS',
+    'mood.1': 'Very hard', 'mood.2': 'Hard', 'mood.3': 'Okay', 'mood.4': 'Good', 'mood.5': 'Serene',
   },
 
   // ════════════ DEUTSCH ════════════
@@ -327,6 +333,9 @@ const UI: Record<Lang, Dict> = {
     'share.button': 'Teilen',
     'share.title': 'Zitat teilen',
     'wisdom.favorites': 'Favoriten',
+    'mood.question': 'Wie fühlst du dich heute?',
+    'mood.trend': 'STIMMUNG — LETZTE 7 TAGE',
+    'mood.1': 'Sehr schwer', 'mood.2': 'Schwer', 'mood.3': 'Okay', 'mood.4': 'Gut', 'mood.5': 'Gelassen',
   },
 
   // ════════════ РУССКИЙ ════════════
@@ -427,6 +436,9 @@ const UI: Record<Lang, Dict> = {
     'share.button': 'Поделиться',
     'share.title': 'Поделиться цитатой',
     'wisdom.favorites': 'Избранное',
+    'mood.question': 'Как вы себя чувствуете сегодня?',
+    'mood.trend': 'НАСТРОЕНИЕ — 7 ДНЕЙ',
+    'mood.1': 'Очень тяжело', 'mood.2': 'Тяжело', 'mood.3': 'Нормально', 'mood.4': 'Хорошо', 'mood.5': 'Безмятежно',
   },
 };
 
