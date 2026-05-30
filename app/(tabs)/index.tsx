@@ -100,6 +100,16 @@ export default function HomeScreen() {
           {/* Quote */}
           <QuoteCard quote={quote} />
 
+          {/* Programs featured card */}
+          <TouchableOpacity style={styles.programCard} onPress={() => router.push('/programs')} activeOpacity={0.85}>
+            <Text style={styles.programIcon}>📿</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.programName}>{t('programs.cardName')}</Text>
+              <Text style={styles.programDesc}>{t('programs.cardDesc')}</Text>
+            </View>
+            <Text style={styles.programArrow}>→</Text>
+          </TouchableOpacity>
+
           {/* Modules */}
           <Text style={styles.sectionLabel}>{t('home.modules')}</Text>
           <View style={styles.modulesGrid}>
@@ -197,6 +207,15 @@ const styles = StyleSheet.create({
     color: Colors.muted,
     marginBottom: 14,
   },
+  programCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    backgroundColor: 'rgba(196,169,106,0.12)', borderRadius: 18, padding: 18, marginBottom: 22,
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.3)',
+  },
+  programIcon: { fontSize: 26 },
+  programName: { fontFamily: Fonts.cinzel, fontSize: 15, color: Colors.sand2, letterSpacing: 0.4, marginBottom: 2 },
+  programDesc: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.text2 },
+  programArrow: { fontFamily: Fonts.cinzel, fontSize: 18, color: Colors.sand },
   modulesGrid: {
     marginBottom: 20,
     gap: 12,
