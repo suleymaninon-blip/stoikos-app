@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 
 // ─── Data ─────────────────────────────────────────────────
-const PHILOSOPHERS = ['Tümü', 'Marcus Aurelius', 'Epiktetos', 'Seneca'];
+const PHILOSOPHERS = ['Tümü', 'Marcus Aurelius', 'Epiktetos', 'Seneca', 'Kıbrıslı Zenon', 'Musonius Rufus', 'Khrysippos'];
 
 const QUOTES = [
   { id: '1', text: 'Bugün ölebilirdin; bunun yerine hâlâ hayattasın. Bu zamanı bilgelikle kullan.', author: 'Marcus Aurelius', source: 'Meditationes' },
@@ -22,6 +22,22 @@ const QUOTES = [
   { id: '10', text: 'Kendi ruhunu değiştirmek, dünyanın geri kalanını değiştirmekten daha zordur.', author: 'Marcus Aurelius', source: 'Meditationes' },
   { id: '11', text: 'Az isteyen çok sahiptir. Çok isteyen hiçbir zaman yeterince sahip değildir.', author: 'Seneca', source: 'De Vita Beata' },
   { id: '12', text: 'Bilgelik; neyin senin kontrolünde olduğunu, neyin olmadığını bilmektir.', author: 'Epiktetos', source: 'Discourses' },
+
+  // ─── Kıbrıslı Zenon (Stoacılığın kurucusu, MÖ 334–262) ───
+  { id: '13', text: 'İki kulağımız ve tek bir ağzımız var; bu yüzden daha çok dinleyip daha az konuşmalıyız.', author: 'Kıbrıslı Zenon', source: 'Diogenes Laertios' },
+  { id: '14', text: 'İyi insanlar yasalardan değil, erdemden ötürü doğru davranır.', author: 'Kıbrıslı Zenon', source: 'Fragmanlar' },
+  { id: '15', text: 'Doğayla uyum içinde yaşamak — işte hayatın amacı budur.', author: 'Kıbrıslı Zenon', source: 'Diogenes Laertios' },
+  { id: '16', text: 'Mutluluk, akışı düzgün bir yaşamdır.', author: 'Kıbrıslı Zenon', source: 'Fragmanlar' },
+
+  // ─── Musonius Rufus ("Romalı Sokrates", MS ~30–100) ───
+  { id: '17', text: 'Erdemli yaşamak için zenginliğe değil, yalnızca akla ihtiyacın var.', author: 'Musonius Rufus', source: 'Söylevler' },
+  { id: '18', text: 'İyi yaşamayı öğrenmek, tüm hayatı öğrenmektir; çünkü her an doğru davranma fırsatıdır.', author: 'Musonius Rufus', source: 'Söylevler' },
+  { id: '19', text: 'Zorluğa katlanmayı seçen kişi, hazza teslim olandan daha özgürdür.', author: 'Musonius Rufus', source: 'Söylevler' },
+
+  // ─── Khrysippos (Stoacılığın ikinci kurucusu, MÖ ~279–206) ───
+  { id: '20', text: 'Yaşamak, erdemi öğrenmek için verilmiş bir okuldur.', author: 'Khrysippos', source: 'Fragmanlar' },
+  { id: '21', text: 'Hiçbir şey rastlantı değildir; her şey aklın düzeni içinde olur.', author: 'Khrysippos', source: 'Fragmanlar' },
+  { id: '22', text: 'Bilge kişi hiçbir şeye muhtaç değildir, ama her şeyi kullanabilir.', author: 'Khrysippos', source: 'Fragmanlar' },
 ];
 
 const CONCEPTS = [
