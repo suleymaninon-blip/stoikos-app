@@ -6,7 +6,7 @@ compatibility_date = "2024-11-01"
 # komutunu çalıştırınca aldığın gerçek id ile değiştir.
 [[kv_namespaces]]
 binding = "MEMORY"
-id = "BURAYA_KV_ID_YAZILACAK"
+id = "4ce0fd41b60c45f486769db962964635"
 
 # ANTHROPIC_API_KEY bir SIR'dır, buraya YAZILMAZ.
 # Şu komutla eklenir:  wrangler secret put ANTHROPIC_API_KEY

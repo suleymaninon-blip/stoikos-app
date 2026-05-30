@@ -121,6 +121,9 @@ const UI: Record<Lang, Dict> = {
     'programs.undo': '↩ Geri al',
     'programs.done': 'Tamamlandı',
     'programs.finished': '✦ Bu yolculuğu tamamladın!',
+    'memory.resetBtn': '🧠 Koç hafızasını sıfırla',
+    'memory.resetTitle': 'Hafızayı Sıfırla',
+    'memory.resetMsg': 'Koçun seninle ilgili hatırladığı her şey silinecek.',
   },
 
   // ════════════ ENGLISH ════════════
@@ -215,6 +218,9 @@ const UI: Record<Lang, Dict> = {
     'programs.undo': '↩ Undo',
     'programs.done': 'Completed',
     'programs.finished': '✦ You completed this journey!',
+    'memory.resetBtn': '🧠 Reset coach memory',
+    'memory.resetTitle': 'Reset Memory',
+    'memory.resetMsg': 'Everything the coach remembers about you will be deleted.',
   },
 
   // ════════════ DEUTSCH ════════════
@@ -309,6 +315,9 @@ const UI: Record<Lang, Dict> = {
     'programs.undo': '↩ Rückgängig',
     'programs.done': 'Abgeschlossen',
     'programs.finished': '✦ Du hast diese Reise abgeschlossen!',
+    'memory.resetBtn': '🧠 Coach-Gedächtnis zurücksetzen',
+    'memory.resetTitle': 'Gedächtnis zurücksetzen',
+    'memory.resetMsg': 'Alles, was der Coach über dich weiß, wird gelöscht.',
   },
 
   // ════════════ РУССКИЙ ════════════
@@ -403,6 +412,9 @@ const UI: Record<Lang, Dict> = {
     'programs.undo': '↩ Отменить',
     'programs.done': 'Завершено',
     'programs.finished': '✦ Вы прошли этот путь!',
+    'memory.resetBtn': '🧠 Сбросить память коуча',
+    'memory.resetTitle': 'Сбросить память',
+    'memory.resetMsg': 'Всё, что коуч помнит о вас, будет удалено.',
   },
 };
 

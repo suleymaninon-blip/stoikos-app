@@ -5,12 +5,11 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
-import { API_KEY_STORAGE } from '../setup';
 import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
 import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
+import { resetMemory } from '../../constants/api';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -168,19 +167,13 @@ export default function ProgressScreen() {
     setExCounts(counts);
   }
 
-  async function resetKey() {
+  function resetCoachMemory() {
     Alert.alert(
-      t('progress.resetTitle'),
-      t('progress.resetMsg'),
+      t('memory.resetTitle'),
+      t('memory.resetMsg'),
       [
         { text: t('progress.cancel'), style: 'cancel' },
-        {
-          text: t('progress.reset'), style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem(API_KEY_STORAGE);
-            router.replace('/setup');
-          },
-        },
+        { text: t('progress.reset'), style: 'destructive', onPress: () => { resetMemory(); } },
       ]
     );
   }
@@ -266,9 +259,9 @@ export default function ProgressScreen() {
             <Text style={styles.quoteAuthor}>{t('progress.motivAuthor')}</Text>
           </View>
 
-          {/* API Key reset */}
-          <TouchableOpacity style={styles.resetBtn} onPress={resetKey} activeOpacity={0.8}>
-            <Text style={styles.resetText}>{t('progress.changeKey')}</Text>
+          {/* Koç hafızası sıfırla */}
+          <TouchableOpacity style={styles.resetBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
+            <Text style={styles.resetText}>{t('memory.resetBtn')}</Text>
           </TouchableOpacity>
 
         </ScrollView>

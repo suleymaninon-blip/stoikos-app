@@ -15,9 +15,9 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_KEY_STORAGE } from '../setup';
 import { useLang } from '../../constants/i18n';
-import { coachSystemPrompt, COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
+import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
+import { sendCoach } from '../../constants/api';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -28,30 +28,6 @@ interface Message {
 }
 
 const CHAT_HISTORY_KEY = 'stoikos_chat_history';
-
-// ─── API ──────────────────────────────────────────────────
-async function sendToClaudeText(messages: Message[], system: string): Promise<string> {
-  const apiKey = await AsyncStorage.getItem(API_KEY_STORAGE);
-  const apiMessages = messages.map((m) => ({ role: m.role, content: m.content }));
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey || '',
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
-      system,
-      messages: apiMessages,
-    }),
-  });
-  if (!response.ok) throw new Error(`API hatası: ${response.status}`);
-  const data = await response.json();
-  return data.content[0].text;
-}
 
 // ─── Helpers ──────────────────────────────────────────────
 function parseResponse(text: string): { body: string; quote: string | null } {
@@ -178,7 +154,9 @@ export default function CoachScreen() {
     saveMessages(withUser);
     setLoading(true);
     try {
-      const reply = await sendToClaudeText(withUser, coachSystemPrompt(lang));
+      // Karşılama mesajını (id '0') çıkar — Claude ilk mesajın 'user' olmasını ister
+      const payload = withUser.filter((m) => m.id !== '0').map((m) => ({ role: m.role, content: m.content }));
+      const reply = await sendCoach(lang, payload);
       const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: reply, timestamp: new Date() };
       const final = [...withUser, aiMsg];
       setMessages(final);
