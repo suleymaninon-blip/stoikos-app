@@ -124,6 +124,8 @@ const UI: Record<Lang, Dict> = {
     'memory.resetBtn': '🧠 Koç hafızasını sıfırla',
     'memory.resetTitle': 'Hafızayı Sıfırla',
     'memory.resetMsg': 'Koçun seninle ilgili hatırladığı her şey silinecek.',
+    'share.button': 'Paylaş',
+    'share.title': 'Alıntıyı Paylaş',
   },
 
   // ════════════ ENGLISH ════════════
@@ -221,6 +223,8 @@ const UI: Record<Lang, Dict> = {
     'memory.resetBtn': '🧠 Reset coach memory',
     'memory.resetTitle': 'Reset Memory',
     'memory.resetMsg': 'Everything the coach remembers about you will be deleted.',
+    'share.button': 'Share',
+    'share.title': 'Share Quote',
   },
 
   // ════════════ DEUTSCH ════════════
@@ -318,6 +322,8 @@ const UI: Record<Lang, Dict> = {
     'memory.resetBtn': '🧠 Coach-Gedächtnis zurücksetzen',
     'memory.resetTitle': 'Gedächtnis zurücksetzen',
     'memory.resetMsg': 'Alles, was der Coach über dich weiß, wird gelöscht.',
+    'share.button': 'Teilen',
+    'share.title': 'Zitat teilen',
   },
 
   // ════════════ РУССКИЙ ════════════
@@ -415,6 +421,8 @@ const UI: Record<Lang, Dict> = {
     'memory.resetBtn': '🧠 Сбросить память коуча',
     'memory.resetTitle': 'Сбросить память',
     'memory.resetMsg': 'Всё, что коуч помнит о вас, будет удалено.',
+    'share.button': 'Поделиться',
+    'share.title': 'Поделиться цитатой',
   },
 };
 

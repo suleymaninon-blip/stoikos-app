@@ -8,10 +8,11 @@ import { Colors, Fonts } from '../../constants/theme';
 import { useLang, Lang } from '../../constants/i18n';
 import { getQuotes, getConcepts, AUTHORS, Quote, Concept, quoteAudioKey, conceptAudioKey } from '../../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
+import { QuoteShareModal } from '../../components/QuoteShareModal';
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote, lang, playingKey, onToggle }: {
-  quote: Quote; lang: Lang; playingKey: string | null; onToggle: (key: string) => void;
+function QuoteItem({ quote, lang, playingKey, onToggle, onShare }: {
+  quote: Quote; lang: Lang; playingKey: string | null; onToggle: (key: string) => void; onShare: (q: Quote) => void;
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -35,6 +36,9 @@ function QuoteItem({ quote, lang, playingKey, onToggle }: {
             <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
           </TouchableOpacity>
         )}
+        <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn}>
+          <Text style={styles.listenIcon}>↗</Text>
+        </TouchableOpacity>
       </View>
     </Animated.View>
   );
@@ -96,6 +100,7 @@ export default function WisdomScreen() {
   const [filter, setFilter] = useState('all'); // 'all' veya authorId
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [playingKey, setPlayingKey] = useState<string | null>(null);
+  const [shareQuote, setShareQuote] = useState<Quote | null>(null);
 
   const quotes = getQuotes(lang);
   const concepts = getConcepts(lang);
@@ -161,7 +166,7 @@ export default function WisdomScreen() {
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
-            renderItem={({ item }) => <QuoteItem quote={item} lang={lang} playingKey={playingKey} onToggle={togglePlay} />}
+            renderItem={({ item }) => <QuoteItem quote={item} lang={lang} playingKey={playingKey} onToggle={togglePlay} onShare={setShareQuote} />}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
           />
@@ -182,6 +187,14 @@ export default function WisdomScreen() {
         lang={lang}
         playingKey={playingKey}
         onToggle={togglePlay}
+      />
+
+      <QuoteShareModal
+        quote={shareQuote}
+        tagline={t('setup.tagline')}
+        shareLabel={t('share.button')}
+        closeLabel={t('wisdom.close')}
+        onClose={() => setShareQuote(null)}
       />
     </SafeAreaView>
   );
