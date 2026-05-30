@@ -16,6 +16,8 @@
 export interface Env {
   ANTHROPIC_API_KEY: string;
   MEMORY: KVNamespace;
+  DB: D1Database;
+  ADMIN_KEY: string;
 }
 
 const MODEL = 'claude-sonnet-4-6';
@@ -98,10 +100,111 @@ async function updateMemory(env: Env, userId: string, lang: string, lastUser: st
   }
 }
 
+// ─── Meydan Okuma: söz moderasyonu (Claude) ───────────────
+async function moderateQuote(env: Env, text: string): Promise<{ ok: boolean; reason: string }> {
+  try {
+    const data = await callClaude(env, {
+      model: MODEL,
+      max_tokens: 150,
+      system: `You moderate user-submitted aphorisms for a Stoic philosophy app. Decide if the text is BOTH:
+(1) appropriate — no hate, harassment, profanity, sexual content, ads/spam, links, personal data, or political propaganda; and
+(2) in the spirit of Stoic wisdom — a reflective maxim about virtue, self-control, acceptance, mortality, reason, resilience (not random nonsense, not a question, not a quote clearly copied from a famous author).
+Respond ONLY with JSON: {"ok": true|false, "reason": "<short reason in Turkish>"}. ok=true only if BOTH conditions hold.`,
+      messages: [{ role: 'user', content: text }],
+    });
+    const raw = data.content?.[0]?.text ?? '';
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (m) {
+      const j = JSON.parse(m[0]);
+      return { ok: !!j.ok, reason: String(j.reason || '') };
+    }
+  } catch (e) {}
+  return { ok: false, reason: 'Değerlendirilemedi, lütfen tekrar dene.' };
+}
+
 export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
     const url = new URL(req.url);
+    const path = url.pathname;
+
+    // ════════ MEYDAN OKUMA ════════
+    // Söz gönder
+    if (req.method === 'POST' && path === '/challenge/submit') {
+      const { userId, text, lang = 'tr', author } = await req.json<any>().catch(() => ({}));
+      const t = (text || '').trim();
+      if (!userId || t.length < 8 || t.length > 220) {
+        return json({ error: 'bad_request', reason: 'Söz 8-220 karakter olmalı.' }, 400);
+      }
+      // basit hız limiti: son 1 saatte en çok 5 gönderim
+      const since = Date.now() - 3600_000;
+      const recent = await env.DB.prepare('SELECT COUNT(*) AS c FROM quotes WHERE user_id=? AND created_at>?')
+        .bind(userId, since).first<{ c: number }>();
+      if ((recent?.c ?? 0) >= 5) return json({ error: 'rate_limited', reason: 'Bir saatte en fazla 5 söz gönderebilirsin.' }, 429);
+
+      const mod = await moderateQuote(env, t);
+      const status = mod.ok ? 'pending' : 'rejected';
+      await env.DB.prepare('INSERT INTO quotes (user_id,text,author,lang,status,reason,created_at) VALUES (?,?,?,?,?,?,?)')
+        .bind(userId, t, (author || '').toString().slice(0, 40) || null, lang, status, mod.reason || null, Date.now()).run();
+      return json(mod.ok
+        ? { status: 'pending', message: 'Sözün alındı! Onaylandıktan sonra listede görünecek.' }
+        : { status: 'rejected', reason: mod.reason });
+    }
+
+    // Onaylı sözleri listele
+    if (req.method === 'GET' && path === '/challenge/list') {
+      const lang = url.searchParams.get('lang') || 'tr';
+      const sort = url.searchParams.get('sort') === 'new' ? 'new' : 'top';
+      const userId = url.searchParams.get('userId') || '';
+      const order = sort === 'new' ? 'created_at DESC' : 'likes DESC, created_at DESC';
+      const rows = await env.DB.prepare(
+        `SELECT q.id,q.text,q.author,q.likes,
+          EXISTS(SELECT 1 FROM likes l WHERE l.quote_id=q.id AND l.user_id=?) AS liked
+         FROM quotes q WHERE q.status='approved' AND q.lang=? ORDER BY ${order} LIMIT 100`
+      ).bind(userId, lang).all();
+      const items = (rows.results || []).map((r: any, i: number) => ({
+        id: r.id, text: r.text, author: r.author, likes: r.likes, liked: !!r.liked, rank: sort === 'top' ? i + 1 : null,
+      }));
+      return json({ items });
+    }
+
+    // Beğeni aç/kapa
+    if (req.method === 'POST' && path === '/challenge/like') {
+      const { userId, quoteId } = await req.json<any>().catch(() => ({}));
+      if (!userId || !quoteId) return json({ error: 'bad_request' }, 400);
+      const existing = await env.DB.prepare('SELECT 1 FROM likes WHERE quote_id=? AND user_id=?').bind(quoteId, userId).first();
+      if (existing) {
+        await env.DB.batch([
+          env.DB.prepare('DELETE FROM likes WHERE quote_id=? AND user_id=?').bind(quoteId, userId),
+          env.DB.prepare('UPDATE quotes SET likes=likes-1 WHERE id=? AND likes>0').bind(quoteId),
+        ]);
+      } else {
+        await env.DB.batch([
+          env.DB.prepare('INSERT INTO likes (quote_id,user_id) VALUES (?,?)').bind(quoteId, userId),
+          env.DB.prepare('UPDATE quotes SET likes=likes+1 WHERE id=?').bind(quoteId),
+        ]);
+      }
+      const row = await env.DB.prepare('SELECT likes FROM quotes WHERE id=?').bind(quoteId).first<{ likes: number }>();
+      return json({ liked: !existing, likes: row?.likes ?? 0 });
+    }
+
+    // ── Yönetim (ADMIN_KEY ile) ──
+    if (path.startsWith('/challenge/admin')) {
+      const key = req.headers.get('x-admin-key') || url.searchParams.get('key') || '';
+      if (!env.ADMIN_KEY || key !== env.ADMIN_KEY) return json({ error: 'unauthorized' }, 401);
+
+      if (req.method === 'GET' && path === '/challenge/admin/pending') {
+        const rows = await env.DB.prepare("SELECT id,text,author,lang,created_at FROM quotes WHERE status='pending' ORDER BY created_at ASC LIMIT 100").all();
+        return json({ items: rows.results || [] });
+      }
+      if (req.method === 'POST' && path === '/challenge/admin/moderate') {
+        const { quoteId, action } = await req.json<any>().catch(() => ({}));
+        const status = action === 'approve' ? 'approved' : 'rejected';
+        await env.DB.prepare('UPDATE quotes SET status=? WHERE id=?').bind(status, quoteId).run();
+        return json({ ok: true, status });
+      }
+    }
+
 
     // Hafıza okuma (debug)
     if (req.method === 'GET' && url.pathname.startsWith('/memory/')) {

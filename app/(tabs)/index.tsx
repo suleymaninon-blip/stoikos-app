@@ -110,6 +110,16 @@ export default function HomeScreen() {
             <Text style={styles.programArrow}>→</Text>
           </TouchableOpacity>
 
+          {/* Challenge featured card */}
+          <TouchableOpacity style={styles.programCard} onPress={() => router.push('/challenge')} activeOpacity={0.85}>
+            <Text style={styles.programIcon}>🏆</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.programName}>{t('ch.cardName')}</Text>
+              <Text style={styles.programDesc}>{t('ch.cardDesc')}</Text>
+            </View>
+            <Text style={styles.programArrow}>→</Text>
+          </TouchableOpacity>
+
           {/* Modules */}
           <Text style={styles.sectionLabel}>{t('home.modules')}</Text>
           <View style={styles.modulesGrid}>

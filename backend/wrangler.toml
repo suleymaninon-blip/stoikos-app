@@ -8,5 +8,13 @@ compatibility_date = "2024-11-01"
 binding = "MEMORY"
 id = "4ce0fd41b60c45f486769db962964635"
 
-# ANTHROPIC_API_KEY bir SIR'dır, buraya YAZILMAZ.
-# Şu komutla eklenir:  wrangler secret put ANTHROPIC_API_KEY
+# Meydan Okuma veritabanı (D1). database_id'yi
+# `wrangler d1 create stoikos-db` çalıştırınca aldığın id ile değiştir.
+[[d1_databases]]
+binding = "DB"
+database_name = "stoikos-db"
+database_id = "BURAYA_D1_ID_YAZILACAK"
+
+# SIRLAR (buraya YAZILMAZ, komutla eklenir):
+#   wrangler secret put ANTHROPIC_API_KEY     (zaten eklendi)
+#   wrangler secret put ADMIN_KEY             (onay paneli için; istediğin gizli bir parola)

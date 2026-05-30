@@ -8,8 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
+import { router } from 'expo-router';
 import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
-import { resetMemory } from '../../constants/api';
+import { resetMemory, ADMIN_KEY_STORAGE } from '../../constants/api';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -122,6 +123,7 @@ export default function ProgressScreen() {
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
   const [notifyOn, setNotifyOn] = useState(false);
+  const [adminKey, setAdminKey] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -130,6 +132,13 @@ export default function ProgressScreen() {
   }, [lang]);
 
   useEffect(() => { isNotifyEnabled().then(setNotifyOn); }, []);
+  useEffect(() => { AsyncStorage.getItem(ADMIN_KEY_STORAGE).then((k) => k && setAdminKey(k)); }, []);
+
+  async function openAdmin() {
+    if (!adminKey.trim()) return;
+    await AsyncStorage.setItem(ADMIN_KEY_STORAGE, adminKey.trim());
+    router.push('/challenge-admin');
+  }
 
   async function toggleNotify() {
     if (notifyOn) {
@@ -264,6 +273,27 @@ export default function ProgressScreen() {
             <Text style={styles.resetText}>{t('memory.resetBtn')}</Text>
           </TouchableOpacity>
 
+          {/* Yönetici — onay kuyruğu (yalnızca sahibi) */}
+          <View style={styles.adminWrap}>
+            <Text style={styles.adminTitle}>{t('admin.title')}</Text>
+            <Text style={styles.adminHint}>{t('admin.hint')}</Text>
+            <View style={styles.adminRow}>
+              <TextInput
+                style={styles.adminInput}
+                placeholder={t('admin.placeholder')}
+                placeholderTextColor={Colors.stone4}
+                value={adminKey}
+                onChangeText={setAdminKey}
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+              <TouchableOpacity style={[styles.adminBtn, !adminKey.trim() && { opacity: 0.4 }]} onPress={openAdmin} disabled={!adminKey.trim()}>
+                <Text style={styles.adminBtnText}>{t('admin.open')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
         </ScrollView>
       </Animated.View>
     </SafeAreaView>
@@ -359,4 +389,11 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
   resetText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted, letterSpacing: 0.3 },
+  adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  adminTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.text2, marginBottom: 4 },
+  adminHint: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.muted, lineHeight: 15, marginBottom: 10 },
+  adminRow: { flexDirection: 'row', gap: 8 },
+  adminInput: { flex: 1, backgroundColor: Colors.stone3, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  adminBtn: { backgroundColor: Colors.stone4, borderRadius: 10, paddingHorizontal: 12, justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  adminBtnText: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand2 },
 });

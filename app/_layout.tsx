@@ -32,6 +32,8 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
       </Stack>
       {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
     </LanguageProvider>

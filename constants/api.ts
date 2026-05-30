@@ -43,3 +43,51 @@ export async function resetMemory(): Promise<void> {
     body: JSON.stringify({ userId }),
   });
 }
+
+// ─── Meydan Okuma ─────────────────────────────────────────
+export const ADMIN_KEY_STORAGE = 'stoikos_admin_key';
+
+export interface ChallengeQuote {
+  id: number; text: string; author: string | null; likes: number; liked: boolean; rank: number | null;
+}
+
+export async function submitQuote(lang: Lang, text: string, author: string): Promise<{ status: string; reason?: string; message?: string }> {
+  const userId = await getUserId();
+  const res = await fetch(`${BACKEND_URL}/challenge/submit`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, lang, text, author }),
+  });
+  return res.json();
+}
+
+export async function listChallenge(lang: Lang, sort: 'top' | 'new'): Promise<ChallengeQuote[]> {
+  const userId = await getUserId();
+  const res = await fetch(`${BACKEND_URL}/challenge/list?lang=${lang}&sort=${sort}&userId=${encodeURIComponent(userId)}`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.items || [];
+}
+
+export async function likeChallenge(quoteId: number): Promise<{ liked: boolean; likes: number }> {
+  const userId = await getUserId();
+  const res = await fetch(`${BACKEND_URL}/challenge/like`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId, quoteId }),
+  });
+  return res.json();
+}
+
+// Yönetim (sadece sahibi)
+export async function adminPending(adminKey: string): Promise<{ id: number; text: string; author: string | null; lang: string }[]> {
+  const res = await fetch(`${BACKEND_URL}/challenge/admin/pending`, { headers: { 'x-admin-key': adminKey } });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.items || [];
+}
+
+export async function adminModerate(adminKey: string, quoteId: number, action: 'approve' | 'reject'): Promise<void> {
+  await fetch(`${BACKEND_URL}/challenge/admin/moderate`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+    body: JSON.stringify({ quoteId, action }),
+  });
+}

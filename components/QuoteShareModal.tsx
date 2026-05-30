@@ -6,10 +6,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { Colors, Fonts } from '../constants/theme';
-import { Quote } from '../constants/content';
+
+export interface ShareableQuote { text: string; author: string; source: string; }
 
 export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClose }: {
-  quote: Quote | null;
+  quote: ShareableQuote | null;
   tagline: string;
   shareLabel: string;
   closeLabel: string;
