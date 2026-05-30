@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
@@ -7,6 +7,7 @@ import { CormorantGaramond_400Regular, CormorantGaramond_400Regular_Italic } fro
 import { Jost_300Light, Jost_400Regular, Jost_500Medium } from '@expo-google-fonts/jost';
 import * as SplashScreen from 'expo-splash-screen';
 import { LanguageProvider } from '../constants/i18n';
+import { BrandIntro } from '../components/BrandIntro';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,6 +17,8 @@ export default function RootLayout() {
     CormorantGaramond_400Regular, CormorantGaramond_400Regular_Italic,
     Jost_300Light, Jost_400Regular, Jost_500Medium,
   });
+
+  const [introDone, setIntroDone] = useState(false);
 
   useEffect(() => {
     if (fontsLoaded) SplashScreen.hideAsync().catch(() => {});
@@ -30,6 +33,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
       </Stack>
+      {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
     </LanguageProvider>
   );
 }
