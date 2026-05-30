@@ -10,7 +10,6 @@ import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
 import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
 import { resetMemory } from '../../constants/api';
-import { getMoods, moodOf } from '../../constants/mood';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -123,7 +122,6 @@ export default function ProgressScreen() {
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
   const [notifyOn, setNotifyOn] = useState(false);
-  const [moodWeek, setMoodWeek] = useState<{ day: string; mood: number | null }[]>([]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -167,9 +165,6 @@ export default function ProgressScreen() {
     setWeekData(chartData);
     setTotalDone(total);
     setExCounts(counts);
-
-    const moods = await getMoods();
-    setMoodWeek(days.map((d) => ({ day: DAY_LABELS[lang][d.getDay()], mood: moods[d.toDateString()] ?? null })));
   }
 
   function resetCoachMemory() {
@@ -255,24 +250,6 @@ export default function ProgressScreen() {
           {/* Week chart */}
           {weekData.length > 0 && <WeekChart data={weekData} />}
 
-          {/* Ruh hali şeridi */}
-          {moodWeek.length > 0 && (
-            <View style={styles.moodWrap}>
-              <Text style={styles.sectionLabel}>{t('mood.trend')}</Text>
-              <View style={styles.moodRow}>
-                {moodWeek.map((d, i) => {
-                  const m = d.mood ? moodOf(d.mood) : null;
-                  return (
-                    <View key={i} style={styles.moodCol}>
-                      {m ? <Text style={styles.moodEmoji}>{m.emoji}</Text> : <View style={styles.moodEmpty} />}
-                      <Text style={styles.moodDay}>{d.day}</Text>
-                    </View>
-                  );
-                })}
-              </View>
-            </View>
-          )}
-
           {/* Exercise breakdown */}
           <ExBreakdown counts={exCounts} />
 
@@ -344,14 +321,6 @@ const styles = StyleSheet.create({
   bestDayIcon: { fontSize: 22 },
   bestDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.sand, marginBottom: 3 },
   bestDayValue: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3 },
-
-  // Ruh hali
-  moodWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
-  moodRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  moodCol: { alignItems: 'center', flex: 1 },
-  moodEmoji: { fontSize: 24, height: 30 },
-  moodEmpty: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.stone4, marginVertical: 11 },
-  moodDay: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 4 },
 
   // Chart
   chartWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
