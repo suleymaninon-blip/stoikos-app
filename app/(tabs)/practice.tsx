@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView,
   StyleSheet, SafeAreaView, Animated, TextInput,
-  KeyboardAvoidingView, Platform,
+  KeyboardAvoidingView, Platform, Modal, Pressable,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,39 +13,65 @@ import { getExercises, getDailyConcept, Exercise } from '../../constants/content
 const COMPLETED_KEY = 'stoikos_completed_';
 const JOURNAL_KEY = 'stoikos_journal_';
 
-// ─── ExerciseItem ──────────────────────────────────────────
-function ExerciseItem({
-  exercise, completed, onToggle,
+// ─── Sade liste satırı (dokununca rehberli kart açılır) ────
+function ExerciseRow({
+  exercise, completed, icon, onOpen, tapHint,
 }: {
   exercise: Exercise;
   completed: boolean;
-  onToggle: () => void;
+  icon: string;
+  onOpen: () => void;
+  tapHint: string;
 }) {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  function handlePress() {
-    Animated.sequence([
-      Animated.timing(scaleAnim, { toValue: 0.96, duration: 80, useNativeDriver: true }),
-      Animated.timing(scaleAnim, { toValue: 1, duration: 80, useNativeDriver: true }),
-    ]).start();
-    onToggle();
-  }
-
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
-      <Animated.View style={[styles.exItem, completed && styles.exItemDone, { transform: [{ scale: scaleAnim }] }]}>
-        <View style={[styles.exCheck, completed && styles.exCheckDone]}>
-          {completed && <Text style={styles.exCheckMark}>✓</Text>}
-        </View>
-        <View style={{ flex: 1 }}>
-          <View style={styles.exHeader}>
-            <Text style={[styles.exName, completed && styles.exNameDone]}>{exercise.name}</Text>
-            <Text style={styles.exDuration}>{exercise.duration}</Text>
-          </View>
-          <Text style={styles.exDesc}>{exercise.desc}</Text>
-        </View>
-      </Animated.View>
+    <TouchableOpacity onPress={onOpen} activeOpacity={0.7} style={styles.row}>
+      <View style={[styles.rowCheck, completed && styles.rowCheckDone]}>
+        {completed && <Text style={styles.rowCheckMark}>✓</Text>}
+      </View>
+      <Text style={styles.rowIcon}>{icon}</Text>
+      <Text style={[styles.rowName, completed && styles.rowNameDone]} numberOfLines={1}>{exercise.name}</Text>
+      <Text style={styles.rowDuration}>{exercise.duration}</Text>
+      <Text style={styles.rowChevron}>›</Text>
     </TouchableOpacity>
+  );
+}
+
+// ─── Rehberli kart (modal) ─────────────────────────────────
+function ExerciseModal({
+  exercise, icon, completed, onToggle, onClose, labels,
+}: {
+  exercise: (Exercise & { icon: string }) | null;
+  icon: string;
+  completed: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+  labels: { complete: string; undo: string; done: string };
+}) {
+  if (!exercise) return null;
+  return (
+    <Modal transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
+        <Pressable style={styles.modalCard} onPress={() => {}}>
+          <Text style={styles.modalIcon}>{icon}</Text>
+          <Text style={styles.modalDuration}>{exercise.duration}</Text>
+          <Text style={styles.modalName}>{exercise.name}</Text>
+          <View style={styles.modalDivider} />
+          <Text style={styles.modalDesc}>{exercise.desc}</Text>
+
+          <TouchableOpacity
+            style={[styles.modalBtn, completed && styles.modalBtnDone]}
+            onPress={onToggle}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.modalBtnText, completed && styles.modalBtnTextDone]}>
+              {completed ? labels.undo : labels.complete}
+            </Text>
+          </TouchableOpacity>
+
+          {completed && <Text style={styles.modalDoneNote}>✦ {labels.done}</Text>}
+        </Pressable>
+      </Pressable>
+    </Modal>
   );
 }
 
@@ -56,6 +82,7 @@ export default function PracticeScreen() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
+  const [selected, setSelected] = useState<(Exercise & { icon: string }) | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const { morning: MORNING_EXERCISES, evening: EVENING_EXERCISES } = getExercises(lang, t('unit.min'));
@@ -116,6 +143,9 @@ export default function PracticeScreen() {
             </Text>
           </View>
 
+          {/* Kısa açıklama */}
+          <Text style={styles.intro}>{t('practice.intro')}</Text>
+
           {/* Progress bar */}
           <View style={styles.progressWrap}>
             <View style={styles.progressHeader}>
@@ -145,11 +175,13 @@ export default function PracticeScreen() {
               </View>
             </View>
             {MORNING_EXERCISES.map((ex) => (
-              <ExerciseItem
+              <ExerciseRow
                 key={ex.id}
                 exercise={ex}
+                icon="🌅"
                 completed={completed.has(ex.id)}
-                onToggle={() => toggleExercise(ex.id)}
+                onOpen={() => setSelected({ ...ex, icon: '🌅' })}
+                tapHint={t('practice.tapHint')}
               />
             ))}
           </View>
@@ -169,11 +201,13 @@ export default function PracticeScreen() {
               </View>
             </View>
             {EVENING_EXERCISES.map((ex) => (
-              <ExerciseItem
+              <ExerciseRow
                 key={ex.id}
                 exercise={ex}
+                icon="🌙"
                 completed={completed.has(ex.id)}
-                onToggle={() => toggleExercise(ex.id)}
+                onOpen={() => setSelected({ ...ex, icon: '🌙' })}
+                tapHint={t('practice.tapHint')}
               />
             ))}
           </View>
@@ -213,6 +247,15 @@ export default function PracticeScreen() {
         </ScrollView>
         </KeyboardAvoidingView>
       </Animated.View>
+
+      <ExerciseModal
+        exercise={selected}
+        icon={selected?.icon || ''}
+        completed={selected ? completed.has(selected.id) : false}
+        onToggle={() => { if (selected) toggleExercise(selected.id); }}
+        onClose={() => setSelected(null)}
+        labels={{ complete: t('practice.complete'), undo: t('practice.undo'), done: t('practice.done') }}
+      />
     </SafeAreaView>
   );
 }
@@ -225,6 +268,7 @@ const styles = StyleSheet.create({
   header: { marginBottom: 24, marginTop: 8 },
   title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
+  intro: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 18, marginBottom: 22 },
 
   // Progress
   progressWrap: { marginBottom: 28 },
@@ -252,26 +296,42 @@ const styles = StyleSheet.create({
   },
   sectionBadgeText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.sand },
 
-  // Exercise item
-  exItem: {
-    flexDirection: 'row', gap: 12, paddingVertical: 12,
+  // Sade satır
+  row: {
+    flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 13,
     borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.04)',
-    alignItems: 'flex-start',
   },
-  exItemDone: { opacity: 0.6 },
-  exCheck: {
-    width: 22, height: 22, borderRadius: 11,
-    borderWidth: 1.5, borderColor: 'rgba(196,169,106,0.35)',
-    alignItems: 'center', justifyContent: 'center',
-    marginTop: 1, flexShrink: 0,
+  rowCheck: {
+    width: 24, height: 24, borderRadius: 12,
+    borderWidth: 1.5, borderColor: 'rgba(196,169,106,0.4)',
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
-  exCheckDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
-  exCheckMark: { fontSize: 11, color: Colors.stone, fontWeight: '700' },
-  exHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  exName: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.text },
-  exNameDone: { textDecorationLine: 'line-through', color: Colors.muted },
-  exDuration: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, letterSpacing: 0.5 },
-  exDesc: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.text2, lineHeight: 17 },
+  rowCheckDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
+  rowCheckMark: { fontSize: 12, color: Colors.stone, fontWeight: '700' },
+  rowIcon: { fontSize: 16 },
+  rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
+  rowNameDone: { color: Colors.muted, textDecorationLine: 'line-through' },
+  rowDuration: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
+  rowChevron: { fontSize: 20, color: Colors.stone4, marginLeft: 2 },
+
+  // Rehberli kart (modal)
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.78)', justifyContent: 'center', alignItems: 'center', padding: 28 },
+  modalCard: {
+    width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center',
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
+  },
+  modalIcon: { fontSize: 44, marginBottom: 8 },
+  modalDuration: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
+  modalName: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
+  modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
+  modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 26, textAlign: 'center', marginBottom: 26 },
+  modalBtn: {
+    width: '100%', backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 16, alignItems: 'center',
+  },
+  modalBtnDone: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  modalBtnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.stone },
+  modalBtnTextDone: { color: Colors.muted },
+  modalDoneNote: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.sand, marginTop: 14 },
 
   // Journal
   journalCard: {
