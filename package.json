@@ -5,7 +5,8 @@
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
-    "ios": "expo start --ios"
+    "ios": "expo start --ios",
+    "gen-audio": "npx --yes tsx scripts/generate-audio.ts"
   },
   "dependencies": {
     "@expo-google-fonts/cinzel": "^0.2.3",

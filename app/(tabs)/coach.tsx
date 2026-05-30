@@ -16,11 +16,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_KEY_STORAGE } from '../setup';
-import * as Speech from 'expo-speech';
-import { Audio } from 'expo-av';
-import { useLang, localeOf } from '../../constants/i18n';
+import { useLang } from '../../constants/i18n';
 import { coachSystemPrompt, COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
-import { synthesizeToFile } from '../../constants/tts';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -66,20 +63,8 @@ function parseResponse(text: string): { body: string; quote: string | null } {
   return { body: text, quote: null };
 }
 
-function getSpeakableText(text: string): string {
-  const { body, quote } = parseResponse(text);
-  return quote ? `${body} ${quote}` : body;
-}
-
 // ─── MessageBubble ────────────────────────────────────────
-function MessageBubble({ message, speakingId, onSpeak, onStop, listenLabel, stopLabel }: {
-  message: Message;
-  speakingId: string | null;
-  onSpeak: (msg: Message) => void;
-  onStop: () => void;
-  listenLabel: string;
-  stopLabel: string;
-}) {
+function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user';
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(10)).current;
@@ -105,23 +90,10 @@ function MessageBubble({ message, speakingId, onSpeak, onStop, listenLabel, stop
   }
 
   const { body, quote } = parseResponse(message.content);
-  const speaking = speakingId === message.id;
-
   return (
     <Animated.View style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-      <View style={styles.aiLabelRow}>
-        <Text style={styles.aiLabel}>Ω  STOIKOS</Text>
-        <TouchableOpacity
-          onPress={() => (speaking ? onStop() : onSpeak(message))}
-          style={[styles.speakBtn, speaking && styles.speakBtnActive]}
-        >
-          <Text style={styles.speakIcon}>{speaking ? '⏹' : '🔊'}</Text>
-          <Text style={[styles.speakBtnText, speaking && styles.speakBtnTextActive]}>
-            {speaking ? stopLabel : listenLabel}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={[styles.aiBubble, speaking && styles.aiBubbleSpeaking]}>
+      <Text style={styles.aiLabel}>Ω  STOIKOS</Text>
+      <View style={styles.aiBubble}>
         <Text style={styles.aiText}>{body}</Text>
         {quote && (
           <View style={styles.quoteInline}>
@@ -171,12 +143,8 @@ export default function CoachScreen() {
   const [messages, setMessages] = useState<Message[]>(() => [{ id: '0', role: 'assistant', content: COACH_INITIAL[lang], timestamp: new Date() }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [autoSpeak, setAutoSpeak] = useState(false);
-  const [speakingId, setSpeakingId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-  const soundRef = useRef<Audio.Sound | null>(null);
 
-  // Geçmişi yükle
   useEffect(() => {
     AsyncStorage.getItem(CHAT_HISTORY_KEY).then((raw) => {
       if (raw) {
@@ -186,13 +154,8 @@ export default function CoachScreen() {
         } catch {}
       }
     });
-    return () => {
-      Speech.stop();
-      if (soundRef.current) { soundRef.current.unloadAsync().catch(() => {}); soundRef.current = null; }
-    };
   }, []);
 
-  // Dil değişince ve henüz sohbet başlamadıysa karşılama mesajını güncelle
   useEffect(() => {
     setMessages((prev) => (prev.length === 1 && prev[0].id === '0' ? [makeInitial()] : prev));
   }, [lang, makeInitial]);
@@ -205,55 +168,6 @@ export default function CoachScreen() {
     AsyncStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(msgs));
   }, []);
 
-  // ─── TTS ────────────────────────────────────────────────
-  async function stopSpeaking() {
-    Speech.stop();
-    if (soundRef.current) {
-      try { await soundRef.current.stopAsync(); await soundRef.current.unloadAsync(); } catch {}
-      soundRef.current = null;
-    }
-    setSpeakingId(null);
-  }
-
-  // Cihazın yerleşik sesi (yedek)
-  function speakWithDevice(text: string) {
-    Speech.speak(text, {
-      language: localeOf(lang),
-      rate: 0.92,
-      pitch: 1.0,
-      onDone: () => setSpeakingId(null),
-      onStopped: () => setSpeakingId(null),
-      onError: () => setSpeakingId(null),
-    });
-  }
-
-  async function speakMessage(msg: Message) {
-    await stopSpeaking();
-    setSpeakingId(msg.id);
-    const text = getSpeakableText(msg.content);
-    try {
-      // ElevenLabs gerçek sesi (anahtar varsa)
-      const uri = await synthesizeToFile(text);
-      if (uri) {
-        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-        const { sound } = await Audio.Sound.createAsync({ uri }, { shouldPlay: true });
-        soundRef.current = sound;
-        sound.setOnPlaybackStatusUpdate((st) => {
-          if (st.isLoaded && st.didJustFinish) {
-            setSpeakingId(null);
-            sound.unloadAsync().catch(() => {});
-            soundRef.current = null;
-          }
-        });
-        return;
-      }
-    } catch (e) {
-      // ElevenLabs başarısızsa cihaz sesine düş
-    }
-    speakWithDevice(text);
-  }
-
-  // ─── Send ───────────────────────────────────────────────
   async function send(text?: string) {
     const content = (text || input).trim();
     if (!content || loading) return;
@@ -269,7 +183,6 @@ export default function CoachScreen() {
       const final = [...withUser, aiMsg];
       setMessages(final);
       saveMessages(final);
-      if (autoSpeak) speakMessage(aiMsg);
     } catch {
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: t('coach.connError'), timestamp: new Date() }]);
     } finally {
@@ -278,14 +191,12 @@ export default function CoachScreen() {
   }
 
   function clearChat() {
-    stopSpeaking();
     setMessages([makeInitial()]);
     AsyncStorage.removeItem(CHAT_HISTORY_KEY);
   }
 
   const suggestions = COACH_SUGGESTIONS[lang];
 
-  // ─── Render ─────────────────────────────────────────────
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient colors={['rgba(212,146,74,0.05)', 'transparent']} style={styles.gradientTop} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
@@ -304,17 +215,7 @@ export default function CoachScreen() {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.subtitleRow}>
-          <Text style={styles.subtitle}>{t('coach.subtitle')}</Text>
-          <TouchableOpacity
-            onPress={() => { setAutoSpeak(!autoSpeak); if (autoSpeak) stopSpeaking(); }}
-            style={[styles.autoSpeakBtn, autoSpeak && styles.autoSpeakBtnActive]}
-          >
-            <Text style={[styles.autoSpeakText, autoSpeak && styles.autoSpeakTextActive]}>
-              {autoSpeak ? t('coach.autoOn') : t('coach.autoOff')}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.subtitle}>{t('coach.subtitle')}</Text>
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -325,9 +226,7 @@ export default function CoachScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} speakingId={speakingId} onSpeak={speakMessage} onStop={stopSpeaking} listenLabel={t('coach.listen')} stopLabel={t('coach.stop')} />
-          ))}
+          {messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)}
           {loading && <TypingIndicator />}
 
           {messages.length <= 1 && (
@@ -375,19 +274,14 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.stone },
   gradientTop: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
   header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
-  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   title: { fontFamily: Fonts.cinzel, fontSize: 20, letterSpacing: 0.8, color: Colors.text },
-  subtitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3, flexShrink: 1 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(76,175,110,0.1)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(76,175,110,0.2)' },
   statusDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.success },
   statusText: { fontFamily: Fonts.jostMedium, fontSize: 8, letterSpacing: 1.5, color: Colors.success },
   clearBtn: { backgroundColor: Colors.stone3, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   clearBtnText: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted },
-  autoSpeakBtn: { backgroundColor: Colors.stone3, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  autoSpeakBtnActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
-  autoSpeakText: { fontFamily: Fonts.jostMedium, fontSize: 10, color: Colors.muted },
-  autoSpeakTextActive: { color: Colors.accent },
   messages: { flex: 1 },
   messagesContent: { padding: 20, gap: 16, paddingBottom: 8 },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
@@ -397,15 +291,8 @@ const styles = StyleSheet.create({
   userBubble: { backgroundColor: Colors.stone4, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   userText: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 20, color: Colors.text },
   aiBubbleWrap: { alignItems: 'flex-start' },
-  aiLabelRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '88%', marginBottom: 6 },
-  aiLabel: { fontFamily: Fonts.cinzel, fontSize: 9, letterSpacing: 1.5, color: Colors.sand, opacity: 0.8 },
-  speakBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(196,169,106,0.1)', borderRadius: 12, paddingHorizontal: 9, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)' },
-  speakBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.3)' },
-  speakIcon: { fontSize: 11 },
-  speakBtnText: { fontFamily: Fonts.jostMedium, fontSize: 10, color: Colors.sand },
-  speakBtnTextActive: { color: '#e08080' },
+  aiLabel: { fontFamily: Fonts.cinzel, fontSize: 9, letterSpacing: 1.5, color: Colors.sand, opacity: 0.8, marginBottom: 6 },
   aiBubble: { backgroundColor: 'rgba(212,146,74,0.08)', borderRadius: 18, borderBottomLeftRadius: 5, padding: 14, maxWidth: '88%', borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)' },
-  aiBubbleSpeaking: { borderColor: 'rgba(212,146,74,0.45)', backgroundColor: 'rgba(212,146,74,0.12)' },
   aiText: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 21, color: Colors.sand3 },
   quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },
   quoteInlineText: { fontFamily: Fonts.cormorantItalic, fontSize: 12, lineHeight: 18, color: Colors.sand2 },

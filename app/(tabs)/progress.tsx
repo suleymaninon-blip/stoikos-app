@@ -10,7 +10,6 @@ import { Colors, Fonts } from '../../constants/theme';
 import { API_KEY_STORAGE } from '../setup';
 import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
-import { ELEVEN_KEY_STORAGE, ELEVEN_VOICE_STORAGE, VOICES, DEFAULT_VOICE, validateElevenKey } from '../../constants/tts';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -124,45 +123,10 @@ export default function ProgressScreen() {
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  // ElevenLabs ses ayarları
-  const [elevenKey, setElevenKey] = useState('');
-  const [elevenSaved, setElevenSaved] = useState(false);
-  const [elevenStatus, setElevenStatus] = useState<'idle' | 'saving' | 'error'>('idle');
-  const [voiceId, setVoiceId] = useState(DEFAULT_VOICE);
-
   useEffect(() => {
     loadStats();
     Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
   }, [lang]);
-
-  useEffect(() => {
-    AsyncStorage.getItem(ELEVEN_KEY_STORAGE).then((k) => { if (k) { setElevenSaved(true); setElevenKey(k); } });
-    AsyncStorage.getItem(ELEVEN_VOICE_STORAGE).then((v) => { if (v) setVoiceId(v); });
-  }, []);
-
-  async function saveElevenKey() {
-    const trimmed = elevenKey.trim();
-    if (!trimmed) return;
-    setElevenStatus('saving');
-    const valid = await validateElevenKey(trimmed);
-    if (!valid) { setElevenStatus('error'); return; }
-    await AsyncStorage.setItem(ELEVEN_KEY_STORAGE, trimmed);
-    await AsyncStorage.setItem(ELEVEN_VOICE_STORAGE, voiceId);
-    setElevenSaved(true);
-    setElevenStatus('idle');
-  }
-
-  async function clearElevenKey() {
-    await AsyncStorage.removeItem(ELEVEN_KEY_STORAGE);
-    setElevenKey('');
-    setElevenSaved(false);
-    setElevenStatus('idle');
-  }
-
-  async function pickVoice(id: string) {
-    setVoiceId(id);
-    await AsyncStorage.setItem(ELEVEN_VOICE_STORAGE, id);
-  }
 
   async function loadStats() {
     const streakVal = parseInt((await AsyncStorage.getItem(STREAK_KEY)) || '0');
@@ -246,67 +210,6 @@ export default function ProgressScreen() {
             </View>
           </View>
 
-          {/* Doğal ses (ElevenLabs) */}
-          <View style={styles.voiceWrap}>
-            <View style={styles.voiceHeader}>
-              <Text style={styles.voiceTitle}>{t('voice.title')}</Text>
-              {elevenSaved && <View style={styles.voiceOnDot} />}
-            </View>
-            <Text style={styles.voiceHint}>{t('voice.hint')}</Text>
-
-            {!elevenSaved ? (
-              <>
-                <TouchableOpacity onPress={() => Linking.openURL('https://elevenlabs.io/app/settings/api-keys')}>
-                  <Text style={styles.voiceLink}>{t('voice.getKey')}</Text>
-                </TouchableOpacity>
-                <View style={styles.voiceInputRow}>
-                  <TextInput
-                    style={styles.voiceInput}
-                    placeholder={t('voice.placeholder')}
-                    placeholderTextColor={Colors.stone4}
-                    value={elevenKey}
-                    onChangeText={(txt) => { setElevenKey(txt); setElevenStatus('idle'); }}
-                    secureTextEntry
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                  />
-                  <TouchableOpacity
-                    style={[styles.voiceSaveBtn, (!elevenKey.trim() || elevenStatus === 'saving') && styles.voiceSaveBtnDim]}
-                    onPress={saveElevenKey}
-                    disabled={!elevenKey.trim() || elevenStatus === 'saving'}
-                  >
-                    {elevenStatus === 'saving'
-                      ? <ActivityIndicator size="small" color={Colors.stone} />
-                      : <Text style={styles.voiceSaveText}>{t('voice.save')}</Text>}
-                  </TouchableOpacity>
-                </View>
-                {elevenStatus === 'error' && <Text style={styles.voiceError}>{t('voice.errInvalid')}</Text>}
-              </>
-            ) : (
-              <>
-                <View style={styles.voiceSavedRow}>
-                  <Text style={styles.voiceSavedText}>{t('voice.saved')}</Text>
-                  <TouchableOpacity onPress={clearElevenKey} style={styles.voiceClearBtn}>
-                    <Text style={styles.voiceClearText}>{t('voice.clear')}</Text>
-                  </TouchableOpacity>
-                </View>
-                <Text style={styles.voiceVoiceLabel}>{t('voice.voiceLabel')}</Text>
-                <View style={styles.voiceChips}>
-                  {VOICES.map((v) => (
-                    <TouchableOpacity
-                      key={v.id}
-                      onPress={() => pickVoice(v.id)}
-                      style={[styles.voiceChip, voiceId === v.id && styles.voiceChipActive]}
-                    >
-                      <Text style={[styles.voiceChipName, voiceId === v.id && styles.voiceChipNameActive]}>{v.name}</Text>
-                      <Text style={styles.voiceChipDesc}>{v.desc}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </>
-            )}
-          </View>
-
           {/* Stat boxes */}
           <View style={styles.statsRow}>
             <StatBox label={t('progress.streak')} value={`${streak}`} sub={t('progress.streakUnit')} />
@@ -366,37 +269,6 @@ const styles = StyleSheet.create({
   langFlag: { fontSize: 14 },
   langLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
   langLabelActive: { color: Colors.accent },
-
-  // Doğal ses (ElevenLabs)
-  voiceWrap: {
-    backgroundColor: Colors.stone2, borderRadius: 16, padding: 18, marginBottom: 20,
-    borderWidth: 1, borderColor: 'rgba(212,146,74,0.18)',
-  },
-  voiceHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
-  voiceTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3 },
-  voiceOnDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.success },
-  voiceHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 17, marginBottom: 12 },
-  voiceLink: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.accent, marginBottom: 10 },
-  voiceInputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  voiceInput: {
-    flex: 1, backgroundColor: Colors.stone3, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11,
-    fontFamily: Fonts.jost, fontSize: 12, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
-  },
-  voiceSaveBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 11, alignItems: 'center', justifyContent: 'center', minWidth: 72 },
-  voiceSaveBtnDim: { opacity: 0.4 },
-  voiceSaveText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.stone, letterSpacing: 0.3 },
-  voiceError: { fontFamily: Fonts.jost, fontSize: 11, color: '#e06c6c', marginTop: 8 },
-  voiceSavedRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
-  voiceSavedText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.success },
-  voiceClearBtn: { backgroundColor: Colors.stone3, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 5, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  voiceClearText: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted },
-  voiceVoiceLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
-  voiceChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  voiceChip: { backgroundColor: Colors.stone3, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  voiceChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
-  voiceChipName: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.text2 },
-  voiceChipNameActive: { color: Colors.accent },
-  voiceChipDesc: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 1 },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },

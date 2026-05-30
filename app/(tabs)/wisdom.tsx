@@ -5,22 +5,36 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
-import { useLang } from '../../constants/i18n';
-import { getQuotes, getConcepts, AUTHORS, Quote, Concept } from '../../constants/content';
+import { useLang, Lang } from '../../constants/i18n';
+import { getQuotes, getConcepts, AUTHORS, Quote, Concept, quoteAudioKey, conceptAudioKey } from '../../constants/content';
+import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote }: { quote: Quote }) {
+function QuoteItem({ quote, lang, playingKey, onToggle }: {
+  quote: Quote; lang: Lang; playingKey: string | null; onToggle: (key: string) => void;
+}) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
   }, []);
 
+  const key = quoteAudioKey(quote.id, lang);
+  const audio = hasAudio(key);
+  const playing = playingKey === key;
+
   return (
     <Animated.View style={[styles.quoteCard, { opacity: fadeAnim }]}>
       <Text style={styles.quoteText}>"{quote.text}"</Text>
       <View style={styles.quoteMeta}>
-        <Text style={styles.quoteAuthor}>{quote.author}</Text>
-        <Text style={styles.quoteSource}>{quote.source}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.quoteAuthor}>{quote.author}</Text>
+          <Text style={styles.quoteSource}>{quote.source}</Text>
+        </View>
+        {audio && (
+          <TouchableOpacity onPress={() => onToggle(key)} style={[styles.listenBtn, playing && styles.listenBtnActive]}>
+            <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </Animated.View>
   );
@@ -40,10 +54,14 @@ function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPres
 }
 
 // ─── Concept Modal ─────────────────────────────────────────
-function ConceptModal({ concept, onClose, exampleLabel, closeLabel }: {
+function ConceptModal({ concept, onClose, exampleLabel, closeLabel, lang, playingKey, onToggle }: {
   concept: Concept | null; onClose: () => void; exampleLabel: string; closeLabel: string;
+  lang: Lang; playingKey: string | null; onToggle: (key: string) => void;
 }) {
   if (!concept) return null;
+  const key = conceptAudioKey(concept.latin, lang);
+  const audio = hasAudio(key);
+  const playing = playingKey === key;
   return (
     <Modal transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
@@ -51,6 +69,11 @@ function ConceptModal({ concept, onClose, exampleLabel, closeLabel }: {
           <Text style={styles.modalIcon}>{concept.icon}</Text>
           <Text style={styles.modalLatin}>{concept.latin}</Text>
           <Text style={styles.modalTr}>{concept.name}</Text>
+          {audio && (
+            <TouchableOpacity onPress={() => onToggle(key)} style={[styles.modalListenBtn, playing && styles.listenBtnActive]}>
+              <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
+            </TouchableOpacity>
+          )}
           <View style={styles.modalDivider} />
           <Text style={styles.modalDesc}>{concept.desc}</Text>
           <View style={styles.modalExampleBox}>
@@ -72,9 +95,24 @@ export default function WisdomScreen() {
   const [tab, setTab] = useState<'quotes' | 'concepts'>('quotes');
   const [filter, setFilter] = useState('all'); // 'all' veya authorId
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
+  const [playingKey, setPlayingKey] = useState<string | null>(null);
 
   const quotes = getQuotes(lang);
   const concepts = getConcepts(lang);
+
+  // Ekrandan çıkınca / dil değişince sesi durdur
+  useEffect(() => { return () => { stopAudio(); }; }, []);
+  useEffect(() => { stopAudio(); setPlayingKey(null); }, [lang]);
+
+  function togglePlay(key: string) {
+    if (playingKey === key) {
+      stopAudio();
+      setPlayingKey(null);
+    } else {
+      setPlayingKey(key);
+      playAudio(key, () => setPlayingKey(null));
+    }
+  }
 
   // Filtre chip'leri: Tümü + kanıt düzeyine göre sıralı yazarlar
   const filterChips = [{ id: 'all', label: t('wisdom.all') }, ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] }))];
@@ -123,7 +161,7 @@ export default function WisdomScreen() {
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
-            renderItem={({ item }) => <QuoteItem quote={item} />}
+            renderItem={({ item }) => <QuoteItem quote={item} lang={lang} playingKey={playingKey} onToggle={togglePlay} />}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
           />
@@ -138,9 +176,12 @@ export default function WisdomScreen() {
 
       <ConceptModal
         concept={selectedConcept}
-        onClose={() => setSelectedConcept(null)}
+        onClose={() => { stopAudio(); setPlayingKey(null); setSelectedConcept(null); }}
         exampleLabel={t('wisdom.exampleLabel')}
         closeLabel={t('wisdom.close')}
+        lang={lang}
+        playingKey={playingKey}
+        onToggle={togglePlay}
       />
     </SafeAreaView>
   );
@@ -181,9 +222,13 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 16, color: Colors.sand3, lineHeight: 26, marginBottom: 12 },
-  quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
+  listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
+  listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
+  listenIcon: { fontSize: 14 },
+  modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)', marginTop: 4, marginBottom: 4 },
 
   conceptsGrid: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   conceptCard: {

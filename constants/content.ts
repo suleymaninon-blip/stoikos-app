@@ -1,4 +1,4 @@
-import { Lang } from './i18n';
+import type { Lang } from './i18n';
 
 type L = Record<Lang, string>;
 
@@ -475,4 +475,30 @@ Reply format:
 4. Add a quote in EXACTLY this format (keep the literal tag "ALINTI"): [ALINTI: "quote text" — Author, Source]
 
 IMPORTANT: ${langInstr[lang]} Use a warm but strong tone. The literal tag must remain "ALINTI" even though the quote text is in ${LANG_NAME[lang]}.`;
+}
+
+// ─── Ses (önceden üretilen statik klipler) ────────────────
+const ALL_LANGS: Lang[] = ['tr', 'en', 'de', 'ru'];
+
+export function quoteAudioKey(id: string, lang: Lang): string {
+  return `q${id}-${lang}`;
+}
+export function conceptAudioKey(latin: string, lang: Lang): string {
+  return `c${latin.replace(/[^a-zA-Z]/g, '').toLowerCase()}-${lang}`;
+}
+
+// Üretim script'i için: seslendirilecek tüm sabit metinler
+export function getAudioItems(): { key: string; text: string }[] {
+  const items: { key: string; text: string }[] = [];
+  for (const q of QUOTES_RAW) {
+    for (const lang of ALL_LANGS) {
+      items.push({ key: quoteAudioKey(q.id, lang), text: `${q.text[lang]} — ${authorName(q.authorId, lang)}` });
+    }
+  }
+  for (const c of CONCEPTS_RAW) {
+    for (const lang of ALL_LANGS) {
+      items.push({ key: conceptAudioKey(c.latin, lang), text: `${c.latin}. ${c.name[lang]}. ${c.desc[lang]}` });
+    }
+  }
+  return items;
 }
