@@ -101,6 +101,11 @@ const UI: Record<Lang, Dict> = {
     'voice.clear': 'Kaldır',
     'voice.errInvalid': 'Anahtar doğrulanamadı.',
     'voice.voiceLabel': 'SES',
+    'notify.title': '🔔 Günlük Hatırlatıcılar',
+    'notify.hint': 'Sabah niyeti (09:00) ve akşam yansıması (21:00) için hatırlatma al. Seni günlük ritmine bağlar.',
+    'notify.on': 'Açık',
+    'notify.off': 'Kapalı',
+    'notify.denied': 'Bildirim izni verilmedi. Telefon ayarlarından açabilirsin.',
   },
 
   // ════════════ ENGLISH ════════════
@@ -175,6 +180,11 @@ const UI: Record<Lang, Dict> = {
     'voice.clear': 'Remove',
     'voice.errInvalid': 'Could not verify the key.',
     'voice.voiceLabel': 'VOICE',
+    'notify.title': '🔔 Daily Reminders',
+    'notify.hint': 'Get reminded for the morning intention (09:00) and evening reflection (21:00). Keeps you in a daily rhythm.',
+    'notify.on': 'On',
+    'notify.off': 'Off',
+    'notify.denied': 'Notification permission was denied. You can enable it in phone settings.',
   },
 
   // ════════════ DEUTSCH ════════════
@@ -249,6 +259,11 @@ const UI: Record<Lang, Dict> = {
     'voice.clear': 'Entfernen',
     'voice.errInvalid': 'Schlüssel konnte nicht überprüft werden.',
     'voice.voiceLabel': 'STIMME',
+    'notify.title': '🔔 Tägliche Erinnerungen',
+    'notify.hint': 'Werde an den Morgenvorsatz (09:00) und die Abendreflexion (21:00) erinnert. Hält dich im täglichen Rhythmus.',
+    'notify.on': 'Ein',
+    'notify.off': 'Aus',
+    'notify.denied': 'Benachrichtigungserlaubnis verweigert. Du kannst sie in den Einstellungen aktivieren.',
   },
 
   // ════════════ РУССКИЙ ════════════
@@ -323,6 +338,11 @@ const UI: Record<Lang, Dict> = {
     'voice.clear': 'Удалить',
     'voice.errInvalid': 'Не удалось проверить ключ.',
     'voice.voiceLabel': 'ГОЛОС',
+    'notify.title': '🔔 Ежедневные напоминания',
+    'notify.hint': 'Напоминания об утреннем настрое (09:00) и вечернем размышлении (21:00). Держит тебя в ежедневном ритме.',
+    'notify.on': 'Вкл',
+    'notify.off': 'Выкл',
+    'notify.denied': 'Разрешение на уведомления отклонено. Включите его в настройках телефона.',
   },
 };
 

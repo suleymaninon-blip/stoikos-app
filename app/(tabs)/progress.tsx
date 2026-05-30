@@ -10,6 +10,7 @@ import { Colors, Fonts } from '../../constants/theme';
 import { API_KEY_STORAGE } from '../setup';
 import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
+import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -121,12 +122,26 @@ export default function ProgressScreen() {
   const [totalDone, setTotalDone] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
+  const [notifyOn, setNotifyOn] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadStats();
     Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
   }, [lang]);
+
+  useEffect(() => { isNotifyEnabled().then(setNotifyOn); }, []);
+
+  async function toggleNotify() {
+    if (notifyOn) {
+      await disableReminders();
+      setNotifyOn(false);
+    } else {
+      const ok = await enableReminders(lang);
+      if (ok) setNotifyOn(true);
+      else Alert.alert('Stoikos', t('notify.denied'));
+    }
+  }
 
   async function loadStats() {
     const streakVal = parseInt((await AsyncStorage.getItem(STREAK_KEY)) || '0');
@@ -210,6 +225,17 @@ export default function ProgressScreen() {
             </View>
           </View>
 
+          {/* Günlük hatırlatıcılar */}
+          <TouchableOpacity style={styles.notifyCard} onPress={toggleNotify} activeOpacity={0.85}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.notifyTitle}>{t('notify.title')}</Text>
+              <Text style={styles.notifyHint}>{t('notify.hint')}</Text>
+            </View>
+            <View style={[styles.toggle, notifyOn && styles.toggleOn]}>
+              <View style={[styles.toggleKnob, notifyOn && styles.toggleKnobOn]} />
+            </View>
+          </TouchableOpacity>
+
           {/* Stat boxes */}
           <View style={styles.statsRow}>
             <StatBox label={t('progress.streak')} value={`${streak}`} sub={t('progress.streakUnit')} />
@@ -269,6 +295,19 @@ const styles = StyleSheet.create({
   langFlag: { fontSize: 14 },
   langLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
   langLabelActive: { color: Colors.accent },
+
+  // Bildirim kartı
+  notifyCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 14,
+    backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 20,
+    borderWidth: 1, borderColor: 'rgba(212,146,74,0.18)',
+  },
+  notifyTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3, marginBottom: 4 },
+  notifyHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 16 },
+  toggle: { width: 46, height: 27, borderRadius: 14, backgroundColor: Colors.stone4, padding: 3, justifyContent: 'center' },
+  toggleOn: { backgroundColor: Colors.accent },
+  toggleKnob: { width: 21, height: 21, borderRadius: 11, backgroundColor: '#f0e8d5' },
+  toggleKnobOn: { alignSelf: 'flex-end' },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
