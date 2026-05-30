@@ -7,7 +7,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 
 // ─── Data ─────────────────────────────────────────────────
-const PHILOSOPHERS = ['Tümü', 'Marcus Aurelius', 'Epiktetos', 'Seneca', 'Kıbrıslı Zenon', 'Musonius Rufus', 'Khrysippos'];
+const PHILOSOPHERS = [
+  'Tümü',
+  'Kıbrıslı Zenon',
+  'Kleanthes',
+  'Khrysippos',
+  'Sakızlı Ariston',
+  'Babilli Diogenes',
+  'Panaitios',
+  'Poseidonios',
+  'Athenodoros',
+  'Seneca',
+  'Musonius Rufus',
+  'Genç Cato',
+  'Epiktetos',
+  'Hierokles',
+  'Marcus Aurelius',
+];
 
 const QUOTES = [
   { id: '1', text: 'Bugün ölebilirdin; bunun yerine hâlâ hayattasın. Bu zamanı bilgelikle kullan.', author: 'Marcus Aurelius', source: 'Meditationes' },
@@ -38,6 +54,36 @@ const QUOTES = [
   { id: '20', text: 'Yaşamak, erdemi öğrenmek için verilmiş bir okuldur.', author: 'Khrysippos', source: 'Fragmanlar' },
   { id: '21', text: 'Hiçbir şey rastlantı değildir; her şey aklın düzeni içinde olur.', author: 'Khrysippos', source: 'Fragmanlar' },
   { id: '22', text: 'Bilge kişi hiçbir şeye muhtaç değildir, ama her şeyi kullanabilir.', author: 'Khrysippos', source: 'Fragmanlar' },
+
+  // ─── Kleanthes (2. okul başkanı, MÖ ~330–230) ───
+  { id: '23', text: 'Beni yönet ey Zeus, ve sen ey Kader, bana çizdiğiniz yola. Tereddütsüz izleyeceğim; istemesem bile gitmem gerekir.', author: 'Kleanthes', source: 'Zeus\'a İlahi' },
+  { id: '24', text: 'İsteyeni kader yöneltir, istemeyeni sürükler.', author: 'Kleanthes', source: 'Fragmanlar' },
+
+  // ─── Sakızlı Ariston (Zenon\'un öğrencisi, MÖ 3. yy) ───
+  { id: '25', text: 'Bilge kişi, hangi rolü oynarsa oynasın onu iyi oynayan usta bir oyuncuya benzer.', author: 'Sakızlı Ariston', source: 'Fragmanlar' },
+  { id: '26', text: 'Erdem ile kötülük dışında her şey kayıtsızdır; gerisi ne iyi ne kötüdür.', author: 'Sakızlı Ariston', source: 'Fragmanlar' },
+
+  // ─── Babilli Diogenes (Orta Stoa, MÖ ~230–150) ───
+  { id: '27', text: 'Doğayla uyumlu yaşamak, her seçimde sağduyuya kulak vermektir.', author: 'Babilli Diogenes', source: 'Fragmanlar' },
+
+  // ─── Panaitios (Stoacılığı Roma\'ya taşıdı, MÖ ~185–110) ───
+  { id: '28', text: 'Her insanın doğası gereği üstlendiği görevler vardır; erdem bunları eksiksiz yerine getirmektir.', author: 'Panaitios', source: 'Görevler Üzerine' },
+  { id: '29', text: 'Onurlu olan ile yararlı olan asla çatışmaz; çatışıyor görünüyorsa, yanılıyoruzdur.', author: 'Panaitios', source: 'Görevler Üzerine' },
+
+  // ─── Poseidonios (filozof-bilim insanı, MÖ ~135–51) ───
+  { id: '30', text: 'Tek bir evren vardır ve onu saran her şey karşılıklı bir sempati ile birbirine bağlıdır.', author: 'Poseidonios', source: 'Fragmanlar' },
+  { id: '31', text: 'Bir gün bilgelikle yaşadıysan, bütün bir ömrü yaşamış sayılırsın.', author: 'Poseidonios', source: 'Fragmanlar' },
+
+  // ─── Athenodoros (Augustus\'un hocası, MÖ 1. yy) ───
+  { id: '32', text: 'Öfkelendiğinde, konuşmadan ya da harekete geçmeden önce alfabenin tüm harflerini içinden say.', author: 'Athenodoros', source: 'Plutarkhos' },
+
+  // ─── Genç Cato (Stoacı örnek kişi, MÖ 95–46) ───
+  { id: '33', text: 'Özgür bir insan ancak kendi erdemiyle yenilebilir; düşmanıyla değil.', author: 'Genç Cato', source: 'Plutarkhos' },
+  { id: '34', text: 'Doğru olanı yap; sonucu kadere bırak.', author: 'Genç Cato', source: 'Plutarkhos' },
+
+  // ─── Hierokles (Geç Stoa, MS 2. yy) ───
+  { id: '35', text: 'Önce kendini, sonra aileni, sonra şehrini, en sonunda tüm insanlığı kucaklayan halkalar çiz; ve bu halkaları sürekli merkeze doğru çekmeye çalış.', author: 'Hierokles', source: 'Etik Unsurlar' },
+  { id: '36', text: 'İnsan doğası gereği topluluk için yaratılmıştır; başkasına iyilik, kendine iyiliktir.', author: 'Hierokles', source: 'Etik Unsurlar' },
 ];
 
 const CONCEPTS = [
