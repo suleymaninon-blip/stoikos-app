@@ -7,22 +7,31 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 
 // ─── Data ─────────────────────────────────────────────────
+// Kanıt düzeyine göre sıralı: önce eseri/metni günümüze ulaşanlar,
+// sonra sözleri antik kaynaklarda belgelenenler, en sonda öğretisi
+// yalnızca fragmanlardan yeniden kurulanlar.
 const PHILOSOPHERS = [
   'Tümü',
-  'Kıbrıslı Zenon',
-  'Kleanthes',
-  'Khrysippos',
-  'Sakızlı Ariston',
-  'Babilli Diogenes',
+
+  // ── Eseri / metni günümüze ulaşanlar ──
+  'Seneca',            // Mektuplar, denemeler (tam korpus)
+  'Epiktetos',         // Söyleşiler + Enchiridion (Arrianus aktarımı)
+  'Marcus Aurelius',   // Meditationes (tam)
+  'Musonius Rufus',    // Söylevler (geniş fragmanlar, Stobaeus)
+  'Kleanthes',         // Zeus'a İlahi (neredeyse tam metin)
+  'Hierokles',         // Etik Unsurlar (papirüs + alıntılar)
+
+  // ── Sözleri antik kaynaklarda belgelenenler ──
+  'Kıbrıslı Zenon',    // Diogenes Laertios aktarımı
+  'Khrysippos',        // geniş fragman ve alıntı külliyatı
+  'Genç Cato',         // Plutarkhos (örnek kişi)
+  'Athenodoros',       // Plutarkhos
+
+  // ── Öğretisi fragmanlardan yeniden kurulanlar ──
   'Panaitios',
   'Poseidonios',
-  'Athenodoros',
-  'Seneca',
-  'Musonius Rufus',
-  'Genç Cato',
-  'Epiktetos',
-  'Hierokles',
-  'Marcus Aurelius',
+  'Sakızlı Ariston',
+  'Babilli Diogenes',
 ];
 
 const QUOTES = [
