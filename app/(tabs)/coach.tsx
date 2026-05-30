@@ -17,8 +17,10 @@ import { Colors, Fonts } from '../../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_KEY_STORAGE } from '../setup';
 import * as Speech from 'expo-speech';
+import { Audio } from 'expo-av';
 import { useLang, localeOf } from '../../constants/i18n';
 import { coachSystemPrompt, COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
+import { synthesizeToFile } from '../../constants/tts';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -172,6 +174,7 @@ export default function CoachScreen() {
   const [autoSpeak, setAutoSpeak] = useState(false);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
 
   // Geçmişi yükle
   useEffect(() => {
@@ -183,7 +186,10 @@ export default function CoachScreen() {
         } catch {}
       }
     });
-    return () => { Speech.stop(); };
+    return () => {
+      Speech.stop();
+      if (soundRef.current) { soundRef.current.unloadAsync().catch(() => {}); soundRef.current = null; }
+    };
   }, []);
 
   // Dil değişince ve henüz sohbet başlamadıysa karşılama mesajını güncelle
@@ -200,10 +206,18 @@ export default function CoachScreen() {
   }, []);
 
   // ─── TTS ────────────────────────────────────────────────
-  function speakMessage(msg: Message) {
+  async function stopSpeaking() {
     Speech.stop();
-    setSpeakingId(msg.id);
-    Speech.speak(getSpeakableText(msg.content), {
+    if (soundRef.current) {
+      try { await soundRef.current.stopAsync(); await soundRef.current.unloadAsync(); } catch {}
+      soundRef.current = null;
+    }
+    setSpeakingId(null);
+  }
+
+  // Cihazın yerleşik sesi (yedek)
+  function speakWithDevice(text: string) {
+    Speech.speak(text, {
       language: localeOf(lang),
       rate: 0.92,
       pitch: 1.0,
@@ -213,9 +227,30 @@ export default function CoachScreen() {
     });
   }
 
-  function stopSpeaking() {
-    Speech.stop();
-    setSpeakingId(null);
+  async function speakMessage(msg: Message) {
+    await stopSpeaking();
+    setSpeakingId(msg.id);
+    const text = getSpeakableText(msg.content);
+    try {
+      // ElevenLabs gerçek sesi (anahtar varsa)
+      const uri = await synthesizeToFile(text);
+      if (uri) {
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+        const { sound } = await Audio.Sound.createAsync({ uri }, { shouldPlay: true });
+        soundRef.current = sound;
+        sound.setOnPlaybackStatusUpdate((st) => {
+          if (st.isLoaded && st.didJustFinish) {
+            setSpeakingId(null);
+            sound.unloadAsync().catch(() => {});
+            soundRef.current = null;
+          }
+        });
+        return;
+      }
+    } catch (e) {
+      // ElevenLabs başarısızsa cihaz sesine düş
+    }
+    speakWithDevice(text);
   }
 
   // ─── Send ───────────────────────────────────────────────
@@ -243,8 +278,7 @@ export default function CoachScreen() {
   }
 
   function clearChat() {
-    Speech.stop();
-    setSpeakingId(null);
+    stopSpeaking();
     setMessages([makeInitial()]);
     AsyncStorage.removeItem(CHAT_HISTORY_KEY);
   }
