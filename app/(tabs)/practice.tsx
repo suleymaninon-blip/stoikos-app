@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView,
-  StyleSheet, SafeAreaView, Animated, Alert,
+  StyleSheet, SafeAreaView, Animated, TextInput,
+  KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -54,8 +55,8 @@ const CONCEPTS = [
   { latin: 'Logos', tr: 'Evrensel Akıl', desc: 'Evreni yöneten bir düzen vardır. Akla uygun yaşamak bu düzenle uyum içinde olmaktır.' },
 ];
 
-const TODAY_CONCEPT_KEY = 'stoikos_concept_day';
 const COMPLETED_KEY = 'stoikos_completed_';
+const JOURNAL_KEY = 'stoikos_journal_';
 
 // ─── ExerciseItem ──────────────────────────────────────────
 function ExerciseItem({
@@ -98,6 +99,8 @@ export default function PracticeScreen() {
   const today = new Date().toDateString();
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [concept, setConcept] = useState(CONCEPTS[0]);
+  const [journal, setJournal] = useState('');
+  const [journalSaved, setJournalSaved] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -106,11 +109,12 @@ export default function PracticeScreen() {
   }, []);
 
   async function loadData() {
-    // Load completed exercises
     const raw = await AsyncStorage.getItem(COMPLETED_KEY + today);
     if (raw) setCompleted(new Set(JSON.parse(raw)));
 
-    // Daily concept rotation
+    const journalRaw = await AsyncStorage.getItem(JOURNAL_KEY + today);
+    if (journalRaw) { setJournal(journalRaw); setJournalSaved(true); }
+
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
     setConcept(CONCEPTS[dayOfYear % CONCEPTS.length]);
   }
@@ -121,6 +125,12 @@ export default function PracticeScreen() {
     else next.add(id);
     setCompleted(next);
     await AsyncStorage.setItem(COMPLETED_KEY + today, JSON.stringify([...next]));
+  }
+
+  async function saveJournal() {
+    if (!journal.trim()) return;
+    await AsyncStorage.setItem(JOURNAL_KEY + today, journal.trim());
+    setJournalSaved(true);
   }
 
   const allExercises = [...MORNING_EXERCISES, ...EVENING_EXERCISES];
@@ -140,6 +150,7 @@ export default function PracticeScreen() {
         end={{ x: 1, y: 0.5 }}
       />
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
           {/* Header */}
@@ -212,6 +223,29 @@ export default function PracticeScreen() {
             ))}
           </View>
 
+          {/* Daily journal */}
+          <View style={styles.journalCard}>
+            <Text style={styles.journalTag}>GÜNLÜK YANSIMA</Text>
+            <Text style={styles.journalHint}>Bugün ne hissettin? Ne öğrendin? Stoacı bir perspektifle yaz.</Text>
+            <TextInput
+              style={styles.journalInput}
+              placeholder="Bugünkü düşüncelerini buraya yaz..."
+              placeholderTextColor={Colors.stone4}
+              value={journal}
+              onChangeText={(t) => { setJournal(t); setJournalSaved(false); }}
+              multiline
+              textAlignVertical="top"
+            />
+            <TouchableOpacity
+              style={[styles.journalSaveBtn, (!journal.trim() || journalSaved) && styles.journalSaveBtnDim]}
+              onPress={saveJournal}
+              disabled={!journal.trim() || journalSaved}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.journalSaveBtnText}>{journalSaved ? '✓ Kaydedildi' : 'Kaydet'}</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Concept of the day */}
           <View style={styles.conceptCard}>
             <Text style={styles.conceptTag}>GÜNÜN KAVRAMI</Text>
@@ -222,6 +256,7 @@ export default function PracticeScreen() {
           </View>
 
         </ScrollView>
+        </KeyboardAvoidingView>
       </Animated.View>
     </SafeAreaView>
   );
@@ -282,6 +317,26 @@ const styles = StyleSheet.create({
   exNameDone: { textDecorationLine: 'line-through', color: Colors.muted },
   exDuration: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, letterSpacing: 0.5 },
   exDesc: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.text2, lineHeight: 17 },
+
+  // Journal
+  journalCard: {
+    backgroundColor: Colors.stone2, borderRadius: 20, padding: 20,
+    marginBottom: 16, borderWidth: 1, borderColor: 'rgba(100,160,220,0.15)',
+  },
+  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: 'rgba(100,160,220,0.8)', marginBottom: 6 },
+  journalHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 17, marginBottom: 12 },
+  journalInput: {
+    backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
+    fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, lineHeight: 21,
+    minHeight: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginBottom: 12,
+  },
+  journalSaveBtn: {
+    backgroundColor: 'rgba(100,160,220,0.15)', borderRadius: 10,
+    paddingVertical: 10, alignItems: 'center',
+    borderWidth: 1, borderColor: 'rgba(100,160,220,0.25)',
+  },
+  journalSaveBtnDim: { opacity: 0.5 },
+  journalSaveBtnText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: 'rgba(140,190,240,0.9)', letterSpacing: 0.5 },
 
   // Concept
   conceptCard: {

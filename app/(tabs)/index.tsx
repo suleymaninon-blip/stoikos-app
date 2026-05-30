@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,9 @@ import {
   Animated,
   TouchableOpacity,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
 import { getTodaysQuote } from '../../constants/quotes';
 import { useStreak } from '../../hooks/useStreak';
@@ -17,15 +18,29 @@ import { QuoteCard } from '../../components/QuoteCard';
 import { ModuleCard } from '../../components/ModuleCard';
 import { StreakBar } from '../../components/StreakBar';
 
-const MODULES = [
-  { icon: '🌅', name: 'Günlük Pratik', desc: 'Sabah niyeti & akşam yansıması', route: '/practice', active: true },
-  { icon: '⚡', name: 'AI Koç', desc: 'Stoacı rehberlik al', route: '/coach', active: false },
-  { icon: '📖', name: 'Bilgelik', desc: 'Kavramlar & alıntılar', route: '/wisdom', active: false },
-  { icon: '📊', name: 'İlerleme', desc: 'Dönüşüm takibi', route: '/progress', active: false },
-];
+const COMPLETED_KEY = 'stoikos_completed_';
+const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
 
 export default function HomeScreen() {
-  const { streak, weekDays } = useStreak();
+  const { streak, weekDays, refresh } = useStreak();
+  const [practiceProgress, setPracticeProgress] = useState(0);
+
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+      AsyncStorage.getItem(COMPLETED_KEY + new Date().toDateString()).then((raw) => {
+        const done: string[] = raw ? JSON.parse(raw) : [];
+        setPracticeProgress(done.length / ALL_EXERCISE_IDS.length);
+      });
+    }, [refresh])
+  );
+
+  const MODULES = [
+    { icon: '🌅', name: 'Günlük Pratik', desc: 'Sabah niyeti & akşam yansıması', route: '/practice', active: practiceProgress > 0 },
+    { icon: '⚡', name: 'AI Koç', desc: 'Stoacı rehberlik al', route: '/coach', active: false },
+    { icon: '📖', name: 'Bilgelik', desc: 'Kavramlar & alıntılar', route: '/wisdom', active: false },
+    { icon: '📊', name: 'İlerleme', desc: 'Dönüşüm takibi', route: '/progress', active: false },
+  ];
   const quote = getTodaysQuote();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
