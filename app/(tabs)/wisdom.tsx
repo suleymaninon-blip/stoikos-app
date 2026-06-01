@@ -75,6 +75,77 @@ const CONCEPTS = [
   },
 ];
 
+const PHILOSOPHER_META: Record<string, { icon: string; count: number }> = {
+  'Tümü':           { icon: '◈', count: QUOTES.length },
+  'Marcus Aurelius': { icon: 'M', count: QUOTES.filter(q => q.author === 'Marcus Aurelius').length },
+  'Epiktetos':      { icon: 'E', count: QUOTES.filter(q => q.author === 'Epiktetos').length },
+  'Seneca':         { icon: 'S', count: QUOTES.filter(q => q.author === 'Seneca').length },
+};
+
+// ─── Filter Dropdown ───────────────────────────────────────
+function FilterDropdown({ filter, setFilter }: { filter: string; setFilter: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const animHeight = useRef(new Animated.Value(0)).current;
+
+  const toggle = () => {
+    const toValue = open ? 0 : 1;
+    setOpen(!open);
+    Animated.timing(animHeight, { toValue, duration: 200, useNativeDriver: false }).start();
+  };
+
+  const select = (p: string) => {
+    setFilter(p);
+    setOpen(false);
+    Animated.timing(animHeight, { toValue: 0, duration: 150, useNativeDriver: false }).start();
+  };
+
+  const meta = PHILOSOPHER_META[filter];
+
+  return (
+    <View style={styles.filterWrapper}>
+      <TouchableOpacity style={styles.filterButton} onPress={toggle} activeOpacity={0.8}>
+        <View style={styles.filterButtonLeft}>
+          <Text style={styles.filterButtonIcon}>{meta?.icon}</Text>
+          <Text style={styles.filterButtonLabel}>{filter}</Text>
+        </View>
+        <View style={styles.filterButtonRight}>
+          <Text style={styles.filterCount}>{meta?.count} alıntı</Text>
+          <Text style={[styles.filterArrow, open && styles.filterArrowOpen]}>›</Text>
+        </View>
+      </TouchableOpacity>
+
+      {open && (
+        <View style={styles.filterDropdown}>
+          {PHILOSOPHERS.map((p, i) => {
+            const m = PHILOSOPHER_META[p];
+            const isActive = p === filter;
+            return (
+              <TouchableOpacity
+                key={p}
+                style={[
+                  styles.filterOption,
+                  i < PHILOSOPHERS.length - 1 && styles.filterOptionBorder,
+                  isActive && styles.filterOptionActive,
+                ]}
+                onPress={() => select(p)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.filterOptionLeft}>
+                  <View style={[styles.filterOptionDot, isActive && styles.filterOptionDotActive]}>
+                    <Text style={[styles.filterOptionDotText, isActive && styles.filterOptionDotTextActive]}>{m.icon}</Text>
+                  </View>
+                  <Text style={[styles.filterOptionText, isActive && styles.filterOptionTextActive]}>{p}</Text>
+                </View>
+                <Text style={styles.filterOptionCount}>{m.count}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
+    </View>
+  );
+}
+
 // ─── QuoteCard ─────────────────────────────────────────────
 function QuoteItem({ quote }: { quote: typeof QUOTES[0] }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -174,18 +245,9 @@ export default function WisdomScreen() {
 
       {tab === 'quotes' ? (
         <>
-          {/* Filter chips */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll} contentContainerStyle={styles.filterContent}>
-            {PHILOSOPHERS.map((p) => (
-              <TouchableOpacity
-                key={p}
-                style={[styles.filterChip, filter === p && styles.filterChipActive]}
-                onPress={() => setFilter(p)}
-              >
-                <Text style={[styles.filterChipText, filter === p && styles.filterChipTextActive]}>{p}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          {/* Filter dropdown */}
+          <FilterDropdown filter={filter} setFilter={setFilter} />
+
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
@@ -226,17 +288,46 @@ const styles = StyleSheet.create({
   tabBtnText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
   tabBtnTextActive: { color: Colors.sand2 },
 
-  // Filter
-  filterScroll: { maxHeight: 44, marginBottom: 12 },
-  filterContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
-  filterChip: {
-    paddingHorizontal: 14, paddingVertical: 6,
-    borderRadius: 20, backgroundColor: Colors.stone2,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  // Filter dropdown
+  filterWrapper: { marginHorizontal: 20, marginBottom: 14 },
+  filterButton: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    backgroundColor: Colors.stone2, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12,
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.15)',
   },
-  filterChipActive: { backgroundColor: 'rgba(196,169,106,0.15)', borderColor: 'rgba(196,169,106,0.3)' },
-  filterChipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
-  filterChipTextActive: { color: Colors.sand2 },
+  filterButtonLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  filterButtonIcon: {
+    fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand,
+    width: 26, height: 26, textAlign: 'center', lineHeight: 26,
+    backgroundColor: 'rgba(196,169,106,0.12)', borderRadius: 6,
+  },
+  filterButtonLabel: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.text2 },
+  filterButtonRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  filterCount: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted },
+  filterArrow: { fontFamily: Fonts.cinzel, fontSize: 18, color: Colors.muted, transform: [{ rotate: '90deg' }] },
+  filterArrowOpen: { transform: [{ rotate: '-90deg' }] },
+  filterDropdown: {
+    marginTop: 4, backgroundColor: Colors.stone2, borderRadius: 14,
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.15)',
+    overflow: 'hidden',
+  },
+  filterOption: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 13,
+  },
+  filterOptionBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.04)' },
+  filterOptionActive: { backgroundColor: 'rgba(196,169,106,0.07)' },
+  filterOptionLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  filterOptionDot: {
+    width: 28, height: 28, borderRadius: 7, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  },
+  filterOptionDotActive: { backgroundColor: 'rgba(196,169,106,0.2)', borderColor: 'rgba(196,169,106,0.3)' },
+  filterOptionDotText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.muted },
+  filterOptionDotTextActive: { color: Colors.sand },
+  filterOptionText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2 },
+  filterOptionTextActive: { color: Colors.sand2, fontFamily: Fonts.jostMedium },
+  filterOptionCount: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted },
 
   // Quote list
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
