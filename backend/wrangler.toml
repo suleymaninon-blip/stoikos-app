@@ -13,7 +13,7 @@ id = "4ce0fd41b60c45f486769db962964635"
 [[d1_databases]]
 binding = "DB"
 database_name = "stoikos-db"
-database_id = "BURAYA_D1_ID_YAZILACAK"
+database_id = "5a952b43-84dc-4d24-9752-746f2a63123c"
 
 # SIRLAR (buraya YAZILMAZ, komutla eklenir):
 #   wrangler secret put ANTHROPIC_API_KEY     (zaten eklendi)
