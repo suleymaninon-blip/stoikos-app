@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
@@ -10,7 +11,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { API_KEY_STORAGE } from './setup';
 
-SplashScreen.preventAutoHideAsync();
+if (Platform.OS !== 'web') {
+  SplashScreen.preventAutoHideAsync();
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -24,7 +27,9 @@ export default function RootLayout() {
     if (!fontsLoaded) return;
     (async () => {
       const key = await AsyncStorage.getItem(API_KEY_STORAGE);
-      await SplashScreen.hideAsync();
+      if (Platform.OS !== 'web') {
+        await SplashScreen.hideAsync();
+      }
       setChecked(true);
       if (!key) {
         router.replace('/setup');
