@@ -28,6 +28,11 @@
       "expo-router",
       "expo-font"
     ],
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "baseUrl": "/stoikos-app"
+    },
     "experiments": {
       "typedRoutes": true
     }
