@@ -30,11 +30,11 @@
     ],
     "web": {
       "bundler": "metro",
-      "output": "static",
-      "baseUrl": "/stoikos-app"
+      "output": "static"
     },
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/stoikos-app"
     }
   }
 }
