@@ -120,6 +120,7 @@ export default function ProgressScreen() {
   const { t, lang, setLang } = useLang();
   const [streak, setStreak] = useState(0);
   const [totalDone, setTotalDone] = useState(0);
+  const [totalMoments, setTotalMoments] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
   const [notifyOn, setNotifyOn] = useState(false);
@@ -174,6 +175,16 @@ export default function ProgressScreen() {
     setWeekData(chartData);
     setTotalDone(total);
     setExCounts(counts);
+
+    // Tüm zamanların toplamı — asla azalmayan "Toplam an"
+    try {
+      const allKeys = await AsyncStorage.getAllKeys();
+      const compKeys = allKeys.filter((k) => k.startsWith(COMPLETED_KEY));
+      const entries = await AsyncStorage.multiGet(compKeys);
+      let allTotal = 0;
+      entries.forEach(([, v]) => { if (v) { try { allTotal += JSON.parse(v).length; } catch {} } });
+      setTotalMoments(allTotal);
+    } catch {}
   }
 
   function resetCoachMemory() {
@@ -186,12 +197,6 @@ export default function ProgressScreen() {
       ]
     );
   }
-
-  const avgPerDay = weekData.length > 0
-    ? (weekData.reduce((s, d) => s + d.count, 0) / 7).toFixed(1)
-    : '0';
-
-  const bestDay = weekData.reduce((best, d) => d.count > best.count ? d : best, { day: '-', count: 0, isToday: false });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -238,23 +243,12 @@ export default function ProgressScreen() {
             </View>
           </TouchableOpacity>
 
-          {/* Stat boxes */}
+          {/* Stat boxes — sakin, rekabetsiz */}
           <View style={styles.statsRow}>
-            <StatBox label={t('progress.streak')} value={`${streak}`} sub={t('progress.streakUnit')} />
-            <StatBox label={t('progress.thisWeek')} value={`${totalDone}`} sub={t('progress.weekUnit')} />
-            <StatBox label={t('progress.avg')} value={avgPerDay} sub={t('progress.avgUnit')} />
+            <StatBox label={t('progress.streak')} value={`${streak}`} />
+            <StatBox label={t('progress.thisWeek')} value={`${totalDone}`} />
+            <StatBox label={t('progress.totalMoments')} value={`${totalMoments}`} />
           </View>
-
-          {/* Best day */}
-          {bestDay.count > 0 && (
-            <View style={styles.bestDayCard}>
-              <Text style={styles.bestDayIcon}>⭐</Text>
-              <View>
-                <Text style={styles.bestDayLabel}>{t('progress.bestDay')}</Text>
-                <Text style={styles.bestDayValue}>{t('progress.bestDayValue', { day: bestDay.day, count: bestDay.count })}</Text>
-              </View>
-            </View>
-          )}
 
           {/* Week chart */}
           {weekData.length > 0 && <WeekChart data={weekData} />}
@@ -262,10 +256,11 @@ export default function ProgressScreen() {
           {/* Exercise breakdown */}
           <ExBreakdown counts={exCounts} />
 
-          {/* Motivasyon alıntısı */}
+          {/* Nazik yansıma */}
           <View style={styles.quoteBox}>
-            <Text style={styles.quoteText}>"{t('progress.motivQuote')}"</Text>
+            <Text style={styles.quoteText}>“{t('progress.motivQuote')}”</Text>
             <Text style={styles.quoteAuthor}>{t('progress.motivAuthor')}</Text>
+            <Text style={styles.reflectionSub}>{t('progress.reflectionSub')}</Text>
           </View>
 
           {/* Koç hafızası sıfırla */}
@@ -302,12 +297,12 @@ export default function ProgressScreen() {
 
 // ─── Styles ───────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.stone },
+  container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, right: 0, width: '70%', height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
-  header: { marginBottom: 24, marginTop: 8 },
-  title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
+  header: { marginBottom: 26, marginTop: 8 },
+  title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
 
   // Dil seçici
   langWrap: { marginBottom: 20 },
@@ -338,8 +333,8 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: Colors.stone2, borderRadius: 16, padding: 16,
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
-  statValue: { fontFamily: Fonts.cinzel, fontSize: 26, color: Colors.accent, marginBottom: 4 },
-  statLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 1.5, color: Colors.muted, textAlign: 'center' },
+  statValue: { fontFamily: Fonts.cinzel, fontSize: 28, color: Colors.sand2, marginBottom: 6 },
+  statLabel: { fontFamily: Fonts.jostMedium, fontSize: 8.5, letterSpacing: 1.2, color: Colors.muted, textAlign: 'center', lineHeight: 12 },
   statSub: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.stone4, marginTop: 2 },
 
   // Best day
@@ -358,8 +353,8 @@ const styles = StyleSheet.create({
   bars: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 100 },
   barCol: { alignItems: 'center', flex: 1 },
   barTrack: { width: 18, height: 80, backgroundColor: Colors.stone3, borderRadius: 9, overflow: 'hidden', justifyContent: 'flex-end' },
-  barFill: { width: '100%', backgroundColor: Colors.accent, borderRadius: 9 },
-  barToday: { backgroundColor: Colors.sand },
+  barFill: { width: '100%', backgroundColor: 'rgba(194,168,120,0.45)', borderRadius: 9 },
+  barToday: { backgroundColor: Colors.sand2 },
   barLabel: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 6 },
   barLabelToday: { color: Colors.sand },
   barCount: { fontFamily: Fonts.cinzel, fontSize: 10, color: Colors.text2, marginTop: 2 },
@@ -379,8 +374,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(196,169,106,0.06)', borderRadius: 16, padding: 18,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
-  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.sand3, lineHeight: 22, marginBottom: 8 },
-  quoteAuthor: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted },
+  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand2, lineHeight: 27, marginBottom: 8 },
+  quoteAuthor: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginBottom: 12 },
+  reflectionSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 19 },
 
   // Reset
   resetBtn: {

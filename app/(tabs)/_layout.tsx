@@ -8,6 +8,7 @@ function TabIcon({ label, icon, focused }: { label: string; icon: string; focuse
     <View style={styles.tabItem}>
       <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>{icon}</Text>
       <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>{label}</Text>
+      <View style={[styles.tabDot, focused && styles.tabDotActive]} />
     </View>
   );
 }
@@ -58,36 +59,40 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: Colors.stone2,
-    borderTopColor: 'rgba(255,255,255,0.06)',
+    backgroundColor: Colors.stone,
+    borderTopColor: 'rgba(194,168,120,0.10)',
     borderTopWidth: 1,
-    height: Platform.OS === 'ios' ? 80 : 64,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 8,
+    height: Platform.OS === 'ios' ? 84 : 66,
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'ios' ? 22 : 10,
   },
   tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 3,
+    gap: 5,
   },
   tabIcon: {
-    fontSize: 20,
-    opacity: 0.4,
-    color: Colors.text2,
+    fontSize: 19,
+    color: Colors.muted,
   },
   tabIconActive: {
-    opacity: 1,
-    color: Colors.sand,
+    color: Colors.sand2,
+  },
+  tabDot: {
+    width: 4, height: 4, borderRadius: 2, marginTop: 2,
+    backgroundColor: 'transparent',
+  },
+  tabDotActive: {
+    backgroundColor: Colors.sand,
   },
   tabLabel: {
     fontFamily: Fonts.jostMedium,
-    fontSize: 9,
-    letterSpacing: 1,
-    color: Colors.text2,
-    opacity: 0.4,
+    fontSize: 8.5,
+    letterSpacing: 1.2,
+    color: Colors.muted,
     textTransform: 'uppercase',
   },
   tabLabelActive: {
-    opacity: 1,
-    color: Colors.sand,
+    color: Colors.sand2,
   },
 });

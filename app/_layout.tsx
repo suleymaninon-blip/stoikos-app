@@ -34,6 +34,7 @@ export default function RootLayout() {
         <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="breathe" options={{ animation: 'fade' }} />
       </Stack>
       {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
     </LanguageProvider>

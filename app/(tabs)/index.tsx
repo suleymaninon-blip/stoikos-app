@@ -16,16 +16,31 @@ import { getTodaysQuote } from '../../constants/content';
 import { useLang, localeOf } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { QuoteCard } from '../../components/QuoteCard';
-import { ModuleCard } from '../../components/ModuleCard';
-import { StreakBar } from '../../components/StreakBar';
+import BreathOrb from '../../components/BreathOrb';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
 
+// ── Dikey modül satırı (yan yana rekabet eden kart yok) ──
+function ModuleRow({ icon, name, desc, onPress }: { icon: string; name: string; desc: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.8}>
+      <View style={styles.rowIconBox}>
+        <Text style={styles.rowIcon}>{icon}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.rowName}>{name}</Text>
+        <Text style={styles.rowDesc}>{desc}</Text>
+      </View>
+      <Text style={styles.rowArrow}>→</Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function HomeScreen() {
   const { t, lang } = useLang();
   const { streak, weekDays, refresh } = useStreak();
-  const [practiceProgress, setPracticeProgress] = useState(0);
+  const [, setPracticeProgress] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -37,134 +52,78 @@ export default function HomeScreen() {
     }, [refresh])
   );
 
-  const MODULES = [
-    { icon: '🌅', name: t('home.mod.practice.name'), desc: t('home.mod.practice.desc'), route: '/practice', active: practiceProgress > 0 },
-    { icon: '⚡', name: t('home.mod.coach.name'), desc: t('home.mod.coach.desc'), route: '/coach', active: false },
-    { icon: '📖', name: t('home.mod.wisdom.name'), desc: t('home.mod.wisdom.desc'), route: '/wisdom', active: false },
-    { icon: '📊', name: t('home.mod.progress.name'), desc: t('home.mod.progress.desc'), route: '/progress', active: false },
-  ];
   const quote = getTodaysQuote(lang);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
+  const slideAnim = useRef(new Animated.Value(16)).current;
 
   useEffect(() => {
     Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   const today = new Date();
-  const dateStr = today.toLocaleDateString(localeOf(lang), {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
-
+  const dateStr = today.toLocaleDateString(localeOf(lang), { weekday: 'long', day: 'numeric', month: 'long' });
   const hour = today.getHours();
-  const greeting =
-    hour < 12 ? t('home.morning') :
-    hour < 17 ? t('home.day') :
-    t('home.evening');
+  const greeting = hour < 18 ? t('home.greetMorn') : t('home.greetEve');
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['rgba(212,146,74,0.07)', 'transparent']}
+        colors={['rgba(194,168,120,0.06)', 'transparent']}
         style={styles.gradientTop}
         start={{ x: 1, y: 0 }}
         end={{ x: 0, y: 1 }}
       />
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
 
-          {/* Greeting */}
+          {/* Selamlama */}
           <View style={styles.greetingBlock}>
             <Text style={styles.dateText}>{dateStr.toUpperCase()}</Text>
             <Text style={styles.greetingText}>{greeting}</Text>
           </View>
 
-          {/* Quote */}
+          {/* Nefes orbu — dokununca tam ekran egzersiz */}
+          <BreathOrb title={t('home.breathTitle')} sub={t('home.breathSub')} onPress={() => router.push('/breathe')} />
+
+          {/* Günün alıntısı */}
           <QuoteCard quote={quote} />
 
-          {/* Programs featured card */}
-          <TouchableOpacity style={styles.programCard} onPress={() => router.push('/programs')} activeOpacity={0.85}>
-            <Text style={styles.programIcon}>📿</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.programName}>{t('programs.cardName')}</Text>
-              <Text style={styles.programDesc}>{t('programs.cardDesc')}</Text>
-            </View>
-            <Text style={styles.programArrow}>→</Text>
-          </TouchableOpacity>
+          {/* BUGÜN — dikey modül listesi */}
+          <Text style={styles.sectionLabel}>{t('home.today')}</Text>
+          <View style={styles.list}>
+            <ModuleRow icon="☀" name={t('home.mod.practice.name')} desc={t('home.mod.practice.desc')} onPress={() => router.push('/practice')} />
+            <ModuleRow icon="◎" name={t('home.mod.coach.name')} desc={t('home.mod.coach.desc')} onPress={() => router.push('/coach')} />
+            <ModuleRow icon="◈" name={t('home.mod.wisdom.name')} desc={t('home.mod.wisdom.desc')} onPress={() => router.push('/wisdom')} />
+            <ModuleRow icon="❖" name={t('programs.cardName')} desc={t('programs.cardDesc')} onPress={() => router.push('/programs')} />
+            <ModuleRow icon="✦" name={t('ch.cardName')} desc={t('ch.cardDesc')} onPress={() => router.push('/challenge')} />
+          </View>
 
-          {/* Challenge featured card */}
-          <TouchableOpacity style={styles.programCard} onPress={() => router.push('/challenge')} activeOpacity={0.85}>
-            <Text style={styles.programIcon}>🏆</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.programName}>{t('ch.cardName')}</Text>
-              <Text style={styles.programDesc}>{t('ch.cardDesc')}</Text>
-            </View>
-            <Text style={styles.programArrow}>→</Text>
-          </TouchableOpacity>
-
-          {/* Modules */}
-          <Text style={styles.sectionLabel}>{t('home.modules')}</Text>
-          <View style={styles.modulesGrid}>
-            <View style={styles.moduleRow}>
-              <ModuleCard
-                icon={MODULES[0].icon}
-                name={MODULES[0].name}
-                desc={MODULES[0].desc}
-                active={MODULES[0].active}
-                onPress={() => router.push(MODULES[0].route as any)}
-                style={{ marginRight: 6 }}
-              />
-              <ModuleCard
-                icon={MODULES[1].icon}
-                name={MODULES[1].name}
-                desc={MODULES[1].desc}
-                active={MODULES[1].active}
-                onPress={() => router.push(MODULES[1].route as any)}
-                style={{ marginLeft: 6 }}
-              />
-            </View>
-            <View style={styles.moduleRow}>
-              <ModuleCard
-                icon={MODULES[2].icon}
-                name={MODULES[2].name}
-                desc={MODULES[2].desc}
-                active={MODULES[2].active}
-                onPress={() => router.push(MODULES[2].route as any)}
-                style={{ marginRight: 6 }}
-              />
-              <ModuleCard
-                icon={MODULES[3].icon}
-                name={MODULES[3].name}
-                desc={MODULES[3].desc}
-                active={MODULES[3].active}
-                onPress={() => router.push(MODULES[3].route as any)}
-                style={{ marginLeft: 6 }}
-              />
+          {/* Baskısız süreklilik */}
+          <View style={styles.continuity}>
+            <Text style={styles.continuityLabel}>
+              🌙 {t('home.continuity')} · {streak} {t('progress.streakUnit')}
+            </Text>
+            <View style={styles.dots}>
+              {weekDays.map((done, i) => {
+                const isToday = i === weekDays.length - 1;
+                return (
+                  <View
+                    key={i}
+                    style={[
+                      styles.dot,
+                      done && styles.dotDone,
+                      isToday && done && styles.dotToday,
+                    ]}
+                  />
+                );
+              })}
             </View>
           </View>
 
-          {/* Streak */}
-          <StreakBar streak={streak} weekDays={weekDays} />
-
-          {/* Omega decoration */}
           <Text style={styles.omega}>Ω</Text>
 
         </Animated.View>
@@ -174,71 +133,39 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.stone,
+  container: { flex: 1, backgroundColor: Colors.bg },
+  gradientTop: { position: 'absolute', top: 0, right: 0, width: '70%', height: 300 },
+  scroll: { flex: 1 },
+  scrollContent: { padding: 24, paddingBottom: 48 },
+
+  greetingBlock: { marginBottom: 28, marginTop: 8 },
+  dateText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2.5, color: Colors.sand, marginBottom: 8 },
+  greetingText: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 38 },
+
+  sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16, marginTop: 6 },
+
+  list: { gap: 12, marginBottom: 32 },
+  row: {
+    flexDirection: 'row', alignItems: 'center', gap: 16,
+    backgroundColor: Colors.stone2, borderRadius: 20, padding: 18,
+    borderWidth: 1, borderColor: 'rgba(194,168,120,0.10)',
   },
-  gradientTop: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: '70%',
-    height: 300,
+  rowIconBox: {
+    width: 46, height: 46, borderRadius: 16,
+    backgroundColor: 'rgba(194,168,120,0.10)',
+    alignItems: 'center', justifyContent: 'center',
   },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 24,
-    paddingBottom: 40,
-  },
-  greetingBlock: {
-    marginBottom: 24,
-    marginTop: 8,
-  },
-  dateText: {
-    fontFamily: Fonts.jostMedium,
-    fontSize: 10,
-    letterSpacing: 2,
-    color: Colors.sand,
-    marginBottom: 4,
-  },
-  greetingText: {
-    fontFamily: Fonts.cinzel,
-    fontSize: 24,
-    fontWeight: '400',
-    color: Colors.text,
-    letterSpacing: 0.5,
-  },
-  sectionLabel: {
-    fontFamily: Fonts.jostMedium,
-    fontSize: 10,
-    letterSpacing: 2.5,
-    color: Colors.muted,
-    marginBottom: 14,
-  },
-  programCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: 'rgba(196,169,106,0.12)', borderRadius: 18, padding: 18, marginBottom: 22,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.3)',
-  },
-  programIcon: { fontSize: 26 },
-  programName: { fontFamily: Fonts.cinzel, fontSize: 15, color: Colors.sand2, letterSpacing: 0.4, marginBottom: 2 },
-  programDesc: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.text2 },
-  programArrow: { fontFamily: Fonts.cinzel, fontSize: 18, color: Colors.sand },
-  modulesGrid: {
-    marginBottom: 20,
-    gap: 12,
-  },
-  moduleRow: {
-    flexDirection: 'row',
-  },
-  omega: {
-    fontFamily: Fonts.cinzel,
-    fontSize: 80,
-    color: 'rgba(196,169,106,0.04)',
-    textAlign: 'right',
-    marginTop: 20,
-    marginRight: -10,
-  },
+  rowIcon: { fontSize: 20, color: Colors.sand2 },
+  rowName: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2, letterSpacing: 0.4, marginBottom: 3 },
+  rowDesc: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 17 },
+  rowArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.sand },
+
+  continuity: { alignItems: 'center', paddingVertical: 8 },
+  continuityLabel: { fontFamily: Fonts.jost, fontSize: 12, letterSpacing: 1, color: Colors.muted, marginBottom: 14 },
+  dots: { flexDirection: 'row', gap: 10 },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'rgba(194,168,120,0.18)' },
+  dotDone: { backgroundColor: 'rgba(194,168,120,0.5)' },
+  dotToday: { backgroundColor: Colors.sand2, width: 9, height: 9, borderRadius: 4.5 },
+
+  omega: { fontFamily: Fonts.cinzel, fontSize: 80, color: 'rgba(194,168,120,0.04)', textAlign: 'right', marginTop: 24, marginRight: -10 },
 });

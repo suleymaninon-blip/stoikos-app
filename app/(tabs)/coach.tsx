@@ -84,6 +84,22 @@ function MessageBubble({ message }: { message: Message }) {
   );
 }
 
+// Nabız atan "Yanında" noktası
+function PulseDot() {
+  const pulse = useRef(new Animated.Value(0.5)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 1100, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0.5, duration: 1100, useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+  return <Animated.View style={[styles.statusDot, { opacity: pulse }]} />;
+}
+
 function TypingIndicator() {
   const dots = [useRef(new Animated.Value(0.3)).current, useRef(new Animated.Value(0.3)).current, useRef(new Animated.Value(0.3)).current];
   useEffect(() => {
@@ -185,7 +201,7 @@ export default function CoachScreen() {
           <Text style={styles.title}>{t('coach.title')}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <View style={styles.statusBadge}>
-              <View style={styles.statusDot} />
+              <PulseDot />
               <Text style={styles.statusText}>{t('coach.active')}</Text>
             </View>
             <TouchableOpacity onPress={clearChat} style={styles.clearBtn}>
@@ -249,7 +265,7 @@ export default function CoachScreen() {
 
 // ─── Styles ───────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.stone },
+  container: { flex: 1, backgroundColor: Colors.bg },
   gradientTop: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
   header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
   titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
@@ -257,7 +273,7 @@ const styles = StyleSheet.create({
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(76,175,110,0.1)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(76,175,110,0.2)' },
   statusDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.success },
-  statusText: { fontFamily: Fonts.jostMedium, fontSize: 8, letterSpacing: 1.5, color: Colors.success },
+  statusText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 0.4, color: Colors.success },
   clearBtn: { backgroundColor: Colors.stone3, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   clearBtnText: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted },
   messages: { flex: 1 },
@@ -266,12 +282,12 @@ const styles = StyleSheet.create({
   dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(196,169,106,0.12)' },
   dividerSymbol: { fontSize: 10, color: Colors.sand, opacity: 0.5 },
   userBubbleWrap: { alignItems: 'flex-end' },
-  userBubble: { backgroundColor: Colors.stone4, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  userText: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 20, color: Colors.text },
+  userBubble: { backgroundColor: Colors.stone3, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  userText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 22, color: Colors.text },
   aiBubbleWrap: { alignItems: 'flex-start' },
   aiLabel: { fontFamily: Fonts.cinzel, fontSize: 9, letterSpacing: 1.5, color: Colors.sand, opacity: 0.8, marginBottom: 6 },
-  aiBubble: { backgroundColor: 'rgba(212,146,74,0.08)', borderRadius: 18, borderBottomLeftRadius: 5, padding: 14, maxWidth: '88%', borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)' },
-  aiText: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 21, color: Colors.sand3 },
+  aiBubble: { backgroundColor: 'rgba(194,168,120,0.09)', borderRadius: 18, borderBottomLeftRadius: 5, padding: 16, maxWidth: '90%', borderWidth: 1, borderColor: 'rgba(194,168,120,0.18)' },
+  aiText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 24, color: Colors.text },
   quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },
   quoteInlineText: { fontFamily: Fonts.cormorantItalic, fontSize: 12, lineHeight: 18, color: Colors.sand2 },
   timeMeta: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 4, letterSpacing: 0.3 },

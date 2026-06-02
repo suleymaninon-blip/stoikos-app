@@ -120,9 +120,6 @@ export default function PracticeScreen() {
   const doneCount = allExercises.filter((e) => completed.has(e.id)).length;
   const progress = totalCount > 0 ? doneCount / totalCount : 0;
 
-  const hour = new Date().getHours();
-  const isMorning = hour < 14;
-
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -137,14 +134,9 @@ export default function PracticeScreen() {
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>{t('practice.title')}</Text>
-            <Text style={styles.subtitle}>
-              {isMorning ? t('practice.morningSub') : t('practice.eveningSub')}
-            </Text>
+            <Text style={styles.title}>{t('practice.calmTitle')}</Text>
+            <Text style={styles.intro}>{t('practice.intro')}</Text>
           </View>
-
-          {/* Kısa açıklama */}
-          <Text style={styles.intro}>{t('practice.intro')}</Text>
 
           {/* Progress bar */}
           <View style={styles.progressWrap}>
@@ -163,7 +155,7 @@ export default function PracticeScreen() {
           {/* Morning */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionIcon}>🌅</Text>
+              <Text style={styles.sectionIcon}>☀</Text>
               <View>
                 <Text style={styles.sectionTag}>{t('practice.morningTag')}</Text>
                 <Text style={styles.sectionTitle}>{t('practice.morningTitle')}</Text>
@@ -178,9 +170,9 @@ export default function PracticeScreen() {
               <ExerciseRow
                 key={ex.id}
                 exercise={ex}
-                icon="🌅"
+                icon="☀"
                 completed={completed.has(ex.id)}
-                onOpen={() => setSelected({ ...ex, icon: '🌅' })}
+                onOpen={() => setSelected({ ...ex, icon: '☀' })}
                 tapHint={t('practice.tapHint')}
               />
             ))}
@@ -191,11 +183,11 @@ export default function PracticeScreen() {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionIcon}>🌙</Text>
               <View>
-                <Text style={styles.sectionTag}>{t('practice.eveningTag')}</Text>
+                <Text style={[styles.sectionTag, styles.moonTag]}>{t('practice.eveningTag')}</Text>
                 <Text style={styles.sectionTitle}>{t('practice.eveningTitle')}</Text>
               </View>
-              <View style={styles.sectionBadge}>
-                <Text style={styles.sectionBadgeText}>
+              <View style={[styles.sectionBadge, styles.moonBadge]}>
+                <Text style={[styles.sectionBadgeText, styles.moonBadgeText]}>
                   {EVENING_EXERCISES.filter((e) => completed.has(e.id)).length}/{EVENING_EXERCISES.length}
                 </Text>
               </View>
@@ -210,6 +202,12 @@ export default function PracticeScreen() {
                 tapHint={t('practice.tapHint')}
               />
             ))}
+          </View>
+
+          {/* Nazik kapanış */}
+          <View style={styles.closeCard}>
+            <Text style={styles.closeQuote}>“{t('practice.closeQuote')}”</Text>
+            <Text style={styles.closeSub}>{t('practice.closeSub')}</Text>
           </View>
 
           {/* Daily journal */}
@@ -262,13 +260,13 @@ export default function PracticeScreen() {
 
 // ─── Styles ───────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.stone },
+  container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 40 },
   header: { marginBottom: 24, marginTop: 8 },
-  title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
+  title: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.text, letterSpacing: 0.3, marginBottom: 8, lineHeight: 34 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
-  intro: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 18, marginBottom: 22 },
+  intro: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 20 },
 
   // Progress
   progressWrap: { marginBottom: 28 },
@@ -295,6 +293,18 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)',
   },
   sectionBadgeText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.sand },
+  // Akşam — ay-mavisi aksan
+  moonTag: { color: Colors.moon },
+  moonBadge: { backgroundColor: 'rgba(159,176,196,0.1)', borderColor: 'rgba(159,176,196,0.25)' },
+  moonBadgeText: { color: Colors.moon },
+
+  // Nazik kapanış kartı
+  closeCard: {
+    backgroundColor: 'rgba(194,168,120,0.06)', borderRadius: 20, padding: 22, marginBottom: 16,
+    borderWidth: 1, borderColor: 'rgba(194,168,120,0.12)', alignItems: 'center',
+  },
+  closeQuote: { fontFamily: Fonts.cormorantItalic, fontSize: 19, color: Colors.sand2, textAlign: 'center', lineHeight: 26, marginBottom: 8 },
+  closeSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center' },
 
   // Sade satır
   row: {
@@ -310,7 +320,7 @@ const styles = StyleSheet.create({
   rowCheckMark: { fontSize: 12, color: Colors.stone, fontWeight: '700' },
   rowIcon: { fontSize: 16 },
   rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
-  rowNameDone: { color: Colors.muted, textDecorationLine: 'line-through' },
+  rowNameDone: { color: Colors.muted },
   rowDuration: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
   rowChevron: { fontSize: 20, color: Colors.stone4, marginLeft: 2 },
 

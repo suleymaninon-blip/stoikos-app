@@ -6,28 +6,29 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLang, Lang } from '../../constants/i18n';
-import { getQuotes, getConcepts, AUTHORS, Quote, Concept, quoteAudioKey, conceptAudioKey } from '../../constants/content';
+import { getQuotes, getConcepts, AUTHORS, Quote, Concept, conceptAudioKey } from '../../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote, lang, playingKey, onToggle, onShare, isFav, onFav }: {
-  quote: Quote; lang: Lang; playingKey: string | null; onToggle: (key: string) => void; onShare: (q: Quote) => void;
+function QuoteItem({ quote, onShare, isFav, onFav }: {
+  quote: Quote; onShare: (q: Quote) => void;
   isFav: boolean; onFav: (id: string) => void;
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(10)).current;
   useEffect(() => {
-    Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
+    ]).start();
   }, []);
 
-  const key = quoteAudioKey(quote.id, lang);
-  const audio = hasAudio(key);
-  const playing = playingKey === key;
-
   return (
-    <Animated.View style={[styles.quoteCard, { opacity: fadeAnim }]}>
-      <Text style={styles.quoteText}>"{quote.text}"</Text>
+    <Animated.View style={[styles.quoteCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+      <Text style={styles.quoteMark}>“</Text>
+      <Text style={styles.quoteText}>{quote.text}</Text>
       <View style={styles.quoteMeta}>
         <View style={{ flex: 1 }}>
           <Text style={styles.quoteAuthor}>{quote.author}</Text>
@@ -36,11 +37,6 @@ function QuoteItem({ quote, lang, playingKey, onToggle, onShare, isFav, onFav }:
         <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]}>
           <Text style={[styles.listenIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
         </TouchableOpacity>
-        {audio && (
-          <TouchableOpacity onPress={() => onToggle(key)} style={[styles.listenBtn, playing && styles.listenBtnActive]}>
-            <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
-          </TouchableOpacity>
-        )}
         <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn}>
           <Text style={styles.listenIcon}>↗</Text>
         </TouchableOpacity>
@@ -227,7 +223,7 @@ export default function WisdomScreen() {
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
-            renderItem={({ item }) => <QuoteItem quote={item} lang={lang} playingKey={playingKey} onToggle={togglePlay} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} />}
+            renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} />}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
           />
@@ -263,11 +259,11 @@ export default function WisdomScreen() {
 
 // ─── Styles ───────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.stone },
+  container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
-  header: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16 },
-  title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
+  header: { paddingHorizontal: 24, paddingTop: 10, paddingBottom: 18 },
+  title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
 
   tabs: {
     flexDirection: 'row', marginHorizontal: 24, marginBottom: 16,
@@ -275,7 +271,7 @@ const styles = StyleSheet.create({
     padding: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   tabBtn: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 10 },
-  tabBtnActive: { backgroundColor: Colors.stone4 },
+  tabBtnActive: { backgroundColor: Colors.stone3 },
   tabBtnText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
   tabBtnTextActive: { color: Colors.sand2 },
 
@@ -329,10 +325,11 @@ const styles = StyleSheet.create({
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   quoteCard: {
-    backgroundColor: Colors.stone2, borderRadius: 16, padding: 18,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 18,
+    borderWidth: 1, borderColor: 'rgba(194,168,120,0.10)', overflow: 'hidden',
   },
-  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 16, color: Colors.sand3, lineHeight: 26, marginBottom: 12 },
+  quoteMark: { fontFamily: Fonts.cormorant, fontSize: 64, color: Colors.sand, opacity: 0.25, height: 48, marginBottom: -4 },
+  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 16 },
   quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
