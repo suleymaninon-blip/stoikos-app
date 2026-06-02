@@ -20,11 +20,12 @@ const KEY = process.env.ELEVEN_API_KEY;
 const MODEL = 'eleven_multilingual_v2';
 
 // Her dile o dilin ana dili konuşan sesi
-const VOICE_BY_LANG: Record<Lang, string> = {
+const VOICE_BY_LANG: Partial<Record<Lang, string>> = {
   tr: 'pMQM2vAjnEa9PmfDvgkY', // Sukru Terzi
   en: 'DMyrgzQFny3JI1Y1paM5', // Donovan
   de: 'kaGxVtjLwllv1bi2GFag', // David (de)
   ru: 'rQOBu7YxCDxGiFdTm28w', // Artem Lebedev (ru)
+  // fr/es: ses henüz üretilmedi (canlı koç tüm dillerde çalışır)
 };
 
 if (!KEY) {
@@ -63,8 +64,10 @@ async function synth(text: string, voiceId: string): Promise<Buffer> {
       available.push(it.key);
       continue;
     }
+    const voiceId = VOICE_BY_LANG[it.lang];
+    if (!voiceId) continue; // bu dil için ses tanımlı değil (fr/es)
     try {
-      const buf = await synth(it.text, VOICE_BY_LANG[it.lang]);
+      const buf = await synth(it.text, voiceId);
       fs.writeFileSync(file, buf);
       available.push(it.key);
       made++;

@@ -31,6 +31,18 @@ const TEXTS: Record<Lang, { morningT: string; morningB: string; eveningT: string
     eveningT: 'Вечернее размышление 🌙',
     eveningB: 'Подведи итоги дня: где был хорош, где можно лучше?',
   },
+  fr: {
+    morningT: 'Intention du matin 🌅',
+    morningB: "Concentre-toi aujourd'hui sur ce qui est en ton pouvoir. Prends quelques minutes.",
+    eveningT: 'Réflexion du soir 🌙',
+    eveningB: 'Repense à ta journée : où as-tu bien agi, où aurais-tu pu mieux faire ?',
+  },
+  es: {
+    morningT: 'Intención de la mañana 🌅',
+    morningB: 'Hoy concéntrate solo en lo que está en tu poder. Tómate unos minutos.',
+    eveningT: 'Reflexión de la tarde 🌙',
+    eveningB: 'Repasa tu día: ¿dónde estuviste bien, dónde podrías mejorar?',
+  },
 };
 
 // Uygulama önplandayken de bildirim göster

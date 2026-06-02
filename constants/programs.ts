@@ -1,7 +1,8 @@
 import type { Lang } from './i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type L = Record<Lang, string>;
+type L = Partial<Record<Lang, string>>;
+const pick = (l: L, lang: Lang): string => l[lang] ?? l.en ?? l.tr ?? '';
 interface RawDay { title: L; body: L; }
 interface RawProgram { id: string; icon: string; color: string; title: L; subtitle: L; days: RawDay[]; }
 
@@ -106,8 +107,8 @@ export interface Program { id: string; icon: string; color: string; title: strin
 export function getPrograms(lang: Lang): Program[] {
   return PROGRAMS_RAW.map((p) => ({
     id: p.id, icon: p.icon, color: p.color,
-    title: p.title[lang], subtitle: p.subtitle[lang], dayCount: p.days.length,
-    days: p.days.map((d) => ({ title: d.title[lang], body: d.body[lang] })),
+    title: pick(p.title, lang), subtitle: pick(p.subtitle, lang), dayCount: p.days.length,
+    days: p.days.map((d) => ({ title: pick(d.title, lang), body: pick(d.body, lang) })),
   }));
 }
 

@@ -183,7 +183,7 @@ export default function WisdomScreen() {
   const filterOptions = [
     { id: 'all', label: t('wisdom.all'), count: quotes.length, heart: false },
     { id: 'fav', label: t('wisdom.favorites'), count: quotes.filter((q) => favorites.includes(q.id)).length, heart: true },
-    ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang], count: quotes.filter((q) => q.authorId === a.id).length, heart: false })),
+    ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] ?? a.name.en ?? a.id, count: quotes.filter((q) => q.authorId === a.id).length, heart: false })),
   ];
 
   const filteredQuotes =
