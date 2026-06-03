@@ -9,86 +9,142 @@ import {
 } from '../constants/breathSound';
 
 type Props = {
-  title?: string;
-  sub?: string;
-  onPress?: () => void;
-  soundLabel?: string; // erişilebilirlik / etiket (çok dilli)
+  idleTitle?: string;   // "Bir an dur"
+  tapHint?: string;     // "Dokun & başla"
+  inhaleLabel?: string; // "Nefes al"
+  exhaleLabel?: string; // "Nefes ver"
+  soundLabel?: string;  // erişilebilirlik etiketi
 };
 
-// Klinik kanıtlı nefes orbu: 9 sn ritim (4.5 büyü / 4.5 küçül), sonsuz döngü.
-// Katmanlı halka + gradient ile yumuşak derinlik. Dokununca tam nefes egzersizi.
-// Opsiyonel: nefese senkron, varsayılan kapalı sakinleştirici ses (yalnız web).
-export default function BreathOrb({ title = 'Bir an dur', sub = 'Daireyle birlikte nefes al · 9 saniye', onPress, soundLabel = 'Sakinleştirici ses' }: Props) {
+const HALF = 4500; // ms — nefes al / ver yarı döngüsü (orb, metin ve ses aynı ritim)
+
+// Nefes orbu: dokununca YERİNDE 9 sn döngüye başlar (yeni ekran açmaz).
+// Aktifken altındaki metin ritimle "Nefes al / Nefes ver" değişir; ses açıksa senkron çalar.
+export default function BreathOrb({
+  idleTitle = 'Bir an dur', tapHint = 'Dokun & başla',
+  inhaleLabel = 'Nefes al', exhaleLabel = 'Nefes ver', soundLabel = 'Sakinleştirici ses',
+}: Props) {
   const scale = useRef(new Animated.Value(0.82)).current;
   const opacity = useRef(new Animated.Value(0.6)).current;
   const haloScale = useRef(new Animated.Value(0.9)).current;
+  const textFade = useRef(new Animated.Value(1)).current;
+
+  const loopRef = useRef<Animated.CompositeAnimation | null>(null);
+  const phaseTimer = useRef<any>(null);
+
+  const [isActive, setIsActive] = useState(false);
+  const activeRef = useRef(false);
+  const [phase, setPhase] = useState<'in' | 'out'>('in'); // yalnız aktifken anlamlı
 
   const soundSupported = isBreathSoundSupported();
   const [soundOn, setSoundOn] = useState(false);
   const soundOnRef = useRef(false);
 
-  useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.parallel([
-          Animated.timing(scale, { toValue: 1.16, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 1, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(haloScale, { toValue: 1.3, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        ]),
-        Animated.parallel([
-          Animated.timing(scale, { toValue: 0.82, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(opacity, { toValue: 0.6, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-          Animated.timing(haloScale, { toValue: 0.9, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        ]),
-      ])
-    );
-    loop.start();
-    return () => loop.stop();
-  }, [scale, opacity, haloScale]);
-
-  // Kalıcı tercihi yükle (varsayılan kapalı). Tercih açıksa en iyi çabayla başlat.
+  // Ses tercihini yükle (yalnız ikon durumu için; varsayılan kapalı, otomatik başlamaz).
   useEffect(() => {
     if (!soundSupported) return;
-    getSoundPref().then((on) => {
-      setSoundOn(on);
-      soundOnRef.current = on;
-      if (on) startBreathSound();
-    });
+    getSoundPref().then((on) => { setSoundOn(on); soundOnRef.current = on; });
   }, [soundSupported]);
 
-  // Ekrandan çıkınca sesi durdur, geri dönünce tercih açıksa devam et.
-  useFocusEffect(
-    useCallback(() => {
-      if (soundOnRef.current) startBreathSound();
-      return () => stopBreathSound();
-    }, [])
-  );
-
-  // Uygulama arka plana geçince ses dursun (pil & nezaket).
+  // Metin her değiştiğinde kısa yumuşak fade.
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (s) => {
-      if (s !== 'active') stopBreathSound();
-      else if (soundOnRef.current) startBreathSound();
-    });
-    return () => sub.remove();
-  }, []);
+    textFade.setValue(0.35);
+    Animated.timing(textFade, { toValue: 1, duration: 280, useNativeDriver: true }).start();
+  }, [phase, isActive, textFade]);
 
-  // Bileşen tamamen kalkarsa sesi kapat.
-  useEffect(() => () => stopBreathSound(), []);
+  const stopAnimLoop = useCallback(() => {
+    loopRef.current?.stop();
+    loopRef.current = null;
+    Animated.parallel([
+      Animated.timing(scale, { toValue: 0.82, duration: 500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      Animated.timing(opacity, { toValue: 0.6, duration: 500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      Animated.timing(haloScale, { toValue: 0.9, duration: 500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+    ]).start();
+  }, [scale, opacity, haloScale]);
+
+  const startAnimLoop = useCallback(() => {
+    scale.setValue(0.82); opacity.setValue(0.6); haloScale.setValue(0.9);
+    const sec = (toScale: number, toOpacity: number, toHalo: number) =>
+      Animated.parallel([
+        Animated.timing(scale, { toValue: toScale, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: toOpacity, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(haloScale, { toValue: toHalo, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]);
+    loopRef.current = Animated.loop(Animated.sequence([
+      sec(1.16, 1, 1.3),    // nefes al (büyür)
+      sec(0.82, 0.6, 0.9),  // nefes ver (küçülür)
+    ]));
+    loopRef.current.start();
+  }, [scale, opacity, haloScale]);
+
+  const deactivate = useCallback(() => {
+    if (!activeRef.current) return;
+    activeRef.current = false;
+    setIsActive(false);
+    if (phaseTimer.current) { clearInterval(phaseTimer.current); phaseTimer.current = null; }
+    stopAnimLoop();
+    stopBreathSound();
+  }, [stopAnimLoop]);
+
+  const activate = useCallback(() => {
+    if (activeRef.current) return;
+    activeRef.current = true;
+    setIsActive(true);
+    setPhase('in');
+    startAnimLoop();
+    // Metin ritmi: ilk faz 'in' (büyürken), 4.5 sn sonra 'out', sonra döngü.
+    if (phaseTimer.current) clearInterval(phaseTimer.current);
+    phaseTimer.current = setInterval(() => {
+      setPhase((p) => (p === 'in' ? 'out' : 'in'));
+    }, HALF);
+    if (soundOnRef.current) startBreathSound();
+  }, [startAnimLoop]);
+
+  const toggleActive = useCallback(() => {
+    if (activeRef.current) deactivate(); else activate();
+  }, [activate, deactivate]);
 
   const toggleSound = useCallback(() => {
     const next = !soundOnRef.current;
     soundOnRef.current = next;
     setSoundOn(next);
     setSoundPref(next);
-    if (next) startBreathSound();
+    // Ses yalnız egzersiz aktifken çalsın.
+    if (next && activeRef.current) startBreathSound();
     else stopBreathSound();
   }, []);
 
-  const Wrapper: any = onPress ? Pressable : View;
+  // Ekrandan çıkınca / arka plana atılınca egzersizi ve sesi durdur.
+  useFocusEffect(useCallback(() => () => deactivate(), [deactivate]));
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (s) => { if (s !== 'active') deactivate(); });
+    return () => sub.remove();
+  }, [deactivate]);
+  useEffect(() => () => deactivate(), [deactivate]);
+
+  const title = isActive ? (phase === 'in' ? inhaleLabel : exhaleLabel) : idleTitle;
 
   return (
-    <Wrapper style={styles.card} onPress={onPress}>
+    <View style={styles.wrap}>
+      <Pressable style={styles.card} onPress={toggleActive} accessibilityRole="button">
+        <View style={styles.orbWrap}>
+          <Animated.View style={[styles.halo, { transform: [{ scale: haloScale }], opacity: Animated.multiply(opacity, 0.5) }]} />
+          <Animated.View style={[styles.midRing, { transform: [{ scale }], opacity }]} />
+          <Animated.View style={[styles.orbInner, { transform: [{ scale }], opacity }]}>
+            <LinearGradient
+              colors={['rgba(232,213,163,0.32)', 'rgba(194,168,120,0.12)', 'rgba(194,168,120,0.04)']}
+              start={{ x: 0.3, y: 0.2 }}
+              end={{ x: 0.8, y: 1 }}
+              style={styles.orbGradient}
+            />
+          </Animated.View>
+        </View>
+
+        <Animated.Text style={[styles.title, { opacity: textFade }]}>{title}</Animated.Text>
+        {!isActive && <Text style={styles.sub}>{tapHint}</Text>}
+      </Pressable>
+
+      {/* Ses toggle — kartın KARDEŞİ (tıklama egzersize yayılmaz) */}
       {soundSupported && (
         <TouchableOpacity
           style={styles.soundBtn}
@@ -101,35 +157,18 @@ export default function BreathOrb({ title = 'Bir an dur', sub = 'Daireyle birlik
           <Text style={[styles.soundIcon, soundOn && styles.soundIconOn]}>{soundOn ? '🔊' : '🔇'}</Text>
         </TouchableOpacity>
       )}
-
-      <View style={styles.orbWrap}>
-        {/* Dış hale — yavaş genişleyen yumuşak ışık */}
-        <Animated.View style={[styles.halo, { transform: [{ scale: haloScale }], opacity: Animated.multiply(opacity, 0.5) }]} />
-        {/* Orta katman */}
-        <Animated.View style={[styles.midRing, { transform: [{ scale }], opacity }]} />
-        {/* İç gradient daire */}
-        <Animated.View style={[styles.orbInner, { transform: [{ scale }], opacity }]}>
-          <LinearGradient
-            colors={['rgba(232,213,163,0.32)', 'rgba(194,168,120,0.12)', 'rgba(194,168,120,0.04)']}
-            start={{ x: 0.3, y: 0.2 }}
-            end={{ x: 0.8, y: 1 }}
-            style={styles.orbGradient}
-          />
-        </Animated.View>
-      </View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.sub}>{sub}</Text>
-    </Wrapper>
+    </View>
   );
 }
 
 const ORB = 124;
 const styles = StyleSheet.create({
+  wrap: { marginBottom: 32, position: 'relative' },
   card: {
     backgroundColor: 'rgba(194,168,120,0.07)',
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.14)',
     borderRadius: 32, paddingVertical: 36, paddingHorizontal: 24,
-    alignItems: 'center', marginBottom: 32,
+    alignItems: 'center',
   },
   soundBtn: {
     position: 'absolute', top: 14, right: 16, zIndex: 5,
@@ -152,6 +191,6 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(216,196,154,0.28)',
   },
   orbGradient: { flex: 1 },
-  title: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.sand2, marginBottom: 6 },
+  title: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.sand2, marginBottom: 6, minHeight: 28 },
   sub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
 });
