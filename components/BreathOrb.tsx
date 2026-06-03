@@ -9,7 +9,7 @@ import {
 } from '../constants/breathSound';
 import {
   isHapticsSupported, getHapticsPref, setHapticsPref,
-  hapticTap, hapticPhase, stopHaptics,
+  hapticTap, hapticPhase, startBreathHaptics, stopHaptics,
 } from '../constants/breathHaptics';
 
 type Props = {
@@ -111,8 +111,8 @@ export default function BreathOrb({
     phaseRef.current = 'in';
     setPhase('in');
     startAnimLoop();
-    // Basış dokunuşu + ilk fazın (artan) titreşimi.
-    if (hapticsOnRef.current) { hapticTap(); hapticPhase('in'); }
+    // Basış dokunuşu + ritmik titreşim (web: tek uzun desen / native: faz darbeleri).
+    if (hapticsOnRef.current) { hapticTap(); startBreathHaptics(); }
     // Metin + titreşim ritmi: ilk faz 'in', 4.5 sn sonra 'out', sonra döngü.
     if (phaseTimer.current) clearInterval(phaseTimer.current);
     phaseTimer.current = setInterval(() => {
