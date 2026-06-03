@@ -62,6 +62,7 @@ const UI: Record<Lang, Dict> = {
     'home.breathTitle': 'Bir an dur', 'home.breathSub': 'Daireyle nefes al · dokun & genişlet',
     'breathe.inhale': 'Nefes al', 'breathe.hold': 'Tut', 'breathe.exhale': 'Ver',
     'breathe.sub': 'Kutu nefesi · 4-4-4-4', 'breathe.hint': 'Hazır olduğunda kapat',
+    'breathSound.label': 'Sakinleştirici ses',
 
     'practice.title': 'Günlük Pratik', 'practice.morningSub': 'Sabah egzersizleri', 'practice.eveningSub': 'Akşam yansıması',
     'practice.todayProgress': 'BUGÜNKÜ YOLCULUK', 'practice.allDone': '✦ Tüm pratikler tamamlandı — iyi iş!',
@@ -184,6 +185,7 @@ const UI: Record<Lang, Dict> = {
     'home.breathTitle': 'Pause for a moment', 'home.breathSub': 'Breathe with the circle · tap to expand',
     'breathe.inhale': 'Breathe in', 'breathe.hold': 'Hold', 'breathe.exhale': 'Breathe out',
     'breathe.sub': 'Box breathing · 4-4-4-4', 'breathe.hint': 'Close when you are ready',
+    'breathSound.label': 'Calming sound',
 
     'practice.title': 'Daily Practice', 'practice.morningSub': 'Morning exercises', 'practice.eveningSub': 'Evening reflection',
     'practice.todayProgress': "TODAY'S JOURNEY", 'practice.allDone': '✦ All practices complete — well done!',
@@ -306,6 +308,7 @@ const UI: Record<Lang, Dict> = {
     'home.breathTitle': 'Halte einen Moment inne', 'home.breathSub': 'Atme mit dem Kreis · zum Öffnen tippen',
     'breathe.inhale': 'Einatmen', 'breathe.hold': 'Halten', 'breathe.exhale': 'Ausatmen',
     'breathe.sub': 'Box-Atmung · 4-4-4-4', 'breathe.hint': 'Schließe, wenn du bereit bist',
+    'breathSound.label': 'Beruhigender Klang',
 
     'practice.title': 'Tägliche Praxis', 'practice.morningSub': 'Morgenübungen', 'practice.eveningSub': 'Abendreflexion',
     'practice.todayProgress': 'HEUTIGE REISE', 'practice.allDone': '✦ Alle Übungen abgeschlossen — gut gemacht!',
@@ -428,6 +431,7 @@ const UI: Record<Lang, Dict> = {
     'home.breathTitle': 'Остановись на миг', 'home.breathSub': 'Дыши с кругом · нажми, чтобы открыть',
     'breathe.inhale': 'Вдох', 'breathe.hold': 'Задержка', 'breathe.exhale': 'Выдох',
     'breathe.sub': 'Дыхание по квадрату · 4-4-4-4', 'breathe.hint': 'Закрой, когда будешь готов',
+    'breathSound.label': 'Успокаивающий звук',
 
     'practice.title': 'Ежедневная практика', 'practice.morningSub': 'Утренние упражнения', 'practice.eveningSub': 'Вечернее размышление',
     'practice.todayProgress': 'ПУТЬ НА СЕГОДНЯ', 'practice.allDone': '✦ Все практики выполнены — отличная работа!',
@@ -550,6 +554,7 @@ const UI: Record<Lang, Dict> = {
     'home.breathTitle': 'Arrête-toi un instant', 'home.breathSub': 'Respire avec le cercle · touche pour agrandir',
     'breathe.inhale': 'Inspire', 'breathe.hold': 'Retiens', 'breathe.exhale': 'Expire',
     'breathe.sub': 'Respiration carrée · 4-4-4-4', 'breathe.hint': 'Ferme quand tu es prêt',
+    'breathSound.label': 'Son apaisant',
 
     'practice.title': 'Pratique quotidienne', 'practice.morningSub': 'Exercices du matin', 'practice.eveningSub': 'Réflexion du soir',
     'practice.todayProgress': "PARCOURS DU JOUR", 'practice.allDone': '✦ Toutes les pratiques terminées — bravo !',
@@ -672,6 +677,7 @@ const UI: Record<Lang, Dict> = {
     'home.breathTitle': 'Detente un momento', 'home.breathSub': 'Respira con el círculo · toca para ampliar',
     'breathe.inhale': 'Inhala', 'breathe.hold': 'Mantén', 'breathe.exhale': 'Exhala',
     'breathe.sub': 'Respiración cuadrada · 4-4-4-4', 'breathe.hint': 'Cierra cuando estés listo',
+    'breathSound.label': 'Sonido relajante',
 
     'practice.title': 'Práctica diaria', 'practice.morningSub': 'Ejercicios de la mañana', 'practice.eveningSub': 'Reflexión de la tarde',
     'practice.todayProgress': "CAMINO DE HOY", 'practice.allDone': '✦ Todas las prácticas completadas — ¡bien hecho!',

@@ -88,7 +88,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Nefes orbu — dokununca tam ekran egzersiz */}
-          <BreathOrb title={t('home.breathTitle')} sub={t('home.breathSub')} onPress={() => router.push('/breathe')} />
+          <BreathOrb title={t('home.breathTitle')} sub={t('home.breathSub')} soundLabel={t('breathSound.label')} onPress={() => router.push('/breathe')} />
 
           {/* Günün alıntısı */}
           <QuoteCard quote={quote} />
