@@ -31,10 +31,19 @@ const CHAT_HISTORY_KEY = 'stoikos_chat_history';
 
 // ─── Helpers ──────────────────────────────────────────────
 function parseResponse(text: string): { body: string; quote: string | null } {
+  // 1) Eski biçim: [ALINTI: "..." — Yazar, Kaynak] (karşılama mesajı & eski geçmiş)
   const quoteMatch = text.match(/\[ALINTI:\s*"([^"]+)"\s*—\s*([^\]]+)\]/);
   if (quoteMatch) {
     const body = text.replace(quoteMatch[0], '').trim();
     return { body, quote: `"${quoteMatch[1]}" — ${quoteMatch[2]}` };
+  }
+  // 2) Yeni biçim: '>' ile işaretli alıntı satır(lar)ı
+  const lines = text.split('\n');
+  const isQuote = (l: string) => /^\s*>/.test(l);
+  if (lines.some(isQuote)) {
+    const quote = lines.filter(isQuote).map((l) => l.replace(/^\s*>\s?/, '')).join(' ').trim();
+    const body = lines.filter((l) => !isQuote(l)).join('\n').trim();
+    return { body, quote: quote || null };
   }
   return { body: text, quote: null };
 }
