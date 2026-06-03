@@ -94,6 +94,7 @@ export default function HomeScreen() {
             inhaleLabel={t('home.breathIn')}
             exhaleLabel={t('home.breathOut')}
             soundLabel={t('breathSound.label')}
+            hapticLabel={t('breathHaptic.label')}
           />
 
           {/* Günün alıntısı */}
