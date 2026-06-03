@@ -17,6 +17,7 @@ import { useLang, localeOf } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
+import { FEATURES } from '../../constants/config';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
@@ -99,7 +100,9 @@ export default function HomeScreen() {
             <ModuleRow icon="◎" name={t('home.mod.coach.name')} desc={t('home.mod.coach.desc')} onPress={() => router.push('/coach')} />
             <ModuleRow icon="◈" name={t('home.mod.wisdom.name')} desc={t('home.mod.wisdom.desc')} onPress={() => router.push('/wisdom')} />
             <ModuleRow icon="❖" name={t('programs.cardName')} desc={t('programs.cardDesc')} onPress={() => router.push('/programs')} />
-            <ModuleRow icon="✦" name={t('ch.cardName')} desc={t('ch.cardDesc')} onPress={() => router.push('/challenge')} />
+            {FEATURES.meydanOkuma && (
+              <ModuleRow icon="✦" name={t('ch.cardName')} desc={t('ch.cardDesc')} onPress={() => router.push('/challenge')} />
+            )}
           </View>
 
           {/* Baskısız süreklilik */}
