@@ -492,7 +492,8 @@ export function getTodaysQuote(lang: Lang): Quote {
 }
 
 // ─── Kavramlar ────────────────────────────────────────────
-interface RawConcept { latin: string; icon: string; color: string; name: L; desc: L; example: L; }
+// practice: günlük hayata bağlayan kısa "pratik bağ" cümlesi (opsiyonel)
+interface RawConcept { latin: string; icon: string; color: string; name: L; desc: L; example: L; practice?: L; }
 
 const CONCEPTS_RAW: RawConcept[] = [
   { latin: 'Amor Fati', icon: '♾', color: 'rgba(212,146,74,0.15)',
@@ -607,12 +608,48 @@ const CONCEPTS_RAW: RawConcept[] = [
       ru: 'Как река: вместо борьбы с течением, понимание его логики приносит покой.',
       fr: "Comme un fleuve : plutôt que de lutter contre le courant, en comprendre la logique apporte la paix.",
       es: 'Como un río: en vez de luchar contra la corriente, comprender su lógica trae paz.' } },
+
+  // ─── 5 yeni kavram (TR; diğer diller pick() ile TR'ye düşer) ───
+  { latin: 'Aretē', icon: '⚖', color: 'rgba(150,130,90,0.15)',
+    name: { tr: 'Dört Erdem' },
+    desc: {
+      tr: 'Stoacılığın tüm ahlakı dört sütuna dayanır: bilgelik, cesaret, adalet, ölçülülük. İyi bir hayat, bu dördünü yaşamaktır.\n\nStoacılar için "iyi" olan tek şey erdemdir — para, ün, sağlık değil. Erdem de dört temel biçimde görünür. Bilgelik: neyin kontrolünde olduğunu, neyin olmadığını görmek. Cesaret: korkuya rağmen doğru olanı yapmak. Adalet: herkese hakkını vermek, ortak iyiyi gözetmek. Ölçülülük: arzu ve tepkilerinde dengeyi korumak. Bu dördü ayrı beceriler değil, aynı bilgeliğin farklı yüzleridir. Birini geliştirdiğinde diğerleri de güçlenir. Mutluluğu dışarıda değil, bu dört erdemi yaşamakta ara — çünkü tek gerçekten senin olan, karakterindir.' },
+    example: { tr: '' },
+    practice: { tr: 'Bugün bir karar verirken sor: bu seçim bu dört erdemden hangisini besliyor?' } },
+
+  { latin: 'Prosochē', icon: '◉', color: 'rgba(120,150,170,0.15)',
+    name: { tr: 'Anlık Farkındalık' },
+    desc: {
+      tr: 'Her ana uyanık olmak. Stoacı pratiğin kalbi: ne düşündüğünü, ne hissettiğini, ne yaptığını fark ederek yaşamak.\n\nProsochē, kesintisiz bir dikkat hâlidir — kendi düşüncelerine ve tepkilerine sürekli, nazik bir farkındalıkla bakmak. Stoacı için felsefe kitapta değil, tam da şu anda yaşanır: Şu öfke nereden geldi? Bu kaygı gerçek mi, yoksa zihnimin uydurduğu bir gelecek mi? Bu dikkat olmadan, eski alışkanlıklar bizi otomatik olarak sürükler. Prosochē ile araya bir boşluk girer — uyaran ile tepki arasında. O boşlukta özgürlük vardır: tepki vermek yerine seçim yapabilirsin. Bu yüzden Stoacılar sabah niyet kurmayı, gün içinde durup nefes almayı, akşam günü gözden geçirmeyi önerir. Hepsi aynı kası çalıştırır: farkında kalma kasını.' },
+    example: { tr: '' },
+    practice: { tr: 'Gün içinde bir kez dur, üç nefes al ve sor: şu an zihnimde ne var?' } },
+
+  { latin: 'Apatheia', icon: '◯', color: 'rgba(140,170,150,0.15)',
+    name: { tr: 'Tutkulardan Arınma' },
+    desc: {
+      tr: 'Duygusuzluk değil — öfke, aşırı korku ve hırs gibi yıkıcı tutkuların esiri olmadan, dingin bir ruhla yaşamak.\n\nApatheia sık sık yanlış anlaşılır: hissizlik ya da soğukluk sanılır. Oysa anlamı, yıkıcı tutkuların (pathos) seni yönetmesine izin vermemektir. Stoacı sevgiyi, sevinci, şefkati reddetmez — bunlar sağlıklı, akılla uyumlu duygulardır. Reddettiği şey, kontrolsüz öfke, tüketen kıskançlık, felç eden korku gibi seni kendinden eden tutkulardır. Bunlar çoğu zaman yanlış yargılardan doğar: "Bu olmazsa mahvolurum" gibi. Yargıyı düzelttiğinde, tutku da yatışır. Apatheia bir duvar örmek değil; fırtınanın ortasında sakin bir merkez bulmaktır. Hisset — ama hislerinin seni sürüklemesine izin verme.' },
+    example: { tr: '' },
+    practice: { tr: 'Güçlü bir duygu yükseldiğinde sor: bu hissin altındaki yargı doğru mu?' } },
+
+  { latin: 'Oikeiōsis', icon: '⊚', color: 'rgba(180,140,120,0.15)',
+    name: { tr: 'Şefkat Halkaları' },
+    desc: {
+      tr: 'Ahlaki ilginin kendinden başlayıp halkalar halinde tüm insanlığa genişlemesi. Önce kendin, sonra yakının, sonra herkes.\n\nHierokles bunu iç içe halkalar olarak anlatır. En içte sen varsın. Onu saran halka ailen, sonra dostların, sonra şehrin, en dışta tüm insanlık. Stoacı pratik, dış halkaları yavaşça içe çekmektir: uzaktaki bir yabancıya, yakın biriymiş gibi şefkat gösterebilmek. Bu duygusal bir zorlama değil, doğal bir genişlemedir — çünkü hepimiz aynı evrensel aklın (Logos) parçasıyız. Sympatheia "her şey birbirine bağlı" derse, Oikeiōsis "öyleyse herkese kendinin bir uzantısı gibi davran" der. Erdemlerden Adalet, kökünü buradan alır. Kendine iyi bak — ama dünyayı da kendi sınırının dışında sanma.' },
+    example: { tr: '' },
+    practice: { tr: 'Bugün bir yabancıya, yakınına göstereceğin sabrı göster.' } },
+
+  { latin: 'Ataraxia', icon: '▽', color: 'rgba(110,140,180,0.15)',
+    name: { tr: 'Sarsılmaz Dinginlik' },
+    desc: {
+      tr: 'Dış olaylar ne olursa olsun bozulmayan iç huzur. Erdemli yaşamın getirdiği sakin, sağlam zihin hâli.\n\nAtaraxia, "rahatsız olmama" anlamına gelir — ama tembellik ya da kayıtsızlık değil. Aksine, dünyayla tam temas hâlinde kalıp yine de sarsılmamaktır. Eudaimonia "iyi yaşamın" bütünüyse, Ataraxia o yaşamın içindeki zihinsel dinginliktir: övgü geldiğinde şişmeyen, yergi geldiğinde çökmeyen, kayıp karşısında yıkılmayan bir denge. Bu hâl bir hediye değil, pratikle kazanılır — kontrol edemediğini bırakmayı, yargılarını düzeltmeyi ve şu ana dönmeyi tekrar tekrar deneyerek. Dalgalar hep olacak; Ataraxia, onların altındaki derin, durgun suyu bulmaktır. Fırtına yüzeyde kalır, sen derinde sakin durursun.' },
+    example: { tr: '' },
+    practice: { tr: 'Bir şey seni sarstığında sor: bu, on yıl sonra önemli olacak mı?' } },
 ];
 
-export interface Concept { latin: string; icon: string; color: string; name: string; desc: string; example: string; }
+export interface Concept { latin: string; icon: string; color: string; name: string; desc: string; example: string; practice: string; }
 
 export function getConcepts(lang: Lang): Concept[] {
-  return CONCEPTS_RAW.map((c) => ({ latin: c.latin, icon: c.icon, color: c.color, name: pick(c.name, lang), desc: pick(c.desc, lang), example: pick(c.example, lang) }));
+  return CONCEPTS_RAW.map((c) => ({ latin: c.latin, icon: c.icon, color: c.color, name: pick(c.name, lang), desc: pick(c.desc, lang), example: pick(c.example, lang), practice: c.practice ? pick(c.practice, lang) : '' }));
 }
 
 export function getDailyConcept(lang: Lang): Concept {

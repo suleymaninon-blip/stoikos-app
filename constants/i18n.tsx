@@ -88,7 +88,7 @@ const UI: Record<Lang, Dict> = {
 
     'wisdom.title': 'Antik öğretiler, bugünün hayatı.', 'wisdom.subtitle': 'Acele etme. Bir alıntıyı oku, bırak otursun.',
     'wisdom.tabQuotes': 'Alıntılar', 'wisdom.tabConcepts': 'Kavramlar', 'wisdom.all': 'Tümü',
-    'wisdom.more': 'Daha fazla →', 'wisdom.exampleLabel': 'ÖRNEK', 'wisdom.close': 'Kapat',
+    'wisdom.more': 'Daha fazla →', 'wisdom.exampleLabel': 'ÖRNEK', 'wisdom.practiceLabel': 'PRATİK BAĞ', 'wisdom.close': 'Kapat',
 
     'progress.title': 'Yolun, sessizce birikiyor.', 'progress.subtitle': 'Rakamlar bir yarış değil — sadece yürüdüğün yolun izi.',
     'progress.streak': 'GÜN ÜST ÜSTE', 'progress.streakUnit': 'gün',
@@ -210,7 +210,7 @@ const UI: Record<Lang, Dict> = {
 
     'wisdom.title': "Ancient teachings, today's life.", 'wisdom.subtitle': "Don't rush. Read a quote, let it settle.",
     'wisdom.tabQuotes': 'Quotes', 'wisdom.tabConcepts': 'Concepts', 'wisdom.all': 'All',
-    'wisdom.more': 'Read more →', 'wisdom.exampleLabel': 'EXAMPLE', 'wisdom.close': 'Close',
+    'wisdom.more': 'Read more →', 'wisdom.exampleLabel': 'EXAMPLE', 'wisdom.practiceLabel': 'PRACTICAL LINK', 'wisdom.close': 'Close',
 
     'progress.title': 'Your path quietly builds.', 'progress.subtitle': "Numbers aren't a race — just the trace of the road you walked.",
     'progress.streak': 'DAYS IN A ROW', 'progress.streakUnit': 'days',
@@ -332,7 +332,7 @@ const UI: Record<Lang, Dict> = {
 
     'wisdom.title': 'Antike Lehren, das Leben von heute.', 'wisdom.subtitle': 'Keine Eile. Lies ein Zitat, lass es wirken.',
     'wisdom.tabQuotes': 'Zitate', 'wisdom.tabConcepts': 'Begriffe', 'wisdom.all': 'Alle',
-    'wisdom.more': 'Mehr lesen →', 'wisdom.exampleLabel': 'BEISPIEL', 'wisdom.close': 'Schließen',
+    'wisdom.more': 'Mehr lesen →', 'wisdom.exampleLabel': 'BEISPIEL', 'wisdom.practiceLabel': 'PRAXISBEZUG', 'wisdom.close': 'Schließen',
 
     'progress.title': 'Dein Weg wächst still.', 'progress.subtitle': 'Zahlen sind kein Wettlauf — nur die Spur des Weges, den du gingst.',
     'progress.streak': 'TAGE IN FOLGE', 'progress.streakUnit': 'Tage',
@@ -454,7 +454,7 @@ const UI: Record<Lang, Dict> = {
 
     'wisdom.title': 'Древние учения, сегодняшняя жизнь.', 'wisdom.subtitle': 'Не спеши. Прочти цитату, дай ей осесть.',
     'wisdom.tabQuotes': 'Цитаты', 'wisdom.tabConcepts': 'Понятия', 'wisdom.all': 'Все',
-    'wisdom.more': 'Подробнее →', 'wisdom.exampleLabel': 'ПРИМЕР', 'wisdom.close': 'Закрыть',
+    'wisdom.more': 'Подробнее →', 'wisdom.exampleLabel': 'ПРИМЕР', 'wisdom.practiceLabel': 'НА ПРАКТИКЕ', 'wisdom.close': 'Закрыть',
 
     'progress.title': 'Твой путь тихо растёт.', 'progress.subtitle': 'Цифры — не гонка, а лишь след пройденной дороги.',
     'progress.streak': 'ДНЕЙ ПОДРЯД', 'progress.streakUnit': 'дн.',
@@ -576,7 +576,7 @@ const UI: Record<Lang, Dict> = {
 
     'wisdom.title': "Enseignements antiques, vie d'aujourd'hui.", 'wisdom.subtitle': "Ne te presse pas. Lis une citation, laisse-la infuser.",
     'wisdom.tabQuotes': 'Citations', 'wisdom.tabConcepts': 'Concepts', 'wisdom.all': 'Tous',
-    'wisdom.more': 'Lire plus →', 'wisdom.exampleLabel': 'EXEMPLE', 'wisdom.close': 'Fermer',
+    'wisdom.more': 'Lire plus →', 'wisdom.exampleLabel': 'EXEMPLE', 'wisdom.practiceLabel': 'EN PRATIQUE', 'wisdom.close': 'Fermer',
 
     'progress.title': "Ton chemin se construit en silence.", 'progress.subtitle': "Les chiffres ne sont pas une course — juste la trace du chemin parcouru.",
     'progress.streak': "JOURS D'AFFILÉE", 'progress.streakUnit': 'jours',
@@ -698,7 +698,7 @@ const UI: Record<Lang, Dict> = {
 
     'wisdom.title': 'Enseñanzas antiguas, la vida de hoy.', 'wisdom.subtitle': 'No te apures. Lee una cita, deja que se asiente.',
     'wisdom.tabQuotes': 'Citas', 'wisdom.tabConcepts': 'Conceptos', 'wisdom.all': 'Todas',
-    'wisdom.more': 'Leer más →', 'wisdom.exampleLabel': 'EJEMPLO', 'wisdom.close': 'Cerrar',
+    'wisdom.more': 'Leer más →', 'wisdom.exampleLabel': 'EJEMPLO', 'wisdom.practiceLabel': 'EN LA PRÁCTICA', 'wisdom.close': 'Cerrar',
 
     'progress.title': 'Tu camino se construye en silencio.', 'progress.subtitle': 'Los números no son una carrera — solo el rastro del camino que recorriste.',
     'progress.streak': 'DÍAS SEGUIDOS', 'progress.streakUnit': 'días',

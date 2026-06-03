@@ -59,8 +59,8 @@ function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPres
 }
 
 // ─── Concept Modal ─────────────────────────────────────────
-function ConceptModal({ concept, onClose, exampleLabel, closeLabel, lang, playingKey, onToggle }: {
-  concept: Concept | null; onClose: () => void; exampleLabel: string; closeLabel: string;
+function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabel, lang, playingKey, onToggle }: {
+  concept: Concept | null; onClose: () => void; exampleLabel: string; practiceLabel: string; closeLabel: string;
   lang: Lang; playingKey: string | null; onToggle: (key: string) => void;
 }) {
   if (!concept) return null;
@@ -71,23 +71,33 @@ function ConceptModal({ concept, onClose, exampleLabel, closeLabel, lang, playin
     <Modal transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
-          <Text style={styles.modalIcon}>{concept.icon}</Text>
-          <Text style={styles.modalLatin}>{concept.latin}</Text>
-          <Text style={styles.modalTr}>{concept.name}</Text>
-          {audio && (
-            <TouchableOpacity onPress={() => onToggle(key)} style={[styles.modalListenBtn, playing && styles.listenBtnActive]}>
-              <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
+          <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+            <Text style={styles.modalIcon}>{concept.icon}</Text>
+            <Text style={styles.modalLatin}>{concept.latin}</Text>
+            <Text style={styles.modalTr}>{concept.name}</Text>
+            {audio && (
+              <TouchableOpacity onPress={() => onToggle(key)} style={[styles.modalListenBtn, playing && styles.listenBtnActive]}>
+                <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
+              </TouchableOpacity>
+            )}
+            <View style={styles.modalDivider} />
+            <Text style={styles.modalDesc}>{concept.desc}</Text>
+            {concept.example ? (
+              <View style={styles.modalExampleBox}>
+                <Text style={styles.modalExampleLabel}>{exampleLabel}</Text>
+                <Text style={styles.modalExample}>{concept.example}</Text>
+              </View>
+            ) : null}
+            {concept.practice ? (
+              <View style={styles.modalPracticeBox}>
+                <Text style={styles.modalPracticeLabel}>{practiceLabel}</Text>
+                <Text style={styles.modalPractice}>{concept.practice}</Text>
+              </View>
+            ) : null}
+            <TouchableOpacity style={styles.modalClose} onPress={onClose}>
+              <Text style={styles.modalCloseText}>{closeLabel}</Text>
             </TouchableOpacity>
-          )}
-          <View style={styles.modalDivider} />
-          <Text style={styles.modalDesc}>{concept.desc}</Text>
-          <View style={styles.modalExampleBox}>
-            <Text style={styles.modalExampleLabel}>{exampleLabel}</Text>
-            <Text style={styles.modalExample}>{concept.example}</Text>
-          </View>
-          <TouchableOpacity style={styles.modalClose} onPress={onClose}>
-            <Text style={styles.modalCloseText}>{closeLabel}</Text>
-          </TouchableOpacity>
+          </ScrollView>
         </Pressable>
       </Pressable>
     </Modal>
@@ -241,6 +251,7 @@ export default function WisdomScreen() {
         concept={selectedConcept}
         onClose={() => { stopAudio(); setPlayingKey(null); setSelectedConcept(null); }}
         exampleLabel={t('wisdom.exampleLabel')}
+        practiceLabel={t('wisdom.practiceLabel')}
         closeLabel={t('wisdom.close')}
         lang={lang}
         playingKey={playingKey}
@@ -358,7 +369,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', padding: 24,
   },
   modalCard: {
-    backgroundColor: Colors.stone2, borderRadius: 24, padding: 28, width: '100%',
+    backgroundColor: Colors.stone2, borderRadius: 24, padding: 28, width: '100%', maxHeight: '85%',
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)',
   },
   modalIcon: { fontSize: 32, marginBottom: 12, textAlign: 'center' },
@@ -372,6 +383,12 @@ const styles = StyleSheet.create({
   },
   modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalExample: { fontFamily: Fonts.cormorantItalic, fontSize: 13, color: Colors.sand3, lineHeight: 20 },
+  modalPracticeBox: {
+    backgroundColor: 'rgba(159,176,196,0.08)', borderRadius: 12, padding: 14,
+    borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
+  },
+  modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
+  modalPractice: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.text, lineHeight: 21 },
   modalClose: {
     backgroundColor: Colors.stone3, borderRadius: 12,
     paddingVertical: 12, alignItems: 'center',
