@@ -28,6 +28,8 @@ export const AUTHORS: Author[] = [
   { id: 'posidonius',  name: { tr: 'Poseidonios',     en: 'Posidonius',        de: 'Poseidonios',        ru: 'Посидоний', fr: 'Posidonios', es: 'Posidonio' } },
   { id: 'ariston',     name: { tr: 'Sakızlı Ariston', en: 'Ariston of Chios',  de: 'Ariston von Chios',  ru: 'Аристон Хиосский', fr: 'Ariston de Chios', es: 'Aristón de Quíos' } },
   { id: 'diogenes_b',  name: { tr: 'Babilli Diogenes',en: 'Diogenes of Babylon',de: 'Diogenes von Babylon',ru: 'Диоген Вавилонский', fr: 'Diogène de Babylone', es: 'Diógenes de Babilonia' } },
+  // Belirli bir kişiye atfedilmeyen, ortak Stoacı miras
+  { id: 'tradition',   name: { tr: 'Stoacı Gelenek',  en: 'Stoic Tradition',   de: 'Stoische Tradition', ru: 'Стоическая традиция', fr: 'Tradition stoïcienne', es: 'Tradición estoica' } },
 ];
 
 export function authorName(id: string, lang: Lang): string {
@@ -48,6 +50,10 @@ const SOURCES: Record<string, L> = {
   onDuties:       { tr: 'Görevler Üzerine', en: 'On Duties',          de: 'Über die Pflichten',   ru: 'Об обязанностях', fr: 'Des devoirs', es: 'Sobre los deberes' },
   plutarch:       { tr: 'Plutarkhos',       en: 'Plutarch',           de: 'Plutarch',             ru: 'Плутарх', fr: 'Plutarque', es: 'Plutarco' },
   ethicalElements:{ tr: 'Etik Unsurlar',    en: 'Elements of Ethics', de: 'Elemente der Ethik',   ru: 'Основы этики', fr: "Éléments d'éthique", es: 'Elementos de ética' },
+  brevity:        { tr: 'De Brevitate Vitae',en: 'On the Shortness of Life', de: 'Von der Kürze des Lebens', ru: 'О краткости жизни', fr: 'De la brièveté de la vie', es: 'Sobre la brevedad de la vida' },
+  onAnger:        { tr: 'De Ira',            en: 'On Anger',           de: 'Über den Zorn',        ru: 'О гневе', fr: 'De la colère', es: 'Sobre la ira' },
+  attributed:     { tr: 'Rivayet',           en: 'Attributed',         de: 'Überliefert',          ru: 'Приписывается', fr: 'Attribué', es: 'Atribuido' },
+  tradition:      { tr: 'Stoacı Gelenek',    en: 'Stoic Tradition',    de: 'Stoische Tradition',   ru: 'Стоическая традиция', fr: 'Tradition stoïcienne', es: 'Tradición estoica' },
 };
 
 function sourceName(id: string, lang: Lang): string {
@@ -55,7 +61,8 @@ function sourceName(id: string, lang: Lang): string {
 }
 
 // ─── Alıntılar ────────────────────────────────────────────
-interface RawQuote { id: string; authorId: string; sourceId: string; text: L; }
+// theme: gizli tema etiketi (ileride ruh haline göre filtre için; uygulamada gösterilmez)
+interface RawQuote { id: string; authorId: string; sourceId: string; text: L; theme?: string; }
 
 const QUOTES_RAW: RawQuote[] = [
   { id: '1', authorId: 'marcus', sourceId: 'meditations', text: {
@@ -321,6 +328,149 @@ const QUOTES_RAW: RawQuote[] = [
     ru: 'По природе человек создан для общности; добро другому — это добро себе.',
     fr: "Par nature, l'être humain est fait pour la communauté ; la bonté envers autrui est bonté envers soi-même.",
     es: 'Por naturaleza, el ser humano está hecho para la comunidad; la bondad hacia otro es bondad hacia uno mismo.' } },
+
+  // ─── 130 söz genişletmesi (Türkçe; diğer diller pick() ile TR'ye düşer) ───
+  // Sözler antik Stoacı kaynaklardan esinlenerek sadeleştirilmiştir.
+  // Marcus Aurelius
+  { id: '37', authorId: 'marcus', sourceId: 'meditations', theme: 'sabah', text: { tr: 'Bugün huysuzlukla karşılaşacaksın. Hazır ol — ama kırılma.' } },
+  { id: '38', authorId: 'marcus', sourceId: 'meditations', theme: 'olum', text: { tr: 'Her işi son işinmiş gibi yap. Telaşsız, savruk değil, kendinden kaçmadan.' } },
+  { id: '39', authorId: 'marcus', sourceId: 'meditations', theme: 'ic-huzur', text: { tr: 'Kendi ruhunu değiştirmek, dünyayı değiştirmekten zordur — ama tek gerçek iş budur.' } },
+  { id: '40', authorId: 'marcus', sourceId: 'meditations', theme: 'kontrol', text: { tr: 'Sana olan değil, ona nasıl baktığın acıtır. Bakışını değiştir.' } },
+  { id: '41', authorId: 'marcus', sourceId: 'meditations', theme: 'ic-huzur', text: { tr: 'Mutluluk dışarıda aranmaz. O, kendi zihninin bir kararıdır.' } },
+  { id: '42', authorId: 'marcus', sourceId: 'meditations', theme: 'sabah', text: { tr: 'Sabah kalkmak istemediğinde sor: Ben yaşamak için mi yaratıldım, yoksa örtü altında ısınmak için mi?' } },
+  { id: '43', authorId: 'marcus', sourceId: 'meditations', theme: 'ic-huzur', text: { tr: 'İnsanlar inzivaya kaçar. Oysa en sakin sığınak, kendi içindir.' } },
+  { id: '44', authorId: 'marcus', sourceId: 'meditations', theme: 'zaman', text: { tr: 'Kalan ömrünü, başkalarının ne dediğini düşünerek harcama.' } },
+  { id: '45', authorId: 'marcus', sourceId: 'meditations', theme: 'eylem', text: { tr: 'Engel, yolun kendisi olur. Önündeki taş, basamağındır.' } },
+  { id: '46', authorId: 'marcus', sourceId: 'meditations', theme: 'zaman', text: { tr: 'Geçmiş ve gelecek senin değil. Yalnızca şu an elinde.' } },
+  { id: '47', authorId: 'marcus', sourceId: 'meditations', theme: 'cesaret', text: { tr: 'Bir şey zor diye yapılamaz sanma. İnsana mümkün olan, sana da mümkündür.' } },
+  { id: '48', authorId: 'marcus', sourceId: 'meditations', theme: 'ofke', text: { tr: 'Öfkenin sana verdiği zarar, onu doğuran şeyden büyüktür.' } },
+  { id: '49', authorId: 'marcus', sourceId: 'meditations', theme: 'sadelik', text: { tr: 'Yalın yaşa. Çoğu şey gereksiz; çıkar onları, huzur kalır.' } },
+  { id: '50', authorId: 'marcus', sourceId: 'meditations', theme: 'kabul', text: { tr: 'Kimseye kin tutma. İnsanlar bilmeden hata eder — sen bilerek bağışla.' } },
+  { id: '51', authorId: 'marcus', sourceId: 'meditations', theme: 'kader', text: { tr: 'Evrenin bir parçasısın. Akışına diren, yorulursun; uy, hafifle.' } },
+  { id: '52', authorId: 'marcus', sourceId: 'meditations', theme: 'ic-huzur', text: { tr: 'Ne düşünürsen, ruhun o renge boyanır. Düşüncelerini seç.' } },
+  { id: '53', authorId: 'marcus', sourceId: 'meditations', theme: 'olum', text: { tr: 'Ölüm doğa kadar olağan. Korkma; doğan her şey döner.' } },
+  { id: '54', authorId: 'marcus', sourceId: 'meditations', theme: 'zaman', text: { tr: 'Bugünü kurtar. Yarın senin değil, belki hiç gelmeyecek.' } },
+  { id: '55', authorId: 'marcus', sourceId: 'meditations', theme: 'ofke', text: { tr: 'Başkasının kusuruna kızdığında, kendi benzer kusuruna bak.' } },
+  { id: '56', authorId: 'marcus', sourceId: 'meditations', theme: 'sukran', text: { tr: 'İyilik yap ve unut. Karşılık bekleyen, iyilik değil ticaret yapar.' } },
+  { id: '57', authorId: 'marcus', sourceId: 'meditations', theme: 'cesaret', text: { tr: 'Sınırların çoğu zihnindedir. Sınırı koyan da kaldıran da sensin.' } },
+  { id: '58', authorId: 'marcus', sourceId: 'meditations', theme: 'sukran', text: { tr: 'Sahip olduklarını, hiç yokmuş da yeni kavuşmuşsun gibi düşün.' } },
+  { id: '59', authorId: 'marcus', sourceId: 'meditations', theme: 'kontrol', text: { tr: 'Dış olaylar seni sarsamaz; onlara verdiğin yargı sarsar. Yargıyı bırak.' } },
+  { id: '60', authorId: 'marcus', sourceId: 'meditations', theme: 'disiplin', text: { tr: 'Acele etme, ama durma da. Sakin bir kararlılıkla yürü.' } },
+  { id: '61', authorId: 'marcus', sourceId: 'meditations', theme: 'eylem', text: { tr: 'Hayat kısa. Tek meyvesi: doğru bir karakter ve topluma yararlı işler.' } },
+  // Seneca (md#28 "Kayıplarını değil..." mevcut id6 ile aynı → eklenmedi)
+  { id: '62', authorId: 'seneca', sourceId: 'brevity', theme: 'zaman', text: { tr: 'Paranı kıskançlıkla korursun da zamanını herkese dağıtırsın. Oysa kıt olan zamandır.' } },
+  { id: '63', authorId: 'seneca', sourceId: 'letters', theme: 'yas', text: { tr: 'Sevdiklerin senin değil, sana emanet. Geri vermeden önce ödünç aldığını hatırla.' } },
+  { id: '64', authorId: 'seneca', sourceId: 'letters', theme: 'kaygi', text: { tr: 'Acıyı çekmeden önce çekersek, iki kez acımış oluruz.' } },
+  { id: '65', authorId: 'seneca', sourceId: 'letters', theme: 'eylem', text: { tr: 'Rüzgârın yönünü bilmeyene hiçbir liman yaramaz.' } },
+  { id: '66', authorId: 'seneca', sourceId: 'letters', theme: 'kaygi', text: { tr: 'Korktuğun şeyi incele. Çoğu zaman korku, olaydan büyüktür.' } },
+  { id: '67', authorId: 'seneca', sourceId: 'letters', theme: 'sadelik', text: { tr: 'Zenginlik, az şeyle yetinmeyi bilmektir — çok şeye sahip olmak değil.' } },
+  { id: '68', authorId: 'seneca', sourceId: 'letters', theme: 'olum', text: { tr: 'Her gün sonun olabilir gibi yaşa; ama yarın hiç gelmeyecekmiş gibi de korkma.' } },
+  { id: '69', authorId: 'seneca', sourceId: 'letters', theme: 'disiplin', text: { tr: 'Yaşamayı, yaşamı bitirene dek öğreniriz.' } },
+  { id: '70', authorId: 'seneca', sourceId: 'letters', theme: 'cesaret', text: { tr: 'Talih kiminle gideceğini bilir: cesurla yürür, korkağı sürükler.' } },
+  { id: '71', authorId: 'seneca', sourceId: 'letters', theme: 'ic-huzur', text: { tr: 'Bilge, elindekiyle zengindir. Aptal, eksiğiyle yoksul.' } },
+  { id: '72', authorId: 'seneca', sourceId: 'letters', theme: 'kabul', text: { tr: 'Hiçbir şey bizim değil; her şey ödünç. Geri istendiğinde şikâyet etme.' } },
+  { id: '73', authorId: 'seneca', sourceId: 'letters', theme: 'dostluk', text: { tr: 'Çok kişiyle değil, doğru kişiyle vakit geçir. Kalite, kalabalığı yener.' } },
+  { id: '74', authorId: 'seneca', sourceId: 'onAnger', theme: 'ofke', text: { tr: 'Öfke, kısa süreli bir deliliktir. Bir an bekle — akıl geri gelsin.' } },
+  { id: '75', authorId: 'seneca', sourceId: 'letters', theme: 'kabul', text: { tr: 'Geleceği merak etme. Onu olduğu gibi karşıla — ister tatlı, ister acı.' } },
+  { id: '76', authorId: 'seneca', sourceId: 'letters', theme: 'disiplin', text: { tr: 'En büyük güç, kendine hâkim olmaktır.' } },
+  { id: '77', authorId: 'seneca', sourceId: 'letters', theme: 'zaman', text: { tr: 'Bir gün bile, dikkatle yaşanırsa, koca bir ömre bedeldir.' } },
+  { id: '78', authorId: 'seneca', sourceId: 'brevity', theme: 'zaman', text: { tr: 'Yol uzun değil — biz oyalanıyoruz. Ömür kısa değil, biz savuruyoruz.' } },
+  { id: '79', authorId: 'seneca', sourceId: 'letters', theme: 'sadelik', text: { tr: 'Yoksulluk az şeye sahip olmak değil, çok şeye aç olmaktır.' } },
+  { id: '80', authorId: 'seneca', sourceId: 'letters', theme: 'kader', text: { tr: 'Kaderi kabul et; o seni zaten taşıyor. Diren, sadece yorulursun.' } },
+  { id: '81', authorId: 'seneca', sourceId: 'letters', theme: 'dostluk', text: { tr: 'Dostluk fayda için değildir. Fayda için sevilen, fayda bitince bırakılır.' } },
+  { id: '82', authorId: 'seneca', sourceId: 'letters', theme: 'cesaret', text: { tr: 'Her yeni başlangıç, bir önceki cesaretin meyvesidir.' } },
+  { id: '83', authorId: 'seneca', sourceId: 'letters', theme: 'olum', text: { tr: 'Ne kadar yaşadığın değil, nasıl yaşadığın önemli.' } },
+  { id: '84', authorId: 'seneca', sourceId: 'onAnger', theme: 'ofke', text: { tr: 'Kızgınken hiçbir karar verme. Dalga geçince denize bak.' } },
+  { id: '85', authorId: 'seneca', sourceId: 'letters', theme: 'sukran', text: { tr: 'Şükret — ama yokken de huzurlu kalabilecek kadar az şeye bağlan.' } },
+  // Epiktetos
+  { id: '86', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'kontrol', text: { tr: 'Bazı şeyler senin elinde, bazıları değil. Huzur, ikisini ayırdığın an başlar.' } },
+  { id: '87', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'ofke', text: { tr: 'Seni öfkelendiren olay değil, ona verdiğin anlam. Tepkiye bir an tanı.' } },
+  { id: '88', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'kaygi', text: { tr: 'İnsanı üzen şeyler değil, şeyler hakkındaki düşünceleridir.' } },
+  { id: '89', authorId: 'epictetus', sourceId: 'discourses', theme: 'ic-huzur', text: { tr: 'Hayatını değiştirmek istiyorsan, önce düşünceni değiştir.' } },
+  { id: '90', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'yas', text: { tr: "Sahip olduğun hiçbir şeyi 'kaybettim' deme; 'geri verdim' de." } },
+  { id: '91', authorId: 'epictetus', sourceId: 'discourses', theme: 'sadelik', text: { tr: 'İki kulağın, bir ağzın var. Bunu unutma.' } },
+  { id: '92', authorId: 'epictetus', sourceId: 'discourses', theme: 'ic-huzur', text: { tr: 'Özgürlük, istediğini elde etmekle değil, isteklerini terbiye etmekle gelir.' } },
+  { id: '93', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'kontrol', text: { tr: 'Kimse seni rızan olmadan incitemez. İncinmeyi de sen seçersin.' } },
+  { id: '94', authorId: 'epictetus', sourceId: 'discourses', theme: 'eylem', text: { tr: 'Önce ne olmak istediğine karar ver. Sonra yapman gerekeni yap.' } },
+  { id: '95', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'ic-huzur', text: { tr: 'Başkalarının seni kınamasına değil, kendi vicdanına bak.' } },
+  { id: '96', authorId: 'epictetus', sourceId: 'discourses', theme: 'cesaret', text: { tr: 'Felsefenin meyvesi, hiçbir koşulda sarsılmayan bir ruhtur.' } },
+  { id: '97', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'kabul', text: { tr: 'Olayların olmasını istediğin gibi değil, oldukları gibi iste. Huzur böyle gelir.' } },
+  { id: '98', authorId: 'epictetus', sourceId: 'discourses', theme: 'disiplin', text: { tr: 'Küçük şeylerde ustalaş. Büyük denge, küçük disiplinlerden doğar.' } },
+  { id: '99', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'cesaret', text: { tr: 'Hasta beden, hür bir iradeye engel değildir — sakat olan bedenin değil, seçimindir.' } },
+  { id: '100', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'sadelik', text: { tr: 'Konuşmadan önce sus. Çoğu pişmanlık, fazladan söylenen sözdür.' } },
+  { id: '101', authorId: 'epictetus', sourceId: 'discourses', theme: 'cesaret', text: { tr: 'Sınavlar olmadan güç olmaz. Zorluk, erdeminin antrenörüdür.' } },
+  { id: '102', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'kontrol', text: { tr: 'Başkasının işine karışma; kendi bahçeni ek. Yeter de artar.' } },
+  { id: '103', authorId: 'epictetus', sourceId: 'discourses', theme: 'kabul', text: { tr: 'Kaybından korkmadığın şey, gerçekten senindir.' } },
+  { id: '104', authorId: 'epictetus', sourceId: 'discourses', theme: 'disiplin', text: { tr: 'Bekle ve sus. Olgunlaşmamış meyveyi koparmak, ham bırakır.' } },
+  { id: '105', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'kabul', text: { tr: 'Sana ait olmayan için üzülme. Yağmura kızan, ıslanmaktan kurtulmaz.' } },
+  { id: '106', authorId: 'epictetus', sourceId: 'enchiridion', theme: 'eylem', text: { tr: 'İyi bir insan ol — bunu kanıtlamaya değil, olmaya çalış.' } },
+  { id: '107', authorId: 'epictetus', sourceId: 'discourses', theme: 'sabah', text: { tr: 'Her sabah kendine sor: bugün hangi kötü huyumla savaşacağım?' } },
+  // Musonius Rufus
+  { id: '108', authorId: 'musonius', sourceId: 'lectures', theme: 'disiplin', text: { tr: 'Felsefeyi bilmek değil, yaşamak gerekir. Bilgi, alışkanlığa dönünce senin olur.' } },
+  { id: '109', authorId: 'musonius', sourceId: 'lectures', theme: 'cesaret', text: { tr: 'Zor olanı seç. Kolaylık gevşetir, zorluk güçlendirir.' } },
+  { id: '110', authorId: 'musonius', sourceId: 'lectures', theme: 'olum', text: { tr: 'İyi yaşamak, çok yaşamaktan değerlidir.' } },
+  { id: '111', authorId: 'musonius', sourceId: 'lectures', theme: 'disiplin', text: { tr: 'Bedenini de terbiye et; erdem yalnız zihinde değil, alışkanlıkta yaşar.' } },
+  { id: '112', authorId: 'musonius', sourceId: 'lectures', theme: 'sadelik', text: { tr: 'Az ile yetinmeyi öğren. İhtiyacın azaldıkça özgürlüğün artar.' } },
+  { id: '113', authorId: 'musonius', sourceId: 'lectures', theme: 'cesaret', text: { tr: 'Acıya dayanmak öğrenilir. Her küçük dayanışma, seni büyütür.' } },
+  { id: '114', authorId: 'musonius', sourceId: 'lectures', theme: 'sadelik', text: { tr: 'Gerçek süs, giysi değil karakterdir.' } },
+  { id: '115', authorId: 'musonius', sourceId: 'lectures', theme: 'disiplin', text: { tr: 'Öğrenmek kolay, uygulamak zordur. Değer, zor olandadır.' } },
+  { id: '116', authorId: 'musonius', sourceId: 'lectures', theme: 'eylem', text: { tr: 'Herkese adil davran — kazanç için değil, doğru olduğu için.' } },
+  { id: '117', authorId: 'musonius', sourceId: 'lectures', theme: 'ic-huzur', text: { tr: 'Sağlıklı bir ruh, sade bir hayatta yeşerir.' } },
+  // Kleanthes
+  { id: '118', authorId: 'cleanthes', sourceId: 'hymnZeus', theme: 'kader', text: { tr: 'Kader razı olanı yürütür, direneni sürükler.' } },
+  { id: '119', authorId: 'cleanthes', sourceId: 'fragments', theme: 'kabul', text: { tr: 'Akışa uy. Evren seni zaten taşıyor — sadece bırak.' } },
+  { id: '120', authorId: 'cleanthes', sourceId: 'fragments', theme: 'cesaret', text: { tr: 'Erdem, güçlü bir ruhun değişmez duruşudur.' } },
+  { id: '121', authorId: 'cleanthes', sourceId: 'fragments', theme: 'disiplin', text: { tr: 'İyiyi seçmek alışkanlık ister. Her gün biraz daha.' } },
+  { id: '122', authorId: 'cleanthes', sourceId: 'fragments', theme: 'kabul', text: { tr: 'Düzen her yerde. Kaos sandığın şey, görmediğin uyumdur.' } },
+  // Hierokles
+  { id: '123', authorId: 'hierocles', sourceId: 'ethicalElements', theme: 'dostluk', text: { tr: 'Önce kendine, sonra yakınına, sonra herkese — şefkat halkalar halinde büyür.' } },
+  { id: '124', authorId: 'hierocles', sourceId: 'ethicalElements', theme: 'dostluk', text: { tr: 'Komşunu uzak biri gibi değil, kendinin uzantısı gibi gör.' } },
+  { id: '125', authorId: 'hierocles', sourceId: 'fragments', theme: 'dostluk', text: { tr: 'Aile, erdemin ilk okuludur. Orada öğrenemezsen, dışarıda zor.' } },
+  { id: '126', authorId: 'hierocles', sourceId: 'fragments', theme: 'kabul', text: { tr: 'İnsanlık tek beden. Birinin acısı, hepimizin acısıdır.' } },
+  { id: '127', authorId: 'hierocles', sourceId: 'fragments', theme: 'eylem', text: { tr: 'Görevini sevgiyle yap. Zorunluluk, gönülle hafifler.' } },
+  // Zenon (Kıbrıslı)
+  { id: '128', authorId: 'zeno', sourceId: 'fragments', theme: 'ic-huzur', text: { tr: 'İyi akış hâlindeki bir hayat — mutluluk budur, başka değil.' } },
+  { id: '129', authorId: 'zeno', sourceId: 'fragments', theme: 'sadelik', text: { tr: 'Doğaya uygun yaşa. Geri kalan gürültüdür.' } },
+  { id: '130', authorId: 'zeno', sourceId: 'fragments', theme: 'sadelik', text: { tr: 'Az konuş, çok dinle. Doğa bunu kulak ve dille zaten söylüyor.' } },
+  { id: '131', authorId: 'zeno', sourceId: 'fragments', theme: 'disiplin', text: { tr: 'İki kez düşün, bir kez konuş. Söz, atılan ok gibidir.' } },
+  { id: '132', authorId: 'zeno', sourceId: 'fragments', theme: 'eylem', text: { tr: 'Mutluluk, küçük adımların toplamıdır — ama küçük bir şey değildir.' } },
+  // Khrysippos
+  { id: '133', authorId: 'chrysippus', sourceId: 'fragments', theme: 'kabul', text: { tr: 'Bilge, talihin her yüzüne hazırdır — gülüşüne de, kaşına da.' } },
+  { id: '134', authorId: 'chrysippus', sourceId: 'fragments', theme: 'kontrol', text: { tr: 'Mantığını yitirme. Duygu fırtınadır; akıl, dümendir.' } },
+  { id: '135', authorId: 'chrysippus', sourceId: 'fragments', theme: 'ic-huzur', text: { tr: 'Erdem yeter. Mutluluk için fazlasına ihtiyacın yok.' } },
+  { id: '136', authorId: 'chrysippus', sourceId: 'fragments', theme: 'kader', text: { tr: 'Evrende tesadüf yok. Her şey bir nedenin çocuğu.' } },
+  // Cato (Genç) — md#102 "Doğru olanı yap..." mevcut id34 ile aynı → eklenmedi
+  { id: '137', authorId: 'cato', sourceId: 'attributed', theme: 'cesaret', text: { tr: 'Eğilmektense kırılmayı seç — ama gereksiz yere değil.' } },
+  { id: '138', authorId: 'cato', sourceId: 'attributed', theme: 'cesaret', text: { tr: 'Bir insanın değeri, baskı altında ne yaptığıyla ölçülür.' } },
+  // Posidonius
+  { id: '139', authorId: 'posidonius', sourceId: 'fragments', theme: 'kabul', text: { tr: 'Evreni anla, kendini anlarsın. İkisi aynı dokunun parçası.' } },
+  { id: '140', authorId: 'posidonius', sourceId: 'fragments', theme: 'ic-huzur', text: { tr: 'Bilgi, ruhu hastalıktan arındıran tek ilaçtır.' } },
+  { id: '141', authorId: 'posidonius', sourceId: 'fragments', theme: 'kontrol', text: { tr: 'Tutkular bedenden doğar; akılla terbiye edilir.' } },
+  // Stoacı Gelenek — genel miras
+  { id: '142', authorId: 'tradition', sourceId: 'tradition', theme: 'ic-huzur', text: { tr: 'Sakinlik bir kaçış değil, seçilmiş bir duruştur.' } },
+  { id: '143', authorId: 'tradition', sourceId: 'tradition', theme: 'kontrol', text: { tr: 'Fırtınayı durduramazsın ama yelkenini ayarlayabilirsin.' } },
+  { id: '144', authorId: 'tradition', sourceId: 'tradition', theme: 'sadelik', text: { tr: 'Az şeye ihtiyaç duyan, hür adama en yakın olandır.' } },
+  { id: '145', authorId: 'tradition', sourceId: 'tradition', theme: 'zaman', text: { tr: 'Bugün için yaşa — ama yarını da hor görme.' } },
+  { id: '146', authorId: 'tradition', sourceId: 'tradition', theme: 'kaygi', text: { tr: 'Kontrol edemediğin şeye harcadığın endişe, çalınan zamandır.' } },
+  { id: '147', authorId: 'tradition', sourceId: 'tradition', theme: 'yas', text: { tr: 'Yas, sevginin gölgesidir. Gölgeye değil, ışığa bak.' } },
+  { id: '148', authorId: 'tradition', sourceId: 'tradition', theme: 'cesaret', text: { tr: 'Cesaret korkusuzluk değil, korkuya rağmen yürümektir.' } },
+  { id: '149', authorId: 'tradition', sourceId: 'tradition', theme: 'sukran', text: { tr: 'Şükran, sahip olduğunu iki kez yaşamaktır.' } },
+  // Karma — günlük ritim & pratik
+  { id: '150', authorId: 'tradition', sourceId: 'tradition', theme: 'sabah', text: { tr: 'Sabah niyetini kur, akşam gününü tart. Arada sadece yürü.' } },
+  { id: '151', authorId: 'tradition', sourceId: 'tradition', theme: 'kontrol', text: { tr: 'Bugün kontrolünde olan tek şey: bir sonraki seçimin.' } },
+  { id: '152', authorId: 'tradition', sourceId: 'tradition', theme: 'disiplin', text: { tr: 'Acele bir karar, yavaş bir pişmanlıktır.' } },
+  { id: '153', authorId: 'tradition', sourceId: 'tradition', theme: 'kaygi', text: { tr: 'Kötü haber geldiğinde sor: bu gerçekten benim elimde mi?' } },
+  { id: '154', authorId: 'tradition', sourceId: 'tradition', theme: 'ic-huzur', text: { tr: 'Nefes al. Bu an, sahip olduğun tek gerçek.' } },
+  { id: '155', authorId: 'tradition', sourceId: 'tradition', theme: 'ic-huzur', text: { tr: 'Karşılaştırma hırsızdır — huzurunu çalar. Kendi yoluna bak.' } },
+  { id: '156', authorId: 'tradition', sourceId: 'tradition', theme: 'kabul', text: { tr: 'Bir şeyi değiştiremiyorsan, ona karşı tutumunu değiştir.' } },
+  { id: '157', authorId: 'tradition', sourceId: 'tradition', theme: 'disiplin', text: { tr: 'Akşam üç soru: Ne iyi yaptım? Nerede yanıldım? Yarın nasıl daha iyi?' } },
+  { id: '158', authorId: 'tradition', sourceId: 'tradition', theme: 'ic-huzur', text: { tr: 'Övgüye de yergiye de aynı sükûnetle bak. İkisi de geçer.' } },
+  { id: '159', authorId: 'tradition', sourceId: 'tradition', theme: 'sukran', text: { tr: 'Sahip olduğunu bir an için kaybettiğini düşün — sonra geri kazandığını. İşte şükran.' } },
+  { id: '160', authorId: 'tradition', sourceId: 'tradition', theme: 'disiplin', text: { tr: 'Mükemmel olmaya değil, biraz daha iyi olmaya çalış.' } },
+  { id: '161', authorId: 'tradition', sourceId: 'tradition', theme: 'ofke', text: { tr: 'Öfke yükseldiğinde, on say. Sayarken çoğu öfke düşer.' } },
+  { id: '162', authorId: 'tradition', sourceId: 'tradition', theme: 'zaman', text: { tr: 'Geçmişe takılma, geleceğe kaçma. Hayat tam buradadır.' } },
+  { id: '163', authorId: 'tradition', sourceId: 'tradition', theme: 'eylem', text: { tr: 'Yapabileceğinin en iyisini yap, gerisini sakince bırak.' } },
+  { id: '164', authorId: 'tradition', sourceId: 'tradition', theme: 'disiplin', text: { tr: 'Her gün küçük bir zafer: söz verdiğin şeyi yapmak.' } },
 ];
 
 export interface Quote { id: string; authorId: string; text: string; author: string; source: string; }

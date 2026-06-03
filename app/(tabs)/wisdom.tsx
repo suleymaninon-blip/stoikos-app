@@ -226,6 +226,7 @@ export default function WisdomScreen() {
             renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} />}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
+            ListFooterComponent={<Text style={styles.attribution}>{t('wisdom.attribution')}</Text>}
           />
         </>
       ) : (
@@ -324,6 +325,7 @@ const styles = StyleSheet.create({
   fCheck: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.accent },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
+  attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
   quoteCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 18,
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.10)', overflow: 'hidden',
