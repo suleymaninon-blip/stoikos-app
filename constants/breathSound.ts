@@ -1,15 +1,13 @@
-// Nefese senkron sakinleştirici ses — kodla üretilir (Web Audio), dosya/telif yok.
-// Tüm çağrılar platform kontrolü + try/catch ile sarılıdır → native'de asla çökmez.
+// Yaz patikası atmosferi — kodla üretilir (Web Audio), dosya/telif yok.
+// Gelip giden hafif esinti + selvi/yaprak hışırtısı. Nefesle çok hafif yükselip alçalır.
+// Tüm çağrılar platform kontrolü + try/catch ile sarılı → native'de asla çökmez.
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PREF_KEY = 'stoikos_breath_sound';
-const HALF = 4.5; // sn — nefes al / ver yarı döngüsü
-// Yumuşak nefes-dalgası: gürültü seviyesi ve filtre kesimi nefesle açılıp kapanır.
-const LO = 0.0;     // nefes ver dibi (neredeyse sessiz)
-const HI = 0.075;   // nefes al doruğu (hafif "şşş" dalgası)
-const CUT_LO = 180; // Hz — verirken kapalı/yumuşak
-const CUT_HI = 620; // Hz — alırken hafif açılır (havalı)
+const HALF = 4.5;      // sn — nefesle çok hafif swell
+const BR_LO = 0.085;   // nefes ver dibi
+const BR_HI = 0.135;   // nefes al doruğu
 
 const w: any = typeof globalThis !== 'undefined' ? (globalThis as any) : {};
 
@@ -22,53 +20,55 @@ export function isBreathSoundSupported(): boolean {
 }
 
 export async function getSoundPref(): Promise<boolean> {
-  try {
-    return (await AsyncStorage.getItem(PREF_KEY)) === '1';
-  } catch {
-    return false;
-  }
+  try { return (await AsyncStorage.getItem(PREF_KEY)) === '1'; } catch { return false; }
 }
-
 export async function setSoundPref(on: boolean): Promise<void> {
-  try {
-    await AsyncStorage.setItem(PREF_KEY, on ? '1' : '0');
-  } catch {}
+  try { await AsyncStorage.setItem(PREF_KEY, on ? '1' : '0'); } catch {}
 }
 
 let ctx: any = null;
 let master: any = null;
-let lp: any = null;
 let timer: any = null;
 
-// ~3 sn'lik kahverengi (brown) gürültü tamponu — yumuşak, "dalga/nefes" dokusu.
-function makeBrownNoise(c: any): any {
+// Döngülenebilir gürültü tamponu. type: 'brown' (yumuşak/derin) | 'white' (hışırtı)
+function makeNoise(c: any, type: 'brown' | 'white'): any {
   const len = Math.floor(c.sampleRate * 3);
   const buf = c.createBuffer(1, len, c.sampleRate);
   const d = buf.getChannelData(0);
-  let last = 0;
-  for (let i = 0; i < len; i++) {
-    const white = Math.random() * 2 - 1;
-    last = (last + 0.02 * white) / 1.02;
-    d[i] = last * 3.2; // seviye
+  if (type === 'brown') {
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+      const white = Math.random() * 2 - 1;
+      last = (last + 0.02 * white) / 1.02;
+      d[i] = last * 3.2;
+    }
+  } else {
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * 0.55;
   }
   return buf;
 }
 
-// Gürültü seviyesi + filtre kesimi orb ritmiyle: 4.5 sn aç (al), 4.5 sn kıs (ver).
+// LFO (alçak frekans osilatör) → bir AudioParam'a derinlikle ekle.
+function addLFO(c: any, param: any, freq: number, depth: number): void {
+  const osc = c.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  const g = c.createGain();
+  g.gain.value = depth;
+  osc.connect(g);
+  g.connect(param);
+  osc.start();
+}
+
+// Nefesle çok hafif master swell (orb ile bağ): 4.5 sn yüksel / 4.5 sn alçal.
 function scheduleBreath() {
   if (!ctx || !master) return;
   try {
     const now = ctx.currentTime;
     master.gain.cancelScheduledValues(now);
-    master.gain.setValueAtTime(Math.max(master.gain.value || 0.0001, 0.0001), now);
-    master.gain.linearRampToValueAtTime(HI, now + HALF);      // nefes al → açılır
-    master.gain.linearRampToValueAtTime(0.0001, now + HALF * 2); // nefes ver → kısılır
-    if (lp) {
-      lp.frequency.cancelScheduledValues(now);
-      lp.frequency.setValueAtTime(lp.frequency.value || CUT_LO, now);
-      lp.frequency.linearRampToValueAtTime(CUT_HI, now + HALF);
-      lp.frequency.linearRampToValueAtTime(CUT_LO, now + HALF * 2);
-    }
+    master.gain.setValueAtTime(Math.max(master.gain.value || BR_LO, 0.0001), now);
+    master.gain.linearRampToValueAtTime(BR_HI, now + HALF);
+    master.gain.linearRampToValueAtTime(BR_LO, now + HALF * 2);
   } catch {}
   timer = setTimeout(scheduleBreath, HALF * 2 * 1000);
 }
@@ -82,27 +82,49 @@ export function startBreathSound(): void {
       ctx = new AC();
       master = ctx.createGain();
       master.gain.value = 0.0001;
-
-      // Nefesle açılıp kapanan yumuşak lowpass
-      lp = ctx.createBiquadFilter();
-      lp.type = 'lowpass';
-      lp.frequency.value = CUT_LO;
-      lp.Q.value = 0.7;
-
-      // Ana doku: döngüye alınmış kahverengi gürültü ("şşş" / dalga / nefes)
-      const src = ctx.createBufferSource();
-      src.buffer = makeBrownNoise(ctx);
-      src.loop = true;
-
-      // Sıcaklık/gövde için çok hafif düşük sinüs (~62 Hz), kalıcı düşük seviye
-      const sub = ctx.createOscillator(); sub.type = 'sine'; sub.frequency.value = 62;
-      const subG = ctx.createGain(); subG.gain.value = 0.05;
-
-      src.connect(lp);
-      lp.connect(master);
-      sub.connect(subG); subG.connect(master);
       master.connect(ctx.destination);
-      src.start(); sub.start();
+
+      // ── Esinti zarfı (gelip giden rüzgâr) — iki yavaş LFO ile organik gust ──
+      const gust = ctx.createGain();
+      gust.gain.value = 0.55;
+      addLFO(ctx, gust.gain, 0.06, 0.33);   // ~16 sn periyot
+      addLFO(ctx, gust.gain, 0.097, 0.16);  // ~10 sn periyot
+      gust.connect(master);
+
+      // ── Katman 1: rüzgârın gövdesi (havalı esinti) — kahverengi gürültü + lowpass ──
+      const wind = ctx.createBufferSource();
+      wind.buffer = makeNoise(ctx, 'brown');
+      wind.loop = true;
+      const windLp = ctx.createBiquadFilter();
+      windLp.type = 'lowpass'; windLp.frequency.value = 560; windLp.Q.value = 0.4;
+      const windG = ctx.createGain(); windG.gain.value = 0.5;
+      addLFO(ctx, windLp.frequency, 0.05, 120); // esintiyle filtre hafif açılır/kapanır
+      wind.connect(windLp); windLp.connect(windG); windG.connect(gust);
+      wind.start();
+
+      // ── Katman 2: selvi/yaprak hışırtısı — beyaz gürültü + bandpass + flutter ──
+      const leaf = ctx.createBufferSource();
+      leaf.buffer = makeNoise(ctx, 'white');
+      leaf.loop = true;
+      const leafHp = ctx.createBiquadFilter();
+      leafHp.type = 'highpass'; leafHp.frequency.value = 1600;
+      const leafBp = ctx.createBiquadFilter();
+      leafBp.type = 'bandpass'; leafBp.frequency.value = 3900; leafBp.Q.value = 0.5;
+      const leafG = ctx.createGain(); leafG.gain.value = 0.14;
+      // yaprakların titreşimi — iki uyumsuz LFO ile doğal flutter
+      const flut = ctx.createGain(); flut.gain.value = 0.6;
+      addLFO(ctx, flut.gain, 5.3, 0.22);
+      addLFO(ctx, flut.gain, 8.9, 0.13);
+      addLFO(ctx, leafBp.frequency, 0.13, 700); // hışırtının tınısı yavaşça gezinir
+      leaf.connect(leafHp); leafHp.connect(leafBp); leafBp.connect(leafG);
+      leafG.connect(flut); flut.connect(gust);
+      leaf.start();
+
+      // ── Çok hafif sıcak gövde (uzaktaki derin hava) ──
+      const sub = ctx.createOscillator(); sub.type = 'sine'; sub.frequency.value = 68;
+      const subG = ctx.createGain(); subG.gain.value = 0.025;
+      sub.connect(subG); subG.connect(master);
+      sub.start();
     }
     ctx.resume?.();
     if (timer) clearTimeout(timer);
@@ -117,12 +139,11 @@ export function stopBreathSound(): void {
       const now = ctx.currentTime;
       master.gain.cancelScheduledValues(now);
       master.gain.setValueAtTime(master.gain.value, now);
-      master.gain.linearRampToValueAtTime(0, now + 0.4); // yumuşak kıs
+      master.gain.linearRampToValueAtTime(0, now + 0.6); // yumuşak kıs
     }
     const closing = ctx;
     ctx = null;
     master = null;
-    lp = null;
-    if (closing) setTimeout(() => { try { closing.close(); } catch {} }, 500);
+    if (closing) setTimeout(() => { try { closing.close(); } catch {} }, 700);
   } catch {}
 }
