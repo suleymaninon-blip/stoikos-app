@@ -53,23 +53,23 @@ async function synth(text: string, voiceId: string): Promise<Buffer> {
 }
 
 (async () => {
-  const items = getAudioItems();
-  console.log(`Toplam ${items.length} klip. Üretim başlıyor...\n`);
+  // Yalnız KAVRAM seslerini üret (key 'c...'); alıntılar atlanır.
+  // (Alıntılarda 🔊 butonu yok; ayrıca yeni alıntıların yalnız TR'si var.)
+  const onlyConcepts = process.argv.includes('--all') ? false : true;
+  const items = getAudioItems().filter((it) => (onlyConcepts ? it.key.startsWith('c') : true));
+  console.log(`${items.length} aday klip (${onlyConcepts ? 'yalnız kavramlar' : 'hepsi'}). Eksikler üretilecek...\n`);
   let made = 0;
-  const available: string[] = [];
 
   for (const it of items) {
     const file = path.join(OUT, `${it.key}.mp3`);
     if (fs.existsSync(file) && fs.statSync(file).size > 0) {
-      available.push(it.key);
-      continue;
+      continue; // zaten var, atla
     }
     const voiceId = VOICE_BY_LANG[it.lang];
     if (!voiceId) continue; // bu dil için ses tanımlı değil (fr/es)
     try {
       const buf = await synth(it.text, voiceId);
       fs.writeFileSync(file, buf);
-      available.push(it.key);
       made++;
       process.stdout.write(`✓ ${it.key}  `);
       if (made % 6 === 0) process.stdout.write('\n');
@@ -79,17 +79,15 @@ async function synth(text: string, voiceId: string): Promise<Buffer> {
     }
   }
 
-  // Manifest'i mevcut dosyalara göre üret
-  const lines = available
-    .filter((k) => fs.existsSync(path.join(OUT, `${k}.mp3`)))
-    .map((k) => `  '${k}': require('../assets/audio/${k}.mp3'),`)
-    .join('\n');
+  // Manifest'i KLASÖRDEKİ TÜM mp3'lerden kur (mevcut alıntı + kavram sesleri korunur).
+  const all = fs.readdirSync(OUT).filter((f) => f.endsWith('.mp3')).map((f) => f.replace(/\.mp3$/, '')).sort();
+  const lines = all.map((k) => `  '${k}': require('../assets/audio/${k}.mp3'),`).join('\n');
 
   const manifest =
     `// OTOMATİK ÜRETİLDİ — elle düzenleme. (npm run gen-audio)\n` +
     `export const AUDIO: Record<string, number> = {\n${lines}\n};\n`;
 
   fs.writeFileSync(path.join(ROOT, 'constants', 'audioManifest.ts'), manifest);
-  console.log(`\n\nBitti. Yeni üretilen: ${made}, toplam mevcut: ${available.length}.`);
+  console.log(`\n\nBitti. Yeni üretilen: ${made}, manifest toplam: ${all.length}.`);
   console.log('constants/audioManifest.ts güncellendi.');
 })();

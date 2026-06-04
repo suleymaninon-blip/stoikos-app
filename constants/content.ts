@@ -909,7 +909,9 @@ export function getAudioItems(): { key: string; lang: Lang; text: string }[] {
   }
   for (const c of CONCEPTS_RAW) {
     for (const lang of ALL_LANGS) {
-      items.push({ key: conceptAudioKey(c.latin, lang), lang, text: `${c.latin}. ${c.name[lang]}. ${c.desc[lang]}` });
+      // Sesi kısa/tutarlı tut: yalnız özet (ilk paragraf), uzun "daha fazla" kısmı okunmaz.
+      const summary = pick(c.desc, lang).split('\n\n')[0];
+      items.push({ key: conceptAudioKey(c.latin, lang), lang, text: `${c.latin}. ${pick(c.name, lang)}. ${summary}` });
     }
   }
   return items;
