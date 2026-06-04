@@ -45,13 +45,14 @@ export async function setHapticsPref(on: boolean): Promise<void> {
 }
 
 // Tek faz deseni (on/gap çiftleri): 'in' artar, 'out' azalır.
+// Güçlü "şişen" his için on-süreleri uzun, doruğa doğru neredeyse kesintisiz (yüksek duty).
 function phasePattern(dir: 'in' | 'out'): number[] {
-  const n = 9, slot = Math.floor(PHASE_MS / n);
+  const n = 12, slot = Math.floor(PHASE_MS / n); // ~375 ms
   const arr: number[] = [];
   for (let i = 0; i < n; i++) {
     const f = dir === 'in' ? i / (n - 1) : 1 - i / (n - 1); // 0..1 yoğunluk
-    const on = Math.round(12 + f * 180);                    // 12..192 ms
-    arr.push(on, Math.max(slot - on, 40));
+    const on = Math.round(30 + f * (slot - 46));            // 30 ms .. neredeyse tüm slot
+    arr.push(on, Math.max(slot - on, 16));
   }
   return arr;
 }
@@ -69,12 +70,12 @@ function buildLoopPattern(startDir: 'in' | 'out'): number[] {
 let timers: any[] = [];
 function clearTimers() { timers.forEach((t) => clearTimeout(t)); timers = []; }
 
-// Tek dokunuş (orba basıldığı an).
+// Tek dokunuş (orba basıldığı an) — belirgin, "yakalayan" bir vuruş.
 export function hapticTap(): void {
   if (!isHapticsSupported()) return;
   try {
-    if (webVibrateOk()) w.navigator.vibrate(18);
-    else if (Haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (webVibrateOk()) w.navigator.vibrate(45);
+    else if (Haptics) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
   } catch {}
 }
 
@@ -94,16 +95,21 @@ export function startBreathHaptics(startDir: 'in' | 'out' = 'in'): void {
 }
 
 // Yalnız NATIVE için faz darbeleri (web'de no-op — desen zaten çalıyor).
+// Doruğa doğru SIKLAŞAN ve GÜÇLENEN darbeler → kesintisiz, seni saran bir uğultu.
 export function hapticPhase(dir: 'in' | 'out'): void {
   if (Platform.OS === 'web') return;
   if (!Haptics || !Haptics.impactAsync) return;
   try {
     const S = Haptics.ImpactFeedbackStyle;
-    const seq: Array<[number, any]> = dir === 'in'
-      ? [[0, S.Light], [1400, S.Light], [2500, S.Medium], [3400, S.Medium], [4200, S.Heavy]]
-      : [[0, S.Heavy], [800, S.Medium], [1800, S.Medium], [3000, S.Light], [4100, S.Light]];
-    for (const [t, style] of seq) {
+    const DUR = 4400;
+    let t = 0;
+    while (t < DUR) {
+      const prog = t / DUR;
+      const f = dir === 'in' ? prog : 1 - prog;            // 0..1 yoğunluk
+      const style = f > 0.62 ? S.Heavy : f > 0.3 ? S.Medium : S.Light;
       timers.push(setTimeout(() => { try { Haptics.impactAsync(style); } catch {} }, t));
+      // darbe aralığı: dipte ~340ms (seyrek), doruğa doğru ~55ms (yoğun uğultu)
+      t += Math.round(340 - f * 285);
     }
   } catch {}
 }
