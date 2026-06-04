@@ -56,12 +56,13 @@ function phasePattern(dir: 'in' | 'out'): number[] {
   return arr;
 }
 
-// Çok döngülü uzun desen (web, tek dokunuşta gönderilir).
-function buildLoopPattern(): number[] {
+// Çok döngülü uzun desen (web, tek dokunuşta gönderilir). startDir: mevcut nefes fazı.
+function buildLoopPattern(startDir: 'in' | 'out'): number[] {
   const inP = phasePattern('in');
   const outP = phasePattern('out');
+  const first = startDir === 'in' ? [...inP, ...outP] : [...outP, ...inP];
   const out: number[] = [];
-  for (let c = 0; c < CYCLES; c++) out.push(...inP, ...outP);
+  for (let c = 0; c < CYCLES; c++) out.push(...first);
   return out;
 }
 
@@ -77,18 +78,18 @@ export function hapticTap(): void {
   } catch {}
 }
 
-// Egzersiz başlarken çağrılır.
+// Parmak basıldığında çağrılır. startDir: o anki nefes fazı (rezonans için).
 // Web: tüm ritmi tek desen olarak başlatır (gesture içinde olmalı).
-// Native: ilk fazın ('in') darbelerini başlatır (devamı hapticPhase ile).
-export function startBreathHaptics(): void {
+// Native: mevcut fazın darbelerini başlatır (devamı hapticPhase ile).
+export function startBreathHaptics(startDir: 'in' | 'out' = 'in'): void {
   if (!isHapticsSupported()) return;
   try {
     if (webVibrateOk()) {
       w.navigator.vibrate(0);
-      w.navigator.vibrate(buildLoopPattern());
+      w.navigator.vibrate(buildLoopPattern(startDir));
       return;
     }
-    hapticPhase('in');
+    hapticPhase(startDir);
   } catch {}
 }
 

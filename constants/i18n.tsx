@@ -63,7 +63,7 @@ const UI: Record<Lang, Dict> = {
     'breathe.inhale': 'Nefes al', 'breathe.hold': 'Tut', 'breathe.exhale': 'Ver',
     'breathe.sub': 'Kutu nefesi · 4-4-4-4', 'breathe.hint': 'Hazır olduğunda kapat',
     'breathSound.label': 'Sakinleştirici ses',
-    'home.breathTap': 'Dokun & başla', 'home.breathIn': 'Nefes al', 'home.breathOut': 'Nefes ver',
+    'home.breathTap': 'Parmağını tut & hisset', 'home.breathIn': 'Nefes al', 'home.breathOut': 'Nefes ver',
     'breathHaptic.label': 'Titreşim',
 
     'practice.title': 'Günlük Pratik', 'practice.morningSub': 'Sabah egzersizleri', 'practice.eveningSub': 'Akşam yansıması',
@@ -188,7 +188,7 @@ const UI: Record<Lang, Dict> = {
     'breathe.inhale': 'Breathe in', 'breathe.hold': 'Hold', 'breathe.exhale': 'Breathe out',
     'breathe.sub': 'Box breathing · 4-4-4-4', 'breathe.hint': 'Close when you are ready',
     'breathSound.label': 'Calming sound',
-    'home.breathTap': 'Tap to begin', 'home.breathIn': 'Breathe in', 'home.breathOut': 'Breathe out',
+    'home.breathTap': 'Hold & feel', 'home.breathIn': 'Breathe in', 'home.breathOut': 'Breathe out',
     'breathHaptic.label': 'Vibration',
 
     'practice.title': 'Daily Practice', 'practice.morningSub': 'Morning exercises', 'practice.eveningSub': 'Evening reflection',
@@ -313,7 +313,7 @@ const UI: Record<Lang, Dict> = {
     'breathe.inhale': 'Einatmen', 'breathe.hold': 'Halten', 'breathe.exhale': 'Ausatmen',
     'breathe.sub': 'Box-Atmung · 4-4-4-4', 'breathe.hint': 'Schließe, wenn du bereit bist',
     'breathSound.label': 'Beruhigender Klang',
-    'home.breathTap': 'Zum Starten tippen', 'home.breathIn': 'Einatmen', 'home.breathOut': 'Ausatmen',
+    'home.breathTap': 'Halten & fühlen', 'home.breathIn': 'Einatmen', 'home.breathOut': 'Ausatmen',
     'breathHaptic.label': 'Vibration',
 
     'practice.title': 'Tägliche Praxis', 'practice.morningSub': 'Morgenübungen', 'practice.eveningSub': 'Abendreflexion',
@@ -438,7 +438,7 @@ const UI: Record<Lang, Dict> = {
     'breathe.inhale': 'Вдох', 'breathe.hold': 'Задержка', 'breathe.exhale': 'Выдох',
     'breathe.sub': 'Дыхание по квадрату · 4-4-4-4', 'breathe.hint': 'Закрой, когда будешь готов',
     'breathSound.label': 'Успокаивающий звук',
-    'home.breathTap': 'Нажми, чтобы начать', 'home.breathIn': 'Вдох', 'home.breathOut': 'Выдох',
+    'home.breathTap': 'Удерживай и почувствуй', 'home.breathIn': 'Вдох', 'home.breathOut': 'Выдох',
     'breathHaptic.label': 'Вибрация',
 
     'practice.title': 'Ежедневная практика', 'practice.morningSub': 'Утренние упражнения', 'practice.eveningSub': 'Вечернее размышление',
@@ -563,7 +563,7 @@ const UI: Record<Lang, Dict> = {
     'breathe.inhale': 'Inspire', 'breathe.hold': 'Retiens', 'breathe.exhale': 'Expire',
     'breathe.sub': 'Respiration carrée · 4-4-4-4', 'breathe.hint': 'Ferme quand tu es prêt',
     'breathSound.label': 'Son apaisant',
-    'home.breathTap': 'Touchez pour commencer', 'home.breathIn': 'Inspire', 'home.breathOut': 'Expire',
+    'home.breathTap': 'Maintiens & ressens', 'home.breathIn': 'Inspire', 'home.breathOut': 'Expire',
     'breathHaptic.label': 'Vibration',
 
     'practice.title': 'Pratique quotidienne', 'practice.morningSub': 'Exercices du matin', 'practice.eveningSub': 'Réflexion du soir',
@@ -688,7 +688,7 @@ const UI: Record<Lang, Dict> = {
     'breathe.inhale': 'Inhala', 'breathe.hold': 'Mantén', 'breathe.exhale': 'Exhala',
     'breathe.sub': 'Respiración cuadrada · 4-4-4-4', 'breathe.hint': 'Cierra cuando estés listo',
     'breathSound.label': 'Sonido relajante',
-    'home.breathTap': 'Toca para empezar', 'home.breathIn': 'Inhala', 'home.breathOut': 'Exhala',
+    'home.breathTap': 'Mantén y siente', 'home.breathIn': 'Inhala', 'home.breathOut': 'Exhala',
     'breathHaptic.label': 'Vibración',
 
     'practice.title': 'Práctica diaria', 'practice.morningSub': 'Ejercicios de la mañana', 'practice.eveningSub': 'Reflexión de la tarde',
