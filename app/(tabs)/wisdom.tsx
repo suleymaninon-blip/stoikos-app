@@ -173,26 +173,49 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
   const BAR_W = width - 48;          // marginHorizontal 24 + 24
   const SIDE = Math.max(0, (BAR_W - ITEM_W) / 2);
 
+  // Sonsuz döngü: listeyi çoğalt; her oturmada ortadaki kopyaya dikişsiz geri merkezle.
+  const REPEATS = 9;
+  const MID = 4;
+  const data = useMemo(() => {
+    const a: { id: string; label: string }[] = [];
+    for (let c = 0; c < REPEATS; c++) for (let i = 0; i < n; i++) a.push(opts[i]);
+    return a;
+  }, [opts, n]);
+
   const idx = Math.max(0, opts.findIndex((o) => o.id === value));
   const valueRef = useRef(value); valueRef.current = value;
   const optsRef = useRef(opts); optsRef.current = opts;
+  const nRef = useRef(n); nRef.current = n;
 
-  const scrollX = useRef(new Animated.Value(idx * ITEM_W)).current;
+  const scrollX = useRef(new Animated.Value((MID * n + idx) * ITEM_W)).current;
   const ref = useRef<any>(null);
   const settle = useRef<any>(null);
   const programmatic = useRef(false);
 
-  // Dış değişimde (ana ekran kısayolu / yazar dropdown) doğru konuma kaydır
-  useEffect(() => {
+  const jump = (virtualIndex: number) => {
     programmatic.current = true;
-    ref.current?.scrollTo({ x: idx * ITEM_W, animated: true });
-    setTimeout(() => { programmatic.current = false; }, 400);
+    const x = virtualIndex * ITEM_W;
+    ref.current?.scrollTo({ x, animated: false });
+    scrollX.setValue(x);
+    setTimeout(() => { programmatic.current = false; }, 140);
+  };
+
+  // Mount + dış değişim (ana ekran kısayolu): orta kopyada ilgili moda konumlan
+  useEffect(() => {
+    jump(MID * nRef.current + idx);
   }, [idx, ITEM_W]);
 
   const applyAt = (x: number) => {
-    const i = Math.max(0, Math.min(optsRef.current.length - 1, Math.round(x / ITEM_W)));
-    const id = optsRef.current[i].id;
-    if (id !== valueRef.current) onChange(id);
+    const N = nRef.current;
+    const i = Math.round(x / ITEM_W);
+    const moodIdx = ((i % N) + N) % N;
+    const id = optsRef.current[moodIdx].id;
+    if (id !== valueRef.current) {
+      onChange(id); // useEffect orta kopyaya geri merkezler
+    } else {
+      const target = MID * N + moodIdx; // aynı mod ama kenara kaymış → dikişsiz geri al
+      if (i !== target) jump(target);
+    }
   };
 
   // Kaydırma durduğunda (her platform için güvenilir): son frame'den ~150ms sonra uygula
@@ -227,7 +250,7 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
         onScrollEndDrag={onEnd}
         contentContainerStyle={{ paddingHorizontal: SIDE }}
       >
-        {opts.map((o, i) => {
+        {data.map((o, i) => {
           const inR = [(i - 1) * ITEM_W, i * ITEM_W, (i + 1) * ITEM_W];
           const animStyle = {
             opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.2, 1, 0.2], extrapolate: 'clamp' }),
@@ -238,7 +261,7 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
             ],
           };
           return (
-            <View key={o.id} style={styles.moodItem}>
+            <View key={i} style={styles.moodItem}>
               <Animated.Text style={[styles.moodCurrent, animStyle]} numberOfLines={1}>{o.label}</Animated.Text>
             </View>
           );
