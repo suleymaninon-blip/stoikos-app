@@ -165,24 +165,32 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
     () => [{ id: 'all', label: t('wisdom.all') }, ...MOOD_THEMES.map((m) => ({ id: `mood:${m}`, label: t(`mood.${m}`) }))],
     [t]
   );
+  const n = opts.length;
   const idx = Math.max(0, opts.findIndex((o) => o.id === value));
+  const prevLabel = opts[(idx - 1 + n) % n].label;
+  const nextLabel = opts[(idx + 1) % n].label;
+
   const valueRef = useRef(value); valueRef.current = value;
   const optsRef = useRef(opts); optsRef.current = opts;
 
-  const fade = useRef(new Animated.Value(1)).current;
-  const slide = useRef(new Animated.Value(0)).current;
+  // Merkez durum: arkadan/aşağıdan büyüyerek öne gelme efekti
+  const cScale = useRef(new Animated.Value(1)).current;
+  const cY = useRef(new Animated.Value(0)).current;
+  const cOp = useRef(new Animated.Value(1)).current;
 
   const go = useCallback((dir: number) => {
     const cur = Math.max(0, optsRef.current.findIndex((o) => o.id === valueRef.current));
-    const n = (cur + dir + optsRef.current.length) % optsRef.current.length;
-    fade.setValue(0.25);
-    slide.setValue(dir * 18);
+    const next = (cur + dir + optsRef.current.length) % optsRef.current.length;
+    cScale.setValue(0.7);
+    cY.setValue(16);
+    cOp.setValue(0.2);
     Animated.parallel([
-      Animated.timing(fade, { toValue: 1, duration: 240, easing: Easing.out(Easing.ease), useNativeDriver: true }),
-      Animated.timing(slide, { toValue: 0, duration: 240, easing: Easing.out(Easing.ease), useNativeDriver: true }),
+      Animated.timing(cScale, { toValue: 1, duration: 320, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(cY, { toValue: 0, duration: 320, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(cOp, { toValue: 1, duration: 300, easing: Easing.out(Easing.ease), useNativeDriver: true }),
     ]).start();
-    onChange(optsRef.current[n].id);
-  }, [fade, slide, onChange]);
+    onChange(optsRef.current[next].id);
+  }, [cScale, cY, cOp, onChange]);
 
   const goRef = useRef(go); goRef.current = go;
   const pan = useRef(
@@ -198,9 +206,14 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
         <Text style={styles.moodArrowText}>‹</Text>
       </TouchableOpacity>
       <View style={styles.moodCenter} {...pan.panHandlers}>
-        <Animated.Text style={[styles.moodCurrent, { opacity: fade, transform: [{ translateX: slide }] }]} numberOfLines={1}>
+        <Text style={[styles.moodSideText, styles.moodSideLeft]} numberOfLines={1} pointerEvents="none">{prevLabel}</Text>
+        <Animated.Text
+          style={[styles.moodCurrent, { opacity: cOp, transform: [{ scale: cScale }, { translateY: cY }] }]}
+          numberOfLines={1}
+        >
           {opts[idx].label}
         </Animated.Text>
+        <Text style={[styles.moodSideText, styles.moodSideRight]} numberOfLines={1} pointerEvents="none">{nextLabel}</Text>
       </View>
       <TouchableOpacity style={styles.moodArrow} onPress={() => go(1)} hitSlop={12}>
         <Text style={styles.moodArrowText}>›</Text>
@@ -410,8 +423,15 @@ const styles = StyleSheet.create({
   },
   moodArrow: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   moodArrowText: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.moon, marginTop: -2 },
-  moodCenter: { flex: 1, height: 48, alignItems: 'center', justifyContent: 'center' },
-  moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 15, letterSpacing: 0.5, color: Colors.sand2 },
+  moodCenter: { flex: 1, height: 48, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 16, letterSpacing: 0.5, color: Colors.sand2 },
+  moodSideText: {
+    position: 'absolute', top: 0, bottom: 0, textAlignVertical: 'center',
+    fontFamily: Fonts.jost, fontSize: 11.5, color: 'rgba(159,176,196,0.38)',
+    maxWidth: 78, lineHeight: 48,
+  },
+  moodSideLeft: { left: 8, textAlign: 'left' },
+  moodSideRight: { right: 8, textAlign: 'right' },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
