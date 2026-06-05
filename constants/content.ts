@@ -891,7 +891,7 @@ IMPORTANT: ${langInstr[lang]} Use a warm but strong tone. The literal tag must r
 }
 
 // ─── Ses (önceden üretilen statik klipler) ────────────────
-const ALL_LANGS: Lang[] = ['tr', 'en', 'de', 'ru'];
+const ALL_LANGS: Lang[] = ['tr', 'en', 'de', 'ru', 'fr', 'es'];
 
 export function quoteAudioKey(id: string, lang: Lang): string {
   return `q${id}-${lang}`;

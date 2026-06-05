@@ -25,7 +25,8 @@ const VOICE_BY_LANG: Partial<Record<Lang, string>> = {
   en: 'DMyrgzQFny3JI1Y1paM5', // Donovan
   de: 'kaGxVtjLwllv1bi2GFag', // David (de)
   ru: 'rQOBu7YxCDxGiFdTm28w', // Artem Lebedev (ru)
-  // fr/es: ses henüz üretilmedi (canlı koç tüm dillerde çalışır)
+  fr: 'nr2EGJNe96rzn9FRlTId', // Yann - Narrator (fr)
+  es: 'k8cFOyAg7B9qwBlDDNTC', // Miguel - Deep, Rich and Cinematic (es)
 };
 
 if (!KEY) {
