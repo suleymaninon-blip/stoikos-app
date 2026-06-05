@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, FlatList,
-  StyleSheet, SafeAreaView, Animated, Modal, Pressable, PanResponder, Easing,
+  StyleSheet, SafeAreaView, Animated, Modal, Pressable, useWindowDimensions,
+  NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
@@ -160,64 +161,69 @@ function FilterDropdown({ options, value, onChange }: {
 // ─── Ruh hali seçici barı (ortada tek durum; oklar + kaydırma) ──
 const MOOD_THEMES = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
 
+// Yatay tekerlek (silindir) seçici — yalnız parmakla kaydırma; yanlar perspektifle bükülür.
 function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: string) => void; t: (k: string) => string }) {
+  const { width } = useWindowDimensions();
   const opts = useMemo(
     () => [{ id: 'all', label: t('wisdom.all') }, ...MOOD_THEMES.map((m) => ({ id: `mood:${m}`, label: t(`mood.${m}`) }))],
     [t]
   );
   const n = opts.length;
-  const idx = Math.max(0, opts.findIndex((o) => o.id === value));
-  const prevLabel = opts[(idx - 1 + n) % n].label;
-  const nextLabel = opts[(idx + 1) % n].label;
+  const ITEM_W = 132;
+  const BAR_W = width - 48;          // marginHorizontal 24 + 24
+  const SIDE = Math.max(0, (BAR_W - ITEM_W) / 2);
 
+  const idx = Math.max(0, opts.findIndex((o) => o.id === value));
   const valueRef = useRef(value); valueRef.current = value;
   const optsRef = useRef(opts); optsRef.current = opts;
 
-  // Merkez durum: arkadan/aşağıdan büyüyerek öne gelme efekti
-  const cScale = useRef(new Animated.Value(1)).current;
-  const cY = useRef(new Animated.Value(0)).current;
-  const cOp = useRef(new Animated.Value(1)).current;
+  const scrollX = useRef(new Animated.Value(idx * ITEM_W)).current;
+  const ref = useRef<any>(null);
 
-  const go = useCallback((dir: number) => {
-    const cur = Math.max(0, optsRef.current.findIndex((o) => o.id === valueRef.current));
-    const next = (cur + dir + optsRef.current.length) % optsRef.current.length;
-    cScale.setValue(0.7);
-    cY.setValue(16);
-    cOp.setValue(0.2);
-    Animated.parallel([
-      Animated.timing(cScale, { toValue: 1, duration: 320, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      Animated.timing(cY, { toValue: 0, duration: 320, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
-      Animated.timing(cOp, { toValue: 1, duration: 300, easing: Easing.out(Easing.ease), useNativeDriver: true }),
-    ]).start();
-    onChange(optsRef.current[next].id);
-  }, [cScale, cY, cOp, onChange]);
+  // Dış değişimde (ana ekran kısayolu / yazar dropdown) doğru konuma kaydır
+  useEffect(() => {
+    ref.current?.scrollTo({ x: idx * ITEM_W, animated: true });
+  }, [idx, ITEM_W]);
 
-  const goRef = useRef(go); goRef.current = go;
-  const pan = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 12 && Math.abs(g.dx) > Math.abs(g.dy),
-      onPanResponderRelease: (_e, g) => { if (g.dx > 40) goRef.current(-1); else if (g.dx < -40) goRef.current(1); },
-    })
-  ).current;
+  const onScroll = Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: false });
+  const onEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const i = Math.max(0, Math.min(n - 1, Math.round(e.nativeEvent.contentOffset.x / ITEM_W)));
+    const id = optsRef.current[i].id;
+    if (id !== valueRef.current) onChange(id);
+  };
 
   return (
-    <View style={styles.moodBar}>
-      <TouchableOpacity style={styles.moodArrow} onPress={() => go(-1)} hitSlop={12}>
-        <Text style={styles.moodArrowText}>‹</Text>
-      </TouchableOpacity>
-      <View style={styles.moodCenter} {...pan.panHandlers}>
-        <Text style={[styles.moodSideText, styles.moodSideLeft]} numberOfLines={1} pointerEvents="none">{prevLabel}</Text>
-        <Animated.Text
-          style={[styles.moodCurrent, { opacity: cOp, transform: [{ scale: cScale }, { translateY: cY }] }]}
-          numberOfLines={1}
-        >
-          {opts[idx].label}
-        </Animated.Text>
-        <Text style={[styles.moodSideText, styles.moodSideRight]} numberOfLines={1} pointerEvents="none">{nextLabel}</Text>
-      </View>
-      <TouchableOpacity style={styles.moodArrow} onPress={() => go(1)} hitSlop={12}>
-        <Text style={styles.moodArrowText}>›</Text>
-      </TouchableOpacity>
+    <View style={[styles.moodBar, { width: BAR_W }]}>
+      <Animated.ScrollView
+        ref={ref}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={ITEM_W}
+        disableIntervalMomentum
+        decelerationRate="fast"
+        scrollEventThrottle={16}
+        onScroll={onScroll}
+        onMomentumScrollEnd={onEnd}
+        onScrollEndDrag={onEnd}
+        contentContainerStyle={{ paddingHorizontal: SIDE }}
+      >
+        {opts.map((o, i) => {
+          const inR = [(i - 1) * ITEM_W, i * ITEM_W, (i + 1) * ITEM_W];
+          const animStyle = {
+            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.2, 1, 0.2], extrapolate: 'clamp' }),
+            transform: [
+              { perspective: 700 },
+              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['52deg', '0deg', '-52deg'], extrapolate: 'clamp' }) },
+              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.62, 1, 0.62], extrapolate: 'clamp' }) },
+            ],
+          };
+          return (
+            <View key={o.id} style={styles.moodItem}>
+              <Animated.Text style={[styles.moodCurrent, animStyle]} numberOfLines={1}>{o.label}</Animated.Text>
+            </View>
+          );
+        })}
+      </Animated.ScrollView>
     </View>
   );
 }
@@ -417,21 +423,12 @@ const styles = StyleSheet.create({
   // Ruh hali (mood) seçici barı
   moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
   moodBar: {
-    flexDirection: 'row', alignItems: 'center', marginHorizontal: 24, marginBottom: 14,
+    alignSelf: 'center', marginBottom: 14,
     backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
-    height: 48, overflow: 'hidden',
+    height: 52, overflow: 'hidden',
   },
-  moodArrow: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
-  moodArrowText: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.moon, marginTop: -2 },
-  moodCenter: { flex: 1, height: 48, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  moodItem: { width: 132, height: 52, alignItems: 'center', justifyContent: 'center' },
   moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 16, letterSpacing: 0.5, color: Colors.sand2 },
-  moodSideText: {
-    position: 'absolute', top: 0, bottom: 0, textAlignVertical: 'center',
-    fontFamily: Fonts.jost, fontSize: 11.5, color: 'rgba(159,176,196,0.38)',
-    maxWidth: 78, lineHeight: 48,
-  },
-  moodSideLeft: { left: 8, textAlign: 'left' },
-  moodSideRight: { right: 8, textAlign: 'right' },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
