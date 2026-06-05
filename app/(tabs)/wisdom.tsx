@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, FlatList,
-  StyleSheet, SafeAreaView, Animated, Modal, Pressable,
+  StyleSheet, SafeAreaView, Animated, Modal, Pressable, PanResponder, Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
@@ -157,6 +157,58 @@ function FilterDropdown({ options, value, onChange }: {
   );
 }
 
+// ─── Ruh hali seçici barı (ortada tek durum; oklar + kaydırma) ──
+const MOOD_THEMES = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
+
+function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: string) => void; t: (k: string) => string }) {
+  const opts = useMemo(
+    () => [{ id: 'all', label: t('wisdom.all') }, ...MOOD_THEMES.map((m) => ({ id: `mood:${m}`, label: t(`mood.${m}`) }))],
+    [t]
+  );
+  const idx = Math.max(0, opts.findIndex((o) => o.id === value));
+  const valueRef = useRef(value); valueRef.current = value;
+  const optsRef = useRef(opts); optsRef.current = opts;
+
+  const fade = useRef(new Animated.Value(1)).current;
+  const slide = useRef(new Animated.Value(0)).current;
+
+  const go = useCallback((dir: number) => {
+    const cur = Math.max(0, optsRef.current.findIndex((o) => o.id === valueRef.current));
+    const n = (cur + dir + optsRef.current.length) % optsRef.current.length;
+    fade.setValue(0.25);
+    slide.setValue(dir * 18);
+    Animated.parallel([
+      Animated.timing(fade, { toValue: 1, duration: 240, easing: Easing.out(Easing.ease), useNativeDriver: true }),
+      Animated.timing(slide, { toValue: 0, duration: 240, easing: Easing.out(Easing.ease), useNativeDriver: true }),
+    ]).start();
+    onChange(optsRef.current[n].id);
+  }, [fade, slide, onChange]);
+
+  const goRef = useRef(go); goRef.current = go;
+  const pan = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_e, g) => Math.abs(g.dx) > 12 && Math.abs(g.dx) > Math.abs(g.dy),
+      onPanResponderRelease: (_e, g) => { if (g.dx > 40) goRef.current(-1); else if (g.dx < -40) goRef.current(1); },
+    })
+  ).current;
+
+  return (
+    <View style={styles.moodBar}>
+      <TouchableOpacity style={styles.moodArrow} onPress={() => go(-1)} hitSlop={12}>
+        <Text style={styles.moodArrowText}>‹</Text>
+      </TouchableOpacity>
+      <View style={styles.moodCenter} {...pan.panHandlers}>
+        <Animated.Text style={[styles.moodCurrent, { opacity: fade, transform: [{ translateX: slide }] }]} numberOfLines={1}>
+          {opts[idx].label}
+        </Animated.Text>
+      </View>
+      <TouchableOpacity style={styles.moodArrow} onPress={() => go(1)} hitSlop={12}>
+        <Text style={styles.moodArrowText}>›</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 // ─── Main ──────────────────────────────────────────────────
 export default function WisdomScreen() {
   const { t, lang } = useLang();
@@ -204,9 +256,6 @@ export default function WisdomScreen() {
     ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] ?? a.name.en ?? a.id, count: quotes.filter((q) => q.authorId === a.id).length, heart: false })),
   ];
 
-  // Ruh hali (tema) filtreleri — alıntılardaki theme etiketine göre
-  const MOODS = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
-
   const filteredQuotes =
     filter === 'all' ? quotes :
     filter === 'fav' ? quotes.filter((q) => favorites.includes(q.id)) :
@@ -243,23 +292,9 @@ export default function WisdomScreen() {
           {/* Filtre paneli (açılır) */}
           <FilterDropdown options={filterOptions} value={filter} onChange={setFilter} />
 
-          {/* Ruh haline göre filtre */}
+          {/* Ruh haline göre filtre — ortada tek durum, oklar + kaydırma */}
           <Text style={styles.moodTitle}>{t('mood.title')}</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moodScroll} contentContainerStyle={styles.moodContent}>
-            {MOODS.map((m) => {
-              const active = filter === `mood:${m}`;
-              return (
-                <TouchableOpacity
-                  key={m}
-                  style={[styles.moodChip, active && styles.moodChipActive]}
-                  onPress={() => setFilter(active ? 'all' : `mood:${m}`)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.moodChipText, active && styles.moodChipTextActive]}>{t(`mood.${m}`)}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+          <MoodSelector value={filter} onChange={setFilter} t={t} />
 
           <FlatList
             data={filteredQuotes}
@@ -366,17 +401,17 @@ const styles = StyleSheet.create({
   fRowCountActive: { color: Colors.sand2 },
   fCheck: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.accent },
 
-  // Ruh hali (mood) filtresi
+  // Ruh hali (mood) seçici barı
   moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
-  moodScroll: { height: 46, flexGrow: 0, flexShrink: 0, marginBottom: 12 },
-  moodContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
-  moodChip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 18,
-    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  moodBar: {
+    flexDirection: 'row', alignItems: 'center', marginHorizontal: 24, marginBottom: 14,
+    backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
+    height: 48, overflow: 'hidden',
   },
-  moodChipActive: { backgroundColor: 'rgba(159,176,196,0.14)', borderColor: 'rgba(159,176,196,0.4)' },
-  moodChipText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
-  moodChipTextActive: { color: Colors.moon },
+  moodArrow: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  moodArrowText: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.moon, marginTop: -2 },
+  moodCenter: { flex: 1, height: 48, alignItems: 'center', justifyContent: 'center' },
+  moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 15, letterSpacing: 0.5, color: Colors.sand2 },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
