@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
+import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
 import { getQuotes, getConcepts, AUTHORS, Quote, Concept, conceptAudioKey } from '../../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
@@ -170,6 +171,13 @@ export default function WisdomScreen() {
   const concepts = getConcepts(lang);
 
   useEffect(() => { getFavorites().then(setFavorites); }, []);
+
+  // Ana ekrandaki "Nasıl hissediyorsun?" kısayolundan gelen ruh hali
+  const params = useLocalSearchParams<{ mood?: string }>();
+  useEffect(() => {
+    const m = Array.isArray(params.mood) ? params.mood[0] : params.mood;
+    if (m) { setTab('quotes'); setFilter(`mood:${m}`); }
+  }, [params.mood]);
 
   async function onFav(id: string) {
     setFavorites(await toggleFavorite(id));

@@ -21,6 +21,7 @@ import { FEATURES } from '../../constants/config';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
+const MOODS = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
 
 // ── Dikey modül satırı (yan yana rekabet eden kart yok) ──
 function ModuleRow({ icon, name, desc, onPress }: { icon: string; name: string; desc: string; onPress: () => void }) {
@@ -100,6 +101,23 @@ export default function HomeScreen() {
           {/* Günün alıntısı */}
           <QuoteCard quote={quote} />
 
+          {/* Nasıl hissediyorsun? — ruh haline göre kısayol */}
+          <View style={styles.moodCard}>
+            <Text style={styles.moodCardTitle}>{t('mood.title')}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moodScroll} contentContainerStyle={styles.moodContent}>
+              {MOODS.map((m) => (
+                <TouchableOpacity
+                  key={m}
+                  style={styles.moodChip}
+                  onPress={() => router.push(`/wisdom?mood=${m}`)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.moodChipText}>{t(`mood.${m}`)}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
           {/* BUGÜN — dikey modül listesi */}
           <Text style={styles.sectionLabel}>{t('home.today')}</Text>
           <View style={styles.list}>
@@ -153,6 +171,20 @@ const styles = StyleSheet.create({
   greetingText: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 38 },
 
   sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16, marginTop: 6 },
+
+  // Nasıl hissediyorsun? kartı
+  moodCard: {
+    backgroundColor: Colors.stone2, borderRadius: 20, paddingTop: 16, paddingBottom: 14, marginBottom: 24,
+    borderWidth: 1, borderColor: 'rgba(159,176,196,0.14)',
+  },
+  moodCardTitle: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: Colors.moon, paddingHorizontal: 18, marginBottom: 12, textTransform: 'uppercase' },
+  moodScroll: { height: 42, flexGrow: 0 },
+  moodContent: { paddingHorizontal: 18, gap: 8, alignItems: 'center' },
+  moodChip: {
+    paddingHorizontal: 15, paddingVertical: 8, borderRadius: 18,
+    backgroundColor: 'rgba(159,176,196,0.10)', borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
+  },
+  moodChipText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2 },
 
   list: { gap: 12, marginBottom: 32 },
   row: {
