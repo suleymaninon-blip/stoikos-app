@@ -179,17 +179,37 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
 
   const scrollX = useRef(new Animated.Value(idx * ITEM_W)).current;
   const ref = useRef<any>(null);
+  const settle = useRef<any>(null);
+  const programmatic = useRef(false);
 
   // Dış değişimde (ana ekran kısayolu / yazar dropdown) doğru konuma kaydır
   useEffect(() => {
+    programmatic.current = true;
     ref.current?.scrollTo({ x: idx * ITEM_W, animated: true });
+    setTimeout(() => { programmatic.current = false; }, 400);
   }, [idx, ITEM_W]);
 
-  const onScroll = Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: false });
-  const onEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const i = Math.max(0, Math.min(n - 1, Math.round(e.nativeEvent.contentOffset.x / ITEM_W)));
+  const applyAt = (x: number) => {
+    const i = Math.max(0, Math.min(optsRef.current.length - 1, Math.round(x / ITEM_W)));
     const id = optsRef.current[i].id;
     if (id !== valueRef.current) onChange(id);
+  };
+
+  // Kaydırma durduğunda (her platform için güvenilir): son frame'den ~150ms sonra uygula
+  const onScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+    {
+      useNativeDriver: false,
+      listener: (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const x = e.nativeEvent.contentOffset.x;
+        if (settle.current) clearTimeout(settle.current);
+        settle.current = setTimeout(() => { if (!programmatic.current) applyAt(x); }, 150);
+      },
+    }
+  );
+  const onEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (settle.current) clearTimeout(settle.current);
+    if (!programmatic.current) applyAt(e.nativeEvent.contentOffset.x);
   };
 
   return (
