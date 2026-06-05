@@ -68,6 +68,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p1t': 'Günlük Pratik', 'onb.p1d': 'Sabah niyet, akşam yansıma — kısa Stoacı egzersizlerle dengeni kur.',
     'onb.p2t': 'Stoacı Koç', 'onb.p2d': 'İçinden geçeni yaz; yargılamadan, Stoacı bilgelikle yön bul.',
     'onb.p3t': 'Bilgelik & Nefes', 'onb.p3d': '164 alıntı, 12 kavram ve nefes orbuyla bir an dur, sakinleş.',
+    'onb.p4t': 'Nazik hatırlatıcılar', 'onb.remind': 'Hatırlatıcıları aç', 'onb.remindOn': '✓ Açık',
     'home.breathTap': 'Parmağını tut & hisset', 'home.breathIn': 'Nefes al', 'home.breathOut': 'Nefes ver',
     'breathHaptic.label': 'Titreşim',
 
@@ -198,6 +199,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p1t': 'Daily Practice', 'onb.p1d': 'Morning intention, evening reflection — find balance with short Stoic exercises.',
     'onb.p2t': 'Stoic Coach', 'onb.p2d': 'Write what is on your mind; find direction with Stoic wisdom, without judgment.',
     'onb.p3t': 'Wisdom & Breath', 'onb.p3d': '164 quotes, 12 concepts and a breathing orb — pause a moment, settle.',
+    'onb.p4t': 'Gentle reminders', 'onb.remind': 'Turn on reminders', 'onb.remindOn': '✓ On',
     'home.breathTap': 'Hold & feel', 'home.breathIn': 'Breathe in', 'home.breathOut': 'Breathe out',
     'breathHaptic.label': 'Vibration',
 
@@ -328,6 +330,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p1t': 'Tägliche Praxis', 'onb.p1d': 'Morgenvorsatz, Abendreflexion — finde Balance mit kurzen stoischen Übungen.',
     'onb.p2t': 'Stoischer Coach', 'onb.p2d': 'Schreib, was dich bewegt; finde Richtung mit stoischer Weisheit, ohne Urteil.',
     'onb.p3t': 'Weisheit & Atem', 'onb.p3d': '164 Zitate, 12 Begriffe und ein Atem-Orb — halte inne, komm zur Ruhe.',
+    'onb.p4t': 'Sanfte Erinnerungen', 'onb.remind': 'Erinnerungen aktivieren', 'onb.remindOn': '✓ An',
     'home.breathTap': 'Halten & fühlen', 'home.breathIn': 'Einatmen', 'home.breathOut': 'Ausatmen',
     'breathHaptic.label': 'Vibration',
 
@@ -458,6 +461,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p1t': 'Ежедневная практика', 'onb.p1d': 'Утренний настрой, вечерняя рефлексия — обрети равновесие короткими практиками.',
     'onb.p2t': 'Стоический коуч', 'onb.p2d': 'Напиши, что на душе; найди направление со стоической мудростью, без осуждения.',
     'onb.p3t': 'Мудрость и дыхание', 'onb.p3d': '164 цитаты, 12 понятий и дышащий круг — остановись на миг, успокойся.',
+    'onb.p4t': 'Мягкие напоминания', 'onb.remind': 'Включить напоминания', 'onb.remindOn': '✓ Вкл',
     'home.breathTap': 'Удерживай и почувствуй', 'home.breathIn': 'Вдох', 'home.breathOut': 'Выдох',
     'breathHaptic.label': 'Вибрация',
 
@@ -588,6 +592,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p1t': 'Pratique quotidienne', 'onb.p1d': "Intention du matin, réflexion du soir — trouve l'équilibre avec de courts exercices stoïciens.",
     'onb.p2t': 'Coach stoïcien', 'onb.p2d': 'Écris ce qui te traverse ; trouve une direction avec la sagesse stoïcienne, sans jugement.',
     'onb.p3t': 'Sagesse & Souffle', 'onb.p3d': '164 citations, 12 concepts et un orbe de respiration — fais une pause, apaise-toi.',
+    'onb.p4t': 'Rappels en douceur', 'onb.remind': 'Activer les rappels', 'onb.remindOn': '✓ Activé',
     'home.breathTap': 'Maintiens & ressens', 'home.breathIn': 'Inspire', 'home.breathOut': 'Expire',
     'breathHaptic.label': 'Vibration',
 
@@ -718,6 +723,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p1t': 'Práctica diaria', 'onb.p1d': 'Intención matutina, reflexión nocturna — encuentra equilibrio con breves ejercicios estoicos.',
     'onb.p2t': 'Coach estoico', 'onb.p2d': 'Escribe lo que sientes; halla dirección con sabiduría estoica, sin juicio.',
     'onb.p3t': 'Sabiduría y Respiración', 'onb.p3d': '164 citas, 12 conceptos y un orbe de respiración — detente un momento, serénate.',
+    'onb.p4t': 'Recordatorios suaves', 'onb.remind': 'Activar recordatorios', 'onb.remindOn': '✓ Activado',
     'home.breathTap': 'Mantén y siente', 'home.breathIn': 'Inhala', 'home.breathOut': 'Exhala',
     'breathHaptic.label': 'Vibración',
 
