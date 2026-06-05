@@ -88,6 +88,25 @@ export default function HomeScreen() {
             <Text style={styles.greetingText}>{greeting}</Text>
           </View>
 
+          {/* Nasıl hissediyorsun? — ince çip şeridi (ruh haline göre kısayol) */}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.moodStrip}
+            contentContainerStyle={styles.moodStripContent}
+          >
+            {MOODS.map((m) => (
+              <TouchableOpacity
+                key={m}
+                style={styles.moodChip}
+                onPress={() => router.push(`/wisdom?mood=${m}`)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.moodChipText}>{t(`mood.${m}`)}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
           {/* Nefes orbu — dokununca YERİNDE egzersiz başlar (yeni ekran açmaz) */}
           <BreathOrb
             idleTitle={t('home.breathTitle')}
@@ -100,23 +119,6 @@ export default function HomeScreen() {
 
           {/* Günün alıntısı */}
           <QuoteCard quote={quote} />
-
-          {/* Nasıl hissediyorsun? — ruh haline göre kısayol */}
-          <View style={styles.moodCard}>
-            <Text style={styles.moodCardTitle}>{t('mood.title')}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moodScroll} contentContainerStyle={styles.moodContent}>
-              {MOODS.map((m) => (
-                <TouchableOpacity
-                  key={m}
-                  style={styles.moodChip}
-                  onPress={() => router.push(`/wisdom?mood=${m}`)}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.moodChipText}>{t(`mood.${m}`)}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
 
           {/* BUGÜN — dikey modül listesi */}
           <Text style={styles.sectionLabel}>{t('home.today')}</Text>
@@ -172,17 +174,12 @@ const styles = StyleSheet.create({
 
   sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16, marginTop: 6 },
 
-  // Nasıl hissediyorsun? kartı
-  moodCard: {
-    backgroundColor: Colors.stone2, borderRadius: 20, paddingTop: 16, paddingBottom: 14, marginBottom: 24,
-    borderWidth: 1, borderColor: 'rgba(159,176,196,0.14)',
-  },
-  moodCardTitle: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: Colors.moon, paddingHorizontal: 18, marginBottom: 12, textTransform: 'uppercase' },
-  moodScroll: { height: 42, flexGrow: 0 },
-  moodContent: { paddingHorizontal: 18, gap: 8, alignItems: 'center' },
+  // Nasıl hissediyorsun? — ince çip şeridi (kartsız)
+  moodStrip: { height: 40, flexGrow: 0, marginTop: -8, marginBottom: 22, marginHorizontal: -24 },
+  moodStripContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
   moodChip: {
-    paddingHorizontal: 15, paddingVertical: 8, borderRadius: 18,
-    backgroundColor: 'rgba(159,176,196,0.10)', borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
+    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 16,
+    backgroundColor: 'rgba(159,176,196,0.08)', borderWidth: 1, borderColor: 'rgba(159,176,196,0.20)',
   },
   moodChipText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2 },
 
