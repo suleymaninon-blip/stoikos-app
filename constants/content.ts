@@ -473,7 +473,7 @@ const QUOTES_RAW: RawQuote[] = [
   { id: '164', authorId: 'tradition', sourceId: 'tradition', theme: 'disiplin', text: { tr: 'Her gün küçük bir zafer: söz verdiğin şeyi yapmak.' } },
 ];
 
-export interface Quote { id: string; authorId: string; text: string; author: string; source: string; }
+export interface Quote { id: string; authorId: string; text: string; author: string; source: string; theme?: string; }
 
 export function getQuotes(lang: Lang): Quote[] {
   return QUOTES_RAW.map((q) => ({
@@ -482,6 +482,7 @@ export function getQuotes(lang: Lang): Quote[] {
     text: pick(q.text, lang),
     author: authorName(q.authorId, lang),
     source: sourceName(q.sourceId, lang),
+    theme: q.theme,
   }));
 }
 

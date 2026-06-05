@@ -196,9 +196,13 @@ export default function WisdomScreen() {
     ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] ?? a.name.en ?? a.id, count: quotes.filter((q) => q.authorId === a.id).length, heart: false })),
   ];
 
+  // Ruh hali (tema) filtreleri — alıntılardaki theme etiketine göre
+  const MOODS = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
+
   const filteredQuotes =
     filter === 'all' ? quotes :
     filter === 'fav' ? quotes.filter((q) => favorites.includes(q.id)) :
+    filter.startsWith('mood:') ? quotes.filter((q) => q.theme === filter.slice(5)) :
     quotes.filter((q) => q.authorId === filter);
 
   return (
@@ -230,6 +234,25 @@ export default function WisdomScreen() {
         <>
           {/* Filtre paneli (açılır) */}
           <FilterDropdown options={filterOptions} value={filter} onChange={setFilter} />
+
+          {/* Ruh haline göre filtre */}
+          <Text style={styles.moodTitle}>{t('mood.title')}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moodScroll} contentContainerStyle={styles.moodContent}>
+            {MOODS.map((m) => {
+              const active = filter === `mood:${m}`;
+              return (
+                <TouchableOpacity
+                  key={m}
+                  style={[styles.moodChip, active && styles.moodChipActive]}
+                  onPress={() => setFilter(active ? 'all' : `mood:${m}`)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.moodChipText, active && styles.moodChipTextActive]}>{t(`mood.${m}`)}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
@@ -334,6 +357,18 @@ const styles = StyleSheet.create({
   fRowCount: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   fRowCountActive: { color: Colors.sand2 },
   fCheck: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.accent },
+
+  // Ruh hali (mood) filtresi
+  moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
+  moodScroll: { height: 46, flexGrow: 0, flexShrink: 0, marginBottom: 12 },
+  moodContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
+  moodChip: {
+    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 18,
+    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  },
+  moodChipActive: { backgroundColor: 'rgba(159,176,196,0.14)', borderColor: 'rgba(159,176,196,0.4)' },
+  moodChipText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
+  moodChipTextActive: { color: Colors.moon },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
