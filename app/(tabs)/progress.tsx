@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, TextInput,
-  StyleSheet, SafeAreaView, Animated, Alert, ActivityIndicator, Linking,
+  StyleSheet, SafeAreaView, Animated, Alert, ActivityIndicator, Linking, Share, Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
@@ -11,6 +12,9 @@ import { getExerciseNames } from '../../constants/content';
 import { router } from 'expo-router';
 import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../../constants/api';
+import { APP_INFO } from '../../constants/config';
+
+const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -198,6 +202,24 @@ export default function ProgressScreen() {
     );
   }
 
+  async function shareApp() {
+    try { await Share.share({ message: `${t('about.shareMsg')} ${APP_INFO.shareUrl}` }); } catch {}
+  }
+
+  function rateApp() {
+    const store = Platform.OS === 'ios' ? APP_INFO.storeUrl.ios : APP_INFO.storeUrl.android;
+    Linking.openURL(store || APP_INFO.shareUrl).catch(() => {});
+  }
+
+  function contactSupport() {
+    const url = `mailto:${APP_INFO.supportEmail}?subject=${encodeURIComponent(t('about.supportSubject'))}`;
+    Linking.openURL(url).catch(() => Alert.alert(t('about.support'), APP_INFO.supportEmail));
+  }
+
+  function showAbout() {
+    Alert.alert('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -267,6 +289,29 @@ export default function ProgressScreen() {
           <TouchableOpacity style={styles.resetBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
             <Text style={styles.resetText}>{t('memory.resetBtn')}</Text>
           </TouchableOpacity>
+
+          {/* Destek & Hakkında */}
+          <Text style={styles.aboutSection}>{t('about.section')}</Text>
+          <View style={styles.aboutCard}>
+            {[
+              { icon: '↗', label: t('about.share'), onPress: shareApp },
+              { icon: '★', label: t('about.rate'), onPress: rateApp },
+              { icon: '✉', label: t('about.support'), onPress: contactSupport },
+              { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
+            ].map((r, i) => (
+              <TouchableOpacity
+                key={r.label}
+                style={[styles.aboutRow, i < 3 && styles.aboutRowBorder]}
+                onPress={r.onPress}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.aboutIcon}>{r.icon}</Text>
+                <Text style={styles.aboutLabel}>{r.label}</Text>
+                <Text style={styles.aboutArrow}>›</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Text style={styles.versionText}>{t('about.version')} {APP_VERSION}</Text>
 
           {/* Yönetici — onay kuyruğu (yalnızca sahibi) */}
           <View style={styles.adminWrap}>
@@ -385,6 +430,16 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
   resetText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted, letterSpacing: 0.3 },
+
+  // Destek & Hakkında
+  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
+  aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', overflow: 'hidden' },
+  aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
+  aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
+  aboutIcon: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand, width: 22, textAlign: 'center' },
+  aboutLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
+  aboutArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.stone4 },
+  versionText: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 12 },
   adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   adminTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.text2, marginBottom: 4 },
   adminHint: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.muted, lineHeight: 15, marginBottom: 10 },
