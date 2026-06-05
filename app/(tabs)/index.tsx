@@ -21,7 +21,6 @@ import { FEATURES } from '../../constants/config';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
-const MOODS = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
 
 // ── Dikey modül satırı (yan yana rekabet eden kart yok) ──
 function ModuleRow({ icon, name, desc, onPress }: { icon: string; name: string; desc: string; onPress: () => void }) {
@@ -88,25 +87,6 @@ export default function HomeScreen() {
             <Text style={styles.greetingText}>{greeting}</Text>
           </View>
 
-          {/* Nasıl hissediyorsun? — ince çip şeridi (ruh haline göre kısayol) */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.moodStrip}
-            contentContainerStyle={styles.moodStripContent}
-          >
-            {MOODS.map((m) => (
-              <TouchableOpacity
-                key={m}
-                style={styles.moodChip}
-                onPress={() => router.push(`/wisdom?mood=${m}`)}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.moodChipText}>{t(`mood.${m}`)}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
           {/* Nefes orbu — dokununca YERİNDE egzersiz başlar (yeni ekran açmaz) */}
           <BreathOrb
             idleTitle={t('home.breathTitle')}
@@ -126,6 +106,7 @@ export default function HomeScreen() {
             <ModuleRow icon="☀" name={t('home.mod.practice.name')} desc={t('home.mod.practice.desc')} onPress={() => router.push('/practice')} />
             <ModuleRow icon="◎" name={t('home.mod.coach.name')} desc={t('home.mod.coach.desc')} onPress={() => router.push('/coach')} />
             <ModuleRow icon="◈" name={t('home.mod.wisdom.name')} desc={t('home.mod.wisdom.desc')} onPress={() => router.push('/wisdom')} />
+            <ModuleRow icon="♥" name={t('mood.title')} desc={t('mood.rowDesc')} onPress={() => router.push('/wisdom')} />
             <ModuleRow icon="❖" name={t('programs.cardName')} desc={t('programs.cardDesc')} onPress={() => router.push('/programs')} />
             {FEATURES.meydanOkuma && (
               <ModuleRow icon="✦" name={t('ch.cardName')} desc={t('ch.cardDesc')} onPress={() => router.push('/challenge')} />
@@ -174,14 +155,6 @@ const styles = StyleSheet.create({
 
   sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16, marginTop: 6 },
 
-  // Nasıl hissediyorsun? — ince çip şeridi (kartsız)
-  moodStrip: { height: 40, flexGrow: 0, marginTop: -8, marginBottom: 22, marginHorizontal: -24 },
-  moodStripContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
-  moodChip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 16,
-    backgroundColor: 'rgba(159,176,196,0.08)', borderWidth: 1, borderColor: 'rgba(159,176,196,0.20)',
-  },
-  moodChipText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2 },
 
   list: { gap: 12, marginBottom: 32 },
   row: {
