@@ -227,7 +227,8 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
 export default function WisdomScreen() {
   const { t, lang } = useLang();
   const [tab, setTab] = useState<'quotes' | 'concepts'>('quotes');
-  const [filter, setFilter] = useState('all'); // 'all' veya authorId
+  const [filter, setFilter] = useState('all'); // 'all' | 'fav' | authorId | 'mood:<tema>'
+  const [mode, setMode] = useState<'author' | 'mood'>('author'); // tekerleğin gösterdiği boyut
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [playingKey, setPlayingKey] = useState<string | null>(null);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
@@ -242,7 +243,7 @@ export default function WisdomScreen() {
   const params = useLocalSearchParams<{ mood?: string }>();
   useEffect(() => {
     const m = Array.isArray(params.mood) ? params.mood[0] : params.mood;
-    if (m) { setTab('quotes'); setFilter(`mood:${m}`); }
+    if (m) { setTab('quotes'); setMode('mood'); setFilter(`mood:${m}`); }
   }, [params.mood]);
 
   async function onFav(id: string) {
@@ -271,11 +272,17 @@ export default function WisdomScreen() {
   const authorOpts = useMemo(
     () => [
       { id: 'all', label: t('wisdom.all') },
-      { id: 'fav', label: `♥ ${t('wisdom.favorites')}` },
       ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] ?? a.name.en ?? a.id })),
     ],
     [t, lang]
   );
+
+  // Mod değiştir: yeni boyuta geçerken mevcut filtre o boyuta ait değilse 'all'a dön.
+  const switchMode = (m: 'author' | 'mood') => {
+    setMode(m);
+    const belongs = m === 'mood' ? filter.startsWith('mood:') : (filter !== 'fav' && !filter.startsWith('mood:'));
+    if (!belongs) setFilter('all');
+  };
 
   const filteredQuotes =
     filter === 'all' ? quotes :
@@ -310,13 +317,42 @@ export default function WisdomScreen() {
 
       {tab === 'quotes' ? (
         <>
-          {/* Filozofa göre — tekerlek (silindir) seçici */}
-          <Text style={styles.moodTitle}>{t('wisdom.byAuthor')}</Text>
-          <WheelSelector opts={authorOpts} value={filter} onChange={setFilter} itemW={168} />
+          {/* Filtre: mod anahtarı (Filozof | Ruh Hali) + ♥ favoriler */}
+          <Text style={styles.moodTitle}>{t('wisdom.filter')}</Text>
+          <View style={styles.filterRow}>
+            <View style={styles.segment}>
+              <TouchableOpacity
+                style={[styles.segBtn, mode === 'author' && styles.segBtnOn]}
+                activeOpacity={0.8}
+                onPress={() => switchMode('author')}
+              >
+                <Text style={[styles.segTxt, mode === 'author' && styles.segTxtOn]}>{t('wisdom.segAuthor')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.segBtn, mode === 'mood' && styles.segBtnOn]}
+                activeOpacity={0.8}
+                onPress={() => switchMode('mood')}
+              >
+                <Text style={[styles.segTxt, mode === 'mood' && styles.segTxtOn]}>{t('wisdom.segMood')}</Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={[styles.heartBtn, filter === 'fav' && styles.heartBtnOn]}
+              activeOpacity={0.8}
+              onPress={() => setFilter('fav')}
+            >
+              <Text style={[styles.heartIcon, filter === 'fav' && styles.heartIconOn]}>♥</Text>
+            </TouchableOpacity>
+          </View>
 
-          {/* Ruh haline göre — tekerlek (silindir) seçici */}
-          <Text style={styles.moodTitle}>{t('mood.title')}</Text>
-          <WheelSelector opts={moodOpts} value={filter} onChange={setFilter} />
+          {/* Tek tekerlek — seçilen moda göre içerik (mod değişince remount) */}
+          <WheelSelector
+            key={mode}
+            opts={mode === 'author' ? authorOpts : moodOpts}
+            value={filter}
+            onChange={setFilter}
+            itemW={mode === 'author' ? 168 : 132}
+          />
 
           {/* Seçili filtrede gösterilen alıntı sayısı */}
           <Text style={styles.wheelCount}>{filteredQuotes.length} {t('wisdom.countLabel')}</Text>
@@ -398,6 +434,17 @@ const styles = StyleSheet.create({
 
   // Ruh hali (mood) seçici barı
   moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
+  // Mod anahtarı (Filozof | Ruh Hali) + favori
+  filterRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 24, marginBottom: 14 },
+  segment: { flex: 1, flexDirection: 'row', backgroundColor: Colors.stone2, borderRadius: 13, padding: 4 },
+  segBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 9, borderRadius: 10 },
+  segBtnOn: { backgroundColor: 'rgba(196,169,106,0.16)' },
+  segTxt: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
+  segTxtOn: { color: Colors.sand2 },
+  heartBtn: { width: 46, height: 46, borderRadius: 13, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2 },
+  heartBtnOn: { backgroundColor: 'rgba(212,146,74,0.2)', borderColor: Colors.accent },
+  heartIcon: { fontSize: 18, color: Colors.muted },
+  heartIconOn: { color: Colors.accent },
   moodBar: {
     alignSelf: 'center', marginBottom: 14,
     backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
