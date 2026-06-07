@@ -23,7 +23,7 @@ export function registerServiceWorker() {
     window.location.reload();
   };
 
-  window.addEventListener('load', () => {
+  const register = () => {
     navigator.serviceWorker.register(swUrl).then((reg) => {
       reg.addEventListener('updatefound', () => {
         const nw = reg.installing;
@@ -42,5 +42,10 @@ export function registerServiceWorker() {
     }).catch(() => {
       // sessiz geç — SW kaydı başarısızsa uygulama yine de çalışır
     });
-  });
+  };
+
+  // Sayfa zaten yüklendiyse hemen kaydet (load olayı kaçmış olabilir),
+  // değilse load'da kaydet (ilk yükle yarışmasın).
+  if (document.readyState === 'complete') register();
+  else window.addEventListener('load', register, { once: true });
 }
