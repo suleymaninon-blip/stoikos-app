@@ -91,6 +91,7 @@ export default function BreathOrb({
     heldRef.current = true;
     setHeld(true);
     Animated.timing(hold, { toValue: 1, duration: 320, easing: Easing.out(Easing.ease), useNativeDriver: true }).start();
+    if (soundOnRef.current) startBreathSound(); // basılı tutunca ses başlar
   }, [hold]);
 
   const onPressOut = useCallback(() => {
@@ -98,14 +99,17 @@ export default function BreathOrb({
     heldRef.current = false;
     setHeld(false);
     Animated.timing(hold, { toValue: 0, duration: 450, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start();
+    stopBreathSound(); // bırakınca ses durur
   }, [hold]);
 
+  // Ses anahtarı yalnız "açık/kapalı" tercihi (sessize alma). Çalma basılı tutmaya bağlı.
   const toggleSound = useCallback(() => {
     const next = !soundOnRef.current;
     soundOnRef.current = next;
     setSoundOn(next);
     setSoundPref(next);
-    if (next) startBreathSound(); else stopBreathSound();
+    if (!next) stopBreathSound();            // kapatınca anında sustur
+    else if (heldRef.current) startBreathSound(); // açtığında hâlâ basılıysa çal
   }, []);
 
   // Ekrandan çıkınca / arka planda: ses dursun, basılı durum sıfırlansın.
