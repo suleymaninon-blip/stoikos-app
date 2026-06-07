@@ -10,8 +10,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider } from '../constants/i18n';
 import { BrandIntro } from '../components/BrandIntro';
 import { Onboarding } from '../components/Onboarding';
+import { registerServiceWorker } from '../constants/registerSW';
 
 SplashScreen.preventAutoHideAsync();
+registerServiceWorker(); // web'de otomatik güncelleme; native'de no-op
 
 const ONBOARDED_KEY = 'stoikos_onboarded';
 
