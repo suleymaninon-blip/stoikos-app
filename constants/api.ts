@@ -28,7 +28,10 @@ export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<strin
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || err.error || `backend ${res.status}`);
+    const e: any = new Error(err.reason || err.detail || err.error || `backend ${res.status}`);
+    // Hız limiti: kullanıcıya doğrudan gösterilecek dostça mesaj
+    if (res.status === 429 && err.reason) e.userMessage = err.reason;
+    throw e;
   }
   const data = await res.json();
   return data.reply as string;

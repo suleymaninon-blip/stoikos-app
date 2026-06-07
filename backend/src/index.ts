@@ -82,6 +82,43 @@ function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', ...CORS } });
 }
 
+// ─── Hız limiti (KV tabanlı, sabit pencere) ───────────────
+// KV atomik artırma yok → küçük yarış payı olabilir; maliyet/kötüye kullanım
+// koruması için yeterli. Pencere bitince anahtar TTL ile kendiliğinden silinir.
+async function hitLimit(env: Env, key: string, limit: number, windowSec: number): Promise<boolean> {
+  const now = Date.now();
+  const bucket = Math.floor(now / (windowSec * 1000));
+  const k = `rl:${key}:${bucket}`;
+  const cur = parseInt((await env.MEMORY.get(k)) || '0', 10) || 0;
+  if (cur >= limit) return true; // limit aşıldı
+  // TTL pencerenin sonuna kadar (en az 60 sn — KV minimumu)
+  await env.MEMORY.put(k, String(cur + 1), { expirationTtl: Math.max(60, windowSec) });
+  return false;
+}
+
+// Koç için çok katmanlı limit: dakikalık + günlük, hem userId hem IP.
+// Limit aşılırsa Türkçe gerekçeli 429 Response döner, yoksa null.
+async function coachRateLimited(env: Env, userId: string, ip: string): Promise<Response | null> {
+  const checks: Array<[string, number, number]> = [
+    [`u:${userId}:min`, 6, 60],        // kullanıcı: dakikada 6
+    [`u:${userId}:day`, 120, 86400],   // kullanıcı: günde 120
+    [`ip:${ip}:min`, 12, 60],          // IP: dakikada 12 (paylaşımlı ağ payı)
+    [`ip:${ip}:day`, 300, 86400],      // IP: günde 300
+  ];
+  for (const [key, limit, win] of checks) {
+    if (await hitLimit(env, key, limit, win)) {
+      const perMin = win <= 60;
+      return json({
+        error: 'rate_limited',
+        reason: perMin
+          ? 'Çok hızlı gidiyorsun, lütfen biraz bekle. Sözcükleri sindirmeye de zaman tanı.'
+          : 'Bugünlük koç sınırına ulaştın. Yarın yeniden buradayım.',
+      }, 429);
+    }
+  }
+  return null;
+}
+
 async function callClaude(env: Env, body: object): Promise<any> {
   const res = await fetch(API, {
     method: 'POST',
@@ -247,6 +284,11 @@ export default {
       if (!userId || !Array.isArray(messages) || messages.length === 0) {
         return json({ error: 'userId ve messages gerekli' }, 400);
       }
+
+      // Hız limiti (kötüye kullanım / maliyet koruması)
+      const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+      const limited = await coachRateLimited(env, userId, ip);
+      if (limited) return limited;
 
       const memory = (await env.MEMORY.get(`mem:${userId}`)) || '';
       const system = buildSystemPrompt(lang, memory);

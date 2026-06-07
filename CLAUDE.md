@@ -38,7 +38,7 @@
 - Meydan Okuma feature flag arkasında gizli (kod/D1 duruyor).
 
 ## BEKLEYEN İŞLER (öncelik sırası)
-1. 🛡️ **Koç backend'ine rate limit** — `/coach` açık + senin Anthropic anahtarınla çalışıyor → kötüye kullanım/maliyet riski. (Hızlı, bedava, acil.)
+1. ✅ ~~Koç backend rate limit~~ — KV tabanlı (`hitLimit`/`coachRateLimited`, `backend/src/index.ts`). userId: 6/dk + 120/gün; IP (`CF-Connecting-IP`): 12/dk + 300/gün. Aşımda 429 + Türkçe `reason`. Frontend: `sendCoach` 429'da `e.userMessage`, coach.tsx onu balon olarak gösterir. Deploy edildi + canlı test geçti.
 2. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
 3. 📧 `constants/config.ts` `APP_INFO`: gerçek destek e-postası + mağaza linkleri.
 4. 🔒 Gizlilik politikası + KVKK/şartlar (mağaza zorunlu).

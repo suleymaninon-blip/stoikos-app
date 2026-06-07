@@ -186,8 +186,9 @@ export default function CoachScreen() {
       const final = [...withUser, aiMsg];
       setMessages(final);
       saveMessages(final);
-    } catch {
-      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: t('coach.connError'), timestamp: new Date() }]);
+    } catch (e: any) {
+      const content = e?.userMessage || t('coach.connError');
+      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content, timestamp: new Date() }]);
     } finally {
       setLoading(false);
     }
