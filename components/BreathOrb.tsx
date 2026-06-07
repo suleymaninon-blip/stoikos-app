@@ -7,10 +7,6 @@ import {
   isBreathSoundSupported, getSoundPref, setSoundPref,
   startBreathSound, stopBreathSound,
 } from '../constants/breathSound';
-import {
-  isHapticsSupported, getHapticsPref, setHapticsPref,
-  hapticTap, hapticPhase, startBreathHaptics, stopHaptics,
-} from '../constants/breathHaptics';
 
 type Props = {
   idleTitle?: string;   // (kullanılmıyor; geriye dönük uyum)
@@ -18,18 +14,17 @@ type Props = {
   inhaleLabel?: string; // "Nefes al"
   exhaleLabel?: string; // "Nefes ver"
   soundLabel?: string;
-  hapticLabel?: string;
 };
 
-const HALF = 4500; // ms — nefes al / ver yarı döngüsü (orb, metin, renk ve titreşim aynı ritim)
+const HALF = 4500; // ms — nefes al / ver yarı döngüsü (orb, metin ve renk aynı ritim)
 
 // Orb her zaman yumuşakça nefes alıp verir.
-// Parmağını BASILI TUTUNCA: nefesle rezone renk parlaması + titreşim.
-// Parmağını çekince: renk normale döner, titreşimsiz nefes devam eder.
+// Parmağını BASILI TUTUNCA: nefesle rezone renk parlaması.
+// Parmağını çekince: renk normale döner, nefes devam eder.
 export default function BreathOrb({
   tapHint = 'Parmağını tut & hisset',
   inhaleLabel = 'Nefes al', exhaleLabel = 'Nefes ver',
-  soundLabel = 'Sakinleştirici ses', hapticLabel = 'Titreşim',
+  soundLabel = 'Sakinleştirici ses',
 }: Props) {
   const scale = useRef(new Animated.Value(0.82)).current;
   const opacity = useRef(new Animated.Value(0.6)).current;
@@ -46,18 +41,11 @@ export default function BreathOrb({
   const [held, setHeld] = useState(false);
   const heldRef = useRef(false);
 
-  const hapticsSupported = isHapticsSupported();
-  const [hapticsOn, setHapticsOn] = useState(false);
-  const hapticsOnRef = useRef(false);
-
   const soundSupported = isBreathSoundSupported();
   const [soundOn, setSoundOn] = useState(false);
   const soundOnRef = useRef(false);
 
   // Tercihleri yükle.
-  useEffect(() => {
-    if (hapticsSupported) getHapticsPref().then((on) => { setHapticsOn(on); hapticsOnRef.current = on; });
-  }, [hapticsSupported]);
   useEffect(() => {
     if (soundSupported) getSoundPref().then((on) => { setSoundOn(on); soundOnRef.current = on; });
   }, [soundSupported]);
@@ -77,13 +65,12 @@ export default function BreathOrb({
     ]));
     loopRef.current.start();
 
-    // Faz takibi (metin + native titreşim ritmi). 'in' ile başlar.
+    // Faz takibi (metin ritmi). 'in' ile başlar.
     phaseRef.current = 'in';
     phaseTimer.current = setInterval(() => {
       const next = phaseRef.current === 'in' ? 'out' : 'in';
       phaseRef.current = next;
       setPhase(next);
-      if (heldRef.current && hapticsOnRef.current) hapticPhase(next); // native: faz darbeleri
     }, HALF);
 
     return () => {
@@ -104,7 +91,6 @@ export default function BreathOrb({
     heldRef.current = true;
     setHeld(true);
     Animated.timing(hold, { toValue: 1, duration: 320, easing: Easing.out(Easing.ease), useNativeDriver: true }).start();
-    if (hapticsOnRef.current) { hapticTap(); startBreathHaptics(phaseRef.current); }
   }, [hold]);
 
   const onPressOut = useCallback(() => {
@@ -112,7 +98,6 @@ export default function BreathOrb({
     heldRef.current = false;
     setHeld(false);
     Animated.timing(hold, { toValue: 0, duration: 450, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start();
-    stopHaptics();
   }, [hold]);
 
   const toggleSound = useCallback(() => {
@@ -123,20 +108,11 @@ export default function BreathOrb({
     if (next) startBreathSound(); else stopBreathSound();
   }, []);
 
-  const toggleHaptics = useCallback(() => {
-    const next = !hapticsOnRef.current;
-    hapticsOnRef.current = next;
-    setHapticsOn(next);
-    setHapticsPref(next);
-    if (next) hapticTap();
-    else stopHaptics();
-  }, []);
-
-  // Ekrandan çıkınca / arka planda: ses + titreşim dursun, basılı durum sıfırlansın.
+  // Ekrandan çıkınca / arka planda: ses dursun, basılı durum sıfırlansın.
   const cleanupLive = useCallback(() => {
     heldRef.current = false; setHeld(false);
     hold.setValue(0);
-    stopHaptics(); stopBreathSound();
+    stopBreathSound();
   }, [hold]);
   useFocusEffect(useCallback(() => () => cleanupLive(), [cleanupLive]));
   useEffect(() => {
@@ -179,20 +155,6 @@ export default function BreathOrb({
         {!held && <Text style={styles.sub}>{tapHint}</Text>}
       </Pressable>
 
-      {/* Titreşim toggle — sol üst (kartın kardeşi) */}
-      {hapticsSupported && (
-        <TouchableOpacity
-          style={styles.hapticBtn}
-          onPress={toggleHaptics}
-          hitSlop={10}
-          accessibilityRole="switch"
-          accessibilityState={{ checked: hapticsOn }}
-          accessibilityLabel={hapticLabel}
-        >
-          <Text style={[styles.soundIcon, hapticsOn && styles.soundIconOn]}>📳</Text>
-        </TouchableOpacity>
-      )}
-
       {/* Ses toggle — sağ üst (kartın kardeşi) */}
       {soundSupported && (
         <TouchableOpacity
@@ -221,11 +183,6 @@ const styles = StyleSheet.create({
   },
   soundBtn: {
     position: 'absolute', top: 14, right: 16, zIndex: 5,
-    width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(194,168,120,0.08)',
-  },
-  hapticBtn: {
-    position: 'absolute', top: 14, left: 16, zIndex: 5,
     width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center',
     backgroundColor: 'rgba(194,168,120,0.08)',
   },

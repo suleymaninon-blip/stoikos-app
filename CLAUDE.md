@@ -22,10 +22,10 @@
 - `constants/theme.ts` — sıcak altın/taş paleti (`Colors`, `colors`, `Fonts`).
 - `constants/config.ts` — `FEATURES.meydanOkuma=false` (gizli), `APP_INFO` (destek e-posta/mağaza linkleri — **PLACEHOLDER, doldurulacak**).
 - `constants/breathSound.ts` — Web Audio doğa ambiyansı (placeholder; gerçek ses kaydıyla değiştirilecek). Web-only.
-- `constants/breathHaptics.ts` — nefese senkron titreşim (expo-haptics native, navigator.vibrate web).
+- (Titreşim/haptics özelliği kaldırıldı: `constants/breathHaptics.ts` silindi, orb'daki 📳 toggle çıkarıldı.)
 - `constants/audioManifest.ts` — OTOMATİK üretilir (`npm run gen-audio`), 216 mp3. Elle düzenleme.
 - `scripts/generate-audio.ts` — ElevenLabs ses üretimi. Sesler: tr=Sukru Terzi, en=Donovan, de=David, ru=Artem Lebedev, fr=Yann, es=Miguel. `npm run gen-audio` (yalnız kavram; `--all` ile hepsi).
-- `components/BreathOrb.tsx` — bas-tut nefes orbu: sürekli nefes; basılı tutunca rezonanslı renk parlama + titreşim; bırakınca normal. Ses/titreşim toggle'ları.
+- `components/BreathOrb.tsx` — bas-tut nefes orbu: sürekli nefes; basılı tutunca rezonanslı renk parlama; bırakınca normal. Sağ üstte yalnız ses toggle (titreşim kaldırıldı).
 - `components/Onboarding.tsx` — ilk açılış 4 slayt (dil seçimi, pratik, koç, bilgelik&nefes) + hatırlatıcı; `_layout.tsx`'te `stoikos_onboarded` bayrağıyla bir kez.
 - `app/(tabs)/index.tsx` — Ana: selamlama, nefes orbu, günün alıntısı, BUGÜN modül listesi (♥ "Nasıl hissediyorsun?" → /wisdom dahil), süreklilik.
 - `app/(tabs)/wisdom.tsx` — Bilgelik: alıntılar. **Mod anahtarı + tek tekerlek** (Alternatif 1): "FİLTRE" altında segment `Filozof | Ruh Hali` (`mode` state) + ayrı **♥ favori** düğmesi; altında moda göre içerik gösteren TEK `WheelSelector` (`key={mode}` ile remount, itemW author=168/mood=132). `switchMode` boyut değişince filtre o boyuta ait değilse 'all'a döner. `filter` tek state: 'all' | 'fav' | authorId | 'mood:<tema>'. Tekerlek: sonsuz döngü, oklar yok, parmakla kaydırma, yanlar perspektifle silik. Altında `wheelCount` ("{n} alıntı"). Boş liste → `ListEmptyComponent` (Favoriler boşsa özel mesaj). Ana ekran mood kısayolu `mode='mood'` yapar. (Eski iki-yığılı tekerlek ve `FilterDropdown` kaldırıldı.) Kavramlar: modal + sesli okuma + pratik bağ.

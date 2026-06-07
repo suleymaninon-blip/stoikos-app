@@ -70,7 +70,6 @@ const UI: Record<Lang, Dict> = {
     'onb.p3t': 'Bilgelik & Nefes', 'onb.p3d': '164 alıntı, 12 kavram ve nefes orbuyla bir an dur, sakinleş.',
     'onb.p4t': 'Nazik hatırlatıcılar', 'onb.remind': 'Hatırlatıcıları aç', 'onb.remindOn': '✓ Açık',
     'home.breathTap': 'Parmağını tut & hisset', 'home.breathIn': 'Nefes al', 'home.breathOut': 'Nefes ver',
-    'breathHaptic.label': 'Titreşim',
 
     'practice.title': 'Günlük Pratik', 'practice.morningSub': 'Sabah egzersizleri', 'practice.eveningSub': 'Akşam yansıması',
     'practice.todayProgress': 'BUGÜNKÜ YOLCULUK', 'practice.allDone': '✦ Tüm pratikler tamamlandı — iyi iş!',
@@ -210,7 +209,6 @@ const UI: Record<Lang, Dict> = {
     'onb.p3t': 'Wisdom & Breath', 'onb.p3d': '164 quotes, 12 concepts and a breathing orb — pause a moment, settle.',
     'onb.p4t': 'Gentle reminders', 'onb.remind': 'Turn on reminders', 'onb.remindOn': '✓ On',
     'home.breathTap': 'Hold & feel', 'home.breathIn': 'Breathe in', 'home.breathOut': 'Breathe out',
-    'breathHaptic.label': 'Vibration',
 
     'practice.title': 'Daily Practice', 'practice.morningSub': 'Morning exercises', 'practice.eveningSub': 'Evening reflection',
     'practice.todayProgress': "TODAY'S JOURNEY", 'practice.allDone': '✦ All practices complete — well done!',
@@ -350,7 +348,6 @@ const UI: Record<Lang, Dict> = {
     'onb.p3t': 'Weisheit & Atem', 'onb.p3d': '164 Zitate, 12 Begriffe und ein Atem-Orb — halte inne, komm zur Ruhe.',
     'onb.p4t': 'Sanfte Erinnerungen', 'onb.remind': 'Erinnerungen aktivieren', 'onb.remindOn': '✓ An',
     'home.breathTap': 'Halten & fühlen', 'home.breathIn': 'Einatmen', 'home.breathOut': 'Ausatmen',
-    'breathHaptic.label': 'Vibration',
 
     'practice.title': 'Tägliche Praxis', 'practice.morningSub': 'Morgenübungen', 'practice.eveningSub': 'Abendreflexion',
     'practice.todayProgress': 'HEUTIGE REISE', 'practice.allDone': '✦ Alle Übungen abgeschlossen — gut gemacht!',
@@ -490,7 +487,6 @@ const UI: Record<Lang, Dict> = {
     'onb.p3t': 'Мудрость и дыхание', 'onb.p3d': '164 цитаты, 12 понятий и дышащий круг — остановись на миг, успокойся.',
     'onb.p4t': 'Мягкие напоминания', 'onb.remind': 'Включить напоминания', 'onb.remindOn': '✓ Вкл',
     'home.breathTap': 'Удерживай и почувствуй', 'home.breathIn': 'Вдох', 'home.breathOut': 'Выдох',
-    'breathHaptic.label': 'Вибрация',
 
     'practice.title': 'Ежедневная практика', 'practice.morningSub': 'Утренние упражнения', 'practice.eveningSub': 'Вечернее размышление',
     'practice.todayProgress': 'ПУТЬ НА СЕГОДНЯ', 'practice.allDone': '✦ Все практики выполнены — отличная работа!',
@@ -630,7 +626,6 @@ const UI: Record<Lang, Dict> = {
     'onb.p3t': 'Sagesse & Souffle', 'onb.p3d': '164 citations, 12 concepts et un orbe de respiration — fais une pause, apaise-toi.',
     'onb.p4t': 'Rappels en douceur', 'onb.remind': 'Activer les rappels', 'onb.remindOn': '✓ Activé',
     'home.breathTap': 'Maintiens & ressens', 'home.breathIn': 'Inspire', 'home.breathOut': 'Expire',
-    'breathHaptic.label': 'Vibration',
 
     'practice.title': 'Pratique quotidienne', 'practice.morningSub': 'Exercices du matin', 'practice.eveningSub': 'Réflexion du soir',
     'practice.todayProgress': "PARCOURS DU JOUR", 'practice.allDone': '✦ Toutes les pratiques terminées — bravo !',
@@ -770,7 +765,6 @@ const UI: Record<Lang, Dict> = {
     'onb.p3t': 'Sabiduría y Respiración', 'onb.p3d': '164 citas, 12 conceptos y un orbe de respiración — detente un momento, serénate.',
     'onb.p4t': 'Recordatorios suaves', 'onb.remind': 'Activar recordatorios', 'onb.remindOn': '✓ Activado',
     'home.breathTap': 'Mantén y siente', 'home.breathIn': 'Inhala', 'home.breathOut': 'Exhala',
-    'breathHaptic.label': 'Vibración',
 
     'practice.title': 'Práctica diaria', 'practice.morningSub': 'Ejercicios de la mañana', 'practice.eveningSub': 'Reflexión de la tarde',
     'practice.todayProgress': "CAMINO DE HOY", 'practice.allDone': '✦ Todas las prácticas completadas — ¡bien hecho!',
