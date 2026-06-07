@@ -319,15 +319,21 @@ export default function WisdomScreen() {
           <WheelSelector opts={moodOpts} value={filter} onChange={setFilter} />
 
           {/* Seçili filtrede gösterilen alıntı sayısı */}
-          <Text style={styles.wheelCount}>{filteredQuotes.length}</Text>
+          <Text style={styles.wheelCount}>{filteredQuotes.length} {t('wisdom.countLabel')}</Text>
 
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
             renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} />}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={filteredQuotes.length ? styles.listContent : styles.listEmpty}
             showsVerticalScrollIndicator={false}
-            ListFooterComponent={<Text style={styles.attribution}>{t('wisdom.attribution')}</Text>}
+            ListEmptyComponent={
+              <View style={styles.emptyWrap}>
+                <Text style={styles.emptyIcon}>{filter === 'fav' ? '♡' : '⌕'}</Text>
+                <Text style={styles.emptyText}>{t(filter === 'fav' ? 'wisdom.emptyFav' : 'wisdom.empty')}</Text>
+              </View>
+            }
+            ListFooterComponent={filteredQuotes.length ? <Text style={styles.attribution}>{t('wisdom.attribution')}</Text> : null}
           />
         </>
       ) : (
@@ -402,6 +408,10 @@ const styles = StyleSheet.create({
   wheelCount: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 2, marginBottom: 10 },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
+  listEmpty: { flexGrow: 1, paddingHorizontal: 20 },
+  emptyWrap: { alignItems: 'center', justifyContent: 'center', paddingTop: 60, paddingHorizontal: 30, gap: 14 },
+  emptyIcon: { fontFamily: Fonts.jost, fontSize: 40, color: Colors.muted, opacity: 0.5 },
+  emptyText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.muted, textAlign: 'center', lineHeight: 26 },
   attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
   quoteCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 18,
