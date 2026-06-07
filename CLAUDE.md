@@ -13,6 +13,7 @@
 ## Yayın / Deploy
 - **GitHub Pages**: https://suleymaninon-blip.github.io/stoikos-app (push to `main` → GitHub Action otomatik deploy). Test edenler bu linki kullanıyor.
 - **app.json** `experiments.baseUrl: "/stoikos-app"` ŞART (kaldırılırsa web "Unmatched Route" verir). Web-only; native'i etkilemez.
+- **Otomatik güncelleme (web):** `public/sw.js` (ağ-öncelikli HTML → bayat sürüm kalmaz, hash'li varlık cache-first, skipWaiting+clientsClaim, eski cache temizlenir) + `constants/registerSW.ts` (`_layout.tsx`'te çağrılır; native no-op; yeni sürümde açık sekmeyi 1 kez otomatik yeniler; `readyState` guard'lı). Test edenlerin cache temizleme derdi bitti. SW yolu `process.env.EXPO_BASE_URL`'den türer (export'ta gömülür).
 - **Backend**: Cloudflare Worker `stoikos-backend.stoikos-app.workers.dev` (wrangler). Koç (Claude proxy, KV hafıza) + Meydan Okuma (D1). Değişince `cd backend && npx wrangler deploy`.
 
 ## Mimari / Önemli dosyalar
