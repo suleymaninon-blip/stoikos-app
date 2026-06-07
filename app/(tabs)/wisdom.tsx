@@ -203,11 +203,13 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
         {data.map((o, i) => {
           const inR = [(i - 1) * ITEM_W, i * ITEM_W, (i + 1) * ITEM_W];
           const animStyle = {
-            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.4, 1, 0.4], extrapolate: 'clamp' }),
+            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.22, 1, 0.22], extrapolate: 'clamp' }),
             transform: [
-              { perspective: 800 },
-              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['36deg', '0deg', '-36deg'], extrapolate: 'clamp' }) },
-              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.82, 1, 0.82], extrapolate: 'clamp' }) },
+              { perspective: 760 },
+              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['44deg', '0deg', '-44deg'], extrapolate: 'clamp' }) },
+              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.7, 1, 0.7], extrapolate: 'clamp' }) },
+              // yan öğeleri merkeze doğru biraz çek → kenarda kırpılma azalsın
+              { translateX: scrollX.interpolate({ inputRange: inR, outputRange: [ITEM_W * 0.16, 0, -ITEM_W * 0.16], extrapolate: 'clamp' }) },
             ],
           };
           return (
