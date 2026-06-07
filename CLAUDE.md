@@ -27,7 +27,7 @@
 - `components/BreathOrb.tsx` — bas-tut nefes orbu: sürekli nefes; basılı tutunca rezonanslı renk parlama + titreşim; bırakınca normal. Ses/titreşim toggle'ları.
 - `components/Onboarding.tsx` — ilk açılış 4 slayt (dil seçimi, pratik, koç, bilgelik&nefes) + hatırlatıcı; `_layout.tsx`'te `stoikos_onboarded` bayrağıyla bir kez.
 - `app/(tabs)/index.tsx` — Ana: selamlama, nefes orbu, günün alıntısı, BUGÜN modül listesi (♥ "Nasıl hissediyorsun?" → /wisdom dahil), süreklilik.
-- `app/(tabs)/wisdom.tsx` — Bilgelik: alıntılar (yazar dropdown filtresi + **mood silindir/çark seçici**: sonsuz döngü, oklar yok, parmakla kaydırma, yan durumlar büyük/silik, ortadaki net), kavramlar (modal + sesli okuma + pratik bağ). Mood filtresi `filter='mood:<tema>'`.
+- `app/(tabs)/wisdom.tsx` — Bilgelik: alıntılar. **İki silindir/çark seçici** ortak `WheelSelector` bileşeniyle: (1) "Filozofa göre" (Tümü/♥Favoriler/yazarlar, itemW=168), (2) "Nasıl hissediyorsun?" (mood). Sonsuz döngü, oklar yok, parmakla kaydırma, yanlar perspektifle bükülür, ortadaki net. Altında seçili filtrenin alıntı sayısı (`wheelCount`). İkisi de aynı `filter` state'ini yazar; biri seçilince diğeri "Tümü"ye düşer. Mood filtresi `filter='mood:<tema>'`. (Eski `FilterDropdown` kaldırıldı.) Kavramlar: modal + sesli okuma + pratik bağ.
 - `app/(tabs)/coach.tsx` — Claude koç (backend `sendCoach`), `>` ile alıntı parse, sessiz (sesli okuma yok).
 - `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: istatistik + dil + bildirim + koç hafıza reset + **Destek & Hakkında** menüsü + admin), `app/programs.tsx`, `challenge*.tsx`.
 - `app/breathe.tsx` — eski tam ekran nefes (artık erişilemez, silinmedi).

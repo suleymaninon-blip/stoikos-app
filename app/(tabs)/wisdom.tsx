@@ -106,70 +106,20 @@ function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabe
   );
 }
 
-// ─── Filtre paneli (açılır dropdown) ──────────────────────
-type FilterOpt = { id: string; label: string; count: number; heart: boolean };
-function FilterDropdown({ options, value, onChange }: {
-  options: FilterOpt[];
-  value: string;
-  onChange: (id: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const current = options.find((o) => o.id === value) || options[0];
-  return (
-    <View style={styles.fWrap}>
-      <TouchableOpacity style={styles.fBtn} activeOpacity={0.8} onPress={() => setOpen(true)}>
-        <View style={styles.fBtnLeft}>
-          <Text style={styles.fBtnIcon}>{current.heart ? '♥' : '⌕'}</Text>
-          <Text style={styles.fBtnLabel} numberOfLines={1}>{current.label}</Text>
-        </View>
-        <View style={styles.fBtnRight}>
-          <View style={styles.fCountPill}><Text style={styles.fCountPillText}>{current.count}</Text></View>
-          <Text style={styles.fChevron}>▾</Text>
-        </View>
-      </TouchableOpacity>
-
-      <Modal transparent visible={open} animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Pressable style={styles.fOverlay} onPress={() => setOpen(false)}>
-          <Pressable style={styles.fCard} onPress={() => {}}>
-            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-              {options.map((o, i) => {
-                const active = o.id === value;
-                return (
-                  <TouchableOpacity
-                    key={o.id}
-                    style={[styles.fRow, i < options.length - 1 && styles.fRowBorder, active && styles.fRowActive]}
-                    onPress={() => { onChange(o.id); setOpen(false); }}
-                  >
-                    <Text style={[styles.fRowLabel, active && styles.fRowLabelActive]} numberOfLines={1}>
-                      {o.heart ? '♥ ' : ''}{o.label}
-                    </Text>
-                    <View style={styles.fRowRight}>
-                      <Text style={[styles.fRowCount, active && styles.fRowCountActive]}>{o.count}</Text>
-                      {active && <Text style={styles.fCheck}>✓</Text>}
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-    </View>
-  );
-}
-
-// ─── Ruh hali seçici barı (ortada tek durum; oklar + kaydırma) ──
+// ─── Ruh hali temaları ────────────────────────────────────
 const MOOD_THEMES = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
 
 // Yatay tekerlek (silindir) seçici — yalnız parmakla kaydırma; yanlar perspektifle bükülür.
-function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: string) => void; t: (k: string) => string }) {
+// Hem ruh hali hem filozof seçimi için ortak kullanılır. `opts` parent'ta memoize edilmeli.
+function WheelSelector({ opts, value, onChange, itemW = 132 }: {
+  opts: { id: string; label: string }[];
+  value: string;
+  onChange: (id: string) => void;
+  itemW?: number;
+}) {
   const { width } = useWindowDimensions();
-  const opts = useMemo(
-    () => [{ id: 'all', label: t('wisdom.all') }, ...MOOD_THEMES.map((m) => ({ id: `mood:${m}`, label: t(`mood.${m}`) }))],
-    [t]
-  );
   const n = opts.length;
-  const ITEM_W = 132;
+  const ITEM_W = itemW;
   const BAR_W = width - 48;          // marginHorizontal 24 + 24
   const SIDE = Math.max(0, (BAR_W - ITEM_W) / 2);
 
@@ -261,7 +211,7 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
             ],
           };
           return (
-            <View key={i} style={styles.moodItem}>
+            <View key={i} style={[styles.moodItem, { width: ITEM_W }]}>
               <Animated.Text style={[styles.moodCurrent, animStyle]} numberOfLines={1}>{o.label}</Animated.Text>
             </View>
           );
@@ -311,12 +261,19 @@ export default function WisdomScreen() {
     }
   }
 
-  // Filtre seçenekleri: Tümü + Favoriler + yazarlar (alıntı sayılarıyla)
-  const filterOptions = [
-    { id: 'all', label: t('wisdom.all'), count: quotes.length, heart: false },
-    { id: 'fav', label: t('wisdom.favorites'), count: quotes.filter((q) => favorites.includes(q.id)).length, heart: true },
-    ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] ?? a.name.en ?? a.id, count: quotes.filter((q) => q.authorId === a.id).length, heart: false })),
-  ];
+  // Tekerlek seçenekleri (referans kararlılığı için memoize) — WheelSelector bunu bekler.
+  const moodOpts = useMemo(
+    () => [{ id: 'all', label: t('wisdom.all') }, ...MOOD_THEMES.map((m) => ({ id: `mood:${m}`, label: t(`mood.${m}`) }))],
+    [t]
+  );
+  const authorOpts = useMemo(
+    () => [
+      { id: 'all', label: t('wisdom.all') },
+      { id: 'fav', label: `♥ ${t('wisdom.favorites')}` },
+      ...AUTHORS.map((a) => ({ id: a.id, label: a.name[lang] ?? a.name.en ?? a.id })),
+    ],
+    [t, lang]
+  );
 
   const filteredQuotes =
     filter === 'all' ? quotes :
@@ -351,12 +308,16 @@ export default function WisdomScreen() {
 
       {tab === 'quotes' ? (
         <>
-          {/* Filtre paneli (açılır) */}
-          <FilterDropdown options={filterOptions} value={filter} onChange={setFilter} />
+          {/* Filozofa göre — tekerlek (silindir) seçici */}
+          <Text style={styles.moodTitle}>{t('wisdom.byAuthor')}</Text>
+          <WheelSelector opts={authorOpts} value={filter} onChange={setFilter} itemW={168} />
 
-          {/* Ruh haline göre filtre — ortada tek durum, oklar + kaydırma */}
+          {/* Ruh haline göre — tekerlek (silindir) seçici */}
           <Text style={styles.moodTitle}>{t('mood.title')}</Text>
-          <MoodSelector value={filter} onChange={setFilter} t={t} />
+          <WheelSelector opts={moodOpts} value={filter} onChange={setFilter} />
+
+          {/* Seçili filtrede gösterilen alıntı sayısı */}
+          <Text style={styles.wheelCount}>{filteredQuotes.length}</Text>
 
           <FlatList
             data={filteredQuotes}
@@ -426,42 +387,6 @@ const styles = StyleSheet.create({
   filterChipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
   filterChipTextActive: { color: Colors.sand2 },
 
-  // ── Açılır filtre paneli ──
-  fWrap: { paddingHorizontal: 24, marginBottom: 12 },
-  fBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 13, borderRadius: 14,
-    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
-  },
-  fBtnLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 9 },
-  fBtnIcon: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.accent },
-  fBtnLabel: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.sand, flex: 1 },
-  fBtnRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  fCountPill: {
-    minWidth: 26, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 11,
-    backgroundColor: 'rgba(196,169,106,0.15)', alignItems: 'center',
-  },
-  fCountPillText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.sand2 },
-  fChevron: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.accent },
-
-  fOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-start', paddingTop: 210, paddingHorizontal: 24 },
-  fCard: {
-    maxHeight: 420, borderRadius: 16, backgroundColor: Colors.stone2,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)', overflow: 'hidden',
-    shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 20, shadowOffset: { width: 0, height: 10 }, elevation: 12,
-  },
-  fRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 18, paddingVertical: 14,
-  },
-  fRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
-  fRowActive: { backgroundColor: 'rgba(196,169,106,0.1)' },
-  fRowLabel: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted, flex: 1 },
-  fRowLabelActive: { color: Colors.sand, fontFamily: Fonts.jostMedium },
-  fRowRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  fRowCount: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
-  fRowCountActive: { color: Colors.sand2 },
-  fCheck: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.accent },
 
   // Ruh hali (mood) seçici barı
   moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
@@ -470,8 +395,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
     height: 52, overflow: 'hidden',
   },
-  moodItem: { width: 132, height: 52, alignItems: 'center', justifyContent: 'center' },
+  moodItem: { height: 52, alignItems: 'center', justifyContent: 'center' },
   moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 16, letterSpacing: 0.5, color: Colors.sand2 },
+  wheelCount: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 2, marginBottom: 10 },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
