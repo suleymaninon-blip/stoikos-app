@@ -253,11 +253,11 @@ function MoodSelector({ value, onChange, t }: { value: string; onChange: (id: st
         {data.map((o, i) => {
           const inR = [(i - 1) * ITEM_W, i * ITEM_W, (i + 1) * ITEM_W];
           const animStyle = {
-            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.2, 1, 0.2], extrapolate: 'clamp' }),
+            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.4, 1, 0.4], extrapolate: 'clamp' }),
             transform: [
-              { perspective: 700 },
-              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['52deg', '0deg', '-52deg'], extrapolate: 'clamp' }) },
-              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.62, 1, 0.62], extrapolate: 'clamp' }) },
+              { perspective: 800 },
+              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['36deg', '0deg', '-36deg'], extrapolate: 'clamp' }) },
+              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.82, 1, 0.82], extrapolate: 'clamp' }) },
             ],
           };
           return (
