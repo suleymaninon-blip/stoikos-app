@@ -11,11 +11,10 @@ import { LanguageProvider } from '../constants/i18n';
 import { BrandIntro } from '../components/BrandIntro';
 import { Onboarding } from '../components/Onboarding';
 import { registerServiceWorker } from '../constants/registerSW';
+import { ONBOARDED_KEY, onReplayOnboarding } from '../constants/onboarding';
 
 SplashScreen.preventAutoHideAsync();
 registerServiceWorker(); // web'de otomatik güncelleme; native'de no-op
-
-const ONBOARDED_KEY = 'stoikos_onboarded';
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -36,6 +35,9 @@ export default function RootLayout() {
       .then((v) => setOnboarded(v === '1'))
       .catch(() => setOnboarded(true)); // hata olursa gösterme
   }, []);
+
+  // "Tanıtımı tekrar göster" (İlerleme ekranı) tetiklenince onboarding'i yeniden aç.
+  useEffect(() => onReplayOnboarding(() => setOnboarded(false)), []);
 
   const finishOnboarding = () => {
     setOnboarded(true);

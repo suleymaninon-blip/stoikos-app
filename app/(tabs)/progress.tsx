@@ -13,6 +13,7 @@ import { router } from 'expo-router';
 import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../../constants/api';
 import { APP_INFO } from '../../constants/config';
+import { replayOnboarding } from '../../constants/onboarding';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -202,6 +203,11 @@ export default function ProgressScreen() {
     );
   }
 
+  async function showOnboardingAgain() {
+    await replayOnboarding();   // root'taki Onboarding'i tetikler
+    router.replace('/');        // ana ekrana dön, tanıtım üstte açılsın
+  }
+
   async function shareApp() {
     try { await Share.share({ message: `${t('about.shareMsg')} ${APP_INFO.shareUrl}` }); } catch {}
   }
@@ -284,6 +290,11 @@ export default function ProgressScreen() {
             <Text style={styles.quoteAuthor}>{t('progress.motivAuthor')}</Text>
             <Text style={styles.reflectionSub}>{t('progress.reflectionSub')}</Text>
           </View>
+
+          {/* Tanıtımı tekrar göster */}
+          <TouchableOpacity style={styles.resetBtn} onPress={showOnboardingAgain} activeOpacity={0.8}>
+            <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
+          </TouchableOpacity>
 
           {/* Koç hafızası sıfırla */}
           <TouchableOpacity style={styles.resetBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
