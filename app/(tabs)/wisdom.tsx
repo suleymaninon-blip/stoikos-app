@@ -210,7 +210,7 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
               { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['14deg', '0deg', '-14deg'], extrapolate: 'clamp' }) },
               { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.86, 1, 0.86], extrapolate: 'clamp' }) },
               // yan öğeleri merkeze doğru çek → kenarda kırpılmasın, daha görünür olsun
-              { translateX: scrollX.interpolate({ inputRange: inR, outputRange: [ITEM_W * 0.2, 0, -ITEM_W * 0.2], extrapolate: 'clamp' }) },
+              { translateX: scrollX.interpolate({ inputRange: inR, outputRange: [ITEM_W * 0.1, 0, -ITEM_W * 0.1], extrapolate: 'clamp' }) },
             ],
           };
           return (
@@ -352,7 +352,7 @@ export default function WisdomScreen() {
             opts={mode === 'author' ? authorOpts : moodOpts}
             value={filter}
             onChange={setFilter}
-            itemW={mode === 'author' ? 168 : 132}
+            itemW={mode === 'author' ? 144 : 124}
           />
 
           {/* Seçili filtrede gösterilen alıntı sayısı */}
