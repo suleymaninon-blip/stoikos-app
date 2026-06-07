@@ -203,13 +203,14 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
         {data.map((o, i) => {
           const inR = [(i - 1) * ITEM_W, i * ITEM_W, (i + 1) * ITEM_W];
           const animStyle = {
-            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.22, 1, 0.22], extrapolate: 'clamp' }),
+            opacity: scrollX.interpolate({ inputRange: inR, outputRange: [0.5, 1, 0.5], extrapolate: 'clamp' }),
             transform: [
-              { perspective: 760 },
-              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['44deg', '0deg', '-44deg'], extrapolate: 'clamp' }) },
-              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.7, 1, 0.7], extrapolate: 'clamp' }) },
-              // yan öğeleri merkeze doğru biraz çek → kenarda kırpılma azalsın
-              { translateX: scrollX.interpolate({ inputRange: inR, outputRange: [ITEM_W * 0.16, 0, -ITEM_W * 0.16], extrapolate: 'clamp' }) },
+              { perspective: 1000 },
+              // hafif perspektif (okunabilirliği bozmasın diye düşük açı)
+              { rotateY: scrollX.interpolate({ inputRange: inR, outputRange: ['14deg', '0deg', '-14deg'], extrapolate: 'clamp' }) },
+              { scale: scrollX.interpolate({ inputRange: inR, outputRange: [0.86, 1, 0.86], extrapolate: 'clamp' }) },
+              // yan öğeleri merkeze doğru çek → kenarda kırpılmasın, daha görünür olsun
+              { translateX: scrollX.interpolate({ inputRange: inR, outputRange: [ITEM_W * 0.2, 0, -ITEM_W * 0.2], extrapolate: 'clamp' }) },
             ],
           };
           return (
