@@ -64,9 +64,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone,
     borderTopColor: 'rgba(194,168,120,0.10)',
     borderTopWidth: 1,
-    height: Platform.OS === 'ios' ? 84 : 66,
-    paddingTop: 8,
-    paddingBottom: Platform.OS === 'ios' ? 22 : 10,
+    height: Platform.OS === 'ios' ? 88 : 70,
+    paddingTop: 14,
+    paddingBottom: Platform.OS === 'ios' ? 22 : 12,
   },
   tabItem: {
     alignItems: 'center',
