@@ -250,7 +250,15 @@ export default function PracticeScreen() {
         exercise={selected}
         icon={selected?.icon || ''}
         completed={selected ? completed.has(selected.id) : false}
-        onToggle={() => { if (selected) toggleExercise(selected.id); }}
+        onToggle={() => {
+          if (!selected) return;
+          const wasDone = completed.has(selected.id);
+          toggleExercise(selected.id);
+          // Tamamlayınca kısa "✦ Tamamlandı" onayı sonra kart kendiliğinden kapanır;
+          // geri alınca hemen kapanır.
+          if (wasDone) setSelected(null);
+          else setTimeout(() => setSelected(null), 650);
+        }}
         onClose={() => setSelected(null)}
         labels={{ complete: t('practice.complete'), undo: t('practice.undo'), done: t('practice.done') }}
       />
