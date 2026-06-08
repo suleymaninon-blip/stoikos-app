@@ -81,10 +81,20 @@ export default function HomeScreen() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}>
 
-          {/* Selamlama */}
-          <View style={styles.greetingBlock}>
-            <Text style={styles.dateText}>{dateStr.toUpperCase()}</Text>
-            <Text style={styles.greetingText}>{greeting}</Text>
+          {/* Selamlama + Ayarlar */}
+          <View style={styles.headerRow}>
+            <View style={styles.greetingBlock}>
+              <Text style={styles.dateText}>{dateStr.toUpperCase()}</Text>
+              <Text style={styles.greetingText}>{greeting}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => router.push('/settings')}
+              style={styles.gearBtn}
+              hitSlop={10}
+              accessibilityLabel={t('settings.title')}
+            >
+              <Text style={styles.gearIcon}>⚙</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Nefes orbu — dokununca YERİNDE egzersiz başlar (yeni ekran açmaz) */}
@@ -148,7 +158,10 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { padding: 24, paddingBottom: 48 },
 
-  greetingBlock: { marginBottom: 28, marginTop: 8 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 28, marginTop: 8 },
+  greetingBlock: { flex: 1 },
+  gearBtn: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 2 },
+  gearIcon: { fontSize: 17, color: Colors.sand },
   dateText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2.5, color: Colors.sand, marginBottom: 8 },
   greetingText: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 38 },
 
