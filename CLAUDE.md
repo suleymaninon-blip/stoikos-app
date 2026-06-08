@@ -20,7 +20,8 @@
 - `constants/i18n.tsx` — 6 dil (TR/EN/DE/RU/FR/ES), `LanguageProvider`, `useLang`, tüm UI metinleri. Dil whitelist'i `LANGUAGES`'tan türer.
 - `constants/content.ts` — AUTHORS (15, "tradition" dahil), SOURCES, **164 alıntı** (`QUOTES_RAW`, id 1-164, yenilerde `theme`), **12 kavram** (`CONCEPTS_RAW`, `practice` alanı), egzersizler, koç. `type L = Partial<...>` + `pick()` (eksik dil → İng/TR yedek). `getAudioItems` (yalnız tr/en/de/ru/fr/es kavram sesi).
 - `constants/theme.ts` — sıcak altın/taş paleti (`Colors`, `colors`, `Fonts`).
-- `constants/config.ts` — `FEATURES.meydanOkuma=false` (gizli), `APP_INFO` (destek e-posta/mağaza linkleri — **PLACEHOLDER, doldurulacak**).
+- `constants/config.ts` — `FEATURES.meydanOkuma=false` (gizli), `APP_INFO` (destek e-posta/mağaza linkleri + `privacyUrl` — **PLACEHOLDER, doldurulacak**).
+- **Gizlilik politikası**: kaynak `docs/gizlilik-politikasi.md` (md taslak) + yayınlanan `public/gizlilik.html` (export'ta `dist/`'e kopyalanır → `…/stoikos-app/gizlilik.html`). Ayarlar→Hakkında'da "🔒 Gizlilik Politikası" satırı `APP_INFO.privacyUrl`'i açar. İçindeki 〔...〕 alanları + EN çevirisi + avukat kontrolü bekliyor.
 - `constants/breathSound.ts` — orb nefes sesi: `assets/audio/breath-orb.m4a` (AAC, ~4dk, expo-av, native+web). Orb **basılı tutulunca çalar (döngü), bırakılınca durur**. Sağ üstteki 🔊/🔇 yalnız aç/kapa (sessize alma) tercihi, varsayılan AÇIK. (Eski Web-Audio synth ambiyans kaldırıldı.) `metro.config.js`'e `m4a` assetExt eklendi.
 - (Titreşim/haptics özelliği kaldırıldı: `constants/breathHaptics.ts` silindi, orb'daki 📳 toggle çıkarıldı.)
 - `constants/audioManifest.ts` — OTOMATİK üretilir (`npm run gen-audio`), 216 mp3. Elle düzenleme.

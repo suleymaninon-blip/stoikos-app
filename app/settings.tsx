@@ -65,6 +65,9 @@ export default function SettingsScreen() {
   function showAbout() {
     Alert.alert('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
   }
+  function openPrivacy() {
+    Linking.openURL(APP_INFO.privacyUrl).catch(() => {});
+  }
   async function openAdmin() {
     if (!adminKey.trim()) return;
     await AsyncStorage.setItem(ADMIN_KEY_STORAGE, adminKey.trim());
@@ -135,11 +138,12 @@ export default function SettingsScreen() {
             { icon: '↗', label: t('about.share'), onPress: shareApp },
             { icon: '★', label: t('about.rate'), onPress: rateApp },
             { icon: '✉', label: t('about.support'), onPress: contactSupport },
+            { icon: '🔒', label: t('about.privacy'), onPress: openPrivacy },
             { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
-          ].map((r, i) => (
+          ].map((r, i, arr) => (
             <TouchableOpacity
               key={r.label}
-              style={[styles.aboutRow, i < 3 && styles.aboutRowBorder]}
+              style={[styles.aboutRow, i < arr.length - 1 && styles.aboutRowBorder]}
               onPress={r.onPress}
               activeOpacity={0.7}
             >

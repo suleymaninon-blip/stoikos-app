@@ -5,6 +5,7 @@ export const APP_INFO = {
   supportEmail: 'destek@stoikos.app',                                  // TODO: gerçek destek e-postanla değiştir
   shareUrl: 'https://suleymaninon-blip.github.io/stoikos-app',         // mağazaya çıkınca store linkiyle güncelle
   storeUrl: { ios: '', android: '' },                                  // App Store / Play Store linkleri (yayında doldur)
+  privacyUrl: 'https://suleymaninon-blip.github.io/stoikos-app/gizlilik.html', // gizlilik politikası (public/gizlilik.html)
 };
 
 export const FEATURES = {
