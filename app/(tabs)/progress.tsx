@@ -12,7 +12,7 @@ import { getExerciseNames } from '../../constants/content';
 import { router } from 'expo-router';
 import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../../constants/api';
-import { APP_INFO } from '../../constants/config';
+import { APP_INFO, FEATURES } from '../../constants/config';
 import { replayOnboarding } from '../../constants/onboarding';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
@@ -324,26 +324,28 @@ export default function ProgressScreen() {
           </View>
           <Text style={styles.versionText}>{t('about.version')} {APP_VERSION}</Text>
 
-          {/* Yönetici — onay kuyruğu (yalnızca sahibi) */}
-          <View style={styles.adminWrap}>
-            <Text style={styles.adminTitle}>{t('admin.title')}</Text>
-            <Text style={styles.adminHint}>{t('admin.hint')}</Text>
-            <View style={styles.adminRow}>
-              <TextInput
-                style={styles.adminInput}
-                placeholder={t('admin.placeholder')}
-                placeholderTextColor={Colors.stone4}
-                value={adminKey}
-                onChangeText={setAdminKey}
-                secureTextEntry
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <TouchableOpacity style={[styles.adminBtn, !adminKey.trim() && { opacity: 0.4 }]} onPress={openAdmin} disabled={!adminKey.trim()}>
-                <Text style={styles.adminBtnText}>{t('admin.open')}</Text>
-              </TouchableOpacity>
+          {/* Yönetici — onay kuyruğu (yalnızca sahibi). Meydan Okuma gizliyken gösterilmez. */}
+          {FEATURES.meydanOkuma && (
+            <View style={styles.adminWrap}>
+              <Text style={styles.adminTitle}>{t('admin.title')}</Text>
+              <Text style={styles.adminHint}>{t('admin.hint')}</Text>
+              <View style={styles.adminRow}>
+                <TextInput
+                  style={styles.adminInput}
+                  placeholder={t('admin.placeholder')}
+                  placeholderTextColor={Colors.stone4}
+                  value={adminKey}
+                  onChangeText={setAdminKey}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity style={[styles.adminBtn, !adminKey.trim() && { opacity: 0.4 }]} onPress={openAdmin} disabled={!adminKey.trim()}>
+                  <Text style={styles.adminBtnText}>{t('admin.open')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )}
 
         </ScrollView>
       </Animated.View>
