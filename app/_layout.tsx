@@ -53,6 +53,7 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />

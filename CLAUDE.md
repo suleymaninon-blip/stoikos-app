@@ -30,7 +30,9 @@
 - `app/(tabs)/index.tsx` — Ana: selamlama, nefes orbu, günün alıntısı, BUGÜN modül listesi (♥ "Nasıl hissediyorsun?" → /wisdom dahil), süreklilik.
 - `app/(tabs)/wisdom.tsx` — Bilgelik: alıntılar. **Mod anahtarı + tek tekerlek** (Alternatif 1): "FİLTRE" altında segment `Filozof | Ruh Hali` (`mode` state) + ayrı **♥ favori** düğmesi; altında moda göre içerik gösteren TEK `WheelSelector` (`key={mode}` ile remount, itemW author=168/mood=132). `switchMode` boyut değişince filtre o boyuta ait değilse 'all'a döner. `filter` tek state: 'all' | 'fav' | authorId | 'mood:<tema>'. Tekerlek: sonsuz döngü, oklar yok, parmakla kaydırma, yanlar perspektifle silik. Altında `wheelCount` ("{n} alıntı"). Boş liste → `ListEmptyComponent` (Favoriler boşsa özel mesaj). Ana ekran mood kısayolu `mode='mood'` yapar. (Eski iki-yığılı tekerlek ve `FilterDropdown` kaldırıldı.) Kavramlar: modal + sesli okuma + pratik bağ.
 - `app/(tabs)/coach.tsx` — Claude koç (backend `sendCoach`), `>` ile alıntı parse, sessiz (sesli okuma yok).
-- `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: istatistik + dil + bildirim + koç hafıza reset + **Destek & Hakkında** menüsü + admin), `app/programs.tsx`, `challenge*.tsx`.
+- `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: **yalnız istatistik** — süreklilik/haftalık/son7/egzersiz dağılımı/söz; sağ üstte ⚙ → Ayarlar).
+- `app/settings.tsx` — **Ayarlar** (push'lu ekran, ⚙ ile açılır): dil, bildirim, ✨ tanıtımı tekrar göster, 🧠 koç hafıza reset, Destek & Hakkında, sürüm, admin (Meydan Okuma bayrağı arkasında). Ayarlar buraya İlerleme'den taşındı.
+- `app/programs.tsx`, `challenge*.tsx`.
 - `app/breathe.tsx` — eski tam ekran nefes (artık erişilemez, silinmedi).
 
 ## Önemli kararlar

@@ -1,21 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, TextInput,
-  StyleSheet, SafeAreaView, Animated, Alert, ActivityIndicator, Linking, Share, Platform,
+  View, Text, TouchableOpacity, ScrollView,
+  StyleSheet, SafeAreaView, Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
-import { useLang, DAY_LABELS, LANGUAGES } from '../../constants/i18n';
+import { useLang, DAY_LABELS } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
 import { router } from 'expo-router';
-import { isNotifyEnabled, enableReminders, disableReminders } from '../../constants/notify';
-import { resetMemory, ADMIN_KEY_STORAGE } from '../../constants/api';
-import { APP_INFO, FEATURES } from '../../constants/config';
-import { replayOnboarding } from '../../constants/onboarding';
-
-const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -122,40 +115,18 @@ function ExBreakdown({ counts }: { counts: Record<string, number> }) {
 
 // ─── Main ──────────────────────────────────────────────────
 export default function ProgressScreen() {
-  const { t, lang, setLang } = useLang();
+  const { t, lang } = useLang();
   const [streak, setStreak] = useState(0);
   const [totalDone, setTotalDone] = useState(0);
   const [totalMoments, setTotalMoments] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
-  const [notifyOn, setNotifyOn] = useState(false);
-  const [adminKey, setAdminKey] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadStats();
     Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
   }, [lang]);
-
-  useEffect(() => { isNotifyEnabled().then(setNotifyOn); }, []);
-  useEffect(() => { AsyncStorage.getItem(ADMIN_KEY_STORAGE).then((k) => k && setAdminKey(k)); }, []);
-
-  async function openAdmin() {
-    if (!adminKey.trim()) return;
-    await AsyncStorage.setItem(ADMIN_KEY_STORAGE, adminKey.trim());
-    router.push('/challenge-admin');
-  }
-
-  async function toggleNotify() {
-    if (notifyOn) {
-      await disableReminders();
-      setNotifyOn(false);
-    } else {
-      const ok = await enableReminders(lang);
-      if (ok) setNotifyOn(true);
-      else Alert.alert('Stoikos', t('notify.denied'));
-    }
-  }
 
   async function loadStats() {
     const streakVal = parseInt((await AsyncStorage.getItem(STREAK_KEY)) || '0');
@@ -192,40 +163,6 @@ export default function ProgressScreen() {
     } catch {}
   }
 
-  function resetCoachMemory() {
-    Alert.alert(
-      t('memory.resetTitle'),
-      t('memory.resetMsg'),
-      [
-        { text: t('progress.cancel'), style: 'cancel' },
-        { text: t('progress.reset'), style: 'destructive', onPress: () => { resetMemory(); } },
-      ]
-    );
-  }
-
-  async function showOnboardingAgain() {
-    await replayOnboarding();   // root'taki Onboarding'i tetikler
-    router.replace('/');        // ana ekrana dön, tanıtım üstte açılsın
-  }
-
-  async function shareApp() {
-    try { await Share.share({ message: `${t('about.shareMsg')} ${APP_INFO.shareUrl}` }); } catch {}
-  }
-
-  function rateApp() {
-    const store = Platform.OS === 'ios' ? APP_INFO.storeUrl.ios : APP_INFO.storeUrl.android;
-    Linking.openURL(store || APP_INFO.shareUrl).catch(() => {});
-  }
-
-  function contactSupport() {
-    const url = `mailto:${APP_INFO.supportEmail}?subject=${encodeURIComponent(t('about.supportSubject'))}`;
-    Linking.openURL(url).catch(() => Alert.alert(t('about.support'), APP_INFO.supportEmail));
-  }
-
-  function showAbout() {
-    Alert.alert('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -238,38 +175,19 @@ export default function ProgressScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
           <View style={styles.header}>
-            <Text style={styles.title}>{t('progress.title')}</Text>
+            <View style={styles.headerRow}>
+              <Text style={styles.title}>{t('progress.title')}</Text>
+              <TouchableOpacity
+                onPress={() => router.push('/settings')}
+                style={styles.gearBtn}
+                hitSlop={10}
+                accessibilityLabel={t('settings.title')}
+              >
+                <Text style={styles.gearIcon}>⚙</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.subtitle}>{t('progress.subtitle')}</Text>
           </View>
-
-          {/* Dil seçici */}
-          <View style={styles.langWrap}>
-            <Text style={styles.langTitle}>{t('progress.langLabel')}</Text>
-            <View style={styles.langRow}>
-              {LANGUAGES.map((l) => (
-                <TouchableOpacity
-                  key={l.code}
-                  onPress={() => setLang(l.code)}
-                  style={[styles.langChip, lang === l.code && styles.langChipActive]}
-                  activeOpacity={0.8}
-                >
-                  <Text style={styles.langFlag}>{l.flag}</Text>
-                  <Text style={[styles.langLabel, lang === l.code && styles.langLabelActive]}>{l.label}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {/* Günlük hatırlatıcılar */}
-          <TouchableOpacity style={styles.notifyCard} onPress={toggleNotify} activeOpacity={0.85}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.notifyTitle}>{t('notify.title')}</Text>
-              <Text style={styles.notifyHint}>{t('notify.hint')}</Text>
-            </View>
-            <View style={[styles.toggle, notifyOn && styles.toggleOn]}>
-              <View style={[styles.toggleKnob, notifyOn && styles.toggleKnobOn]} />
-            </View>
-          </TouchableOpacity>
 
           {/* Stat boxes — sakin, rekabetsiz */}
           <View style={styles.statsRow}>
@@ -291,62 +209,6 @@ export default function ProgressScreen() {
             <Text style={styles.reflectionSub}>{t('progress.reflectionSub')}</Text>
           </View>
 
-          {/* Tanıtımı tekrar göster */}
-          <TouchableOpacity style={styles.resetBtn} onPress={showOnboardingAgain} activeOpacity={0.8}>
-            <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
-          </TouchableOpacity>
-
-          {/* Koç hafızası sıfırla */}
-          <TouchableOpacity style={styles.resetBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
-            <Text style={styles.resetText}>{t('memory.resetBtn')}</Text>
-          </TouchableOpacity>
-
-          {/* Destek & Hakkında */}
-          <Text style={styles.aboutSection}>{t('about.section')}</Text>
-          <View style={styles.aboutCard}>
-            {[
-              { icon: '↗', label: t('about.share'), onPress: shareApp },
-              { icon: '★', label: t('about.rate'), onPress: rateApp },
-              { icon: '✉', label: t('about.support'), onPress: contactSupport },
-              { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
-            ].map((r, i) => (
-              <TouchableOpacity
-                key={r.label}
-                style={[styles.aboutRow, i < 3 && styles.aboutRowBorder]}
-                onPress={r.onPress}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.aboutIcon}>{r.icon}</Text>
-                <Text style={styles.aboutLabel}>{r.label}</Text>
-                <Text style={styles.aboutArrow}>›</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <Text style={styles.versionText}>{t('about.version')} {APP_VERSION}</Text>
-
-          {/* Yönetici — onay kuyruğu (yalnızca sahibi). Meydan Okuma gizliyken gösterilmez. */}
-          {FEATURES.meydanOkuma && (
-            <View style={styles.adminWrap}>
-              <Text style={styles.adminTitle}>{t('admin.title')}</Text>
-              <Text style={styles.adminHint}>{t('admin.hint')}</Text>
-              <View style={styles.adminRow}>
-                <TextInput
-                  style={styles.adminInput}
-                  placeholder={t('admin.placeholder')}
-                  placeholderTextColor={Colors.stone4}
-                  value={adminKey}
-                  onChangeText={setAdminKey}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <TouchableOpacity style={[styles.adminBtn, !adminKey.trim() && { opacity: 0.4 }]} onPress={openAdmin} disabled={!adminKey.trim()}>
-                  <Text style={styles.adminBtnText}>{t('admin.open')}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
         </ScrollView>
       </Animated.View>
     </SafeAreaView>
@@ -359,31 +221,11 @@ const styles = StyleSheet.create({
   grad: { position: 'absolute', top: 0, right: 0, width: '70%', height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
   header: { marginBottom: 26, marginTop: 8 },
-  title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
+  headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },
+  title: { flex: 1, fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
-
-  // Dil seçici
-  langWrap: { marginBottom: 20 },
-  langTitle: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
-  langRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  langChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
-  langFlag: { fontSize: 14 },
-  langLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
-  langLabelActive: { color: Colors.accent },
-
-  // Bildirim kartı
-  notifyCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 20,
-    borderWidth: 1, borderColor: 'rgba(212,146,74,0.18)',
-  },
-  notifyTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3, marginBottom: 4 },
-  notifyHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 16 },
-  toggle: { width: 46, height: 27, borderRadius: 14, backgroundColor: Colors.stone4, padding: 3, justifyContent: 'center' },
-  toggleOn: { backgroundColor: Colors.accent },
-  toggleKnob: { width: 21, height: 21, borderRadius: 11, backgroundColor: '#f0e8d5' },
-  toggleKnobOn: { alignSelf: 'flex-end' },
+  gearBtn: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 2 },
+  gearIcon: { fontSize: 17, color: Colors.sand },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
@@ -394,16 +236,6 @@ const styles = StyleSheet.create({
   statValue: { fontFamily: Fonts.cinzel, fontSize: 28, color: Colors.sand2, marginBottom: 6 },
   statLabel: { fontFamily: Fonts.jostMedium, fontSize: 8.5, letterSpacing: 1.2, color: Colors.muted, textAlign: 'center', lineHeight: 12 },
   statSub: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.stone4, marginTop: 2 },
-
-  // Best day
-  bestDayCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 14,
-    backgroundColor: 'rgba(212,146,74,0.08)', borderRadius: 14, padding: 14,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)', marginBottom: 20,
-  },
-  bestDayIcon: { fontSize: 22 },
-  bestDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.sand, marginBottom: 3 },
-  bestDayValue: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3 },
 
   // Chart
   chartWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
@@ -435,29 +267,4 @@ const styles = StyleSheet.create({
   quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand2, lineHeight: 27, marginBottom: 8 },
   quoteAuthor: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginBottom: 12 },
   reflectionSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 19 },
-
-  // Reset
-  resetBtn: {
-    backgroundColor: Colors.stone2, borderRadius: 14,
-    paddingVertical: 14, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
-  },
-  resetText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted, letterSpacing: 0.3 },
-
-  // Destek & Hakkında
-  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
-  aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', overflow: 'hidden' },
-  aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
-  aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
-  aboutIcon: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand, width: 22, textAlign: 'center' },
-  aboutLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
-  aboutArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.stone4 },
-  versionText: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 12 },
-  adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
-  adminTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.text2, marginBottom: 4 },
-  adminHint: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.muted, lineHeight: 15, marginBottom: 10 },
-  adminRow: { flexDirection: 'row', gap: 8 },
-  adminInput: { flex: 1, backgroundColor: Colors.stone3, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  adminBtn: { backgroundColor: Colors.stone4, borderRadius: 10, paddingHorizontal: 12, justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  adminBtnText: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand2 },
 });

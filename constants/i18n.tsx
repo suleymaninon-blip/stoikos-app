@@ -98,7 +98,7 @@ const UI: Record<Lang, Dict> = {
     'wisdom.tabQuotes': 'Alıntılar', 'wisdom.tabConcepts': 'Kavramlar', 'wisdom.all': 'Tümü',
     'wisdom.more': 'Daha fazla →', 'wisdom.exampleLabel': 'ÖRNEK', 'wisdom.practiceLabel': 'PRATİK BAĞ', 'wisdom.close': 'Kapat',
 
-    'progress.title': 'Yolun, sessizce birikiyor.', 'progress.subtitle': 'Rakamlar bir yarış değil — sadece yürüdüğün yolun izi.',
+    'settings.title': 'Ayarlar', 'settings.subtitle': 'Tercihlerini buradan yönet.', 'progress.title': 'Yolun, sessizce birikiyor.', 'progress.subtitle': 'Rakamlar bir yarış değil — sadece yürüdüğün yolun izi.',
     'progress.streak': 'GÜN ÜST ÜSTE', 'progress.streakUnit': 'gün',
     'progress.thisWeek': 'BU HAFTA PRATİK', 'progress.weekUnit': 'pratik',
     'progress.totalMoments': 'TOPLAM AN',
@@ -237,7 +237,7 @@ const UI: Record<Lang, Dict> = {
     'wisdom.tabQuotes': 'Quotes', 'wisdom.tabConcepts': 'Concepts', 'wisdom.all': 'All',
     'wisdom.more': 'Read more →', 'wisdom.exampleLabel': 'EXAMPLE', 'wisdom.practiceLabel': 'PRACTICAL LINK', 'wisdom.close': 'Close',
 
-    'progress.title': 'Your path quietly builds.', 'progress.subtitle': "Numbers aren't a race — just the trace of the road you walked.",
+    'settings.title': 'Settings', 'settings.subtitle': 'Manage your preferences here.', 'progress.title': 'Your path quietly builds.', 'progress.subtitle': "Numbers aren't a race — just the trace of the road you walked.",
     'progress.streak': 'DAYS IN A ROW', 'progress.streakUnit': 'days',
     'progress.thisWeek': 'THIS WEEK', 'progress.weekUnit': 'practices',
     'progress.totalMoments': 'TOTAL MOMENTS',
@@ -376,7 +376,7 @@ const UI: Record<Lang, Dict> = {
     'wisdom.tabQuotes': 'Zitate', 'wisdom.tabConcepts': 'Begriffe', 'wisdom.all': 'Alle',
     'wisdom.more': 'Mehr lesen →', 'wisdom.exampleLabel': 'BEISPIEL', 'wisdom.practiceLabel': 'PRAXISBEZUG', 'wisdom.close': 'Schließen',
 
-    'progress.title': 'Dein Weg wächst still.', 'progress.subtitle': 'Zahlen sind kein Wettlauf — nur die Spur des Weges, den du gingst.',
+    'settings.title': 'Einstellungen', 'settings.subtitle': 'Verwalte hier deine Einstellungen.', 'progress.title': 'Dein Weg wächst still.', 'progress.subtitle': 'Zahlen sind kein Wettlauf — nur die Spur des Weges, den du gingst.',
     'progress.streak': 'TAGE IN FOLGE', 'progress.streakUnit': 'Tage',
     'progress.thisWeek': 'DIESE WOCHE', 'progress.weekUnit': 'Übungen',
     'progress.totalMoments': 'MOMENTE GESAMT',
@@ -515,7 +515,7 @@ const UI: Record<Lang, Dict> = {
     'wisdom.tabQuotes': 'Цитаты', 'wisdom.tabConcepts': 'Понятия', 'wisdom.all': 'Все',
     'wisdom.more': 'Подробнее →', 'wisdom.exampleLabel': 'ПРИМЕР', 'wisdom.practiceLabel': 'НА ПРАКТИКЕ', 'wisdom.close': 'Закрыть',
 
-    'progress.title': 'Твой путь тихо растёт.', 'progress.subtitle': 'Цифры — не гонка, а лишь след пройденной дороги.',
+    'settings.title': 'Настройки', 'settings.subtitle': 'Управляй настройками здесь.', 'progress.title': 'Твой путь тихо растёт.', 'progress.subtitle': 'Цифры — не гонка, а лишь след пройденной дороги.',
     'progress.streak': 'ДНЕЙ ПОДРЯД', 'progress.streakUnit': 'дн.',
     'progress.thisWeek': 'НА ЭТОЙ НЕДЕЛЕ', 'progress.weekUnit': 'практик',
     'progress.totalMoments': 'ВСЕГО МГНОВЕНИЙ',
@@ -654,7 +654,7 @@ const UI: Record<Lang, Dict> = {
     'wisdom.tabQuotes': 'Citations', 'wisdom.tabConcepts': 'Concepts', 'wisdom.all': 'Tous',
     'wisdom.more': 'Lire plus →', 'wisdom.exampleLabel': 'EXEMPLE', 'wisdom.practiceLabel': 'EN PRATIQUE', 'wisdom.close': 'Fermer',
 
-    'progress.title': "Ton chemin se construit en silence.", 'progress.subtitle': "Les chiffres ne sont pas une course — juste la trace du chemin parcouru.",
+    'settings.title': 'Réglages', 'settings.subtitle': 'Gère tes préférences ici.', 'progress.title': "Ton chemin se construit en silence.", 'progress.subtitle': "Les chiffres ne sont pas une course — juste la trace du chemin parcouru.",
     'progress.streak': "JOURS D'AFFILÉE", 'progress.streakUnit': 'jours',
     'progress.thisWeek': 'CETTE SEMAINE', 'progress.weekUnit': 'pratiques',
     'progress.totalMoments': 'MOMENTS AU TOTAL',
@@ -793,7 +793,7 @@ const UI: Record<Lang, Dict> = {
     'wisdom.tabQuotes': 'Citas', 'wisdom.tabConcepts': 'Conceptos', 'wisdom.all': 'Todas',
     'wisdom.more': 'Leer más →', 'wisdom.exampleLabel': 'EJEMPLO', 'wisdom.practiceLabel': 'EN LA PRÁCTICA', 'wisdom.close': 'Cerrar',
 
-    'progress.title': 'Tu camino se construye en silencio.', 'progress.subtitle': 'Los números no son una carrera — solo el rastro del camino que recorriste.',
+    'settings.title': 'Ajustes', 'settings.subtitle': 'Gestiona tus preferencias aquí.', 'progress.title': 'Tu camino se construye en silencio.', 'progress.subtitle': 'Los números no son una carrera — solo el rastro del camino que recorriste.',
     'progress.streak': 'DÍAS SEGUIDOS', 'progress.streakUnit': 'días',
     'progress.thisWeek': 'ESTA SEMANA', 'progress.weekUnit': 'prácticas',
     'progress.totalMoments': 'MOMENTOS TOTALES',
