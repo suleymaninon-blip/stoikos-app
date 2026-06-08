@@ -6,9 +6,11 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLang } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
+import { addReflectionToMemory } from '../../constants/api';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const JOURNAL_KEY = 'stoikos_journal_';
@@ -110,9 +112,11 @@ export default function PracticeScreen() {
   }
 
   async function saveJournal() {
-    if (!journal.trim()) return;
-    await AsyncStorage.setItem(JOURNAL_KEY + today, journal.trim());
+    const txt = journal.trim();
+    if (!txt) return;
+    await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
     setJournalSaved(true);
+    addReflectionToMemory(lang, txt); // koç hafızasına işle (fire-and-forget)
   }
 
   const allExercises = [...MORNING_EXERCISES, ...EVENING_EXERCISES];
@@ -212,7 +216,12 @@ export default function PracticeScreen() {
 
           {/* Daily journal */}
           <View style={styles.journalCard}>
-            <Text style={styles.journalTag}>{t('practice.journalTag')}</Text>
+            <View style={styles.journalHeader}>
+              <Text style={styles.journalTag}>{t('practice.journalTag')}</Text>
+              <TouchableOpacity onPress={() => router.push('/journal')} hitSlop={8} activeOpacity={0.7}>
+                <Text style={styles.journalHistoryLink}>{t('practice.journalHistory')}</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.journalHint}>{t('practice.journalHint')}</Text>
             <TextInput
               style={styles.journalInput}
@@ -231,6 +240,7 @@ export default function PracticeScreen() {
             >
               <Text style={styles.journalSaveBtnText}>{journalSaved ? t('practice.saved') : t('practice.save')}</Text>
             </TouchableOpacity>
+            <Text style={styles.journalCoachNote}>{t('practice.journalCoachNote')}</Text>
           </View>
 
           {/* Concept of the day */}
@@ -356,8 +366,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 20, padding: 20,
     marginBottom: 16, borderWidth: 1, borderColor: 'rgba(100,160,220,0.15)',
   },
-  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: 'rgba(100,160,220,0.8)', marginBottom: 6 },
+  journalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: 'rgba(100,160,220,0.8)' },
+  journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(100,160,220,0.9)', letterSpacing: 0.3 },
   journalHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 17, marginBottom: 12 },
+  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.faint, lineHeight: 15, marginTop: 10, fontStyle: 'italic' },
   journalInput: {
     backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
     fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, lineHeight: 21,

@@ -32,6 +32,7 @@
 - `app/(tabs)/coach.tsx` — Claude koç (backend `sendCoach`), `>` ile alıntı parse, sessiz (sesli okuma yok).
 - `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: **yalnız istatistik** — süreklilik/haftalık/son7/egzersiz dağılımı/söz; sağ üstte ⚙ → Ayarlar).
 - `app/settings.tsx` — **Ayarlar** (push'lu ekran, ⚙ ile açılır): dil, bildirim, ✨ tanıtımı tekrar göster, 🧠 koç hafıza reset, Destek & Hakkında, sürüm, admin (Meydan Okuma bayrağı arkasında). Ayarlar buraya İlerleme'den taşındı.
+- `app/journal.tsx` — **Yansımaların** (push'lu, Pratik'teki "Geçmiş →" linkiyle açılır): geçmiş günlük yansımalar, tarihli kartlar (AsyncStorage `stoikos_journal_<tarih>`). Günlük yansıma kaydedilince ayrıca **koç hafızasına** işlenir: `addReflectionToMemory` (api.ts) → backend `POST /memory/note` → `updateMemory` ile KV'ye merge (günde 20 limit). Koç böylece yansımalara değinebilir. Veri cihazda + koç hafızası KV'de.
 - `app/programs.tsx`, `challenge*.tsx`.
 - `app/breathe.tsx` — eski tam ekran nefes (artık erişilemez, silinmedi).
 

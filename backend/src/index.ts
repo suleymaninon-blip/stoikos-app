@@ -276,6 +276,21 @@ export default {
       return json({ ok: true });
     }
 
+    // Günlük yansıma → koç hafızasına işle (kullanıcı pratik ekranında yazınca)
+    if (req.method === 'POST' && url.pathname === '/memory/note') {
+      let body: { userId?: string; lang?: string; text?: string };
+      try { body = await req.json(); } catch { return json({ error: 'invalid json' }, 400); }
+      const { userId, lang = 'en', text } = body;
+      const t = (text || '').trim();
+      if (!userId || t.length < 2) return json({ error: 'bad_request' }, 400);
+      // Kötüye kullanım/maliyet koruması: günde en çok 20 yansıma işlenir
+      if (await hitLimit(env, `note:${userId}:day`, 20, 86400)) return json({ ok: true, skipped: true });
+      const prev = (await env.MEMORY.get(`mem:${userId}`)) || '';
+      // Hafıza güncellemesini arka planda yap (yanıtı bekletme)
+      ctx.waitUntil(updateMemory(env, userId, lang, `(Günlük yansıma) ${t}`, '', prev));
+      return json({ ok: true });
+    }
+
     // Koç
     if (req.method === 'POST' && url.pathname === '/coach') {
       let payload: { userId?: string; lang?: string; messages?: { role: string; content: string }[] };

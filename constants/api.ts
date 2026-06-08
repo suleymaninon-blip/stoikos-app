@@ -47,6 +47,18 @@ export async function resetMemory(): Promise<void> {
   });
 }
 
+// Günlük yansımayı koç hafızasına işle (fire-and-forget; başarısızsa sessiz)
+export async function addReflectionToMemory(lang: Lang, text: string): Promise<void> {
+  try {
+    const userId = await getUserId();
+    await fetch(`${BACKEND_URL}/memory/note`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, lang, text }),
+    });
+  } catch {}
+}
+
 // ─── Meydan Okuma ─────────────────────────────────────────
 export const ADMIN_KEY_STORAGE = 'stoikos_admin_key';
 
