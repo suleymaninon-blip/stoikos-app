@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   tabIcon: {
-    fontSize: 19,
+    fontSize: 22,
     color: Colors.muted,
   },
   tabIconActive: {
@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontFamily: Fonts.jostMedium,
-    fontSize: 8.5,
-    letterSpacing: 0.6,
+    fontSize: 9.5,
+    letterSpacing: 0.5,
     color: Colors.muted,
     textTransform: 'uppercase',
     textAlign: 'center',
