@@ -257,7 +257,7 @@ export default function PracticeScreen() {
           // Tamamlayınca kısa "✦ Tamamlandı" onayı sonra kart kendiliğinden kapanır;
           // geri alınca hemen kapanır.
           if (wasDone) setSelected(null);
-          else setTimeout(() => setSelected(null), 650);
+          else setTimeout(() => setSelected(null), 320);
         }}
         onClose={() => setSelected(null)}
         labels={{ complete: t('practice.complete'), undo: t('practice.undo'), done: t('practice.done') }}
