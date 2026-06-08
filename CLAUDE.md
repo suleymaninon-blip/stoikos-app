@@ -46,9 +46,13 @@
 1. ✅ ~~Koç backend rate limit~~ — KV tabanlı (`hitLimit`/`coachRateLimited`, `backend/src/index.ts`). userId: 6/dk + 120/gün; IP (`CF-Connecting-IP`): 12/dk + 300/gün. Aşımda 429 + Türkçe `reason`. Frontend: `sendCoach` 429'da `e.userMessage`, coach.tsx onu balon olarak gösterir. Deploy edildi + canlı test geçti.
 2. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
 3. 📧 `constants/config.ts` `APP_INFO`: gerçek destek e-postası + mağaza linkleri.
-4. 🔒 Gizlilik politikası + KVKK/şartlar (mağaza zorunlu).
+4. 🔒 Gizlilik politikası: taslak + yayın + uygulama içi link **hazır** (`public/gizlilik.html`, `docs/gizlilik-politikasi.md`). **KALAN:**
+   - (kullanıcı) 〔...〕 alanlarını doldurur (ad/unvan, adres, **gerçek destek e-postası**, yaş sınırı, tarih).
+   - ⏳ **Kullanıcı doldurunca → `gizlilik.html`'i İngilizceye çevir** (`gizlilik-en.html` + Hakkında'da link / dile göre seç). Gerekiyorsa DE/RU/FR/ES.
+   - `config.ts` `supportEmail` placeholder'ını gerçeğiyle değiştir.
+   - Avukat/danışman son kontrolü.
 5. 🌐 fr/es için 164 alıntının çevirisi (şu an TR'ye düşüyor; kavramlar+UI tam).
-6. 🔊 Orb sesini gerçek doğa kaydıyla değiştir (expo-av + .mp3).
+6. 🔊 Orb sesi: gerçek dosya (`assets/audio/breath-orb.m4a`) **eklendi**; istenirse daha kısa/seamless loop'a uygun kesitle değiştirilebilir.
 7. 🏪 Mağaza materyalleri (ekran görüntüleri, açıklamalar, eas.json).
 
 ## Güvenlik
