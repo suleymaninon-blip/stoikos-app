@@ -14,6 +14,7 @@ import { addReflectionToMemory } from '../../constants/api';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const JOURNAL_KEY = 'stoikos_journal_';
+const COACH_CONSENT_KEY = 'stoikos_journal_coach_consent'; // açık rıza (KVKK), varsayılan kapalı
 
 // ─── Sade liste satırı (dokununca rehberli kart açılır) ────
 function ExerciseRow({
@@ -84,6 +85,7 @@ export default function PracticeScreen() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
+  const [coachConsent, setCoachConsent] = useState(false); // yansımayı koça iletme izni
   const [selected, setSelected] = useState<(Exercise & { icon: string }) | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -101,6 +103,15 @@ export default function PracticeScreen() {
 
     const journalRaw = await AsyncStorage.getItem(JOURNAL_KEY + today);
     if (journalRaw) { setJournal(journalRaw); setJournalSaved(true); }
+
+    const consent = await AsyncStorage.getItem(COACH_CONSENT_KEY);
+    setCoachConsent(consent === '1');
+  }
+
+  async function toggleCoachConsent() {
+    const next = !coachConsent;
+    setCoachConsent(next);
+    await AsyncStorage.setItem(COACH_CONSENT_KEY, next ? '1' : '0');
   }
 
   async function toggleExercise(id: string) {
@@ -116,7 +127,8 @@ export default function PracticeScreen() {
     if (!txt) return;
     await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
     setJournalSaved(true);
-    addReflectionToMemory(lang, txt); // koç hafızasına işle (fire-and-forget)
+    // Yalnız kullanıcı açık rıza verdiyse koç hafızasına işlenir (KVKK).
+    if (coachConsent) addReflectionToMemory(lang, txt);
   }
 
   const allExercises = [...MORNING_EXERCISES, ...EVENING_EXERCISES];
@@ -240,7 +252,15 @@ export default function PracticeScreen() {
             >
               <Text style={styles.journalSaveBtnText}>{journalSaved ? t('practice.saved') : t('practice.save')}</Text>
             </TouchableOpacity>
-            <Text style={styles.journalCoachNote}>{t('practice.journalCoachNote')}</Text>
+
+            {/* Açık rıza (KVKK) — varsayılan kapalı; yalnız açıkken yansıma koça iletilir */}
+            <TouchableOpacity style={styles.consentRow} onPress={toggleCoachConsent} activeOpacity={0.7}>
+              <View style={[styles.consentBox, coachConsent && styles.consentBoxOn]}>
+                {coachConsent && <Text style={styles.consentCheck}>✓</Text>}
+              </View>
+              <Text style={styles.consentLabel}>{t('practice.journalConsent')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.journalCoachNote}>{t('practice.journalConsentNote')}</Text>
           </View>
 
           {/* Concept of the day */}
@@ -370,7 +390,12 @@ const styles = StyleSheet.create({
   journalTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: 'rgba(100,160,220,0.8)' },
   journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(100,160,220,0.9)', letterSpacing: 0.3 },
   journalHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 17, marginBottom: 12 },
-  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.faint, lineHeight: 15, marginTop: 10, fontStyle: 'italic' },
+  consentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 },
+  consentBox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1.5, borderColor: 'rgba(100,160,220,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
+  consentBoxOn: { backgroundColor: 'rgba(100,160,220,0.85)', borderColor: 'rgba(100,160,220,0.85)' },
+  consentCheck: { fontSize: 12, color: '#0c1116', fontFamily: Fonts.jostMedium, marginTop: -1 },
+  consentLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 17 },
+  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.faint, lineHeight: 14, marginTop: 8 },
   journalInput: {
     backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
     fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, lineHeight: 21,
