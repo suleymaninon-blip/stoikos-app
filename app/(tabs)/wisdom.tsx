@@ -12,6 +12,7 @@ import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, Quot
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
+import PhilosopherSymbol from '../../components/PhilosopherSymbol';
 
 // ─── QuoteCard ─────────────────────────────────────────────
 function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
@@ -117,7 +118,7 @@ function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabe
 function PhilosopherCard({ philo, onPress }: { philo: Philosopher; onPress: () => void }) {
   return (
     <TouchableOpacity style={[styles.philoCard, { backgroundColor: philo.color }]} onPress={onPress} activeOpacity={0.8}>
-      <View style={styles.philoSymbolBox}><Text style={styles.philoSymbol}>{philo.symbol}</Text></View>
+      <View style={styles.philoSymbolBox}><PhilosopherSymbol id={philo.id} size={24} /></View>
       <View style={{ flex: 1 }}>
         <Text style={styles.philoName}>{philo.name}</Text>
         <Text style={styles.philoEra}>{philo.era}</Text>
@@ -137,7 +138,7 @@ function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
       <Pressable style={styles.modalOverlay} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-            <View style={styles.philoModalSymbolBox}><Text style={styles.philoModalSymbol}>{philo.symbol}</Text></View>
+            <View style={styles.philoModalSymbolBox}><PhilosopherSymbol id={philo.id} size={32} /></View>
             <Text style={styles.modalTr}>{philo.name}</Text>
             <Text style={styles.philoModalEra}>{philo.era}</Text>
             <View style={styles.modalDivider} />
