@@ -15,7 +15,12 @@ export function QuoteCard({ quote }: Props) {
       <Text style={styles.label}>{t('home.quoteLabel')}</Text>
       <Text style={styles.bigQuote}>"</Text>
       <Text style={styles.quoteText}>{quote.text}</Text>
-      <Text style={styles.author}>— {quote.author}, <Text style={styles.source}>{quote.source}</Text></Text>
+      <Text style={styles.author}>
+        — {quote.author}
+        {quote.source && quote.source !== quote.author
+          ? <Text style={styles.source}>, {quote.source}</Text>
+          : null}
+      </Text>
     </View>
   );
 }

@@ -42,7 +42,9 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
           ) : (
             <Text style={styles.quoteAuthor}>{quote.author}</Text>
           )}
-          <Text style={styles.quoteSource}>{quote.source}</Text>
+          {quote.source && quote.source !== quote.author
+            ? <Text style={styles.quoteSource}>{quote.source}</Text>
+            : null}
         </View>
         <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]}>
           <Text style={[styles.listenIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
