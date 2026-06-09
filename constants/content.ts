@@ -762,6 +762,103 @@ export function getDailyConcept(lang: Lang): Concept {
   return getConcepts(lang)[dayOfYear % CONCEPTS_RAW.length];
 }
 
+// ─── Filozoflar (Bilgelik > "Filozoflar" sekmesi) ─────────
+// id'ler AUTHORS ile aynı → alıntıdaki yazar adına dokununca kart açılır.
+// İçerik TR; diğer diller eksikse pick() TR'ye düşer (sonra çevrilecek).
+// name AUTHORS'tan türer (zaten 6 dilli). Sembol: sade monogram harf.
+interface RawPhilosopher { id: string; symbol: string; color: string; era: L; oneLiner: L; story: L; contribution: L; }
+
+const PHILOSOPHERS_RAW: RawPhilosopher[] = [
+  {
+    id: 'marcus', symbol: 'M', color: 'rgba(212,146,74,0.13)',
+    era: { tr: 'MS 121–180 · Roma İmparatoru', en: 'AD 121–180 · Roman Emperor' },
+    oneLiner: { tr: 'Dünyanın en güçlü adamıyken, geceleri kendine alçakgönüllülük notları tuttu.', en: 'The most powerful man in the world, who wrote himself notes on humility at night.' },
+    story: { tr: 'Tarihin en güçlü adamlarından biriydi — Roma İmparatoru, o çağda bilinen dünyanın yarısının hükümdarı. Ama geceleri, savaş çadırında kendine notlar tutuyordu: nasıl daha sabırlı, daha adil, daha az öfkeli olabileceğine dair. Bu notları kimsenin okumasını istememişti; sadece kendine yazıyordu. Ölümünden sonra bulunan o defter, bugün Meditationes (Düşünceler) adıyla felsefenin en sevilen eserlerinden biri oldu.' },
+    contribution: { tr: 'Gücün ve servetin insanı mutlu etmediğini, asıl işin kendi karakterini terbiye etmek olduğunu — hem de bunu söyleyebilecek son kişi olan bir imparatorun ağzından — gösterdi.' },
+  },
+  {
+    id: 'epictetus', symbol: 'E', color: 'rgba(159,176,196,0.12)',
+    era: { tr: 'MS 50–135 · Köle doğdu, özgür bir bilge oldu', en: 'AD 50–135 · Born a slave, became a free sage' },
+    oneLiner: { tr: 'Bir köleydi; ama özgürlüğün zincirlerle değil, zihinle ilgili olduğunu öğretti.', en: 'A slave who taught that freedom is a matter of the mind, not of chains.' },
+    story: { tr: 'Marcus Aurelius dünyanın en güçlü adamıyken, Epiktetos köle olarak doğdu. Bir efendinin malıydı; rivayete göre efendisi bacağını kırdığında sakin sakin "kırılacağını söylemiştim" demişti. Sonradan özgürlüğüne kavuştu ve bir okul kurdu. Hiçbir şey yazmadı — bildiğimiz her şeyi öğrencisi not aldı. Ona göre özgürlük, zincirlerin olmaması değil, kimsenin elinden alamayacağı tek şeyin — kendi zihnin ve seçimlerin — farkında olmaktı.' },
+    contribution: { tr: 'Kontrol ikilemini — "bazı şeyler bize bağlıdır, bazıları değil" — felsefenin kalbine yerleştirdi. Bir kölenin özgürlüğü herkesten iyi anlatması ise başlı başına bir derstir.' },
+  },
+  {
+    id: 'seneca', symbol: 'S', color: 'rgba(196,169,106,0.13)',
+    era: { tr: 'MÖ 4 – MS 65 · Devlet adamı, yazar, sürgün', en: '4 BC – AD 65 · Statesman, writer, exile' },
+    oneLiner: { tr: 'Hem çok zengin hem çok eleştirilen bir adamdı; servet ile erdem arasındaki gerilimi yaşadı.', en: 'Both very rich and much criticized; he lived the tension between wealth and virtue.' },
+    story: { tr: 'Romalı bir devlet adamı ve dönemin en ünlü yazarıydı. Bir süre sürgüne gönderildi, sonra geri çağrılıp imparator Nero\'nun danışmanı oldu — tehlikeli bir görev. Çok zengindi ve bu yüzden "yoksulluğu öv ama saraylarda yaşa" diye eleştirildi. Kendisi de bu çelişkinin farkındaydı; "bilge değilim, iyileşmeye çalışan bir hastayım" derdi. Sonunda Nero ondan ölmesini istedi ve o, sakince kendi sonunu karşıladı.' },
+    contribution: { tr: 'Stoacılığı soyut bir teoriden günlük hayata indirdi. Zaman, öfke, kayıp ve ölüm üzerine yazdığı mektuplar, felsefenin en pratik, en insani metinleridir.' },
+  },
+  {
+    id: 'musonius', symbol: 'R', color: 'rgba(184,150,120,0.12)',
+    era: { tr: 'MS ~30–100 · "Romalı Sokrates"', en: 'c. AD 30–100 · "The Roman Socrates"' },
+    oneLiner: { tr: 'Felsefe konuşulmaz, yaşanır dedi — ve sürgünde bile öğretmeye devam etti.', en: 'He said philosophy is lived, not spoken — and taught even in exile.' },
+    story: { tr: 'Epiktetos\'un hocasıydı. Döneminde o kadar saygındı ki "Romalı Sokrates" denirdi. Siyasi sürgünlere gönderildi ama bunu bile bir ders fırsatı saydı — çorak bir adada öğretmeye devam etti. Felsefenin laf değil eylem olduğunda ısrar etti; kadınların da erkekler kadar felsefe öğrenmesi gerektiğini savunması, çağına göre cesur bir duruştu.' },
+    contribution: { tr: 'Felsefenin pratiğe, alışkanlığa ve bedensel disipline dökülmesi gerektiğini vurguladı: bilmek değil, yapmak.' },
+  },
+  {
+    id: 'zeno', symbol: 'Z', color: 'rgba(140,170,150,0.12)',
+    era: { tr: 'MÖ ~334–262 · Stoacılığın kurucusu', en: 'c. 334–262 BC · Founder of Stoicism' },
+    oneLiner: { tr: 'Bir gemi kazasında her şeyini kaybetti — ve felsefeyi buldu.', en: 'He lost everything in a shipwreck — and found philosophy.' },
+    story: { tr: 'Zengin bir tüccardı. Bir deniz yolculuğunda gemisi battı, tüm serveti yok oldu. Atina\'da bir kitapçıda Sokrates\'i okurken "böyle biri nerede bulunur?" diye sordu; tam o sırada bir filozof geçiyordu. Her şeyini kaybetmesini sonradan "en kârlı yolculuğum" diye anardı. Atina\'da boyalı bir revakın (Stoa Poikile) altında ders verdi — "Stoacılık" adı buradan gelir.' },
+    contribution: { tr: 'Felsefeyi kurdu. Erdemin tek gerçek iyilik, dış şeylerin ise kayıtsız olduğu temel fikrini ortaya koydu.' },
+  },
+  {
+    id: 'cleanthes', symbol: 'K', color: 'rgba(170,160,130,0.12)',
+    era: { tr: 'MÖ ~330–230 · Eski boksör, su taşıyıcısı', en: 'c. 330–230 BC · Former boxer, water-carrier' },
+    oneLiner: { tr: 'Gündüz su taşıdı, gece felsefe öğrendi — azmin sembolü oldu.', en: 'He carried water by day and learned philosophy by night — a symbol of perseverance.' },
+    story: { tr: 'Zenon\'dan sonra okulun başına geçti. Eskiden boksördü ve o kadar yoksuldu ki geceleri felsefe öğrenebilmek için gündüz bahçelerde su taşıyıp para kazanıyordu. Zeki olmaktan çok azimliydi; yavaş ama sağlam öğrenirdi. Bu yüzden "ikinci sınıf zekâ, birinci sınıf karakter" örneği sayılır.' },
+    contribution: { tr: 'Evrenin akılla (Logos) düzenlendiği fikrini derinleştirdi; ünlü "Zeus\'a İlahi"sinde kadere uyumu şiirleştirdi.' },
+  },
+  {
+    id: 'chrysippus', symbol: 'X', color: 'rgba(150,160,190,0.12)',
+    era: { tr: 'MÖ ~279–206 · Stoacılığın "ikinci kurucusu"', en: 'c. 279–206 BC · The "second founder" of Stoicism' },
+    oneLiner: { tr: 'O olmasaydı Stoacılık olmazdı, derler — sistemi mantıkla sağlamlaştırdı.', en: 'Without him there would be no Stoicism, they say — he secured the system with logic.' },
+    story: { tr: 'Uzun mesafe koşucusuyken felsefeye döndü. İnanılmaz üretkendi — 700\'den fazla eser yazdığı söylenir. Keskin mantığıyla Stoacılığı dağınık fikirlerden tutarlı bir sisteme dönüştürdü. "Khrysippos olmasaydı, Stoa olmazdı" sözü ününü özetler.' },
+    contribution: { tr: 'Stoacı mantığı ve fizik anlayışını sistemleştirdi; felsefeyi entelektüel olarak savunulabilir bir bütün hâline getirdi.' },
+  },
+  {
+    id: 'hierocles', symbol: 'H', color: 'rgba(200,150,150,0.12)',
+    era: { tr: 'MS 2. yüzyıl · Şefkat halkalarının düşünürü', en: '2nd century AD · Thinker of the circles of concern' },
+    oneLiner: { tr: 'İnsan sevgisini iç içe halkalar olarak çizdi: kendinden başlayıp tüm insanlığa.', en: 'He drew human love as nested circles: from yourself out to all humanity.' },
+    story: { tr: 'Hakkında az şey bilinir ama bıraktığı bir fikir felsefede iz bıraktı: oikeiosis. İnsanı merkezde, çevresinde iç içe halkalar olarak hayal etti — aile, dostlar, şehir, tüm insanlık. Erdemli yaşam, dıştaki halkaları yavaşça içe çekmek; yani uzaktaki bir yabancıya yakınınmış gibi şefkat gösterebilmektir.' },
+    contribution: { tr: 'Stoacılığın sosyal ve şefkatli yüzünü işledi; adaletin ve insan sevgisinin felsefedeki yerini güçlendirdi.' },
+  },
+  {
+    id: 'cato', symbol: 'C', color: 'rgba(190,160,110,0.13)',
+    era: { tr: 'MÖ 95–46 · Romalı senatör, direnişin sembolü', en: '95–46 BC · Roman senator, symbol of resistance' },
+    oneLiner: { tr: 'Hiç eser yazmadı; Stoacılığı sözleriyle değil, dimdik duruşuyla anlattı.', en: 'He wrote nothing; he conveyed Stoicism not with words but with an unbending stance.' },
+    story: { tr: 'Romalı bir senatördü, dürüstlüğü ve satın alınamazlığıyla ünlüydü — rüşvetin sıradan olduğu bir çağda. Julius Caesar\'ın artan gücüne sonuna kadar direndi. Özgürlüğün bittiğini görünce, bir zorbaya boyun eğmektense kendi sonunu seçti. Bir kitap değil, bir duruş bıraktı; sonraki nesiller için Stoacı erdemin canlı örneği oldu.' },
+    contribution: { tr: 'Felsefeyi yazıyla değil yaşayarak kanıtladı. Cesaret, dürüstlük ve ilkelere bağlılığın somut bir timsali sayıldı.' },
+  },
+  {
+    id: 'posidonius', symbol: 'P', color: 'rgba(150,175,185,0.12)',
+    era: { tr: 'MÖ ~135–51 · Filozof, bilim insanı, gezgin', en: 'c. 135–51 BC · Philosopher, scientist, traveler' },
+    oneLiner: { tr: 'Hem yıldızları hem ruhu inceledi — bilgiyi tek bir bütün gördü.', en: 'He studied both the stars and the soul — he saw knowledge as one whole.' },
+    story: { tr: 'Çağının en bilgili insanlarından biriydi. Sadece felsefe değil; astronomi, coğrafya, tarih, meteoroloji üzerine çalıştı. Gel-git olaylarını Ay\'a bağlayan ilk düşünürlerdendi. Dünyayı dolaşıp gözlem yaptı. Ona göre felsefe, bilim ve doğa ayrı şeyler değil; evreni anlamak kendini anlamanın parçasıydı.' },
+    contribution: { tr: 'Stoacılığı bilimle ve geniş bir evren anlayışıyla birleştirdi; "her şey birbirine bağlıdır" (sympatheia) fikrini güçlendirdi.' },
+  },
+];
+
+export interface Philosopher { id: string; name: string; symbol: string; color: string; era: string; oneLiner: string; story: string; contribution: string; }
+
+export function getPhilosophers(lang: Lang): Philosopher[] {
+  return PHILOSOPHERS_RAW.map((p) => ({
+    id: p.id,
+    name: authorName(p.id, lang),
+    symbol: p.symbol,
+    color: p.color,
+    era: pick(p.era, lang),
+    oneLiner: pick(p.oneLiner, lang),
+    story: pick(p.story, lang),
+    contribution: pick(p.contribution, lang),
+  }));
+}
+
+// Alıntıdaki yazarın filozof kartı var mı? (söz → kart bağı için)
+export const PHILOSOPHER_IDS: ReadonlySet<string> = new Set(PHILOSOPHERS_RAW.map((p) => p.id));
+
 // ─── Egzersizler ──────────────────────────────────────────
 interface RawExercise { id: string; min: number; name: L; desc: L; }
 

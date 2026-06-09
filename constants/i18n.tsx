@@ -95,7 +95,7 @@ const UI: Record<Lang, Dict> = {
     'coach.connError': 'Bağlantı hatası oluştu. Lütfen tekrar dene.',
 
     'wisdom.title': 'Antik öğretiler, bugünün hayatı.', 'wisdom.subtitle': 'Acele etme. Bir alıntıyı oku, bırak otursun.',
-    'wisdom.tabQuotes': 'Alıntılar', 'wisdom.tabConcepts': 'Kavramlar', 'wisdom.all': 'Tümü',
+    'wisdom.tabQuotes': 'Alıntılar', 'wisdom.tabConcepts': 'Kavramlar', 'wisdom.tabPhilosophers': 'Filozoflar', 'wisdom.philoContribution': 'Stoacılığa katkısı', 'wisdom.all': 'Tümü',
     'wisdom.more': 'Daha fazla →', 'wisdom.exampleLabel': 'ÖRNEK', 'wisdom.practiceLabel': 'PRATİK BAĞ', 'wisdom.close': 'Kapat',
 
     'settings.title': 'Ayarlar', 'settings.subtitle': 'Tercihlerini buradan yönet.', 'progress.title': 'Yolun, sessizce birikiyor.', 'progress.subtitle': 'Rakamlar bir yarış değil — sadece yürüdüğün yolun izi.',
@@ -234,7 +234,7 @@ const UI: Record<Lang, Dict> = {
     'coach.connError': 'A connection error occurred. Please try again.',
 
     'wisdom.title': "Ancient teachings, today's life.", 'wisdom.subtitle': "Don't rush. Read a quote, let it settle.",
-    'wisdom.tabQuotes': 'Quotes', 'wisdom.tabConcepts': 'Concepts', 'wisdom.all': 'All',
+    'wisdom.tabQuotes': 'Quotes', 'wisdom.tabConcepts': 'Concepts', 'wisdom.tabPhilosophers': 'Philosophers', 'wisdom.philoContribution': 'Contribution to Stoicism', 'wisdom.all': 'All',
     'wisdom.more': 'Read more →', 'wisdom.exampleLabel': 'EXAMPLE', 'wisdom.practiceLabel': 'PRACTICAL LINK', 'wisdom.close': 'Close',
 
     'settings.title': 'Settings', 'settings.subtitle': 'Manage your preferences here.', 'progress.title': 'Your path quietly builds.', 'progress.subtitle': "Numbers aren't a race — just the trace of the road you walked.",
@@ -373,7 +373,7 @@ const UI: Record<Lang, Dict> = {
     'coach.connError': 'Es ist ein Verbindungsfehler aufgetreten. Bitte versuche es erneut.',
 
     'wisdom.title': 'Antike Lehren, das Leben von heute.', 'wisdom.subtitle': 'Keine Eile. Lies ein Zitat, lass es wirken.',
-    'wisdom.tabQuotes': 'Zitate', 'wisdom.tabConcepts': 'Begriffe', 'wisdom.all': 'Alle',
+    'wisdom.tabQuotes': 'Zitate', 'wisdom.tabConcepts': 'Begriffe', 'wisdom.tabPhilosophers': 'Philosophen', 'wisdom.philoContribution': 'Beitrag zur Stoa', 'wisdom.all': 'Alle',
     'wisdom.more': 'Mehr lesen →', 'wisdom.exampleLabel': 'BEISPIEL', 'wisdom.practiceLabel': 'PRAXISBEZUG', 'wisdom.close': 'Schließen',
 
     'settings.title': 'Einstellungen', 'settings.subtitle': 'Verwalte hier deine Einstellungen.', 'progress.title': 'Dein Weg wächst still.', 'progress.subtitle': 'Zahlen sind kein Wettlauf — nur die Spur des Weges, den du gingst.',
@@ -512,7 +512,7 @@ const UI: Record<Lang, Dict> = {
     'coach.connError': 'Произошла ошибка соединения. Попробуйте ещё раз.',
 
     'wisdom.title': 'Древние учения, сегодняшняя жизнь.', 'wisdom.subtitle': 'Не спеши. Прочти цитату, дай ей осесть.',
-    'wisdom.tabQuotes': 'Цитаты', 'wisdom.tabConcepts': 'Понятия', 'wisdom.all': 'Все',
+    'wisdom.tabQuotes': 'Цитаты', 'wisdom.tabConcepts': 'Понятия', 'wisdom.tabPhilosophers': 'Философы', 'wisdom.philoContribution': 'Вклад в стоицизм', 'wisdom.all': 'Все',
     'wisdom.more': 'Подробнее →', 'wisdom.exampleLabel': 'ПРИМЕР', 'wisdom.practiceLabel': 'НА ПРАКТИКЕ', 'wisdom.close': 'Закрыть',
 
     'settings.title': 'Настройки', 'settings.subtitle': 'Управляй настройками здесь.', 'progress.title': 'Твой путь тихо растёт.', 'progress.subtitle': 'Цифры — не гонка, а лишь след пройденной дороги.',
@@ -651,7 +651,7 @@ const UI: Record<Lang, Dict> = {
     'coach.connError': "Une erreur de connexion s'est produite. Réessaie.",
 
     'wisdom.title': "Enseignements antiques, vie d'aujourd'hui.", 'wisdom.subtitle': "Ne te presse pas. Lis une citation, laisse-la infuser.",
-    'wisdom.tabQuotes': 'Citations', 'wisdom.tabConcepts': 'Concepts', 'wisdom.all': 'Tous',
+    'wisdom.tabQuotes': 'Citations', 'wisdom.tabConcepts': 'Concepts', 'wisdom.tabPhilosophers': 'Philosophes', 'wisdom.philoContribution': 'Apport au stoïcisme', 'wisdom.all': 'Tous',
     'wisdom.more': 'Lire plus →', 'wisdom.exampleLabel': 'EXEMPLE', 'wisdom.practiceLabel': 'EN PRATIQUE', 'wisdom.close': 'Fermer',
 
     'settings.title': 'Réglages', 'settings.subtitle': 'Gère tes préférences ici.', 'progress.title': "Ton chemin se construit en silence.", 'progress.subtitle': "Les chiffres ne sont pas une course — juste la trace du chemin parcouru.",
@@ -790,7 +790,7 @@ const UI: Record<Lang, Dict> = {
     'coach.connError': 'Ocurrió un error de conexión. Inténtalo de nuevo.',
 
     'wisdom.title': 'Enseñanzas antiguas, la vida de hoy.', 'wisdom.subtitle': 'No te apures. Lee una cita, deja que se asiente.',
-    'wisdom.tabQuotes': 'Citas', 'wisdom.tabConcepts': 'Conceptos', 'wisdom.all': 'Todas',
+    'wisdom.tabQuotes': 'Citas', 'wisdom.tabConcepts': 'Conceptos', 'wisdom.tabPhilosophers': 'Filósofos', 'wisdom.philoContribution': 'Aporte al estoicismo', 'wisdom.all': 'Todas',
     'wisdom.more': 'Leer más →', 'wisdom.exampleLabel': 'EJEMPLO', 'wisdom.practiceLabel': 'EN LA PRÁCTICA', 'wisdom.close': 'Cerrar',
 
     'settings.title': 'Ajustes', 'settings.subtitle': 'Gestiona tus preferencias aquí.', 'progress.title': 'Tu camino se construye en silencio.', 'progress.subtitle': 'Los números no son una carrera — solo el rastro del camino que recorriste.',

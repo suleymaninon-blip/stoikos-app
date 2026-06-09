@@ -8,15 +8,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
-import { getQuotes, getConcepts, AUTHORS, Quote, Concept, conceptAudioKey } from '../../constants/content';
+import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote, onShare, isFav, onFav }: {
+function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
   quote: Quote; onShare: (q: Quote) => void;
   isFav: boolean; onFav: (id: string) => void;
+  onAuthor?: (authorId: string) => void; // filozof kartı varsa dokunulabilir
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(10)).current;
@@ -33,7 +34,13 @@ function QuoteItem({ quote, onShare, isFav, onFav }: {
       <Text style={styles.quoteText}>{quote.text}</Text>
       <View style={styles.quoteMeta}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.quoteAuthor}>{quote.author}</Text>
+          {onAuthor ? (
+            <TouchableOpacity onPress={() => onAuthor(quote.authorId)} activeOpacity={0.6} hitSlop={6}>
+              <Text style={[styles.quoteAuthor, styles.quoteAuthorLink]}>{quote.author} ›</Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.quoteAuthor}>{quote.author}</Text>
+          )}
           <Text style={styles.quoteSource}>{quote.source}</Text>
         </View>
         <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]}>
@@ -94,6 +101,51 @@ function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabe
               <View style={styles.modalPracticeBox}>
                 <Text style={styles.modalPracticeLabel}>{practiceLabel}</Text>
                 <Text style={styles.modalPractice}>{concept.practice}</Text>
+              </View>
+            ) : null}
+            <TouchableOpacity style={styles.modalClose} onPress={onClose}>
+              <Text style={styles.modalCloseText}>{closeLabel}</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
+
+// ─── Philosopher Card ──────────────────────────────────────
+function PhilosopherCard({ philo, onPress }: { philo: Philosopher; onPress: () => void }) {
+  return (
+    <TouchableOpacity style={[styles.philoCard, { backgroundColor: philo.color }]} onPress={onPress} activeOpacity={0.8}>
+      <View style={styles.philoSymbolBox}><Text style={styles.philoSymbol}>{philo.symbol}</Text></View>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.philoName}>{philo.name}</Text>
+        <Text style={styles.philoEra}>{philo.era}</Text>
+        <Text style={styles.philoOneLiner} numberOfLines={3}>{philo.oneLiner}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+// ─── Philosopher Modal ─────────────────────────────────────
+function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
+  philo: Philosopher | null; onClose: () => void; contributionLabel: string; closeLabel: string;
+}) {
+  if (!philo) return null;
+  return (
+    <Modal transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
+        <Pressable style={styles.modalCard} onPress={() => {}}>
+          <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+            <View style={styles.philoModalSymbolBox}><Text style={styles.philoModalSymbol}>{philo.symbol}</Text></View>
+            <Text style={styles.modalTr}>{philo.name}</Text>
+            <Text style={styles.philoModalEra}>{philo.era}</Text>
+            <View style={styles.modalDivider} />
+            <Text style={styles.modalDesc}>{philo.story}</Text>
+            {philo.contribution ? (
+              <View style={styles.modalPracticeBox}>
+                <Text style={styles.modalPracticeLabel}>{contributionLabel}</Text>
+                <Text style={styles.modalPractice}>{philo.contribution}</Text>
               </View>
             ) : null}
             <TouchableOpacity style={styles.modalClose} onPress={onClose}>
@@ -227,16 +279,24 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
 // ─── Main ──────────────────────────────────────────────────
 export default function WisdomScreen() {
   const { t, lang } = useLang();
-  const [tab, setTab] = useState<'quotes' | 'concepts'>('quotes');
+  const [tab, setTab] = useState<'quotes' | 'concepts' | 'philosophers'>('quotes');
   const [filter, setFilter] = useState('all'); // 'all' | 'fav' | authorId | 'mood:<tema>'
   const [mode, setMode] = useState<'author' | 'mood'>('author'); // tekerleğin gösterdiği boyut
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
+  const [selectedPhilo, setSelectedPhilo] = useState<Philosopher | null>(null);
   const [playingKey, setPlayingKey] = useState<string | null>(null);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
   const quotes = getQuotes(lang);
   const concepts = getConcepts(lang);
+  const philosophers = getPhilosophers(lang);
+
+  // Alıntıdaki yazar adına dokununca → filozof sekmesine geç + kartını aç.
+  const openPhilosopher = useCallback((authorId: string) => {
+    const p = philosophers.find((x) => x.id === authorId);
+    if (p) { setTab('philosophers'); setSelectedPhilo(p); }
+  }, [philosophers]);
 
   useEffect(() => { getFavorites().then(setFavorites); }, []);
 
@@ -314,6 +374,9 @@ export default function WisdomScreen() {
         <TouchableOpacity style={[styles.tabBtn, tab === 'concepts' && styles.tabBtnActive]} onPress={() => setTab('concepts')}>
           <Text style={[styles.tabBtnText, tab === 'concepts' && styles.tabBtnTextActive]}>{t('wisdom.tabConcepts')}</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'philosophers' && styles.tabBtnActive]} onPress={() => setTab('philosophers')}>
+          <Text style={[styles.tabBtnText, tab === 'philosophers' && styles.tabBtnTextActive]}>{t('wisdom.tabPhilosophers')}</Text>
+        </TouchableOpacity>
       </View>
 
       {tab === 'quotes' ? (
@@ -361,7 +424,7 @@ export default function WisdomScreen() {
           <FlatList
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
-            renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} />}
+            renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} onAuthor={PHILOSOPHER_IDS.has(item.authorId) ? openPhilosopher : undefined} />}
             contentContainerStyle={filteredQuotes.length ? styles.listContent : styles.listEmpty}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
@@ -373,13 +436,27 @@ export default function WisdomScreen() {
             ListFooterComponent={filteredQuotes.length ? <Text style={styles.attribution}>{t('wisdom.attribution')}</Text> : null}
           />
         </>
-      ) : (
+      ) : tab === 'concepts' ? (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid}>
           {concepts.map((c) => (
             <ConceptCard key={c.latin} concept={c} onPress={() => setSelectedConcept(c)} moreLabel={t('wisdom.more')} />
           ))}
         </ScrollView>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid}>
+          {philosophers.map((p) => (
+            <PhilosopherCard key={p.id} philo={p} onPress={() => setSelectedPhilo(p)} />
+          ))}
+          <Text style={styles.attribution}>{t('wisdom.attribution')}</Text>
+        </ScrollView>
       )}
+
+      <PhilosopherModal
+        philo={selectedPhilo}
+        onClose={() => setSelectedPhilo(null)}
+        contributionLabel={t('wisdom.philoContribution')}
+        closeLabel={t('wisdom.close')}
+      />
 
       <ConceptModal
         concept={selectedConcept}
@@ -469,6 +546,7 @@ const styles = StyleSheet.create({
   quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 16 },
   quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
+  quoteAuthorLink: { color: Colors.accent },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
   listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
@@ -487,6 +565,31 @@ const styles = StyleSheet.create({
   conceptTr: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5, marginBottom: 10 },
   conceptPreview: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 18, marginBottom: 10 },
   conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.accent, letterSpacing: 0.3 },
+
+  // Filozof kartı
+  philoCard: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: 16,
+    borderRadius: 18, padding: 18,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  },
+  philoSymbolBox: {
+    width: 48, height: 48, borderRadius: 24,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.18)', borderWidth: 1, borderColor: 'rgba(216,196,154,0.25)',
+  },
+  philoSymbol: { fontFamily: Fonts.cinzel, fontSize: 20, color: Colors.sand2 },
+  philoName: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.sand2, marginBottom: 2 },
+  philoEra: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.muted, letterSpacing: 0.3, marginBottom: 8 },
+  philoOneLiner: { fontFamily: Fonts.jost, fontSize: 12.5, color: Colors.text2, lineHeight: 19 },
+
+  // Filozof modal
+  philoModalSymbolBox: {
+    alignSelf: 'center', width: 56, height: 56, borderRadius: 28,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 12,
+    backgroundColor: 'rgba(216,196,154,0.10)', borderWidth: 1, borderColor: 'rgba(216,196,154,0.28)',
+  },
+  philoModalSymbol: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.sand2 },
+  philoModalEra: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, textAlign: 'center', letterSpacing: 0.3, marginTop: -10, marginBottom: 16 },
 
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.75)',
