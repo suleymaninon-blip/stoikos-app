@@ -27,7 +27,7 @@
 - `constants/audioManifest.ts` — OTOMATİK üretilir (`npm run gen-audio`), 216 mp3. Elle düzenleme.
 - `scripts/generate-audio.ts` — ElevenLabs ses üretimi. Sesler: tr=Sukru Terzi, en=Donovan, de=David, ru=Artem Lebedev, fr=Yann, es=Miguel. `npm run gen-audio` (yalnız kavram; `--all` ile hepsi).
 - `components/BreathOrb.tsx` — bas-tut nefes orbu: sürekli nefes; basılı tutunca rezonanslı renk parlama; bırakınca normal. Sağ üstte yalnız ses toggle (titreşim kaldırıldı).
-- `components/Onboarding.tsx` — ilk açılış 4 slayt (dil seçimi, pratik, koç, bilgelik&nefes) + hatırlatıcı; `_layout.tsx`'te `stoikos_onboarded` bayrağıyla bir kez. **Tekrar izleme:** İlerleme ekranında "✨ Tanıtımı tekrar göster" butonu → `constants/onboarding.ts` (`replayOnboarding`/`onReplayOnboarding`) bayrağı silip root'taki Onboarding'i canlı tetikler.
+- `components/Onboarding.tsx` — ilk açılış **6 slayt**: logo animasyonu (Ω SVG stroke ~4s, sessiz sahne) + dil seçimi + pratik + koç + bilgelik&nefes + hatırlatıcı; `_layout.tsx`'te `stoikos_onboarded` bayrağıyla bir kez. **Tekrar izleme:** İlerleme ekranında "✨ Tanıtımı tekrar göster" butonu → `constants/onboarding.ts` (`replayOnboarding`/`onReplayOnboarding`) bayrağı silip root'taki Onboarding'i canlı tetikler.
 - `app/(tabs)/index.tsx` — Ana: selamlama, nefes orbu, günün alıntısı, BUGÜN modül listesi (♥ "Nasıl hissediyorsun?" → /wisdom dahil), süreklilik.
 - `app/(tabs)/wisdom.tsx` — Bilgelik: alıntılar. **Mod anahtarı + tek tekerlek** (Alternatif 1): "FİLTRE" altında segment `Filozof | Ruh Hali` (`mode` state) + ayrı **♥ favori** düğmesi; altında moda göre içerik gösteren TEK `WheelSelector` (`key={mode}` ile remount, itemW author=168/mood=132). `switchMode` boyut değişince filtre o boyuta ait değilse 'all'a döner. `filter` tek state: 'all' | 'fav' | authorId | 'mood:<tema>'. Tekerlek: sonsuz döngü, oklar yok, parmakla kaydırma, yanlar perspektifle silik. Altında `wheelCount` ("{n} alıntı"). Boş liste → `ListEmptyComponent` (Favoriler boşsa özel mesaj). Ana ekran mood kısayolu `mode='mood'` yapar. (Eski iki-yığılı tekerlek ve `FilterDropdown` kaldırıldı.) Kavramlar: modal + sesli okuma + pratik bağ. **3. sekme "Filozoflar"**: 10 Stoacı düşünür kartı (`PHILOSOPHERS_RAW`/`getPhilosophers` content.ts; id'ler AUTHORS ile aynı), Kavramlar kart/detay desenini taklit eder (monogram + isim + dönem + tek satır → modal: hikâye + "Stoacılığa katkısı"). Alıntıdaki yazar adı (filozof kartı olanlar) `›` ile dokunulabilir → `openPhilosopher` ile sekme+kart açar (`PHILOSOPHER_IDS`). İçerik TR; diğer diller `pick()` ile TR'ye düşer (çevrilecek).
 - `app/(tabs)/coach.tsx` — Claude koç (backend `sendCoach`), `>` ile alıntı parse, sessiz (sesli okuma yok).
@@ -44,11 +44,9 @@
 
 ## BEKLEYEN İŞLER (öncelik sırası)
 1. ✅ ~~Koç backend rate limit~~ — KV tabanlı (`hitLimit`/`coachRateLimited`, `backend/src/index.ts`). userId: 6/dk + 120/gün; IP (`CF-Connecting-IP`): 12/dk + 300/gün. Aşımda 429 + Türkçe `reason`. Frontend: `sendCoach` 429'da `e.userMessage`, coach.tsx onu balon olarak gösterir. Deploy edildi + canlı test geçti.
-2. 🌐 **ŞURADAN BAŞLA:** `constants/content.ts` alıntılar & filozoflar çevirisi (başlamadı — 2 gündür konuşma limit doluyor):
-   - **Alıntılar 37–164** (128 adet): yalnız TR var. EN/DE/RU/FR/ES ekle (`QUOTES_RAW[].text`).
-   - **10 Filozof** (`PHILOSOPHERS_RAW`): `story` + `contribution` yalnız TR; `era` + `oneLiner` TR+EN. Tüm 6 dile çevir.
-   - Sonra commit: `feat(i18n): 128 alıntı + filosof biyografi tüm dillerde`
-3. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
+2. ✅ ~~`constants/content.ts` alıntılar & filozoflar çevirisi~~ — Alıntılar 37–164 (128 adet) + 10 filozof tüm alanları EN/DE/RU/FR/ES'e çevrildi (commit 6ed2b650).
+3. ✅ ~~Logo animasyon sahnesi~~ — Tanıtım turuna slayt 0 olarak eklendi: `LogoSceneBoundary` (SVG stroke draw ~2.5s → nefes parlaması → STOIKOS fade-in); native hata için `OmegaFallback` + ErrorBoundary.
+4. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
 4. 📧 `constants/config.ts` `APP_INFO`: gerçek destek e-postası + mağaza linkleri.
 5. 🔒 Gizlilik politikası: taslak + yayın + uygulama içi link **hazır** (`public/gizlilik.html`, `docs/gizlilik-politikasi.md`). **KALAN:**
    - (kullanıcı) 〔...〕 alanlarını doldurur (ad/unvan, adres, **gerçek destek e-postası**, yaş sınırı, tarih).

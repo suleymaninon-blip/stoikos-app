@@ -4,9 +4,119 @@ import {
   useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Path } from 'react-native-svg';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang, LANGUAGES } from '../constants/i18n';
 import { enableReminders, disableReminders } from '../constants/notify';
+
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+
+// Ω SVG path — viewBox 0 0 100 92, single continuous stroke
+// Arc: large-arc=1 sweep=1 traces the horseshoe going UP and over the top
+const OMEGA_PATH = 'M 4 80 L 26 80 L 26 62 A 28 32 0 1 1 74 62 L 74 80 L 96 80';
+const OMEGA_LEN = 210; // approximate stroke length for dasharray
+
+// Fallback: simple fade-in + one breath (no SVG stroke draw)
+function OmegaFallback({ size }: { size: number }) {
+  const op = useRef(new Animated.Value(0)).current;
+  const sc = useRef(new Animated.Value(0.92)).current;
+  const brandOp = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.sequence([
+      Animated.delay(400),
+      Animated.parallel([
+        Animated.timing(op, { toValue: 0.75, duration: 1800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(sc, { toValue: 1, duration: 1800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(op, { toValue: 1, duration: 700, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(sc, { toValue: 1.03, duration: 700, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+      Animated.parallel([
+        Animated.timing(op, { toValue: 0.85, duration: 700, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(sc, { toValue: 1, duration: 700, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+      Animated.timing(brandOp, { toValue: 1, duration: 500, useNativeDriver: true }),
+    ]).start();
+  }, []);
+  return (
+    <View style={logoSt.scene}>
+      <Animated.Text style={[logoSt.omegaText, { opacity: op, transform: [{ scale: sc }], fontSize: size * 0.62 }]}>
+        Ω
+      </Animated.Text>
+      <Animated.Text style={[logoSt.brand, { opacity: brandOp }]}>STOIKOS</Animated.Text>
+    </View>
+  );
+}
+
+// SVG stroke-draw scene
+function OmegaSvgScene({ size }: { size: number }) {
+  const dashOff = useRef(new Animated.Value(OMEGA_LEN)).current;
+  const glowOp = useRef(new Animated.Value(0.7)).current;
+  const glowSc = useRef(new Animated.Value(1)).current;
+  const brandOp = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.sequence([
+      // Phase 1: draw Ω over 2.5s (0.5s initial delay)
+      Animated.timing(dashOff, {
+        toValue: 0, duration: 2500, delay: 500,
+        easing: Easing.inOut(Easing.ease), useNativeDriver: false,
+      }),
+      // Phase 2: one breath glow — in
+      Animated.parallel([
+        Animated.timing(glowOp, { toValue: 1, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(glowSc, { toValue: 1.03, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+      // Phase 2: breath — out
+      Animated.parallel([
+        Animated.timing(glowOp, { toValue: 0.85, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(glowSc, { toValue: 1, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+      // Phase 3: STOIKOS fades in
+      Animated.timing(brandOp, { toValue: 1, duration: 500, useNativeDriver: true }),
+    ]).start();
+  }, []);
+  const svgH = size * 0.92;
+  return (
+    <View style={logoSt.scene}>
+      <Animated.View style={{ transform: [{ scale: glowSc }], opacity: glowOp }}>
+        <Svg width={size} height={svgH} viewBox="0 0 100 92">
+          <AnimatedPath
+            d={OMEGA_PATH}
+            fill="none"
+            stroke={Colors.sand2}
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray={`${OMEGA_LEN}`}
+            strokeDashoffset={dashOff}
+          />
+        </Svg>
+      </Animated.View>
+      <Animated.Text style={[logoSt.brand, { opacity: brandOp }]}>STOIKOS</Animated.Text>
+    </View>
+  );
+}
+
+// Error boundary wraps SVG scene → falls back to fade-in version on any render error
+class LogoSceneBoundary extends React.Component<{ size: number }, { err: boolean }> {
+  constructor(props: { size: number }) { super(props); this.state = { err: false }; }
+  static getDerivedStateFromError() { return { err: true }; }
+  render() {
+    return this.state.err
+      ? <OmegaFallback size={this.props.size} />
+      : <OmegaSvgScene size={this.props.size} />;
+  }
+}
+
+const logoSt = StyleSheet.create({
+  scene: { alignItems: 'center', justifyContent: 'center' },
+  omegaText: { fontFamily: Fonts.cinzel, color: Colors.sand2, lineHeight: 110 },
+  brand: {
+    fontFamily: Fonts.jost, fontSize: 10, letterSpacing: 5,
+    color: Colors.faint, marginTop: 24, textTransform: 'uppercase',
+  },
+});
 
 // Yumuşak nabız parıltısı (ikon arkası)
 function PulseGlow({ size }: { size: number }) {
@@ -68,6 +178,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const [remindOn, setRemindOn] = useState(false);
 
   const slides = [
+    { key: 'logo' as const },
     { key: 'welcome' as const },
     { key: 'p1' as const, icon: '☀', title: t('onb.p1t'), desc: t('onb.p1d') },
     { key: 'p2' as const, icon: '◎', title: t('onb.p2t'), desc: t('onb.p2d') },
@@ -124,7 +235,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           return (
             <View key={s.key} style={[styles.slide, { width }]}>
               <Animated.View style={[styles.slideInner, aStyle]}>
-                {s.key === 'welcome' ? (
+                {s.key === 'logo' ? (
+                  <LogoSceneBoundary size={Math.min(width * 0.38, 180)} />
+                ) : s.key === 'welcome' ? (
                   <>
                     <Text style={styles.omega}>Ω</Text>
                     <Text style={styles.brand}>STOIKOS</Text>
