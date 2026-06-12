@@ -75,17 +75,25 @@ nav {
   pointer-events: none;
 }
 .omega-wrap { position: relative; margin-bottom: 24px; }
-.omega-svg { width: 140px; height: 130px; }
-.omega-path {
-  stroke-dasharray: 210;
-  stroke-dashoffset: 210;
-  animation: draw 2.8s ease-in-out 0.4s forwards;
+.omega-char {
+  font-family: 'Cinzel', serif;
+  font-size: 120px;
+  color: #d8c49a;
+  line-height: 0.9;
+  opacity: 0;
+  display: block;
+  animation: omegaReveal 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+  filter: drop-shadow(0 0 30px rgba(216,196,154,0.15));
 }
-@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes omegaReveal {
+  0%   { opacity: 0; transform: scale(0.78); filter: drop-shadow(0 0 60px rgba(216,196,154,0.55)); }
+  45%  { opacity: 1; transform: scale(1.04); filter: drop-shadow(0 0 35px rgba(216,196,154,0.35)); }
+  100% { opacity: 1; transform: scale(1);    filter: drop-shadow(0 0 18px rgba(216,196,154,0.12)); }
+}
 .omega-glow-ring {
   position: absolute; inset: -20px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(216,196,154,0.12) 0%, transparent 70%);
-  animation: pulse 3s ease-in-out 3.2s infinite;
+  background: radial-gradient(circle, rgba(216,196,154,0.10) 0%, transparent 70%);
+  animation: pulse 3s ease-in-out 2.6s infinite;
 }
 @keyframes pulse {
   0%, 100% { opacity: .6; transform: scale(1); }
@@ -94,20 +102,20 @@ nav {
 .hero h1 {
   font-family: 'Cinzel', serif; font-size: clamp(36px, 6vw, 64px);
   letter-spacing: 10px; color: var(--text); margin-bottom: 10px;
-  animation: fadeUp .8s ease 3s both;
+  animation: fadeUp .8s ease 2.7s both;
 }
 .hero-tagline {
   font-family: 'Jost', sans-serif; font-size: clamp(11px, 1.5vw, 13px);
   letter-spacing: 3px; color: var(--gold); text-transform: uppercase;
-  margin-bottom: 28px; animation: fadeUp .8s ease 3.2s both;
+  margin-bottom: 28px; animation: fadeUp .8s ease 2.9s both;
 }
 .hero-desc {
   font-family: 'Cormorant Garamond', serif; font-style: italic;
   font-size: clamp(20px, 3vw, 26px); color: var(--text2);
   max-width: 560px; line-height: 1.5; margin-bottom: 48px;
-  animation: fadeUp .8s ease 3.4s both;
+  animation: fadeUp .8s ease 3.1s both;
 }
-.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; animation: fadeUp .8s ease 3.6s both; }
+.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; animation: fadeUp .8s ease 3.3s both; }
 .btn-primary {
   background: rgba(194,168,120,0.15); border: 1px solid rgba(194,168,120,0.45);
   border-radius: 14px; padding: 16px 32px;
@@ -231,10 +239,7 @@ footer a:hover { color: var(--gold); }
   <div class="hero-glow"></div>
   <div class="omega-wrap">
     <div class="omega-glow-ring"></div>
-    <svg class="omega-svg" viewBox="0 0 100 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path class="omega-path" d="M 4 80 L 26 80 L 26 62 A 28 32 0 1 1 74 62 L 74 80 L 96 80"
-        fill="none" stroke="#d8c49a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <span class="omega-char">Ω</span>
   </div>
   <h1>STOIKOS</h1>
   <p class="hero-tagline" data-en="Ancient Wisdom · Modern Practice" data-tr="Kadim Bilgelik · Modern Pratik">Ancient Wisdom · Modern Practice</p>
