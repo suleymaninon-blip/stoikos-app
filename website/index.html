@@ -11,39 +11,43 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  height: 100%;
+  height: 100%; width: 100%;
   background: #14120e;
   color: #ece4d4;
   font-family: 'Jost', sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
-.scene {
-  text-align: center;
-  position: relative;
-  user-select: none;
-}
-
+/* ── GLOW BG ── */
 .glow-bg {
   position: fixed;
-  top: 50%; left: 50%;
+  top: 42%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px; height: 600px;
+  width: 560px; height: 560px;
   background: radial-gradient(circle, rgba(194,168,120,0.07) 0%, transparent 65%);
   pointer-events: none;
   animation: glowPulse 4s ease-in-out 2.6s infinite;
 }
 @keyframes glowPulse {
   0%, 100% { opacity: .7; transform: translate(-50%,-50%) scale(1); }
-  50%       { opacity: 1;  transform: translate(-50%,-50%) scale(1.08); }
+  50%       { opacity: 1;  transform: translate(-50%,-50%) scale(1.1); }
 }
+
+/* ── LOGO SCENE ── */
+.scene {
+  position: fixed;
+  top: 38%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  user-select: none;
+  z-index: 10;
+  transition: top 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.scene.raised { top: 30%; }
 
 .omega {
   font-family: 'Cinzel', serif;
-  font-size: clamp(100px, 20vw, 160px);
+  font-size: clamp(90px, 18vw, 150px);
   color: #d8c49a;
   line-height: 0.85;
   display: block;
@@ -59,27 +63,80 @@ html, body {
 
 .brand {
   font-family: 'Cinzel', serif;
-  font-size: clamp(18px, 4vw, 28px);
-  letter-spacing: clamp(8px, 2vw, 14px);
+  font-size: clamp(16px, 3.5vw, 26px);
+  letter-spacing: clamp(7px, 1.8vw, 13px);
   color: #cabfa8;
-  margin-top: 24px;
+  margin-top: 22px;
   opacity: 0;
   animation: fadeUp 1s ease 2.8s both;
 }
-
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── GRASS ── */
+.grass-wrap {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 52vh;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+  animation: grassReveal 2.2s ease 6.5s forwards;
+}
+@keyframes grassReveal {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.grass-horizon {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 40%;
+  background: linear-gradient(to bottom,
+    rgba(80,165,190,0.14) 0%,
+    rgba(80,165,190,0.06) 40%,
+    transparent 100%);
+}
+.grass-fade {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 30%;
+  background: linear-gradient(to bottom, #14120e 0%, transparent 100%);
+}
+
+.grass-svg {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+@keyframes sway1 {
+  0%,100% { transform: rotate(-1.8deg); }
+  50%     { transform: rotate(2.2deg); }
+}
+@keyframes sway2 {
+  0%,100% { transform: rotate(-2.5deg); }
+  50%     { transform: rotate(1.4deg); }
+}
+@keyframes sway3 {
+  0%,100% { transform: rotate(-1.2deg); }
+  50%     { transform: rotate(2.8deg); }
+}
+@keyframes sway4 {
+  0%,100% { transform: rotate(-2deg); }
+  50%     { transform: rotate(1.8deg); }
+}
+
+/* ── FOOTER ── */
 footer {
   position: fixed;
-  bottom: 28px; left: 0; right: 0;
+  bottom: 22px; left: 0; right: 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   color: #5a5348;
   opacity: 0;
-  animation: fadeUp 1s ease 3.4s both;
+  animation: fadeUp 1s ease 3.6s both;
+  z-index: 20;
 }
 footer a { color: #6b6453; text-decoration: none; }
 footer a:hover { color: #c2a878; }
@@ -89,9 +146,15 @@ footer a:hover { color: #c2a878; }
 
 <div class="glow-bg"></div>
 
-<div class="scene">
+<div class="scene" id="scene">
   <span class="omega">Ω</span>
   <div class="brand">STOIKOS</div>
+</div>
+
+<div class="grass-wrap" id="grassWrap">
+  <div class="grass-horizon"></div>
+  <svg id="grassSvg" class="grass-svg" preserveAspectRatio="xMidYMax meet"></svg>
+  <div class="grass-fade"></div>
 </div>
 
 <footer>
@@ -103,11 +166,102 @@ footer a:hover { color: #c2a878; }
 </footer>
 
 <script>
+/* ── Lang ── */
 const lang = (navigator.language || '').toLowerCase();
 if (lang.startsWith('tr')) {
-  document.getElementById('privacy-link').href = 'gizlilik.html';
-  document.getElementById('privacy-link').textContent = 'Gizlilik Politikası';
+  const pl = document.getElementById('privacy-link');
+  pl.href = 'gizlilik.html';
+  pl.textContent = 'Gizlilik Politikası';
 }
+
+/* ── Raise scene when grass appears ── */
+setTimeout(() => {
+  document.getElementById('scene').classList.add('raised');
+}, 6400);
+
+/* ── Grass generation ── */
+(function buildGrass() {
+  const svg  = document.getElementById('grassSvg');
+  const W = 1440, H = 420;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const anims = ['sway1','sway2','sway3','sway4'];
+  const rand  = Math.random;
+
+  function color() {
+    return `hsl(${40 + rand()*22},${38 + rand()*28}%,${58 + rand()*26}%)`;
+  }
+
+  function blade(x, h, lean, w, opacity) {
+    const tipX = x + lean, tipY = H - h;
+    const cX = x + lean * 0.38, cY = H - h * 0.62;
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const anim = anims[Math.floor(rand() * 4)];
+    const dur  = (1.7 + rand() * 1.6).toFixed(2);
+    const del  = (rand() * 2.2).toFixed(2);
+    g.setAttribute('style',
+      `transform-origin:${x.toFixed(1)}px ${H}px;` +
+      `animation:${anim} ${dur}s ease-in-out ${del}s infinite`);
+
+    const c = color();
+
+    /* stalk */
+    const s = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    s.setAttribute('d', `M${x.toFixed(1)} ${H} Q${cX.toFixed(1)} ${cY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}`);
+    s.setAttribute('stroke', c);
+    s.setAttribute('stroke-width', w.toString());
+    s.setAttribute('fill', 'none');
+    s.setAttribute('stroke-linecap', 'round');
+    s.setAttribute('opacity', opacity.toString());
+    g.appendChild(s);
+
+    /* seed head */
+    if (rand() > 0.22) {
+      const sl = 14 + rand() * 30;
+      const sk = (rand() - 0.5) * 22;
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d',
+        `M${tipX.toFixed(1)} ${tipY.toFixed(1)} ` +
+        `Q${(tipX+sk).toFixed(1)} ${(tipY+sl*0.4).toFixed(1)} ` +
+        `${(tipX+sk*1.6).toFixed(1)} ${(tipY+sl).toFixed(1)}`);
+      p.setAttribute('stroke', c);
+      p.setAttribute('stroke-width', (w * 0.7).toString());
+      p.setAttribute('fill', 'none');
+      p.setAttribute('stroke-linecap', 'round');
+      p.setAttribute('opacity', (opacity * 0.85).toString());
+      g.appendChild(p);
+
+      /* secondary sprig */
+      if (rand() > 0.5) {
+        const sk2 = (rand() - 0.5) * 18;
+        const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p2.setAttribute('d',
+          `M${tipX.toFixed(1)} ${(tipY + sl*0.25).toFixed(1)} ` +
+          `L${(tipX+sk2).toFixed(1)} ${(tipY+sl*0.25+18).toFixed(1)}`);
+        p2.setAttribute('stroke', c);
+        p2.setAttribute('stroke-width', (w * 0.5).toString());
+        p2.setAttribute('fill', 'none');
+        p2.setAttribute('opacity', (opacity * 0.6).toString());
+        g.appendChild(p2);
+      }
+    }
+
+    return g;
+  }
+
+  /* mid-ground layer — 320 blades */
+  for (let i = 0; i < 320; i++) {
+    const x = (i / 320) * W + (rand() - 0.5) * 28;
+    svg.appendChild(blade(x, 110 + rand()*160, (rand()-0.42)*38, 0.7+rand()*1.1, 0.5+rand()*0.45));
+  }
+
+  /* foreground layer — taller, more opaque, adds depth */
+  for (let i = 0; i < 60; i++) {
+    const x = rand() * W;
+    svg.appendChild(blade(x, 200 + rand()*130, (rand()-0.4)*28, 1.4+rand()*0.9, 0.75+rand()*0.25));
+  }
+})();
 </script>
 </body>
 </html>
