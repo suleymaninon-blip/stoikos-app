@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stoikos — Stoic Philosophy for Daily Life</title>
+<meta name="description" content="Daily Stoic wisdom, breathing exercises, and an AI coach. Available in 6 languages.">
+<meta property="og:title" content="Stoikos">
+<meta property="og:description" content="Daily Stoic wisdom, breathing exercises, and an AI coach.">
+<meta property="og:image" content="og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #14120e;
+  --bg2: #1a1710;
+  --surface: #211d18;
+  --line: rgba(196,169,106,0.15);
+  --gold: #c2a878;
+  --gold2: #d8c49a;
+  --gold3: #f0e4c4;
+  --text: #ece4d4;
+  --text2: #cabfa8;
+  --muted: #8a8070;
+  --faint: #5a5348;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Jost', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 40px;
+  background: rgba(20,18,14,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-logo { font-family: 'Cinzel', serif; font-size: 16px; letter-spacing: 4px; color: var(--gold2); text-decoration: none; }
+.nav-right { display: flex; align-items: center; gap: 24px; }
+.lang-toggle { display: flex; gap: 4px; }
+.lang-btn {
+  background: none; border: 1px solid transparent; border-radius: 6px;
+  padding: 4px 10px; font-family: 'Jost', sans-serif; font-size: 12px;
+  letter-spacing: 1px; color: var(--muted); cursor: pointer; transition: all .2s;
+}
+.lang-btn.active { border-color: var(--gold); color: var(--gold2); }
+.nav-cta {
+  background: rgba(194,168,120,0.12); border: 1px solid rgba(194,168,120,0.35);
+  border-radius: 10px; padding: 8px 18px;
+  font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 1px;
+  color: var(--gold2); text-decoration: none; transition: all .2s;
+}
+.nav-cta:hover { background: rgba(194,168,120,0.22); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 80px;
+  position: relative; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(194,168,120,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.omega-wrap { position: relative; margin-bottom: 24px; }
+.omega-svg { width: 140px; height: 130px; }
+.omega-path {
+  stroke-dasharray: 210;
+  stroke-dashoffset: 210;
+  animation: draw 2.8s ease-in-out 0.4s forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.omega-glow-ring {
+  position: absolute; inset: -20px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(216,196,154,0.12) 0%, transparent 70%);
+  animation: pulse 3s ease-in-out 3.2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: .6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+.hero h1 {
+  font-family: 'Cinzel', serif; font-size: clamp(36px, 6vw, 64px);
+  letter-spacing: 10px; color: var(--text); margin-bottom: 10px;
+  animation: fadeUp .8s ease 3s both;
+}
+.hero-tagline {
+  font-family: 'Jost', sans-serif; font-size: clamp(11px, 1.5vw, 13px);
+  letter-spacing: 3px; color: var(--gold); text-transform: uppercase;
+  margin-bottom: 28px; animation: fadeUp .8s ease 3.2s both;
+}
+.hero-desc {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(20px, 3vw, 26px); color: var(--text2);
+  max-width: 560px; line-height: 1.5; margin-bottom: 48px;
+  animation: fadeUp .8s ease 3.4s both;
+}
+.hero-btns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; animation: fadeUp .8s ease 3.6s both; }
+.btn-primary {
+  background: rgba(194,168,120,0.15); border: 1px solid rgba(194,168,120,0.45);
+  border-radius: 14px; padding: 16px 32px;
+  font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 1.5px;
+  color: var(--gold2); text-decoration: none; transition: all .25s;
+}
+.btn-primary:hover { background: rgba(194,168,120,0.25); transform: translateY(-1px); }
+.btn-secondary {
+  background: transparent; border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px; padding: 16px 32px;
+  font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: 1px;
+  color: var(--muted); text-decoration: none; transition: all .25s;
+}
+.btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text2); }
+.hero-langs { margin-top: 40px; font-size: 12px; color: var(--faint); letter-spacing: 1px; animation: fadeUp .8s ease 3.8s both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── QUOTE ── */
+.quote-band {
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding: 56px 24px; text-align: center;
+  background: linear-gradient(to right, transparent, rgba(194,168,120,0.04), transparent);
+}
+.quote-text {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(18px, 2.5vw, 24px); color: var(--text2);
+  max-width: 680px; margin: 0 auto 14px; line-height: 1.6;
+}
+.quote-author { font-size: 12px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; }
+
+/* ── FEATURES ── */
+.features { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+.section-label { font-size: 11px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; text-align: center; margin-bottom: 16px; }
+.section-title { font-family: 'Cinzel', serif; font-size: clamp(22px, 3vw, 32px); text-align: center; color: var(--text); margin-bottom: 64px; letter-spacing: 1px; }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.feature-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 20px; padding: 36px 32px;
+  transition: border-color .25s, transform .25s;
+}
+.feature-card:hover { border-color: rgba(194,168,120,0.35); transform: translateY(-3px); }
+.feature-icon { font-size: 32px; margin-bottom: 18px; }
+.feature-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold2); margin-bottom: 10px; letter-spacing: 0.5px; }
+.feature-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── SCREENSHOTS ── */
+.screenshots { padding: 80px 24px 100px; text-align: center; overflow: hidden; }
+.phones { display: flex; gap: 20px; justify-content: center; align-items: flex-end; flex-wrap: wrap; margin-top: 56px; }
+.phone {
+  width: 220px; background: #0e0c09; border: 1.5px solid rgba(194,168,120,0.25);
+  border-radius: 36px; overflow: hidden; position: relative;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  transition: transform .3s;
+}
+.phone:hover { transform: translateY(-8px); }
+.phone.center { transform: scale(1.06); margin: 0 10px; }
+.phone.center:hover { transform: scale(1.06) translateY(-8px); }
+.phone-notch { width: 80px; height: 20px; background: #0e0c09; border-radius: 0 0 14px 14px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 2; }
+.phone-screen {
+  width: 100%; aspect-ratio: 9/19.5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--bg); position: relative; overflow: hidden;
+}
+.phone-screen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.phone-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 20px;
+  background: linear-gradient(160deg, #1a1710 0%, #14120e 100%);
+}
+.phone-placeholder .ph-omega { font-family: 'Cinzel', serif; font-size: 40px; color: rgba(194,168,120,0.3); }
+.phone-placeholder .ph-label { font-size: 10px; letter-spacing: 2px; color: var(--faint); text-transform: uppercase; }
+.phone-caption { padding: 14px 12px; font-size: 11px; letter-spacing: 1px; color: var(--faint); text-align: center; border-top: 1px solid var(--line); }
+
+/* ── LANGS ── */
+.langs-section { padding: 80px 24px; text-align: center; border-top: 1px solid var(--line); }
+.lang-chips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+.lang-chip {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 100px; padding: 10px 20px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text2);
+}
+.lang-chip span:first-child { font-size: 18px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 40px 24px; text-align: center;
+  font-size: 13px; color: var(--faint);
+}
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--gold); }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  nav { padding: 14px 20px; }
+  .phone { width: 160px; }
+  .phone.center { transform: scale(1.04); }
+  .hero-btns { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">STOIKOS</a>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('tr')">TR</button>
+    </div>
+    <a class="nav-cta" href="https://suleymaninon-blip.github.io/stoikos-app" target="_blank" data-en="Open App" data-tr="Uygulamayı Aç">Open App</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="omega-wrap">
+    <div class="omega-glow-ring"></div>
+    <svg class="omega-svg" viewBox="0 0 100 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="omega-path" d="M 4 80 L 26 80 L 26 62 A 28 32 0 1 1 74 62 L 74 80 L 96 80"
+        fill="none" stroke="#d8c49a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <h1>STOIKOS</h1>
+  <p class="hero-tagline" data-en="Ancient Wisdom · Modern Practice" data-tr="Kadim Bilgelik · Modern Pratik">Ancient Wisdom · Modern Practice</p>
+  <p class="hero-desc" data-en="Daily Stoic quotes, breathing exercises, and an AI coach — to help you face each day with clarity and calm." data-tr="Her güne netlik ve dinginlikle başlamak için günlük Stoacı alıntılar, nefes egzersizleri ve yapay zeka koç.">
+    Daily Stoic quotes, breathing exercises, and an AI coach — to help you face each day with clarity and calm.
+  </p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://suleymaninon-blip.github.io/stoikos-app" target="_blank"
+      data-en="Open Web App" data-tr="Web Uygulamasını Aç">Open Web App</a>
+    <a class="btn-secondary" href="#features"
+      data-en="Learn More ↓" data-tr="Daha Fazla ↓">Learn More ↓</a>
+  </div>
+  <p class="hero-langs" data-en="Available in Turkish · English · German · Russian · French · Spanish" data-tr="Türkçe · İngilizce · Almanca · Rusça · Fransızca · İspanyolca dillerinde">
+    Available in Turkish · English · German · Russian · French · Spanish
+  </p>
+</section>
+
+<!-- QUOTE BAND -->
+<div class="quote-band">
+  <p class="quote-text" data-en="&ldquo;You have power over your mind, not outside events. Realize this, and you will find strength.&rdquo;" data-tr="&ldquo;Zihnin üzerinde güce sahipsin, dış olaylar üzerinde değil. Bunu kavra, ve gücü bulacaksın.&rdquo;">
+    &ldquo;You have power over your mind, not outside events. Realize this, and you will find strength.&rdquo;
+  </p>
+  <p class="quote-author">— Marcus Aurelius</p>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-label" data-en="What's inside" data-tr="İçinde neler var">What's inside</p>
+  <h2 class="section-title" data-en="Everything you need for daily practice" data-tr="Günlük pratik için ihtiyacın olan her şey">Everything you need for daily practice</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📜</div>
+      <h3 class="feature-title" data-en="164 Stoic Quotes" data-tr="164 Stoacı Alıntı">164 Stoic Quotes</h3>
+      <p class="feature-desc" data-en="Carefully selected wisdom from Marcus Aurelius, Epictetus, Seneca, and more. A new quote every day, in 6 languages." data-tr="Marcus Aurelius, Epiktetos, Seneca ve daha fazlasından özenle seçilmiş bilgelik. Her gün yeni bir alıntı, 6 dilde.">Carefully selected wisdom from Marcus Aurelius, Epictetus, Seneca, and more. A new quote every day, in 6 languages.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">◎</div>
+      <h3 class="feature-title" data-en="Breathing & Calm" data-tr="Nefes ve Dinginlik">Breathing & Calm</h3>
+      <p class="feature-desc" data-en="A gentle breathing orb guides you through moments of stillness. Press, breathe, and let go." data-tr="Yumuşak bir nefes orbu sizi dinginlik anlarına eşlik eder. Bas, nefes al ve bırak.">A gentle breathing orb guides you through moments of stillness. Press, breathe, and let go.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3 class="feature-title" data-en="AI Stoic Coach" data-tr="Yapay Zeka Stoacı Koç">AI Stoic Coach</h3>
+      <p class="feature-desc" data-en="A personal coach trained on Stoic philosophy. Ask anything, reflect on your day, and receive thoughtful guidance." data-tr="Stoacı felsefe üzerine eğitilmiş kişisel koç. Her şeyi sorun, gününüzü yansıtın ve düşünceli rehberlik alın.">A personal coach trained on Stoic philosophy. Ask anything, reflect on your day, and receive thoughtful guidance.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3 class="feature-title" data-en="Daily Exercises" data-tr="Günlük Egzersizler">Daily Exercises</h3>
+      <p class="feature-desc" data-en="Short, practical Stoic exercises — negative visualisation, journaling, and more — to build mental resilience." data-tr="Olumsuz görselleştirme, günlük tutma ve daha fazlası gibi kısa, pratik Stoacı egzersizler.">Short, practical Stoic exercises — negative visualisation, journaling, and more — to build mental resilience.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏛</div>
+      <h3 class="feature-title" data-en="10 Stoic Philosophers" data-tr="10 Stoacı Filosof">10 Stoic Philosophers</h3>
+      <p class="feature-desc" data-en="Explore the lives and contributions of the greatest Stoic thinkers — from Zeno to Marcus Aurelius." data-tr="Zenon'dan Marcus Aurelius'a en büyük Stoacı düşünürlerin hayatlarını ve katkılarını keşfedin.">Explore the lives and contributions of the greatest Stoic thinkers — from Zeno to Marcus Aurelius.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3 class="feature-title" data-en="Private by Design" data-tr="Tasarımdan Gelen Gizlilik">Private by Design</h3>
+      <p class="feature-desc" data-en="No account required. No ads. No tracking. Your journal stays on your device unless you choose to share it." data-tr="Hesap gerekmez. Reklam yok. Takip yok. Günlüğünüz, paylaşmayı seçmediğiniz sürece cihazınızda kalır.">No account required. No ads. No tracking. Your journal stays on your device unless you choose to share it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section class="screenshots">
+  <p class="section-label" data-en="The App" data-tr="Uygulama">The App</p>
+  <h2 class="section-title" data-en="Designed for stillness" data-tr="Dinginlik için tasarlandı">Designed for stillness</h2>
+  <div class="phones">
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-placeholder">
+          <div class="ph-omega">Ω</div>
+          <div class="ph-label" data-en="Home" data-tr="Ana Sayfa">Home</div>
+        </div>
+      </div>
+      <div class="phone-caption" data-en="Daily Quote" data-tr="Günlük Alıntı">Daily Quote</div>
+    </div>
+    <div class="phone center">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-placeholder">
+          <div class="ph-omega">◎</div>
+          <div class="ph-label" data-en="Breathing" data-tr="Nefes">Breathing</div>
+        </div>
+      </div>
+      <div class="phone-caption" data-en="Breath Orb" data-tr="Nefes Orbu">Breath Orb</div>
+    </div>
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-placeholder">
+          <div class="ph-omega">🧠</div>
+          <div class="ph-label" data-en="Coach" data-tr="Koç">Coach</div>
+        </div>
+      </div>
+      <div class="phone-caption" data-en="AI Coach" data-tr="Yapay Zeka Koç">AI Coach</div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section class="langs-section">
+  <p class="section-label" data-en="6 Languages" data-tr="6 Dil">6 Languages</p>
+  <h2 class="section-title" data-en="Wisdom knows no borders" data-tr="Bilgelik sınır tanımaz">Wisdom knows no borders</h2>
+  <div class="lang-chips">
+    <div class="lang-chip"><span>🇹🇷</span><span>Türkçe</span></div>
+    <div class="lang-chip"><span>🇬🇧</span><span>English</span></div>
+    <div class="lang-chip"><span>🇩🇪</span><span>Deutsch</span></div>
+    <div class="lang-chip"><span>🇷🇺</span><span>Русский</span></div>
+    <div class="lang-chip"><span>🇫🇷</span><span>Français</span></div>
+    <div class="lang-chip"><span>🇪🇸</span><span>Español</span></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="https://suleymaninon-blip.github.io/stoikos-app" target="_blank" data-en="Open App" data-tr="Uygulamayı Aç">Open App</a>
+    <a href="privacy.html" id="privacy-link">Privacy Policy</a>
+    <a href="mailto:support@stoikos.app">support@stoikos.app</a>
+  </div>
+  <p>© 2026 Stoikos · Bilge İnön</p>
+</footer>
+
+<script>
+let currentLang = 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.innerHTML = el.getAttribute('data-' + lang) || el.getAttribute('data-en');
+  });
+  // Privacy link
+  const pl = document.getElementById('privacy-link');
+  if (lang === 'tr') {
+    pl.href = 'gizlilik.html';
+    pl.textContent = 'Gizlilik Politikası';
+  } else {
+    pl.href = 'privacy.html';
+    pl.textContent = 'Privacy Policy';
+  }
+  document.documentElement.lang = lang;
+}
+
+// Auto-detect browser language
+const browserLang = (navigator.language || '').toLowerCase();
+if (browserLang.startsWith('tr')) setLang('tr');
+</script>
+</body>
+</html>
