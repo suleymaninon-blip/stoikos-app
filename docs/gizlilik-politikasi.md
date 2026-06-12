@@ -1,7 +1,7 @@
 # Stoikos — Gizlilik Politikası ve Aydınlatma Metni
 
-**Son güncelleme:** 〔GG.AA.YYYY〕
-**Sürüm:** 1.0 (taslak)
+**Son güncelleme:** 12.06.2026
+**Sürüm:** 1.0
 
 > Bu metin hem 6698 sayılı **KVKK** kapsamında aydınlatma metni hem de genel bir gizlilik politikası olarak hazırlanmıştır. Yayın öncesi bir hukuk danışmanına son kontrol ettirilmesi önerilir.
 
@@ -9,9 +9,9 @@
 
 ## 1. Veri Sorumlusu
 
-- **Veri sorumlusu:** 〔Ad Soyad / Şirket unvanı〕
-- **Adres:** 〔Açık adres〕
-- **İletişim / başvuru:** 〔destek e-postası — ör. destek@stoikos.app〕
+- **Veri sorumlusu:** Bilge İnön
+- **Adres:** Cumhuriyet Mah. 1113 Sk. No:24/A Premium Green Life 1 Sitesi C Blok Daire 10 Didim/Aydın
+- **İletişim / başvuru:** support@stoikos.app
 
 Stoikos ("Uygulama"), Stoacı felsefe ve farkındalık temelli bir kişisel gelişim uygulamasıdır. Bu metin, Uygulama'yı kullandığında hangi verilerin işlendiğini, neden işlendiğini, kimlerle paylaşıldığını ve haklarını açıklar.
 
@@ -103,13 +103,13 @@ Uygulamadan doğrudan kullanabileceğin kontroller:
 - **Yansıma rızasını geri çek:** Günlük kartındaki onay kutusunu kapat — sonraki yansımalar artık iletilmez.
 - **Tüm yerel veriyi sil:** Uygulamayı cihazından kaldır.
 
-Diğer talepler için 〔destek e-postası〕 adresinden bize ulaşabilirsin; başvurun KVKK'da öngörülen sürede yanıtlanır.
+Diğer talepler için support@stoikos.app adresinden bize ulaşabilirsin; başvurun KVKK'da öngörülen sürede yanıtlanır.
 
 ---
 
 ## 8. Çocukların Gizliliği
 
-Stoikos 〔13/18〕 yaş altındaki kişilere yönelik değildir ve bilerek bu yaş altından veri toplamaz.
+Stoikos 13 yaş altındaki kişilere yönelik değildir ve bilerek bu yaş altından veri toplamaz.
 
 ---
 
@@ -128,12 +128,11 @@ Bu politika zaman zaman güncellenebilir. Önemli değişikliklerde uygulama iç
 ## 11. İletişim
 
 Soruların veya talepler için:
-**〔destek e-postası〕** — 〔Ad Soyad / Unvan〕
+**support@stoikos.app** — Bilge İnön
 
 ---
 
-### 📝 Yayın öncesi doldurulacaklar
-- 〔...〕 ile işaretli tüm alanlar (sorumlu kimliği, adres, e-posta, yaş sınırı, tarih).
+### 📝 Kalan işler
 - Bu metnin **İngilizce (ve gerekiyorsa DE/RU/FR/ES)** çevirileri.
 - Bir avukat/danışman son kontrolü.
-- Metnin herkese açık bir URL'de yayını (ör. GitHub Pages `gizlilik.html`) + App Store/Play Store ve uygulama içi "Hakkında"dan link.
+- `public/gizlilik.html` güncellenmeli (bu md ile senkronize edilecek).
