@@ -66,7 +66,8 @@ export default function SettingsScreen() {
     Alert.alert('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
   }
   function openPrivacy() {
-    Linking.openURL(APP_INFO.privacyUrl).catch(() => {});
+    const url = lang === 'tr' ? APP_INFO.privacyUrl : APP_INFO.privacyUrlEn;
+    Linking.openURL(url).catch(() => {});
   }
   async function openAdmin() {
     if (!adminKey.trim()) return;
