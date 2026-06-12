@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stoikos — Privacy Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500;0,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#13100a; --card:#1d190f; --line:rgba(196,169,106,0.18);
+    --gold:#c4a96a; --sand:#cabba0; --sand2:#d8c9aa; --text:#e7ddc9; --muted:#8a8170; --faint:#6b6453;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Jost',-apple-system,system-ui,sans-serif; font-weight:400;
+    line-height:1.7; font-size:16px;
+    padding:0 18px 80px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  header{padding:46px 0 10px; border-bottom:1px solid var(--line); margin-bottom:30px;}
+  .omega{font-family:'Cormorant Garamond',serif; font-size:40px; color:var(--gold); line-height:1; margin-bottom:6px;}
+  h1{font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600; font-size:30px; color:#efe6d4; margin:6px 0 6px;}
+  .meta{font-size:13px; color:var(--muted);}
+  .note{background:rgba(196,169,106,0.06); border-left:2px solid var(--gold); padding:12px 16px; border-radius:8px; font-size:14px; color:var(--sand); margin:18px 0 26px;}
+  h2{font-family:'Cormorant Garamond',serif; font-weight:600; font-size:23px; color:var(--sand2); margin:34px 0 10px; padding-top:8px;}
+  h3{font-family:'Jost'; font-weight:500; font-size:15px; letter-spacing:.5px; color:var(--gold); margin:22px 0 6px; text-transform:none;}
+  p{margin:10px 0; color:var(--text);}
+  ul{margin:10px 0; padding-left:22px;}
+  li{margin:7px 0; color:var(--text);}
+  strong{color:var(--sand2); font-weight:500;}
+  a{color:var(--gold);}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:14px;}
+  th,td{text-align:left; padding:10px 10px; border-bottom:1px solid rgba(255,255,255,0.07); vertical-align:top;}
+  th{color:var(--gold); font-weight:500; font-size:12px; letter-spacing:.5px;}
+  footer{margin-top:40px; padding-top:20px; border-top:1px solid var(--line); font-size:13px; color:var(--faint);}
+  hr{border:none; border-top:1px solid rgba(255,255,255,0.06); margin:26px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="omega">Ω</div>
+    <h1>Stoikos — Privacy Policy</h1>
+    <div class="meta">Last updated: June 12, 2026 · Version 1.0</div>
+  </header>
+
+  <div class="note">This document serves as both a general privacy policy and a disclosure notice under Turkish personal data protection law (KVKK No. 6698). A legal review is recommended before publishing.</div>
+
+  <h2>1. Data Controller</h2>
+  <ul>
+    <li><strong>Data controller:</strong> Bilge İnön</li>
+    <li><strong>Address:</strong> Cumhuriyet Mah. 1113 Sk. No:24/A Premium Green Life 1 Sitesi C Blok Daire 10 Didim/Aydın, Turkey</li>
+    <li><strong>Contact:</strong> <a href="mailto:support@stoikos.app">support@stoikos.app</a></li>
+  </ul>
+  <p>Stoikos ("the App") is a personal development application based on Stoic philosophy and mindfulness. This policy explains what data is processed when you use the App, why it is processed, with whom it is shared, and what rights you have.</p>
+
+  <h2>2. Summary</h2>
+  <ul>
+    <li>You do <strong>not</strong> need to create an account or provide your name, email address, or phone number to use Stoikos.</li>
+    <li><strong>Most of your data stays only on your device</strong> and is never sent anywhere.</li>
+    <li>Data leaves your device only in these cases:
+      <ul>
+        <li>When you use the <strong>Coach (chat)</strong> feature — your messages are sent to an AI service to generate a response.</li>
+        <li>When you <strong>explicitly consent to sharing your journal reflections with the Coach</strong> — only if you check the consent box.</li>
+      </ul>
+    </li>
+    <li><strong>No ads. No third-party tracking or analytics. No data sales.</strong></li>
+  </ul>
+
+  <h2>3. Data We Process</h2>
+  <h3>3.1. Data stored only on your device (never sent to a server)</h3>
+  <ul>
+    <li>Exercise completion records and streak information</li>
+    <li><strong>Daily journal reflection texts</strong> — never leave your device unless you give consent</li>
+    <li>Language preference, notification and sound settings, onboarding status</li>
+    <li>Coach chat history (stored on your device)</li>
+    <li>Your coach-sharing consent preference (on/off)</li>
+    <li>A random device-specific <strong>user ID</strong> — a randomly generated number that cannot be linked to your identity; used to associate coach memory with your device.</li>
+  </ul>
+  <h3>3.2. Data sent to our server or third parties</h3>
+  <ul>
+    <li><strong>Coach chat:</strong> When you send a message, your random user ID, language, and <strong>message content</strong> are sent to our server (Cloudflare Worker) and then to the AI provider (Anthropic). A short <strong>summary ("memory")</strong> is extracted from the conversation so the Coach can remember you, and stored on our server (Cloudflare KV).</li>
+    <li><strong>Journal reflection sharing (only with explicit consent):</strong> If you check the consent box, your saved reflection text is sent along with your user ID and language to our server and then to Anthropic, where it is added to your coach memory. <strong>This transfer does not happen when the consent box is unchecked.</strong></li>
+  </ul>
+  <h3>3.3. Data we do not collect</h3>
+  <ul>
+    <li>Location, contacts, advertising ID, and cookie-based tracking are <strong>not collected.</strong></li>
+    <li>Notifications are scheduled locally on your device; no data is sent to a server for notifications.</li>
+  </ul>
+
+  <h2>4. Purposes and Legal Bases</h2>
+  <table>
+    <tr><th>Data / processing</th><th>Purpose</th><th>Legal basis</th></tr>
+    <tr><td>All local on-device data</td><td>Core app functionality (progress, journal, preferences)</td><td>Performance of service; legitimate interest</td></tr>
+    <tr><td>Coach chat (message → Anthropic)</td><td>Generate the AI coach response you requested</td><td>Performance of service — you initiate the action</td></tr>
+    <tr><td>Coach memory (summary, KV)</td><td>Coach remembers you; personalisation</td><td>Performance of service</td></tr>
+    <tr><td><strong>Journal reflection sharing</strong></td><td>Help the Coach understand you better</td><td><strong>Explicit consent</strong> — not processed when box is unchecked</td></tr>
+  </table>
+  <p>Because journal reflections may contain <strong>sensitive personal data</strong> (mood, relationships, health), sharing them with the Coach is based solely on your <strong>explicit consent</strong> and is <strong>off by default</strong>. You may withdraw your consent at any time.</p>
+
+  <h2>5. Third Parties and International Data Transfers</h2>
+  <ul>
+    <li><strong>Anthropic, PBC (USA)</strong> — generates AI coach responses and memory summaries. Your coach messages and (if consented) journal reflections are transferred to this service <strong>in the USA</strong>.</li>
+    <li><strong>Cloudflare, Inc. (USA / global)</strong> — server hosting and coach memory storage (KV).</li>
+    <li><strong>GitHub Pages</strong> (web version) and <strong>Apple App Store / Google Play</strong> (mobile) — app distribution and hosting.</li>
+  </ul>
+  <p>Because these providers are located outside Turkey, using the Coach feature and/or giving journal consent means your personal data is <strong>transferred internationally</strong>. Using the Coach chat makes this transfer necessary; journal sharing only occurs with your explicit consent. We note that Anthropic states it does not use API-submitted data to train its models; please refer to the provider's own policies for the most current terms.</p>
+
+  <h2>6. Retention</h2>
+  <ul>
+    <li><strong>On-device data:</strong> Remains on your device until you delete it (by uninstalling the app or using the relevant reset action).</li>
+    <li><strong>Coach memory (server/KV):</strong> Retained until you delete it via Settings → "Reset coach memory".</li>
+    <li><strong>Coach message transmission:</strong> Processed in real time to generate a response; no persistent chat log is stored on our server (your chat history lives only on your device). Providers' own temporary log retention is governed by their policies.</li>
+  </ul>
+
+  <h2>7. Your Rights</h2>
+  <p>You have the right to learn whether your personal data is being processed, to request information about it, to request correction of incomplete or inaccurate data, to <strong>request deletion</strong>, and to <strong>withdraw your consent</strong> at any time.</p>
+  <p>Controls available directly in the app:</p>
+  <ul>
+    <li><strong>Delete coach memory:</strong> Settings → "Reset coach memory".</li>
+    <li><strong>Withdraw journal consent:</strong> Uncheck the consent box in the journal card — future reflections will no longer be shared.</li>
+    <li><strong>Delete all local data:</strong> Uninstall the app from your device.</li>
+  </ul>
+  <p>For other requests, contact us at <a href="mailto:support@stoikos.app">support@stoikos.app</a>; we will respond within the timeframe required by applicable law.</p>
+
+  <h2>8. Children's Privacy</h2>
+  <p>Stoikos is not directed at children under the age of 13 and does not knowingly collect data from children under 13.</p>
+
+  <h2>9. Security</h2>
+  <p>Data in transit is protected by encrypted connections (HTTPS). While no system is 100% secure, we take reasonable technical and administrative measures to protect your data. The AI API key is stored securely on the server side and is never embedded in the app.</p>
+
+  <h2>10. Changes</h2>
+  <p>This policy may be updated from time to time. For significant changes, we will provide notice within the app or on this page. The "Last updated" date always reflects the most current version.</p>
+
+  <h2>11. Contact</h2>
+  <p>For questions or requests: <a href="mailto:support@stoikos.app">support@stoikos.app</a> — Bilge İnön</p>
+
+  <footer>© 2026 Stoikos · <a href="mailto:support@stoikos.app">support@stoikos.app</a></footer>
+</div>
+</body>
+</html>
