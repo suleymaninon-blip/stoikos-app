@@ -9,156 +9,109 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Jost:wght@300;400&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  height: 100%; width: 100%;
-  background: #14120e;
-  color: #ece4d4;
-  font-family: 'Jost', sans-serif;
-  overflow: hidden;
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;width:100%;background:#14120e;overflow:hidden;font-family:'Jost',sans-serif}
+
+#glowBg{
+  position:fixed;border-radius:50%;pointer-events:none;z-index:1;
+  width:560px;height:560px;
+  background:radial-gradient(circle,rgba(194,168,120,.08) 0%,transparent 65%);
+  top:38%;left:50%;transform:translate(-50%,-50%);
+  animation:glowBreathe 4s ease-in-out 2.5s infinite;
+}
+@keyframes glowBreathe{
+  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}
+  50%    {opacity:1; transform:translate(-50%,-50%) scale(1.1)}
 }
 
-/* ── GLOW BG ── */
-.glow-bg {
-  position: fixed;
-  top: 42%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 560px; height: 560px;
-  background: radial-gradient(circle, rgba(194,168,120,0.07) 0%, transparent 65%);
-  pointer-events: none;
-  animation: glowPulse 4s ease-in-out 2.6s infinite;
+#scene{
+  position:fixed;z-index:10;text-align:center;
+  top:38%;left:50%;transform:translate(-50%,-50%);
+  width:clamp(260px,50vw,600px);
 }
-@keyframes glowPulse {
-  0%, 100% { opacity: .7; transform: translate(-50%,-50%) scale(1); }
-  50%       { opacity: 1;  transform: translate(-50%,-50%) scale(1.1); }
+#omega{
+  font-family:'Cinzel',serif;
+  font-size:clamp(90px,18vw,150px);
+  color:#d8c49a;line-height:.85;display:block;opacity:0;
 }
-
-/* ── LOGO SCENE ── */
-.scene {
-  position: fixed;
-  top: 38%; left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  user-select: none;
-  z-index: 10;
-  transition: top 1.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.scene.raised { top: 30%; }
-
-.omega {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(90px, 18vw, 150px);
-  color: #d8c49a;
-  line-height: 0.85;
-  display: block;
-  opacity: 0;
-  animation: omegaReveal 2.2s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
-  filter: drop-shadow(0 0 40px rgba(216,196,154,0.18));
-}
-@keyframes omegaReveal {
-  0%   { opacity: 0; transform: scale(0.75); filter: drop-shadow(0 0 80px rgba(216,196,154,0.6)); }
-  45%  { opacity: 1; transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(216,196,154,0.35)); }
-  100% { opacity: 1; transform: scale(1);   filter: drop-shadow(0 0 20px rgba(216,196,154,0.12)); }
+#brand{
+  font-family:'Cinzel',serif;
+  font-size:clamp(15px,3.2vw,24px);
+  letter-spacing:clamp(6px,1.6vw,12px);
+  color:#cabfa8;margin-top:20px;opacity:0;
 }
 
-.brand {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(16px, 3.5vw, 26px);
-  letter-spacing: clamp(7px, 1.8vw, 13px);
-  color: #cabfa8;
-  margin-top: 22px;
-  opacity: 0;
-  animation: fadeUp 1s ease 2.8s both;
+#grassWrap{
+  position:fixed;bottom:0;left:0;right:0;
+  height:52vh;opacity:0;pointer-events:none;z-index:5;
 }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+#grassHorizon{
+  position:absolute;top:0;left:0;right:0;height:40%;
+  background:linear-gradient(to bottom,rgba(80,165,190,.14) 0%,rgba(80,165,190,.05) 40%,transparent 100%);
 }
+#grassFade{
+  position:absolute;top:0;left:0;right:0;height:28%;
+  background:linear-gradient(to bottom,#14120e 0%,transparent 100%);
+}
+#grassSvg{position:absolute;bottom:0;left:0;width:100%;height:100%}
 
-/* ── GRASS ── */
-.grass-wrap {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 52vh;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 5;
-  animation: grassReveal 2.2s ease 6.5s forwards;
-}
-@keyframes grassReveal {
-  0%   { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
+@keyframes sway1{0%,100%{transform:rotate(-1.8deg)}50%{transform:rotate(2.2deg)}}
+@keyframes sway2{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(1.4deg)}}
+@keyframes sway3{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(2.8deg)}}
+@keyframes sway4{0%,100%{transform:rotate(-2deg)}  50%{transform:rotate(1.8deg)}}
 
-.grass-horizon {
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 40%;
-  background: linear-gradient(to bottom,
-    rgba(80,165,190,0.14) 0%,
-    rgba(80,165,190,0.06) 40%,
-    transparent 100%);
+#sunlight{
+  position:fixed;inset:0;pointer-events:none;z-index:2;opacity:0;
+  background:radial-gradient(ellipse 75% 85% at 6% 6%,
+    rgba(255,195,60,.18) 0%,rgba(255,175,40,.08) 32%,
+    rgba(220,160,30,.02) 58%,transparent 74%);
 }
-.grass-fade {
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 30%;
-  background: linear-gradient(to bottom, #14120e 0%, transparent 100%);
-}
+#overlay{position:fixed;inset:0;background:#14120e;opacity:0;pointer-events:none;z-index:50}
 
-.grass-svg {
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 100%; height: 100%;
+footer{
+  position:fixed;bottom:20px;left:0;right:0;
+  text-align:center;font-size:11px;color:#5a5348;opacity:0;z-index:20;
 }
+footer a{color:#6b6453;text-decoration:none}
+footer a:hover{color:#c2a878}
 
-@keyframes sway1 {
-  0%,100% { transform: rotate(-1.8deg); }
-  50%     { transform: rotate(2.2deg); }
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes omegaReveal{
+  0%  {opacity:0;transform:scale(.75);filter:drop-shadow(0 0 80px rgba(216,196,154,.6))}
+  45% {opacity:1;transform:scale(1.05);filter:drop-shadow(0 0 40px rgba(216,196,154,.35))}
+  100%{opacity:1;transform:scale(1);  filter:drop-shadow(0 0 20px rgba(216,196,154,.12))}
 }
-@keyframes sway2 {
-  0%,100% { transform: rotate(-2.5deg); }
-  50%     { transform: rotate(1.4deg); }
+@keyframes grassReveal{
+  0%  {opacity:0;transform:translateY(20px)}
+  100%{opacity:1;transform:translateY(0)}
 }
-@keyframes sway3 {
-  0%,100% { transform: rotate(-1.2deg); }
-  50%     { transform: rotate(2.8deg); }
+@keyframes sunGlow{
+  0%,100%{filter:drop-shadow(0 0 14px rgba(255,200,80,1)) drop-shadow(0 0 38px rgba(255,150,20,.65)) drop-shadow(0 0 80px rgba(255,120,0,.3))}
+  50%    {filter:drop-shadow(0 0 22px rgba(255,220,100,1)) drop-shadow(0 0 55px rgba(255,170,30,.85)) drop-shadow(0 0 110px rgba(255,130,0,.5))}
 }
-@keyframes sway4 {
-  0%,100% { transform: rotate(-2deg); }
-  50%     { transform: rotate(1.8deg); }
-}
-
-/* ── FOOTER ── */
-footer {
-  position: fixed;
-  bottom: 22px; left: 0; right: 0;
-  text-align: center;
-  font-size: 11px;
-  color: #5a5348;
-  opacity: 0;
-  animation: fadeUp 1s ease 3.6s both;
-  z-index: 20;
-}
-footer a { color: #6b6453; text-decoration: none; }
-footer a:hover { color: #c2a878; }
+@keyframes lightBreathe{0%,100%{opacity:.75}50%{opacity:1}}
 </style>
 </head>
 <body>
 
-<div class="glow-bg"></div>
+<div id="glowBg"></div>
 
-<div class="scene" id="scene">
-  <span class="omega">Ω</span>
-  <div class="brand">STOIKOS</div>
+<div id="scene">
+  <span id="omega">Ω</span>
+  <div id="brand">STOIKOS</div>
 </div>
 
-<div class="grass-wrap" id="grassWrap">
-  <div class="grass-horizon"></div>
-  <svg id="grassSvg" class="grass-svg" preserveAspectRatio="xMidYMax meet"></svg>
-  <div class="grass-fade"></div>
+<div id="grassWrap">
+  <div id="grassHorizon"></div>
+  <svg id="grassSvg" preserveAspectRatio="xMidYMax meet"></svg>
+  <div id="grassFade"></div>
 </div>
 
-<footer>
-  <a href="privacy.html" id="privacy-link">Privacy Policy</a>
+<div id="sunlight"></div>
+<div id="overlay"></div>
+
+<footer id="footer">
+  <a href="privacy.html" id="privacyLink">Privacy Policy</a>
   &nbsp;·&nbsp;
   <a href="mailto:support@stoikos.app">support@stoikos.app</a>
   &nbsp;·&nbsp;
@@ -166,102 +119,145 @@ footer a:hover { color: #c2a878; }
 </footer>
 
 <script>
-/* ── Lang ── */
-const lang = (navigator.language || '').toLowerCase();
-if (lang.startsWith('tr')) {
-  const pl = document.getElementById('privacy-link');
-  pl.href = 'gizlilik.html';
-  pl.textContent = 'Gizlilik Politikası';
+/* lang */
+if ((navigator.language||'').toLowerCase().startsWith('tr')) {
+  const l = document.getElementById('privacyLink');
+  l.href = 'gizlilik.html'; l.textContent = 'Gizlilik Politikası';
 }
 
-/* ── Raise scene when grass appears ── */
-setTimeout(() => {
-  document.getElementById('scene').classList.add('raised');
-}, 6400);
+/* ── build grass (once) ── */
+(function(){
+  const svg = document.getElementById('grassSvg');
+  const W=1440, H=420;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const anims=['sway1','sway2','sway3','sway4'], r=Math.random;
 
-/* ── Grass generation ── */
-(function buildGrass() {
-  const svg  = document.getElementById('grassSvg');
-  const W = 1440, H = 420;
-  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-
-  const anims = ['sway1','sway2','sway3','sway4'];
-  const rand  = Math.random;
-
-  function color() {
-    return `hsl(${40 + rand()*22},${38 + rand()*28}%,${58 + rand()*26}%)`;
-  }
-
-  function blade(x, h, lean, w, opacity) {
-    const tipX = x + lean, tipY = H - h;
-    const cX = x + lean * 0.38, cY = H - h * 0.62;
-
-    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    const anim = anims[Math.floor(rand() * 4)];
-    const dur  = (1.7 + rand() * 1.6).toFixed(2);
-    const del  = (rand() * 2.2).toFixed(2);
+  function blade(x,h,lean,sw,op){
+    const tx=x+lean,ty=H-h,cx=x+lean*.38,cy=H-h*.62;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const hsl=`hsl(${40+r()*22},${38+r()*28}%,${58+r()*26}%)`;
     g.setAttribute('style',
-      `transform-origin:${x.toFixed(1)}px ${H}px;` +
-      `animation:${anim} ${dur}s ease-in-out ${del}s infinite`);
-
-    const c = color();
-
-    /* stalk */
-    const s = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    s.setAttribute('d', `M${x.toFixed(1)} ${H} Q${cX.toFixed(1)} ${cY.toFixed(1)} ${tipX.toFixed(1)} ${tipY.toFixed(1)}`);
-    s.setAttribute('stroke', c);
-    s.setAttribute('stroke-width', w.toString());
-    s.setAttribute('fill', 'none');
-    s.setAttribute('stroke-linecap', 'round');
-    s.setAttribute('opacity', opacity.toString());
-    g.appendChild(s);
-
-    /* seed head */
-    if (rand() > 0.22) {
-      const sl = 14 + rand() * 30;
-      const sk = (rand() - 0.5) * 22;
-      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('d',
-        `M${tipX.toFixed(1)} ${tipY.toFixed(1)} ` +
-        `Q${(tipX+sk).toFixed(1)} ${(tipY+sl*0.4).toFixed(1)} ` +
-        `${(tipX+sk*1.6).toFixed(1)} ${(tipY+sl).toFixed(1)}`);
-      p.setAttribute('stroke', c);
-      p.setAttribute('stroke-width', (w * 0.7).toString());
-      p.setAttribute('fill', 'none');
-      p.setAttribute('stroke-linecap', 'round');
-      p.setAttribute('opacity', (opacity * 0.85).toString());
-      g.appendChild(p);
-
-      /* secondary sprig */
-      if (rand() > 0.5) {
-        const sk2 = (rand() - 0.5) * 18;
-        const p2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        p2.setAttribute('d',
-          `M${tipX.toFixed(1)} ${(tipY + sl*0.25).toFixed(1)} ` +
-          `L${(tipX+sk2).toFixed(1)} ${(tipY+sl*0.25+18).toFixed(1)}`);
-        p2.setAttribute('stroke', c);
-        p2.setAttribute('stroke-width', (w * 0.5).toString());
-        p2.setAttribute('fill', 'none');
-        p2.setAttribute('opacity', (opacity * 0.6).toString());
-        g.appendChild(p2);
-      }
+      `transform-origin:${x.toFixed(1)}px ${H}px;`+
+      `animation:${anims[0|r()*4]} ${(1.7+r()*1.6).toFixed(2)}s ease-in-out ${(r()*2.2).toFixed(2)}s infinite`);
+    const s=document.createElementNS('http://www.w3.org/2000/svg','path');
+    s.setAttribute('d',`M${x.toFixed(1)} ${H} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)}`);
+    s.setAttribute('stroke',hsl);s.setAttribute('stroke-width',sw.toString());
+    s.setAttribute('fill','none');s.setAttribute('stroke-linecap','round');
+    s.setAttribute('opacity',op.toString());g.appendChild(s);
+    if(r()>.22){
+      const sl=14+r()*30,sk=(r()-.5)*22;
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d',`M${tx.toFixed(1)} ${ty.toFixed(1)} Q${(tx+sk).toFixed(1)} ${(ty+sl*.4).toFixed(1)} ${(tx+sk*1.6).toFixed(1)} ${(ty+sl).toFixed(1)}`);
+      p.setAttribute('stroke',hsl);p.setAttribute('stroke-width',(sw*.7).toString());
+      p.setAttribute('fill','none');p.setAttribute('stroke-linecap','round');
+      p.setAttribute('opacity',(op*.85).toString());g.appendChild(p);
     }
-
     return g;
   }
-
-  /* mid-ground layer — 320 blades */
-  for (let i = 0; i < 320; i++) {
-    const x = (i / 320) * W + (rand() - 0.5) * 28;
-    svg.appendChild(blade(x, 110 + rand()*160, (rand()-0.42)*38, 0.7+rand()*1.1, 0.5+rand()*0.45));
-  }
-
-  /* foreground layer — taller, more opaque, adds depth */
-  for (let i = 0; i < 60; i++) {
-    const x = rand() * W;
-    svg.appendChild(blade(x, 200 + rand()*130, (rand()-0.4)*28, 1.4+rand()*0.9, 0.75+rand()*0.25));
-  }
+  for(let i=0;i<320;i++) svg.appendChild(blade((i/320)*W+(r()-.5)*28,110+r()*160,(r()-.42)*38,.7+r()*1.1,.5+r()*.45));
+  for(let i=0;i<60;i++)  svg.appendChild(blade(r()*W,200+r()*130,(r()-.4)*28,1.4+r()*.9,.75+r()*.25));
 })();
+
+/* ── cycle engine ── */
+const EL={
+  scene:   document.getElementById('scene'),
+  omega:   document.getElementById('omega'),
+  brand:   document.getElementById('brand'),
+  glow:    document.getElementById('glowBg'),
+  grass:   document.getElementById('grassWrap'),
+  sun:     document.getElementById('sunlight'),
+  overlay: document.getElementById('overlay'),
+  footer:  document.getElementById('footer'),
+};
+
+const T=[];
+function sched(fn,ms){T.push(setTimeout(fn,ms));}
+function clearT(){T.forEach(clearTimeout);T.length=0;}
+
+function tr(el,props,ms,delay){
+  el.style.transition=Object.keys(props).map(p=>`${p} ${ms}ms ease ${delay||0}ms`).join(',');
+  Object.entries(props).forEach(([p,v])=>{ el.style[p]=v; });
+}
+
+let footerShown=false;
+
+function play(){
+  clearT();
+  [EL.scene,EL.omega,EL.brand,EL.grass,EL.sun].forEach(el=>{
+    el.style.cssText=''; void el.offsetWidth;
+  });
+  EL.glow.style.cssText=''; void EL.glow.offsetWidth;
+  EL.overlay.style.cssText='opacity:0;transition:opacity 1.5s ease;';
+
+  /* P1 — logo */
+  EL.omega.style.animation='omegaReveal 2.2s cubic-bezier(.4,0,.2,1) .5s forwards';
+  EL.brand.style.animation='fadeUp 1s ease 2.8s both';
+  if(!footerShown){
+    EL.footer.style.animation='fadeUp 1s ease 3.4s both';
+    sched(()=>{EL.footer.style.animation='';EL.footer.style.opacity='1';footerShown=true;},5000);
+  }
+
+  /* P2 — grass + logo raise */
+  sched(()=>{
+    EL.scene.style.transition='top 1.8s cubic-bezier(.4,0,.2,1)';
+    EL.scene.style.top='30%';
+  },6400);
+  sched(()=>{
+    EL.grass.style.animation='grassReveal 2.2s ease forwards';
+  },6500);
+
+  /* P3 — sun transform (3 sn sonra) */
+  sched(sunTransform,9500);
+}
+
+function sunTransform(){
+  /* scene → sol üst köşe */
+  tr(EL.scene,{top:'52px',left:'52px',transform:'translate(0,0)'},2500);
+  tr(EL.brand,{opacity:'0'},1200);
+
+  /* glow güneşi takip eder */
+  tr(EL.glow,{top:'80px',left:'80px',transform:'translate(0,0)',width:'280px',height:'280px'},2500);
+
+  /* Ω → altın güneş */
+  EL.omega.style.transition='font-size 2.5s ease,color 2.5s ease,filter 2.5s ease';
+  EL.omega.style.fontSize='54px';
+  EL.omega.style.color='#FFD98A';
+  EL.omega.style.filter=
+    'drop-shadow(0 0 16px rgba(255,205,80,1)) '+
+    'drop-shadow(0 0 40px rgba(255,160,20,.7)) '+
+    'drop-shadow(0 0 90px rgba(255,120,0,.35))';
+
+  /* geçiş bittikten sonra pulsing güneş */
+  sched(()=>{
+    EL.omega.style.transition='';
+    EL.omega.style.animation='sunGlow 3s ease-in-out infinite';
+  },2600);
+
+  /* aydınlatma (geçiş sonrası) */
+  sched(illuminate,2500);
+}
+
+function illuminate(){
+  EL.sun.style.transition='opacity 1.5s ease';
+  EL.sun.style.opacity='1';
+  sched(()=>{ EL.sun.style.animation='lightBreathe 3.5s ease-in-out infinite'; },1600);
+
+  EL.grass.style.transition='filter 2s ease';
+  EL.grass.style.filter='sepia(.12) saturate(1.2) brightness(1.08)';
+
+  /* 2 saniye sonra döngü devam eder */
+  sched(cycleReset,2000);
+}
+
+function cycleReset(){
+  tr(EL.overlay,{opacity:'1'},2000);
+  sched(()=>{
+    play();
+    sched(()=>{ tr(EL.overlay,{opacity:'0'},1200); },200);
+  },2300);
+}
+
+play();
 </script>
 </body>
 </html>
