@@ -46,15 +46,12 @@
 1. ✅ ~~Koç backend rate limit~~ — KV tabanlı (`hitLimit`/`coachRateLimited`, `backend/src/index.ts`). userId: 6/dk + 120/gün; IP (`CF-Connecting-IP`): 12/dk + 300/gün. Aşımda 429 + Türkçe `reason`. Frontend: `sendCoach` 429'da `e.userMessage`, coach.tsx onu balon olarak gösterir. Deploy edildi + canlı test geçti.
 2. ✅ ~~`constants/content.ts` alıntılar & filozoflar çevirisi~~ — Alıntılar 37–164 (128 adet) + 10 filozof tüm alanları EN/DE/RU/FR/ES'e çevrildi (commit 6ed2b650).
 3. ✅ ~~Logo animasyon sahnesi~~ — Tanıtım turuna slayt 0 olarak eklendi: `LogoSceneBoundary` (SVG stroke draw ~2.5s → nefes parlaması → STOIKOS fade-in); native hata için `OmegaFallback` + ErrorBoundary.
-4. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
-4. 📧 `constants/config.ts` `APP_INFO`: gerçek destek e-postası + mağaza linkleri.
-5. 🔒 Gizlilik politikası: taslak + yayın + uygulama içi link **hazır** (`public/gizlilik.html`, `docs/gizlilik-politikasi.md`). **KALAN:**
-   - (kullanıcı) 〔...〕 alanlarını doldurur (ad/unvan, adres, **gerçek destek e-postası**, yaş sınırı, tarih).
-   - ⏳ **Kullanıcı doldurunca → `gizlilik.html`'i İngilizceye çevir** (`gizlilik-en.html` + Hakkında'da link / dile göre seç). Gerekiyorsa DE/RU/FR/ES.
-   - `config.ts` `supportEmail` placeholder'ını gerçeğiyle değiştir.
-   - Avukat/danışman son kontrolü.
-6. 🔊 Orb sesi: gerçek dosya (`assets/audio/breath-orb.m4a`) **eklendi**; istenirse daha kısa/seamless loop'a uygun kesitle değiştirilebilir.
-7. 🏪 Mağaza materyalleri (ekran görüntüleri, açıklamalar, eas.json).
+4. ✅ ~~Alan adı & e-posta~~ — `stoikos.app` (Squarespace), DNS Cloudflare'e bağlandı, `support@stoikos.app` → Gmail yönlendirmesi aktif.
+5. ✅ ~~Gizlilik politikası~~ — TR (`public/gizlilik.html`) + EN (`public/privacy.html`) tamamlandı, GitHub Pages'te yayında. Ayarlar'da dile göre doğru link açılıyor. **Kalan: avukat kontrolü.**
+6. ✅ ~~`config.ts` destek e-postası~~ — `support@stoikos.app` güncellendi.
+7. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
+8. 🏪 **Mağaza materyalleri**: ekran görüntüleri, açıklamalar, `eas.json`, mağaza linkleri (`config.ts` `storeUrl`).
+9. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
 
 ## Güvenlik
 - ElevenLabs anahtarı paylaşıldıysa **iptal/yenile**.
