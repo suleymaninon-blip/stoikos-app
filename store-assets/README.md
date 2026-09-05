@@ -51,6 +51,16 @@ dosyalarından okunuyor (`node_modules/@expo-google-fonts`), ağ gerekmiyor.
 Play her dil için ayrı görsel kabul ediyor; yalnızca biri yüklenecekse
 Türkçe ya da İngilizce sürüm kullanılır.
 
+## Teaser videosu
+
+`teaser-<dil>-1080x1920.mp4` — 20 sn, 30 fps, H.264. Instagram Reels / TikTok /
+Facebook için. **Sessiz**: seslendirme ve müzik dışarıda eklenecek.
+
+Üretim, sahne listesi ve eksik ses katmanı: **`scripts/teaser/README.md`**.
+
+⚠️ Video sahne 5'te buradaki ekran görüntülerini kullanıyor — **ekranlar
+değişince teaser de eskir.** Önce `shoot-store.js`, sonra `render-teaser.js`.
+
 ## Simgeler
 
 `icon-1024-apple.png` (App Store) ve `icon-512-play.png` (Play vitrini).
