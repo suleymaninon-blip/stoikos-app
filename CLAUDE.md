@@ -14,7 +14,7 @@
 - **GitHub Pages**: https://suleymaninon-blip.github.io/stoikos-app (push to `main` → GitHub Action otomatik deploy). Test edenler bu linki kullanıyor.
 - **app.json** `experiments.baseUrl: "/stoikos-app"` ŞART (kaldırılırsa web "Unmatched Route" verir). Web-only; native'i etkilemez.
 - **Otomatik güncelleme (web):** `public/sw.js` (ağ-öncelikli HTML → bayat sürüm kalmaz, hash'li varlık cache-first, skipWaiting+clientsClaim, eski cache temizlenir) + `constants/registerSW.ts` (`_layout.tsx`'te çağrılır; native no-op; yeni sürümde açık sekmeyi 1 kez otomatik yeniler; `readyState` guard'lı). Test edenlerin cache temizleme derdi bitti. SW yolu `process.env.EXPO_BASE_URL`'den türer (export'ta gömülür).
-- **Backend**: Cloudflare Worker `stoikos-backend.stoikos-app.workers.dev` (wrangler). Koç (Claude proxy, KV hafıza) + Meydan Okuma (D1). Değişince `cd backend && npx wrangler deploy`.
+- **Backend**: Cloudflare Worker `stoikos-backend.stoikos-app.workers.dev` (wrangler). Koç (Claude proxy, KV hafıza) + Meydan Okuma (D1). **Otomatik deploy:** `backend/` değişip `main`'e push edilince `.github/workflows/deploy-backend.yml` Worker'ı deploy eder (repo secret `CLOUDFLARE_API_TOKEN`; deploy öncesi tsc). Elle gerekirse `cd backend && npx wrangler deploy`.
 
 ## Mimari / Önemli dosyalar
 - `constants/i18n.tsx` — 6 dil (TR/EN/DE/RU/FR/ES), `LanguageProvider`, `useLang`, tüm UI metinleri. Dil whitelist'i `LANGUAGES`'tan türer.
@@ -49,7 +49,12 @@
 4. ✅ ~~Alan adı & e-posta~~ — `stoikos.app` (Squarespace), DNS Cloudflare'e bağlandı, `support@stoikos.app` → Gmail yönlendirmesi aktif.
 5. ✅ ~~Gizlilik politikası~~ — TR (`public/gizlilik.html`) + EN (`public/privacy.html`) tamamlandı, GitHub Pages'te yayında. Ayarlar'da dile göre doğru link açılıyor. **Kalan: avukat kontrolü.**
 6. ✅ ~~`config.ts` destek e-postası~~ — `support@stoikos.app` güncellendi.
-7. 💳 **Para kazanma**: RevenueCat ödeme duvarı + koç'u aboneliğe gate + EAS native build + mağaza (Apple $99/yıl, Google $25).
+7. 💳 **Para kazanma** — sunucu kapısı ve arayüz hazır, ödeme sistemi bağlı değil:
+   - ✅ **Ücretsiz kota**: `FREE_COACH_MESSAGES` (`backend/src/index.ts`), KV'de `used:<userId>` ömür boyu sayacı. Dolunca `402` + `quota_exceeded`. `GET /coach/quota?userId=` kalan hakkı döner. Hak **yalnız başarılı yanıttan sonra** düşer (API hatası hakkı yakmaz).
+   - ✅ **Abonelik kancası**: `hasActiveSubscription()` şimdilik KV stub'ı (`sub:<userId>`=`'1'` → sınırsız; test hesabı işaretlemek için). RevenueCat REST doğrulaması **sunucuda** yapılacak — talimat fonksiyonun yorumunda. RevenueCat `appUserId` = bizim `userId`.
+   - ✅ **Arayüz**: koç başlığında kalan hak rozeti (dokununca duvar), hak bitince yazma alanı yerine tek eylem butonu, `components/Paywall.tsx` (6 dil). `onSubscribe` prop'u verilmediği için buton "YAKINDA" durumunda — satın alma akışı o prop'a bağlanacak, başka değişiklik gerekmez.
+   - ⚠️ **`FREE_COACH_MESSAGES` şu an 50 — GEÇİCİ.** Test grubu sınırsız kullanıyordu, 5'e indirmek hepsini satın alınabilir bir şey yokken duvara çarpardı. **Mağazaya çıkarken 5 YAP.**
+   - ⏳ Kalan: RevenueCat bağlama, EAS native build, mağaza hesapları (Apple $99/yıl, Google $25).
 8. 🏪 **Mağaza materyalleri**: ekran görüntüleri, açıklamalar, `eas.json`, mağaza linkleri (`config.ts` `storeUrl`).
 9. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
 
