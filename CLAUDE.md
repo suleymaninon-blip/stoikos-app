@@ -22,6 +22,8 @@
 - `constants/theme.ts` — sıcak altın/taş paleti (`Colors`, `colors`, `Fonts`).
 - `constants/config.ts` — `FEATURES.meydanOkuma=false` (gizli), `APP_INFO` (destek e-posta/mağaza linkleri + `privacyUrl` — **PLACEHOLDER, doldurulacak**).
 - **Gizlilik politikası**: kaynak `docs/gizlilik-politikasi.md` (md taslak) + yayınlanan `public/gizlilik.html` (export'ta `dist/`'e kopyalanır → `…/stoikos-app/gizlilik.html`). Ayarlar→Hakkında'da "🔒 Gizlilik Politikası" satırı `APP_INFO.privacyUrl`'i açar. İçindeki 〔...〕 alanları + EN çevirisi + avukat kontrolü bekliyor.
+- **Kullanım koşulları (EULA)**: `public/terms.html` (TR) + `public/terms-en.html` (EN). Apple abonelik satan uygulamada zorunlu tutuyor, yoksa reddediyor. Gizlilik politikasının tasarımını izler. **Avukat kontrolü bekliyor.** Henüz uygulama içinden bağlantı verilmiyor — Paywall'da yalnızca metin olarak anılıyor, tıklanabilir değil (RevenueCat bağlanırken eklenecek).
+- **Mağaza görselleri**: `store-assets/` — ekran görüntüleri (iPhone 1290×2796, Android 1080×1920), Play öne çıkan görseli (1024×500, 6 dil), alfasız kare simgeler. Üretim betikleri `scripts/shoot-store.js`, `scripts/shoot-feature.js`, `scripts/make-store-icons.js`. Ayrıntı ve tuzaklar: `store-assets/README.md`. Ekran görüntüsü çekmek için Expo web sunucusu bu ortamda `--offline` ister (`EXPO_OFFLINE=1 … --offline`), yoksa `api.expo.dev`'e ulaşamayıp çöker.
 - `constants/breathSound.ts` — orb nefes sesi: `assets/audio/breath-orb.m4a` (AAC, ~4dk, expo-av, native+web). Orb **basılı tutulunca çalar (döngü), bırakılınca durur**. Sağ üstteki 🔊/🔇 yalnız aç/kapa (sessize alma) tercihi, varsayılan AÇIK. (Eski Web-Audio synth ambiyans kaldırıldı.) `metro.config.js`'e `m4a` assetExt eklendi.
 - (Titreşim/haptics özelliği kaldırıldı: `constants/breathHaptics.ts` silindi, orb'daki 📳 toggle çıkarıldı.)
 - `constants/audioManifest.ts` — OTOMATİK üretilir (`npm run gen-audio`), 216 mp3. Elle düzenleme.
@@ -50,13 +52,21 @@
 4. ✅ ~~Alan adı & e-posta~~ — `stoikos.app` (Squarespace), DNS Cloudflare'e bağlandı, `support@stoikos.app` → Gmail yönlendirmesi aktif.
 5. ✅ ~~Gizlilik politikası~~ — TR (`public/gizlilik.html`) + EN (`public/privacy.html`) tamamlandı, GitHub Pages'te yayında. Ayarlar'da dile göre doğru link açılıyor. **Kalan: avukat kontrolü.**
 6. ✅ ~~`config.ts` destek e-postası~~ — `support@stoikos.app` güncellendi.
-7. 💳 **Para kazanma & mağazaya çıkış** — kod tarafı hazır, mağaza tarafı kullanıcıda.
-   👉 **Ayrıntı: `docs/magazaya-cikis.md`** — alınan kararlar, kritik yol (Google'ın 14 gün kuralı takvimi belirliyor), kalan işler, maliyet modeli, mağaza metinleri bağlantısı.
-   - Özet: ücretsiz kota + ödeme duvarı arayüzü **canlıda**. Fiyat **$6,99/ay** (aylık; yıllık eklenmedi). Hesaplar **kişisel**, eş adına, iOS+Android.
+7. 💳 **Para kazanma & mağazaya çıkış** — kod tarafı bitti, mağaza tarafı tıkalı.
+   👉 **Ayrıntı: `docs/magazaya-cikis.md`** — alınan kararlar, kritik yol (Google'ın 14 gün kuralı takvimi belirliyor), kalan işler, maliyet modeli, bağlantılar.
+   - Fiyat **$6,99/ay** (aylık; yıllık eklenmedi). Hesaplar **kişisel**, eş adına, iOS+Android.
    - `hasActiveSubscription()` KV stub'ı (`sub:<userId>`=`'1'` → sınırsız, test hesabı işaretlemek için). Gerçek doğrulama **sunucuda** RevenueCat REST ile yapılacak; `appUserId` = bizim `userId`.
-   - ⚠️ **Yayına çıkmadan yapılacaklar:** `FREE_COACH_MESSAGES` 50 → **5**; **kullanım koşulları (EULA) eklenecek** (Apple abonelikte zorunlu, bizde yok — sık ret sebebi); ödeme ekranına aboneliğin adı/süresi/fiyatı + iki bağlantı yazılacak; RevenueCat `Paywall`'ın `onSubscribe` prop'una bağlanacak.
-8. 🏪 **Mağaza materyalleri**: metinler **hazır** (6 dil, karakter sınırları doğrulanmış — bağlantı `docs/magazaya-cikis.md` içinde). Kalan: ekran görüntüleri, Play öne çıkan görsel (1024×500), `config.ts` `storeUrl`.
-9. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
+   - ✅ Bitti: `FREE_COACH_MESSAGES` 50→**5**, EULA (TR+EN), ödeme ekranında fiyat/süre/koşullar metni (6 dil).
+   - ⏳ Kalan: **RevenueCat** (`Paywall`'ın `onSubscribe` prop'una bağlanacak — verilmezse buton "YAKINDA" durumunda kalıyor, kasten) ve ödeme ekranındaki iki belgeye **tıklanabilir bağlantı** (Apple şart koşuyor, şu an yalnız metin).
+   - 🔴 **Bu değişikliklerin hiçbiri canlıda değil** — `claude/stoikosta-wnVG4` dalında, `main`'e birleştirilmedi. `backend/` `main`'e girer girmez Worker deploy oluyor, yani birleştirme anında test grubunun hakkı 50'den 5'e düşer ve RevenueCat bağlı olmadığı için satın alma yapamazlar. Ya RevenueCat'ten sonra birleştir, ya önce test grubuna haber ver.
+8. 🏪 **Mağaza materyalleri** — metinler ve **görseller hazır**.
+   - Metinler: 6 dil, karakter sınırları doğrulanmış (bağlantı `docs/magazaya-cikis.md` içinde).
+   - Görseller: `store-assets/` — ekran görüntüleri, Play öne çıkan görseli, alfasız simgeler. Üretim betikleriyle birlikte, yeniden çekmek tek komut.
+   - Kalan: `config.ts` `storeUrl` (yayına girmeden doldurulamaz), yaş sınırı anketi, kategori seçimi.
+9. 🎬 **Video teaser** — 20 sn konsept hazır (storyboard + 6 dilde seslendirme + prodüksiyon künyesi), bağlantı `docs/magazaya-cikis.md` → Pazarlama. Çekilebilir; yalnız kapanıştaki "bio'da link" için yayın beklesin.
+10. 🍎 **Apple Developer kaydı takıldı** — 2FA açık ama kayıt "tamamlanamadı" veriyor, hesap programa kayıtlı değil, $99 ödenmedi. Sırayla denenecek: bekleyip tekrar → Apple Developer **uygulamasından** kayıt → Developer Support. Ayrıntı `docs/magazaya-cikis.md`.
+11. 🤖 **Google Play** — hesap açık, üç doğrulama bekliyor (kimlik, telefon, **Android cihaz**). Elde Android telefon yok, bu çözülmeden Play'de uygulama oluşturulamıyor.
+12. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
 
 ## Güvenlik
 - ElevenLabs anahtarı paylaşıldıysa **iptal/yenile**.
