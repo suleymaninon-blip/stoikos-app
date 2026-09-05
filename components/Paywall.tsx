@@ -32,6 +32,11 @@ export function Paywall({
           <Text style={styles.title}>{t('paywall.title')}</Text>
           <Text style={styles.subtitle}>{t('paywall.subtitle')}</Text>
 
+          <View style={styles.priceBox}>
+            <Text style={styles.price}>{t('paywall.price')}</Text>
+            <Text style={styles.frequency}>{t('paywall.frequency')}</Text>
+          </View>
+
           <View style={styles.divider} />
 
           <Text style={styles.body}>{t('paywall.body')}</Text>
@@ -47,6 +52,10 @@ export function Paywall({
 
           <View style={styles.freeNote}>
             <Text style={styles.freeNoteText}>{t('paywall.stillFree')}</Text>
+          </View>
+
+          <View style={styles.termsBox}>
+            <Text style={styles.termsText}>{t('paywall.termsNote')}</Text>
           </View>
 
           {onSubscribe ? (
@@ -79,7 +88,10 @@ const styles = StyleSheet.create({
   },
   omega: { fontFamily: Fonts.cinzel, fontSize: 34, color: Colors.sand, textAlign: 'center', marginBottom: 10 },
   title: { fontFamily: Fonts.cinzel, fontSize: 21, color: Colors.sand2, textAlign: 'center', letterSpacing: 0.8, marginBottom: 6 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, textAlign: 'center', letterSpacing: 0.4 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, textAlign: 'center', letterSpacing: 0.4, marginBottom: 14 },
+  priceBox: { alignItems: 'center', marginBottom: 18 },
+  price: { fontFamily: Fonts.cinzel, fontSize: 26, color: Colors.sand2, letterSpacing: 0.5, marginBottom: 4 },
+  frequency: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
   divider: { height: 1, backgroundColor: 'rgba(196,169,106,0.15)', marginVertical: 18 },
   body: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 21, color: Colors.text2, marginBottom: 18 },
 
@@ -93,6 +105,12 @@ const styles = StyleSheet.create({
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
   freeNoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 13, lineHeight: 20, color: Colors.sand3 },
+
+  termsBox: {
+    backgroundColor: 'rgba(196,169,106,0.06)', borderRadius: 10, padding: 11,
+    borderLeftWidth: 2, borderLeftColor: Colors.muted, marginBottom: 18,
+  },
+  termsText: { fontFamily: Fonts.jost, fontSize: 11, lineHeight: 16, color: Colors.muted, letterSpacing: 0.2 },
 
   cta: {
     backgroundColor: Colors.accent, borderRadius: 14,
