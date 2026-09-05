@@ -1,0 +1,42 @@
+name: Deploy Backend (Cloudflare Worker)
+
+# Yalnızca backend/ değişince çalışır — frontend push'larında boşuna deploy olmasın.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: worker
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm install
+
+      - name: Typecheck
+        working-directory: backend
+        run: npx tsc --noEmit -p tsconfig.json
+
+      # Worker sırları (ANTHROPIC_API_KEY, ADMIN_KEY) Cloudflare'de duruyor;
+      # deploy onlara dokunmaz, yalnızca kodu günceller.
+      - name: Deploy worker
+        working-directory: backend
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
