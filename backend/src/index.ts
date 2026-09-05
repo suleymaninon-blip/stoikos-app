@@ -20,18 +20,22 @@ export interface Env {
   ADMIN_KEY: string;
 }
 
-const MODEL = 'claude-sonnet-4-6';
+const MODEL = 'claude-sonnet-4-6';       // koç yanıtları
+const MODEL_FAST = 'claude-haiku-4-5';  // hafıza özeti + moderasyon (basit iş, ~3x ucuz)
 const API = 'https://api.anthropic.com/v1/messages';
+
+// Ücretsiz koç hakkı — ÖMÜR BOYU (yenilenmez). Dolunca abonelik gerekir.
+const FREE_COACH_MESSAGES = 5;
 
 const LANG_NAME: Record<string, string> = {
   tr: 'Türkçe', en: 'English', de: 'Deutsch', ru: 'Русский (Russian)', fr: 'Français (French)', es: 'Español (Spanish)',
 };
 
-function buildSystemPrompt(lang: string, memory: string): string {
+// Sistem promptu iki parçaya ayrıldı: SABİT kısım prompt cache'lenir (dile göre
+// 6 varyant), DEĞİŞKEN hafıza ayrı blokta gider — her turda değiştiği için
+// cache işaretçisinin dışında kalmalı, yoksa önbelleği sürekli geçersiz kılar.
+function buildSystemPrompt(lang: string): string {
   const langName = LANG_NAME[lang] || 'English';
-  const memoryBlock = memory.trim()
-    ? `\n\n## KULLANICI HAKKINDA BİLDİKLERİN\n(Geçmiş konuşmalardan; uygun olduğunda doğal biçimde başvur, ama her mesajda zorlama):\n${memory.trim()}`
-    : '';
   return `Sen STOIKOS uygulamasının Stoacı koçusun. Görevin, kullanıcının günlük hayat zorluklarıyla baş etmesine Stoacı felsefenin pratik bilgeliğiyle yardım etmek. Bir terapist ya da alıntı makinesi değilsin — sakin, bilge ve sıcak bir yol arkadaşısın.
 
 ## TEMEL TARZIN: ANLAYIŞLA YANIT VER
@@ -69,7 +73,37 @@ function buildSystemPrompt(lang: string, memory: string): string {
 Sakin, sıcak, sade. Ukala ya da didaktik değil. Seni gerçekten dert eden olgun bir dostun tonu. Doğal ve akıcı konuş.
 
 ## DİL (çok önemli)
-Kullanıcıya şu dilde yanıt ver: ${langName}. Tüm yanıtın baştan sona o dilde olsun — alıntıyı da o dile çevir.${memoryBlock}`;
+Kullanıcıya şu dilde yanıt ver: ${langName}. Tüm yanıtın baştan sona o dilde olsun — alıntıyı da o dile çevir.`;
+}
+
+// Hafıza bloğu — her turda değişir, cache işaretçisinin DIŞINDA gönderilir.
+function buildMemoryBlock(memory: string): string {
+  return memory.trim()
+    ? `## KULLANICI HAKKINDA BİLDİKLERİN\n(Geçmiş konuşmalardan; uygun olduğunda doğal biçimde başvur, ama her mesajda zorlama):\n${memory.trim()}`
+    : '';
+}
+
+// ─── Ücretsiz kota & abonelik ─────────────────────────────
+// Kullanılan ücretsiz koç mesajı sayısı (ömür boyu, TTL yok).
+async function getCoachUsed(env: Env, userId: string): Promise<number> {
+  return parseInt((await env.MEMORY.get(`used:${userId}`)) || '0', 10) || 0;
+}
+
+/**
+ * Abonelik durumu.
+ *
+ * ADIM 3 (RevenueCat bağlanınca) burası şuna dönecek:
+ *   GET https://api.revenuecat.com/v1/subscribers/<userId>
+ *   Authorization: Bearer <env.REVENUECAT_KEY>
+ *   → entitlements.coach.expires_date > şimdi  ise true
+ *
+ * Doğrulamanın SUNUCUDA yapılması şart: uygulamadan gelen "ben aboneyim"
+ * bilgisine güvenilemez. RevenueCat'in appUserId'si bizim userId ile aynı olacak.
+ *
+ * Şimdilik: KV'de elle işaretlenen test hesapları (`sub:<userId>` = '1').
+ */
+async function hasActiveSubscription(env: Env, userId: string): Promise<boolean> {
+  return (await env.MEMORY.get(`sub:${userId}`)) === '1';
 }
 
 // ─── CORS ─────────────────────────────────────────────────
@@ -141,7 +175,7 @@ async function updateMemory(env: Env, userId: string, lang: string, lastUser: st
       `of durable facts about the user (their name, goals, recurring struggles, values, important events). ` +
       `Merge new info, drop nothing important, keep it under 150 words. Output ONLY the bullet list, no preamble. Write in ${LANG_NAME[lang] || 'English'}.`;
     const data = await callClaude(env, {
-      model: MODEL,
+      model: MODEL_FAST,
       max_tokens: 400,
       system: sys,
       messages: [{
@@ -160,7 +194,7 @@ async function updateMemory(env: Env, userId: string, lang: string, lastUser: st
 async function moderateQuote(env: Env, text: string): Promise<{ ok: boolean; reason: string }> {
   try {
     const data = await callClaude(env, {
-      model: MODEL,
+      model: MODEL_FAST,
       max_tokens: 150,
       system: `You moderate user-submitted aphorisms for a Stoic philosophy app. Decide if the text is BOTH:
 (1) appropriate — no hate, harassment, profanity, sexual content, ads/spam, links, personal data, or political propaganda; and
@@ -291,6 +325,20 @@ export default {
       return json({ ok: true });
     }
 
+    // Kalan ücretsiz hak — uygulama koç ekranını açınca sorar
+    if (req.method === 'GET' && url.pathname === '/coach/quota') {
+      const userId = url.searchParams.get('userId') || '';
+      if (!userId) return json({ error: 'bad_request' }, 400);
+      const subscribed = await hasActiveSubscription(env, userId);
+      const used = await getCoachUsed(env, userId);
+      return json({
+        subscribed,
+        used,
+        limit: FREE_COACH_MESSAGES,
+        remaining: subscribed ? null : Math.max(0, FREE_COACH_MESSAGES - used),
+      });
+    }
+
     // Koç
     if (req.method === 'POST' && url.pathname === '/coach') {
       let payload: { userId?: string; lang?: string; messages?: { role: string; content: string }[] };
@@ -305,8 +353,28 @@ export default {
       const limited = await coachRateLimited(env, userId, ip);
       if (limited) return limited;
 
+      // Ücretsiz kota — abonelere uygulanmaz
+      const subscribed = await hasActiveSubscription(env, userId);
+      let used = 0;
+      if (!subscribed) {
+        used = await getCoachUsed(env, userId);
+        if (used >= FREE_COACH_MESSAGES) {
+          return json({
+            error: 'quota_exceeded',
+            reason: 'Ücretsiz koç hakkın doldu. Sınırsız sohbet için aboneliğe geçebilirsin.',
+            used,
+            limit: FREE_COACH_MESSAGES,
+          }, 402);
+        }
+      }
+
       const memory = (await env.MEMORY.get(`mem:${userId}`)) || '';
-      const system = buildSystemPrompt(lang, memory);
+      // Sabit prompt cache'lenir; değişken hafıza ayrı blokta gider.
+      const memBlock = buildMemoryBlock(memory);
+      const system: unknown[] = [
+        { type: 'text', text: buildSystemPrompt(lang), cache_control: { type: 'ephemeral' } },
+      ];
+      if (memBlock) system.push({ type: 'text', text: memBlock });
 
       let reply: string;
       try {
@@ -316,11 +384,21 @@ export default {
         return json({ error: 'coach_failed', detail: String(e.message || e) }, 502);
       }
 
+      // Hak YALNIZCA başarılı yanıttan sonra düşer — hata kullanıcının hakkını yakmasın.
+      if (!subscribed) {
+        used += 1;
+        await env.MEMORY.put(`used:${userId}`, String(used));
+      }
+
       // Hafızayı arka planda güncelle (yanıtı bekletmeden)
       const lastUser = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
       ctx.waitUntil(updateMemory(env, userId, lang, lastUser, reply, memory));
 
-      return json({ reply });
+      return json({
+        reply,
+        subscribed,
+        remaining: subscribed ? null : Math.max(0, FREE_COACH_MESSAGES - used),
+      });
     }
 
     return json({ error: 'not found' }, 404);
