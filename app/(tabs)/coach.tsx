@@ -17,7 +17,8 @@ import { Colors, Fonts } from '../../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLang } from '../../constants/i18n';
 import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
-import { sendCoach } from '../../constants/api';
+import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
+import { Paywall } from '../../components/Paywall';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -144,7 +145,16 @@ export default function CoachScreen() {
   const [messages, setMessages] = useState<Message[]>(() => [{ id: '0', role: 'assistant', content: COACH_INITIAL[lang], timestamp: new Date() }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  // Kota yalnızca arayüz içindir; asıl kapı backend'de. null = bilinmiyor (ağ hatası).
+  const [quota, setQuota] = useState<CoachQuota | null>(null);
+  const [paywallOpen, setPaywallOpen] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+
+  const exhausted = quota != null && !quota.subscribed && (quota.remaining ?? 1) <= 0;
+
+  useEffect(() => {
+    getCoachQuota().then(setQuota);
+  }, []);
 
   useEffect(() => {
     AsyncStorage.getItem(CHAT_HISTORY_KEY).then((raw) => {
@@ -172,6 +182,7 @@ export default function CoachScreen() {
   async function send(text?: string) {
     const content = (text || input).trim();
     if (!content || loading) return;
+    if (exhausted) { setPaywallOpen(true); return; }
     setInput('');
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content, timestamp: new Date() };
     const withUser = [...messages, userMsg];
@@ -181,13 +192,24 @@ export default function CoachScreen() {
     try {
       // Karşılama mesajını (id '0') çıkar — Claude ilk mesajın 'user' olmasını ister
       const payload = withUser.filter((m) => m.id !== '0').map((m) => ({ role: m.role, content: m.content }));
-      const reply = await sendCoach(lang, payload);
+      const { reply, remaining, subscribed } = await sendCoach(lang, payload);
+      setQuota((q) => (q ? { ...q, remaining, subscribed } : q));
       const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: reply, timestamp: new Date() };
       const final = [...withUser, aiMsg];
       setMessages(final);
       saveMessages(final);
     } catch (e: any) {
-      const content = e?.userMessage || t('coach.connError');
+      // Hak bitti → sayacı sıfırla, duvarı aç. Sohbete balon EKLEME: açıklama
+      // zaten duvarda ve orası 6 dilde; backend'in gerekçesi yalnız Türkçe.
+      if (e?.quotaExceeded) {
+        setQuota((q) => (q ? { ...q, remaining: 0 } : { subscribed: false, used: 0, limit: 0, remaining: 0 }));
+        setPaywallOpen(true);
+        return;
+      }
+      const content =
+        e?.rateLimitScope === 'minute' ? t('coach.tooFast')
+        : e?.rateLimitScope === 'day' ? t('coach.dailyLimit')
+        : e?.userMessage || t('coach.connError');
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content, timestamp: new Date() }]);
     } finally {
       setLoading(false);
@@ -210,10 +232,23 @@ export default function CoachScreen() {
         <View style={styles.titleRow}>
           <Text style={styles.title}>{t('coach.title')}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <View style={styles.statusBadge}>
-              <PulseDot />
-              <Text style={styles.statusText}>{t('coach.active')}</Text>
-            </View>
+            {quota && !quota.subscribed ? (
+              // Ücretsiz kullanıcı: kalan hak. Dokununca ödeme duvarı açılır.
+              <TouchableOpacity
+                style={[styles.quotaBadge, exhausted && styles.quotaBadgeEnded]}
+                onPress={() => setPaywallOpen(true)}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.quotaText, exhausted && styles.quotaTextEnded]}>
+                  {exhausted ? t('coach.quotaEnded') : t('coach.remaining', { n: quota.remaining ?? 0 })}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.statusBadge}>
+                <PulseDot />
+                <Text style={styles.statusText}>{t('coach.active')}</Text>
+              </View>
+            )}
             <TouchableOpacity onPress={clearChat} style={styles.clearBtn}>
               <Text style={styles.clearBtnText}>{t('coach.reset')}</Text>
             </TouchableOpacity>
@@ -247,6 +282,15 @@ export default function CoachScreen() {
           )}
         </ScrollView>
 
+        {exhausted ? (
+          // Hak bitti: yazma alanı yerine ödeme duvarına götüren tek bir eylem
+          <View style={styles.inputArea}>
+            <TouchableOpacity style={styles.unlockBtn} onPress={() => setPaywallOpen(true)} activeOpacity={0.85}>
+              <Text style={styles.unlockIcon}>Ω</Text>
+              <Text style={styles.unlockText}>{t('paywall.title')}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
         <View style={styles.inputArea}>
           <Text style={styles.inputLabel}>{t('coach.inputLabel')}</Text>
           <View style={styles.inputRow}>
@@ -268,7 +312,12 @@ export default function CoachScreen() {
             </TouchableOpacity>
           </View>
         </View>
+        )}
       </KeyboardAvoidingView>
+
+      {/* onSubscribe verilmedi → buton "yakında" durumunda. RevenueCat bağlanınca
+          satın alma akışı buraya prop olarak geçilecek. */}
+      <Paywall visible={paywallOpen} onClose={() => setPaywallOpen(false)} />
     </SafeAreaView>
   );
 }
@@ -284,6 +333,19 @@ const styles = StyleSheet.create({
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(76,175,110,0.1)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(76,175,110,0.2)' },
   statusDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.success },
   statusText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 0.4, color: Colors.success },
+  quotaBadge: {
+    backgroundColor: 'rgba(196,169,106,0.1)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4,
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
+  },
+  quotaBadgeEnded: { backgroundColor: 'rgba(196,169,106,0.2)', borderColor: 'rgba(196,169,106,0.45)' },
+  quotaText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 0.4, color: Colors.sand2 },
+  quotaTextEnded: { color: Colors.sand3 },
+  unlockBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
+    backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 15,
+  },
+  unlockIcon: { fontFamily: Fonts.cinzel, fontSize: 16, color: Colors.stone },
+  unlockText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.stone, letterSpacing: 1 },
   clearBtn: { backgroundColor: Colors.stone3, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   clearBtnText: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted },
   messages: { flex: 1 },

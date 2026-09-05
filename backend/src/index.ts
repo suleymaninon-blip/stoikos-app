@@ -25,7 +25,11 @@ const MODEL_FAST = 'claude-haiku-4-5';  // hafıza özeti + moderasyon (basit i�
 const API = 'https://api.anthropic.com/v1/messages';
 
 // Ücretsiz koç hakkı — ÖMÜR BOYU (yenilenmez). Dolunca abonelik gerekir.
-const FREE_COACH_MESSAGES = 5;
+//
+// ⚠️ GEÇİCİ: Test grubu şu an koçu sınırsız kullanıyor; 5'e indirince hepsi
+// bir anda duvara çarpardı — üstelik satın alınabilecek bir şey yokken.
+// Mağazaya çıkarken (RevenueCat bağlanınca) bunu 5 YAP.
+const FREE_COACH_MESSAGES = 50;
 
 const LANG_NAME: Record<string, string> = {
   tr: 'Türkçe', en: 'English', de: 'Deutsch', ru: 'Русский (Russian)', fr: 'Français (French)', es: 'Español (Spanish)',
@@ -142,8 +146,11 @@ async function coachRateLimited(env: Env, userId: string, ip: string): Promise<R
   for (const [key, limit, win] of checks) {
     if (await hitLimit(env, key, limit, win)) {
       const perMin = win <= 60;
+      // `scope` makine-okunur; çeviriyi uygulama yapar (6 dil). `reason` yalnız
+      // eski sürümler için geriye dönük yedek — yeni istemci onu kullanmaz.
       return json({
         error: 'rate_limited',
+        scope: perMin ? 'minute' : 'day',
         reason: perMin
           ? 'Çok hızlı gidiyorsun, lütfen biraz bekle. Sözcükleri sindirmeye de zaman tanı.'
           : 'Bugünlük koç sınırına ulaştın. Yarın yeniden buradayım.',

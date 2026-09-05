@@ -18,8 +18,41 @@ export async function getUserId(): Promise<string> {
 
 export interface CoachMsg { role: 'user' | 'assistant'; content: string; }
 
+export interface CoachReply {
+  reply: string;
+  /** Kalan ücretsiz hak; abone ise null (sınırsız). */
+  remaining: number | null;
+  subscribed: boolean;
+}
+
+export interface CoachQuota {
+  subscribed: boolean;
+  used: number;
+  limit: number;
+  /** Abone ise null (sınırsız). */
+  remaining: number | null;
+}
+
+/**
+ * Kalan ücretsiz koç hakkı.
+ *
+ * Bu YALNIZCA arayüz içindir — asıl kapı sunucuda. Ağ hatasında null döner ve
+ * arayüz sayaç göstermez; kullanıcıyı yanlışlıkla kilitlemeyiz, çünkü kotayı
+ * zaten backend uyguluyor.
+ */
+export async function getCoachQuota(): Promise<CoachQuota | null> {
+  try {
+    const userId = await getUserId();
+    const res = await fetch(`${BACKEND_URL}/coach/quota?userId=${encodeURIComponent(userId)}`);
+    if (!res.ok) return null;
+    return (await res.json()) as CoachQuota;
+  } catch {
+    return null;
+  }
+}
+
 // Koça mesaj gönder — backend Claude'a iletir, hafızayı yönetir
-export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<string> {
+export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<CoachReply> {
   const userId = await getUserId();
   const res = await fetch(`${BACKEND_URL}/coach`, {
     method: 'POST',
@@ -29,12 +62,22 @@ export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<strin
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     const e: any = new Error(err.reason || err.detail || err.error || `backend ${res.status}`);
-    // Hız limiti: kullanıcıya doğrudan gösterilecek dostça mesaj
-    if (res.status === 429 && err.reason) e.userMessage = err.reason;
+    // Hız limiti: `scope` ile uygulama kendi dilinde mesaj gösterir.
+    // `reason` (Türkçe) yalnız scope gelmezse yedek olarak kullanılır.
+    if (res.status === 429) {
+      e.rateLimitScope = err.scope as 'minute' | 'day' | undefined;
+      if (err.reason) e.userMessage = err.reason;
+    }
+    // Ücretsiz hak bitti → arayüz ödeme duvarını açar (metin duvarda, balon yok)
+    if (res.status === 402) e.quotaExceeded = true;
     throw e;
   }
   const data = await res.json();
-  return data.reply as string;
+  return {
+    reply: data.reply as string,
+    remaining: data.remaining ?? null,
+    subscribed: !!data.subscribed,
+  };
 }
 
 // Koç hafızasını sıfırla
