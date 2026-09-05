@@ -77,8 +77,29 @@ Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kal
 ## Mağaza tarafında kalan işler
 
 ### Hesaplar
-- **Apple Developer** — developer.apple.com/programs/enroll, $99/yıl, Individual/Sole Proprietor, 2FA açık olmalı. Onay 24-48 saat.
-- **Google Play Console** — play.google.com/console/signup, $25 tek seferlik, Personal. Kimlik + adres doğrulaması birkaç gün sürebiliyor.
+
+**Google Play — ✅ hesap açıldı** (5 Eylül 2026)
+- Geliştirici adı: **stoikos** · Kişisel hesap · Hesap Kimliği `6149932770313324165`
+- Sahip Google hesabı: `bilgeinon@gmail.com` (eş) — **kalıcı, değiştirilemez**
+- $25 ödendi, ödeme profili bağlandı (Bireysel / Türkiye)
+- ⏳ Kalan doğrulamalar:
+  1. **Kimlik belgesi** — yüklendi/yüklenecek, Google onayı birkaç gün
+  2. **Telefon doğrulama** — kimlik onayından *sonra* açılıyor
+  3. **Android cihaz doğrulama** — Play Console mobil uygulamasına gerçek bir Android cihazdan giriş gerekiyor. **Elimizde Android telefon yok**, çözülecek.
+- ⚠️ Bu üç doğrulama bitmeden **uygulama oluşturulamıyor** (Play Console'da "Uygulama oluştur" kilitli).
+
+**Apple Developer — ⏳ henüz başlanmadı**
+- developer.apple.com/programs/enroll, $99/yıl, Individual/Sole Proprietor, 2FA açık olmalı. Onay 24-48 saat.
+- Google'ın onayını beklemeye gerek yok, paralel yürütülmeli.
+
+### Android cihaz ihtiyacı (tek seferlik değil)
+
+Android telefona birden fazla noktada ihtiyaç var — "sonra hallederiz" derken bunları hesaba kat:
+1. Play Console cihaz doğrulaması (yukarıda)
+2. 12 testçinin **hepsi** Android kullanıcısı olmalı
+3. Build'i yayına vermeden kendin denemek
+
+Emülatör 3. madde için iş görür ama **cihaz doğrulaması için gerçek cihaz gerekiyor**.
 
 Bireysel/kişisel hesapta mağazada **yasal ad** görünüyor ("Stoikos" değil). Google, ücretli/abonelikli uygulamalarda **herkese açık fiziksel adres** yayınlıyor.
 
