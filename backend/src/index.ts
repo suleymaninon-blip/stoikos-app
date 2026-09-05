@@ -31,6 +31,26 @@ const API = 'https://api.anthropic.com/v1/messages';
 // Mağazaya çıkarken (RevenueCat bağlanınca) bunu 5 YAP.
 const FREE_COACH_MESSAGES = 50;
 
+// Claude'a gönderilen sohbet geçmişi bu kadar mesajla sınırlı.
+//
+// Neden: geçmiş kırpılmadığında her yeni mesaj tüm konuşmayı baştan taşıyor,
+// yani maliyet konuşma uzadıkça büyüyordu (50. mesaj 10.'nun ~4 katı).
+// Kırpmak güvenli, çünkü kullanıcıya dair KALICI bilgiler zaten `mem:<userId>`
+// hafızasında ve her istekte ayrı blok olarak gidiyor — burada yalnızca
+// "az önce ne konuştuk" bağlamı taşınıyor.
+const MAX_HISTORY_MESSAGES = 12;
+
+/**
+ * Geçmişi son N mesajla sınırlar.
+ * Claude ilk mesajın 'user' olmasını şart koşuyor; kırpma sonrası başta
+ * 'assistant' kalırsa onları atar.
+ */
+function trimHistory<T extends { role: string }>(messages: T[], max: number): T[] {
+  let out = messages.slice(-max);
+  while (out.length > 1 && out[0].role !== 'user') out = out.slice(1);
+  return out;
+}
+
 const LANG_NAME: Record<string, string> = {
   tr: 'Türkçe', en: 'English', de: 'Deutsch', ru: 'Русский (Russian)', fr: 'Français (French)', es: 'Español (Spanish)',
 };
@@ -383,9 +403,11 @@ export default {
       ];
       if (memBlock) system.push({ type: 'text', text: memBlock });
 
+      const history = trimHistory(messages, MAX_HISTORY_MESSAGES);
+
       let reply: string;
       try {
-        const data = await callClaude(env, { model: MODEL, max_tokens: 700, system, messages });
+        const data = await callClaude(env, { model: MODEL, max_tokens: 700, system, messages: history });
         reply = data.content?.[0]?.text ?? '';
       } catch (e: any) {
         return json({ error: 'coach_failed', detail: String(e.message || e) }, 502);

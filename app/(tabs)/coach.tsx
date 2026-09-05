@@ -191,7 +191,13 @@ export default function CoachScreen() {
     setLoading(true);
     try {
       // Karşılama mesajını (id '0') çıkar — Claude ilk mesajın 'user' olmasını ister
-      const payload = withUser.filter((m) => m.id !== '0').map((m) => ({ role: m.role, content: m.content }));
+      // Yükleme boyutunu küçük tut (uzun sohbette mobil veri israfı olmasın).
+      // Asıl kırpma backend'de (MAX_HISTORY_MESSAGES); buradaki pencere kasten
+      // daha geniş tutuldu ki ikisi çakışmasın.
+      const payload = withUser
+        .filter((m) => m.id !== '0')
+        .slice(-24)
+        .map((m) => ({ role: m.role, content: m.content }));
       const { reply, remaining, subscribed } = await sendCoach(lang, payload);
       setQuota((q) => (q ? { ...q, remaining, subscribed } : q));
       const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: reply, timestamp: new Date() };
