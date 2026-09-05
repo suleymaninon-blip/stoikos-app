@@ -9,6 +9,15 @@ kurgu** — seslendirme ve müzik yok, onlar dışarıda eklenecek (aşağıya b
 Storyboard ve altı dildeki seslendirme metinleri:
 https://claude.ai/code/artifact/b2c0a5f3-d1f8-4c67-a1e4-0f59335e2a8f
 
+Basılabilir sürüm (A4, kurgucuya verilecek):
+`store-assets/stoikos-teaser-plani.pdf` — kaynak `plan-print.html`,
+üretim `node scripts/teaser/make-plan-pdf.js`.
+
+Seslendirme süresi hesabı **sahne süresine göre değil, kesintisiz ses
+penceresine göre** yapılıyor: 2. sahne sessiz olduğu için 1. sahnenin sesi
+oraya taşabilir, yani penceresi 2 değil 3 saniye. Sahne süresiyle
+hesaplanırsa neredeyse her dil "aşıyor" görünür ve uyarı anlamsızlaşır.
+
 ## Üretmek
 
 ```bash
