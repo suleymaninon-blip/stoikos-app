@@ -41,10 +41,36 @@ Bu veri yalnızca tarayıcı oturumunda yaşıyor, depoya veya cihaza yazılmıy
 - Egzersiz kimlikleri gerçek olmalı (`neg_vis`, `intention`, `memento`,
   `review`, `gratitude`); uydurma kimlikler dağılım listesini 0/7 bırakır.
 
+## Öne çıkan görsel (Play)
+
+`play-feature-*.png` — tam **1024×500**, altı dilde. Play'de zorunlu.
+Şablon `scripts/feature-graphic.html`, üretim `node scripts/shoot-feature.js`.
+Metinler mağaza açıklamalarıyla aynı cümleler; fontlar uygulamanın kendi
+dosyalarından okunuyor (`node_modules/@expo-google-fonts`), ağ gerekmiyor.
+
+Play her dil için ayrı görsel kabul ediyor; yalnızca biri yüklenecekse
+Türkçe ya da İngilizce sürüm kullanılır.
+
+## Simgeler
+
+`icon-1024-apple.png` (App Store) ve `icon-512-play.png` (Play vitrini).
+Üretim: `node scripts/make-store-icons.js`.
+
+Kaynak `assets/icon.png` doğrudan yüklenemezdi:
+
+- **Alfa kanalı vardı** ve piksellerin %4,4'ü gerçekten saydamdı
+  (yuvarlatılmış köşeler). Apple alfa kanallı simgeyi reddediyor.
+- **Köşeler hazır yuvarlatılmıştı.** Her iki mağaza da köşeyi kendisi
+  yuvarlıyor; hazır yuvarlatılmış simge iki kez kırpılınca köşelerde koyu
+  artık kalıyor.
+
+Betik saydam köşeleri simgenin kendi dış bandının rengiyle dolduruyor
+(renk sabit yazılmadı, simgeden okunuyor) ve alfa kanalını tümüyle atıyor.
+
+`assets/adaptive-icon.png` bilerek değiştirilmedi — o Android'in
+uyarlanabilir simgesinin ön katmanı ve saydamlığı orada doğru.
+
 ## Hâlâ eksik
 
-- **Play öne çıkan görsel — 1024×500.** Play'de zorunlu ve bir ekran
-  görüntüsü değil, tasarlanması gereken bir kapak görseli.
-- **Uygulama simgesi.** `assets/icon.png` mevcut; Apple 1024×1024, Play
-  512×512 ister ve ikisinde de saydamlık kabul edilmiyor — boyut ve alfa
-  kanalı kontrol edilmeli.
+- **Mağaza bağlantısı.** `constants/config.ts` içindeki `storeUrl` boş;
+  uygulama yayına girince doldurulacak.
