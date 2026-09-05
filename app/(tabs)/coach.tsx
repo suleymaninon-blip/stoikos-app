@@ -199,12 +199,17 @@ export default function CoachScreen() {
       setMessages(final);
       saveMessages(final);
     } catch (e: any) {
-      // Hak bitti → sayacı sıfırla ve ödeme duvarını aç
+      // Hak bitti → sayacı sıfırla, duvarı aç. Sohbete balon EKLEME: açıklama
+      // zaten duvarda ve orası 6 dilde; backend'in gerekçesi yalnız Türkçe.
       if (e?.quotaExceeded) {
         setQuota((q) => (q ? { ...q, remaining: 0 } : { subscribed: false, used: 0, limit: 0, remaining: 0 }));
         setPaywallOpen(true);
+        return;
       }
-      const content = e?.userMessage || t('coach.connError');
+      const content =
+        e?.rateLimitScope === 'minute' ? t('coach.tooFast')
+        : e?.rateLimitScope === 'day' ? t('coach.dailyLimit')
+        : e?.userMessage || t('coach.connError');
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content, timestamp: new Date() }]);
     } finally {
       setLoading(false);

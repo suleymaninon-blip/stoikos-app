@@ -146,8 +146,11 @@ async function coachRateLimited(env: Env, userId: string, ip: string): Promise<R
   for (const [key, limit, win] of checks) {
     if (await hitLimit(env, key, limit, win)) {
       const perMin = win <= 60;
+      // `scope` makine-okunur; çeviriyi uygulama yapar (6 dil). `reason` yalnız
+      // eski sürümler için geriye dönük yedek — yeni istemci onu kullanmaz.
       return json({
         error: 'rate_limited',
+        scope: perMin ? 'minute' : 'day',
         reason: perMin
           ? 'Çok hızlı gidiyorsun, lütfen biraz bekle. Sözcükleri sindirmeye de zaman tanı.'
           : 'Bugünlük koç sınırına ulaştın. Yarın yeniden buradayım.',
