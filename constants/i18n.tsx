@@ -104,7 +104,7 @@ const UI: Record<Lang, Dict> = {
     'paywall.f2': 'Seni hatırlayan, süregelen bir konuşma',
     'paywall.f3': 'Altı dilde, ihtiyaç duyduğun her an',
     'paywall.stillFree': 'Alıntılar, kavramlar, filozoflar, nefes ve pratikler her zaman ücretsiz kalacak.',
-    'paywall.termsNote': 'Abone olarak Gizlilik Politikası ve Kullanım Koşulları'nı kabul ediyorum.',
+    'paywall.termsNote': 'Abone olarak Gizlilik Politikası ve Kullanım Koşulları\'nı kabul ediyorum.',
     'paywall.cta': 'ABONE OL', 'paywall.soon': 'YAKINDA', 'paywall.close': 'Şimdi değil',
 
     'wisdom.title': 'Antik öğretiler, bugünün hayatı.', 'wisdom.subtitle': 'Acele etme. Bir alıntıyı oku, bırak otursun.',
