@@ -22,7 +22,7 @@ export function Paywall({
   const { t } = useLang();
   if (!visible) return null;
 
-  const features = [t('paywall.f1'), t('paywall.f2'), t('paywall.f3')];
+  const features = [t('paywall.f1'), t('paywall.f2'), t('paywall.f3'), t('paywall.f4')];
 
   return (
     <Modal transparent animationType="fade" onRequestClose={onClose}>

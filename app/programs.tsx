@@ -7,6 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
 import { getPrograms, getProgress, setDayDone, Program } from '../constants/programs';
+import { usePlus } from '../constants/entitlement';
+import { Paywall } from '../components/Paywall';
 
 export default function ProgramsScreen() {
   const { t, lang } = useLang();
@@ -14,6 +16,10 @@ export default function ProgramsScreen() {
   const [progress, setProgress] = useState<Record<string, number[]>>({});
   const [openId, setOpenId] = useState<string | null>(null);
   const [dayIdx, setDayIdx] = useState<number | null>(null);
+  // Programlar Stoikos Plus'a dahil. Kilitliyken kart gizlenmiyor — ne olduğu
+  // görünsün, dokununca ödeme duvarı açılsın; kapatmak yerine tanıtmak.
+  const { plus } = usePlus();
+  const [paywallOpen, setPaywallOpen] = useState(false);
 
   const loadAll = useCallback(async () => {
     const entries = await Promise.all(programs.map(async (p) => [p.id, await getProgress(p.id)] as const));
@@ -125,29 +131,41 @@ export default function ProgramsScreen() {
             const pct = done / p.dayCount;
             const label = done === 0 ? t('programs.start') : done === p.dayCount ? t('programs.review') : t('programs.continue');
             return (
-              <TouchableOpacity key={p.id} style={[styles.card, { backgroundColor: p.color }]} onPress={() => setOpenId(p.id)} activeOpacity={0.85}>
+              <TouchableOpacity
+                key={p.id}
+                style={[styles.card, { backgroundColor: p.color }]}
+                onPress={() => (plus ? setOpenId(p.id) : setPaywallOpen(true))}
+                activeOpacity={0.85}
+              >
                 <View style={styles.cardHead}>
                   <Text style={styles.cardIcon}>{p.icon}</Text>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.cardTitle}>{p.title}</Text>
                     <Text style={styles.cardSub}>{p.subtitle}</Text>
                   </View>
+                  {!plus && <Text style={styles.cardBadge}>{t('plus.badge')}</Text>}
                 </View>
                 <View style={styles.cardTrack}><View style={[styles.cardFill, { width: `${pct * 100}%` }]} /></View>
                 <View style={styles.cardFoot}>
                   <Text style={styles.cardProgress}>{t('programs.progress', { done, total: p.dayCount })}</Text>
-                  <Text style={styles.cardCta}>{label} →</Text>
+                  <Text style={styles.cardCta}>{plus ? `${label} →` : t('plus.unlock')}</Text>
                 </View>
               </TouchableOpacity>
             );
           })}
         </View>
       </ScrollView>
+      <Paywall visible={paywallOpen} onClose={() => setPaywallOpen(false)} />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  cardBadge: {
+    fontFamily: Fonts.jost, fontSize: 9, letterSpacing: 1.4, color: Colors.sand,
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.4)', borderRadius: 4,
+    paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden',
+  },
   container: { flex: 1, backgroundColor: Colors.stone },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 240 },
   topBar: { paddingHorizontal: 16, paddingTop: 8, height: 44, justifyContent: 'center' },

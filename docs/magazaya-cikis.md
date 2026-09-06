@@ -13,8 +13,8 @@
 
 | Konu | Karar |
 |---|---|
-| Para modeli | Freemium. İçerik bedava, **yalnız koç** abonelik. |
-| Fiyat | **$6,99 / ay** |
+| Para modeli | Freemium. **Stoikos Plus** = koç + tüm programlar + sesli anlatım. Alıntılar, kavramlar, filozoflar, nefes ve günlük pratik hep ücretsiz. (6 Eyl 2026'da yalnız-koç modelinden genişletildi; gerekçe `docs/urun-degerlendirmesi.md`.) |
+| Fiyat | **$6,99 / ay**, **14 gün ücretsiz deneme** (mağazanın introductory offer'ı — uygulamada sayılmıyor) |
 | Dönem | Aylık birincil. Yıllık **eklenmedi** — ⚠️ bu karar gözden geçirilmeli, gerekçe aşağıda. |
 | Platform | **iOS + Android**, ikisi birden |
 | Google hesap türü | **Kişisel** (kurumsal değil) |
@@ -26,7 +26,7 @@
 Kod tarafı hazır. Aşağıdakiler `main`'de ve yayında:
 
 - **Ücretsiz kota** — `FREE_COACH_MESSAGES` (backend), KV'de `used:<userId>` ömür boyu sayacı, dolunca `402` + `quota_exceeded`. `GET /coach/quota?userId=` kalan hakkı döner. Hak yalnız başarılı yanıttan sonra düşer.
-- **Ödeme duvarı arayüzü** — `components/Paywall.tsx`, koç başlığında kalan hak rozeti, hak bitince tek eylem butonu. 6 dilde.
+- **Ödeme duvarı arayüzü** — `components/Paywall.tsx`, koç başlığında kalan hak rozeti, hak bitince tek eylem butonu. 6 dilde. (Canlıdaki sürüm hâlâ yalnız-koç metniyle; Plus paketi dalda bekliyor.)
 - **Geçmiş kırpma** — `MAX_HISTORY_MESSAGES = 12` (backend, yetkili yer) + uygulama son 24 mesajı yükler. Maliyet mesaj başına sabitlendi.
 - **Dil düzeltmesi** — backend 429'a `scope` (`minute`/`day`) ekledi, çeviriyi uygulama yapıyor. Eskiden tüm hata metinleri Türkçeydi.
 - **Otomatik deploy** — `backend/` değişip `main`'e push edilince Worker deploy olur (`.github/workflows/deploy-backend.yml`, repo secret `CLOUDFLARE_API_TOKEN`).
@@ -42,7 +42,9 @@ dolayısıyla ne web sürümünde ne Worker'da canlı değil.
 | Atıf dili yumuşatıldı (künyede uyarlama işareti) | `constants/content.ts` |
 | Kullanım koşulları (EULA), TR + EN | `public/terms.html`, `public/terms-en.html` |
 | Ödeme ekranında fiyat/süre/koşullar | `components/Paywall.tsx`, `constants/i18n.tsx` |
+| **Stoikos Plus paketi + kapılar** | `constants/entitlement.tsx`, `app/programs.tsx`, `app/(tabs)/wisdom.tsx`, `backend/src/index.ts` |
 | Mağaza görselleri ve üretim betikleri | `store-assets/`, `scripts/shoot-*.js` |
+| Mağaza metinleri (artık sürüm kontrolünde) | `scripts/store-content.js`, `scripts/build-store-page.js` |
 
 **Bu paket birleştirilmeye hazır.** `backend/` değişikliği `main`'e girer
 girmez Worker otomatik deploy oluyor — ama bu pakette backend'e giren tek şey
@@ -93,8 +95,9 @@ ve ücretli özellikler, abonelik koşulları (fiyat, dönem, iptal, yenileme),
 mülkiyet, askıya alma.
 
 Apple'ın hazır standart EULA'sı yerine kendi metnimiz yazıldı; uygulamanın
-gerçek işleyişini (ömür boyu 5 ücretsiz soru, yalnız koçun ücretli olması)
-anlatabilmesi için. **Avukat kontrolü bekliyor** — gizlilik politikası gibi.
+gerçek işleyişini anlatabilmesi için. 6 Eylül 2026'da **Stoikos Plus modeline
+göre güncellendi** (sürüm 1.1): ücretsiz katman, Plus paketi ve 14 günlük
+mağaza denemesi ayrı ayrı yazılı. **Avukat kontrolü bekliyor.**
 
 ### 3. ✅ Ödeme ekranı zorunlu bilgileri
 `components/Paywall.tsx` artık aboneliğin fiyatını ($6,99/ay) ve süresini
@@ -130,19 +133,21 @@ değil zorunluluk olduğunu gösteriyor:
 Fiyatın kendisi sorun değil: $6,99 global medyanın ($12,99) ve nişin altında.
 Eksik olan yıllık seçenek.
 
-### 6. Ücretsiz kota — 5 ömür boyu yerine yenilenen hak
+### 6. Ücretsiz koç tadımı — küçük ve taahhütsüz
 
-`FREE_COACH_MESSAGES = 5` **ömür boyu** ve yenilenmiyor. Sorun: koçun satış
-gerekçesi **hafıza**, ama hafızanın değeri ancak farklı günlerde dönüp
-koçun seni hatırladığını görünce anlaşılır. 5 mesajını tek oturumda harcayan
-kullanıcı, para vermesini istediğimiz özelliği **hiç yaşamadan** duvara
-çarpıyor. (Nişteki bir rakip ücretsiz katmanda günde 5 veriyor.)
+Model Stoikos Plus'a genişleyince kota sorusu da değişti. Artık asıl demo
+**14 günlük mağaza denemesi**: kullanıcı Plus'ın tamamını (koç, programlar,
+ses) iki hafta boyunca kullanıyor, bu da hafızanın farklı günlerde
+çalıştığını görmeye fazlasıyla yetiyor. Değerlendirmedeki "haftada 3 mesaj"
+önerisinin yerini bu aldı.
 
-Öneri: ilk 3 hafta haftada 3 mesaj (~9 mesaj, 3 ayrı oturum), sonra ayda 1
-tadımlık. Etkin kullanıcı başına ~$0,22 — karşılanabilir.
+Geriye tek soru kalıyor: kullanıcı **kart bilgisi vermeden** koçun kalitesini
+görebilmeli mi? Görebilmeli — deneme başlatmanın önündeki en büyük engel bu.
+Bu yüzden ücretsiz katmanda **birkaç mesajlık taahhütsüz bir tadım** kalıyor
+(`FREE_COACH_MESSAGES`, mekanizma zaten çalışıyor).
 
-Ayrıca deneme süresi uzun tutulmalı: 17–32 günlük denemeler %42,5 dönüşüyor,
-4 günden kısa olanlar %25,5.
+Yayına çıkarken: tadım küçük bir sayıya çekilecek. Şu an 50 ve bilerek öyle
+(1. madde).
 
 ### 7. Ödeme ekranındaki fiyat sabit yazılı — düzeltilmeli
 

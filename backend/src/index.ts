@@ -371,6 +371,21 @@ export default {
       return json({ ok: true });
     }
 
+    // Tek yetki kaynağı. Uygulama açılışta bir kez sorar; koç, programlar ve
+    // sesli anlatım hep buna bakar.
+    //
+    // Deneme süresi BURADA sayılmıyor ve sayılmamalı: 14 günlük ücretsiz
+    // deneme mağazanın "introductory offer" mekanizmasıyla veriliyor, yani
+    // makbuza ve Apple ID / Google hesabına bağlı. Kendi sayacımızı yazsaydık
+    // userId cihazda üretildiği için uygulama silinip kurulunca sıfırlanırdı.
+    // Deneme aktifken RevenueCat da bu kullanıcıyı "abone" döner, dolayısıyla
+    // burada ayrı bir dal gerekmiyor.
+    if (req.method === 'GET' && url.pathname === '/entitlement') {
+      const userId = url.searchParams.get('userId') || '';
+      if (!userId) return json({ error: 'bad_request' }, 400);
+      return json({ plus: await hasActiveSubscription(env, userId) });
+    }
+
     // Kalan ücretsiz hak — uygulama koç ekranını açınca sorar
     if (req.method === 'GET' && url.pathname === '/coach/quota') {
       const userId = url.searchParams.get('userId') || '';
