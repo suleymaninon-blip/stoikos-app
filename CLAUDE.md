@@ -72,7 +72,8 @@
    👉 **Ayrıntı: `docs/magazaya-cikis.md`** — alınan kararlar, kritik yol (Google'ın 14 gün kuralı takvimi belirliyor), kalan işler, maliyet modeli, bağlantılar.
    - Fiyat **$6,99/ay** (aylık; yıllık eklenmedi). Hesaplar **kişisel**, eş adına, iOS+Android.
    - `hasActiveSubscription()` KV stub'ı (`sub:<userId>`=`'1'` → sınırsız, test hesabı işaretlemek için). Gerçek doğrulama **sunucuda** RevenueCat REST ile yapılacak; `appUserId` = bizim `userId`.
-   - ✅ Bitti: `FREE_COACH_MESSAGES` 50→**5**, EULA (TR+EN), ödeme ekranında fiyat/süre/koşullar metni (6 dil).
+   - ✅ Bitti: EULA (TR+EN), ödeme ekranında fiyat/süre/koşullar metni (6 dil), atıf dili yumuşatıldı.
+   - ⏸️ **`FREE_COACH_MESSAGES` bilerek 50'de bırakıldı.** RevenueCat bağlanmadan düşürülmemeli: `backend/` `main`'e girince Worker deploy oluyor ve test grubu satın alınamayan bir duvara çarpar. Yayında düz "5 ömür boyu" değil, **yenilenen** bir hak olacak (bkz. `docs/urun-degerlendirmesi.md` → bulgu 2).
    - ⏳ Kalan: **RevenueCat** (`Paywall`'ın `onSubscribe` prop'una bağlanacak — verilmezse buton "YAKINDA" durumunda kalıyor, kasten) ve ödeme ekranındaki iki belgeye **tıklanabilir bağlantı** (Apple şart koşuyor, şu an yalnız metin).
    - 🔴 **Bu değişikliklerin hiçbiri canlıda değil** — `claude/stoikosta-wnVG4` dalında, `main`'e birleştirilmedi. `backend/` `main`'e girer girmez Worker deploy oluyor, yani birleştirme anında test grubunun hakkı 50'den 5'e düşer ve RevenueCat bağlı olmadığı için satın alma yapamazlar. Ya RevenueCat'ten sonra birleştir, ya önce test grubuna haber ver.
 8. 🏪 **Mağaza materyalleri** — metinler ve **görseller hazır**.

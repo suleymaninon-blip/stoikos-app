@@ -25,7 +25,18 @@ const MODEL_FAST = 'claude-haiku-4-5';  // hafıza özeti + moderasyon (basit i�
 const API = 'https://api.anthropic.com/v1/messages';
 
 // Ücretsiz koç hakkı — ÖMÜR BOYU (yenilenmez). Dolunca abonelik gerekir.
-const FREE_COACH_MESSAGES = 5;
+//
+// ⚠️ SIRA ÖNEMLİ — bunu RevenueCat bağlanmadan düşürmeyin.
+// Bu dosya `main`'e girer girmez Worker otomatik deploy oluyor. Değer bugün
+// düşürülürse test grubu duvara çarpar ama satın alınabilecek bir şey yoktur;
+// Paywall `onSubscribe` verilmediği için "YAKINDA" durumunda kalıyor.
+//
+// Yayına çıkarken yapılacak (ayrıntı: docs/urun-degerlendirmesi.md → bulgu 2):
+// düz bir "5 ömür boyu" DEĞİL, yenilenen bir hak. Koçun satış gerekçesi
+// hafıza, ama hafızanın değeri ancak farklı günlerde dönüp koçun seni
+// hatırladığını görünce anlaşılıyor — tek oturumda biten 5 mesaj bunu
+// yapısal olarak engelliyor. Önerilen: ilk 3 hafta haftada 3, sonra ayda 1.
+const FREE_COACH_MESSAGES = 50;
 
 // Claude'a gönderilen sohbet geçmişi bu kadar mesajla sınırlı.
 //

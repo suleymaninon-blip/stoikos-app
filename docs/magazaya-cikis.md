@@ -38,19 +38,20 @@ dolayısıyla ne web sürümünde ne Worker'da canlı değil.
 
 | Değişiklik | Dosya |
 |---|---|
-| `FREE_COACH_MESSAGES` 50 → **5** | `backend/src/index.ts` |
+| Koç promptunda uydurma atıf yasağı | `backend/src/index.ts` |
+| Atıf dili yumuşatıldı (künyede uyarlama işareti) | `constants/content.ts` |
 | Kullanım koşulları (EULA), TR + EN | `public/terms.html`, `public/terms-en.html` |
 | Ödeme ekranında fiyat/süre/koşullar | `components/Paywall.tsx`, `constants/i18n.tsx` |
 | Mağaza görselleri ve üretim betikleri | `store-assets/`, `scripts/shoot-*.js` |
 
-**Birleştirmeden önce sırayı düşün.** `backend/` değişikliği `main`'e girer
-girmez Worker otomatik deploy oluyor. Yani birleştirme anında test grubunun
-hakkı 50'den 5'e düşer — ve RevenueCat henüz bağlı olmadığı için duvara
-çarpan kullanıcı satın alma yapamaz, "YAKINDA" butonuyla karşılaşır.
+**Bu paket birleştirilmeye hazır.** `backend/` değişikliği `main`'e girer
+girmez Worker otomatik deploy oluyor — ama bu pakette backend'e giren tek şey
+koç promptundaki uydurma atıf yasağı, ki saf iyileştirme.
 
-İki seçenek: ya RevenueCat bağlandıktan sonra birleştir, ya da önce test
-grubuna haber ver. Kotayı 5'e indirmek yayın için zorunlu, ama zamanlaması
-bu yüzden RevenueCat'e bağlı.
+`FREE_COACH_MESSAGES` bilerek **50'de bırakıldı** (bkz. aşağıda 1. madde).
+Bir ara 5 yapılmıştı; RevenueCat bağlanmadan canlıya girerse test grubu
+satın alınamayan bir duvara çarpacağı için geri alındı. Kotayı düşürmek
+yayın için zorunlu, ama sırası RevenueCat'ten sonra.
 
 ## Kritik yol
 
@@ -76,9 +77,13 @@ Sayaç, **build'i Play'e yükledikten sonra** başlıyor. Bu yüzden build'i erk
 
 Bunlar mağazaya çıkmadan **mutlaka** yapılacak:
 
-### 1. ✅ `FREE_COACH_MESSAGES` = 50 → **5**
-Yapıldı (`backend/src/index.ts`). Dalda bekliyor — birleştirme zamanlaması
-için yukarıdaki uyarıya bak.
+### 1. ⏸️ `FREE_COACH_MESSAGES` — bilerek 50'de bırakıldı
+Bir ara 5 yapılmıştı, sonra **kasten geri alındı**: `backend/` `main`'e
+girer girmez Worker deploy oluyor ve RevenueCat bağlı olmadığı için duvara
+çarpan kullanıcı satın alma yapamıyor (Paywall "YAKINDA" durumunda).
+
+Yayına çıkarken düşürülecek — ama düz "5 ömür boyu" olarak değil; gerekçesi
+ve önerilen tasarım 6. maddede.
 
 ### 2. ✅ Kullanım Koşulları (EULA)
 Yazıldı: `public/terms.html` (TR) ve `public/terms-en.html` (EN). Gizlilik
