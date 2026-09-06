@@ -315,7 +315,7 @@ yapmıyor.
 **Yayından önce**
 1. ✅ ~~Atıf dilini yumuşat~~ — yapıldı 6 Eylül 2026
 2. **Ücretsiz kotayı haftalığa çevir + 14–30 günlük deneme** — sattığınız şey denenebilsin
-3. **Yıllık plan ekle** ($44,99–49,99) — kategorinin ana gelir kanalı, reklamın tek matematiksel yolu
+3. ✅ ~~Yıllık plan ekle~~ — yapıldı 6 Eylül 2026: **$49,99/yıl**, %40 tasarruf, ödeme ekranında önseçili
 4. **EULA'yı uygulamaya bağla, fiyatı RevenueCat'ten al** — ayrıntı `docs/magazaya-cikis.md`
 5. **Değerlendirme istemi ekle** (`expo-store-review`) — organik keşfin en büyük kaldıracı
 

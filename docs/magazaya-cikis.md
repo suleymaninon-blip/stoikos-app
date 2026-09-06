@@ -14,8 +14,8 @@
 | Konu | Karar |
 |---|---|
 | Para modeli | Freemium. **Stoikos Plus** = koç + tüm programlar + sesli anlatım. Alıntılar, kavramlar, filozoflar, nefes ve günlük pratik hep ücretsiz. (6 Eyl 2026'da yalnız-koç modelinden genişletildi; gerekçe `docs/urun-degerlendirmesi.md`.) |
-| Fiyat | **$6,99 / ay**, **14 gün ücretsiz deneme** (mağazanın introductory offer'ı — uygulamada sayılmıyor) |
-| Dönem | Aylık birincil. Yıllık **eklenmedi** — ⚠️ bu karar gözden geçirilmeli, gerekçe aşağıda. |
+| Deneme | **14 gün ücretsiz** — mağazanın introductory offer'ı, makbuza bağlı, uygulamada sayılmıyor |
+| Dönem | **Aylık $6,99 + Yıllık $49,99** (%40 tasarruf, ayda $4,17). Ödeme ekranında yıllık önseçili. |
 | Platform | **iOS + Android**, ikisi birden |
 | Google hesap türü | **Kişisel** (kurumsal değil) |
 | Hesap sahibi | **Eş adına** — kimlik doğrulaması, sözleşme onayı, banka hesabı ve vergi yükümlülüğü onun üzerinde |
@@ -100,10 +100,13 @@ göre güncellendi** (sürüm 1.1): ücretsiz katman, Plus paketi ve 14 günlük
 mağaza denemesi ayrı ayrı yazılı. **Avukat kontrolü bekliyor.**
 
 ### 3. ✅ Ödeme ekranı zorunlu bilgileri
-`components/Paywall.tsx` artık aboneliğin fiyatını ($6,99/ay) ve süresini
-(aylık otomatik yenileme) gösteriyor, altında koşulları kabul yazısı var.
-Altı dilde (`constants/i18n.tsx`: `paywall.price`, `paywall.frequency`,
-`paywall.termsNote`).
+`components/Paywall.tsx` iki planı yan yana gösteriyor (yıllık $49,99
+önseçili + tasarruf rozeti, aylık $6,99), altında seçime göre değişen
+yenileme satırı ve koşulları kabul yazısı. Altı dilde.
+
+⚠️ **Dört fiyat dizesi de sabit yazılı** (`paywall.price`, `priceAnnual`,
+`perMonth`, `save`). Mağaza yerel para biriminde tahsil edeceği için
+RevenueCat'in döndürdüğü yerelleştirilmiş değerler kullanılmalı.
 
 ⚠️ **Bağlantılar hâlâ tıklanabilir değil.** Şu an yalnızca "Gizlilik
 Politikası ve Kullanım Koşulları'nı kabul ediyorum" cümlesi yazıyor; Apple
@@ -117,21 +120,27 @@ bağlanmalı.
 - RevenueCat `appUserId` = bizim `userId` (aynı değer).
 - Arayüzde tek bağlantı noktası: `Paywall`'a `onSubscribe` prop'u geçmek. Verilmediğinde buton "YAKINDA" durumunda kalıyor — kasten böyle, satın alınamayan bir butona "ABONE OL" yazmamak için.
 
-### 5. Yıllık plan — **eklenmeli** (Eylül 2026 değerlendirmesi)
+### 5. ✅ Yıllık plan — eklendi (6 Eylül 2026)
 
-Başta "istenirse eklenir" diye bırakılmıştı; sektör verisi bunun bir tercih
-değil zorunluluk olduğunu gösteriyor:
+**$49,99/yıl**, aylığa göre %40 tasarruf (ayda $4,17). Ödeme ekranında iki
+plan yan yana; **yıllık önseçili** ve tasarruf rozetiyle işaretli.
+
+Neden eklendi — "istenirse olur" değil, zorunluluk:
 
 - Sağlık & Fitness kategorisinde abonelik gelirinin **%60–68'i** yıllık
   planlardan geliyor.
 - Ödeyen abone başına edinme maliyeti **$50–100**. $6,99'dan net ~$5,94 →
   geri kazanım **9–17 ay**. Ama **aylık + yapay zekâ** planlarında 12. ay
-  elde tutma **%6,1** (RevenueCat, 1 milyar+ işlem). Yani aylık planla ücretli
-  reklam matematiksel olarak geri dönmüyor.
-- Nişteki tipik yıllık indirim %40–55 → **$44,99–49,99/yıl** piyasaya oturur.
+  elde tutma **%6,1** (RevenueCat, 1 milyar+ işlem). Aylık planla ücretli
+  reklam matematiksel olarak geri dönmüyor; yıllık tek çıkış yolu.
+- Nişteki tipik yıllık indirim %40–55. $49,99 bandın alt ucunda.
 
-Fiyatın kendisi sorun değil: $6,99 global medyanın ($12,99) ve nişin altında.
-Eksik olan yıllık seçenek.
+Fiyatın kendisi sorun değildi: $6,99 global medyanın ($12,99) ve nişin altında.
+
+⚠️ Fiyat karşılaştırması için not: kategori lideri **stoic.** yıllık planını
+$39,99'a satıyor (kaynak zayıf, doğrulanmalı). Dönüşüm düşük kalırsa
+$44,99'a çekmek düşünülebilir — tek yapılacak `paywall.priceAnnual`,
+`paywall.perMonth` ve `paywall.save` dizelerini değiştirmek.
 
 ### 6. Ücretsiz koç tadımı — küçük ve taahhütsüz
 

@@ -71,7 +71,7 @@
 7. 💳 **Para modeli: STOIKOS PLUS** (6 Eylül 2026'da genişletildi)
    👉 Gerekçe `docs/urun-degerlendirmesi.md`, mağaza süreci `docs/magazaya-cikis.md`.
    - **Hep ücretsiz:** 164 alıntı, 12 kavram, 10 filozof, nefes orbu, günlük pratik, ilerleme. İndirme sebebi ve mağaza puanı motoru burası; kapatılmıyor.
-   - **Plus:** koç, tüm programlar, kavramların sesli anlatımı, sonradan eklenen içerik. **$6,99/ay, 14 gün ücretsiz deneme.**
+   - **Plus:** koç, tüm programlar, kavramların sesli anlatımı, sonradan eklenen içerik. **$6,99/ay veya $49,99/yıl** (%40 tasarruf, yıllık önseçili), **14 gün ücretsiz deneme.**
    - **Neden genişletildi:** yalnız koç satmak, taklit edilmesi en kolay şeyi satıp taklit edilmesi zor olan her şeyi bedava vermek demekti. Sektör verisi de yapay zekâ aboneliklerinin en kötü elde tutan tür olduğunu gösteriyor (aylık planda 12. ay %6,1 — RevenueCat). Paket, kullanıcı koçtan sıkıldığında da ayakta kalıyor. Ayrım: **metalaşmış olan bedava, üretilmiş olan paralı.**
    - **Deneme uygulamada SAYILMIYOR** — mağazanın *introductory offer* mekanizmasıyla veriliyor, makbuza ve Apple ID / Google hesabına bağlı, silip kurunca sıfırlanmıyor. Kendi sayacımız `userId` cihazda üretildiği için baypas edilirdi. Deneme sürerken RevenueCat kullanıcıyı zaten abone döner.
    - **Tek yetki kaynağı:** `constants/entitlement.tsx` → `usePlus()`, backend `GET /entitlement`. Ağ hatasında son bilinen değer önbellekten kullanılır (abone çevrimdışı erişimini kaybetmesin). Kapılar: `app/programs.tsx`, `app/(tabs)/wisdom.tsx` (sesli anlatım); koç zaten sunucuda korunuyor.
@@ -79,7 +79,7 @@
    - `hasActiveSubscription()` hâlâ KV stub'ı (`sub:<userId>`=`'1'`). Gerçek doğrulama **sunucuda** RevenueCat REST ile yapılacak; `appUserId` = bizim `userId`.
    - ✅ Bitti: EULA (TR+EN), ödeme ekranında fiyat/süre/koşullar metni, atıf dili yumuşatıldı, Plus paketi + kapılar + 6 dilde metinler, mağaza metinleri yeni modele göre güncellendi.
    - ⏸️ **`FREE_COACH_MESSAGES` bilerek 50'de bırakıldı.** RevenueCat bağlanmadan düşürülmemeli: `backend/` `main`'e girince Worker deploy oluyor ve kullanıcı satın alınamayan bir duvara çarpar.
-   - ⏳ Kalan: **RevenueCat** (`Paywall`'ın `onSubscribe` prop'una bağlanacak — verilmezse buton kasten "YAKINDA"), **yerelleştirilmiş fiyat** (şu an `$6,99` sabit yazılı), **EULA'ya tıklanabilir bağlantı**, **yıllık plan**.
+   - ⏳ Kalan: **RevenueCat** (`Paywall`'ın `onSubscribe` prop'u artık seçilen planı alıyor: `(plan: 'annual' | 'monthly') => void`; verilmezse buton kasten "YAKINDA"), **yerelleştirilmiş fiyat** (dört fiyat dizesi de sabit yazılı, RevenueCat'ten gelmeli), **EULA'ya tıklanabilir bağlantı**.
 8. 🏪 **Mağaza materyalleri** — metinler ve **görseller hazır**.
    - Metinler: 6 dil, karakter sınırları doğrulanmış (bağlantı `docs/magazaya-cikis.md` içinde).
    - Görseller: `store-assets/` — ekran görüntüleri, Play öne çıkan görseli, alfasız simgeler. Üretim betikleriyle birlikte, yeniden çekmek tek komut.
