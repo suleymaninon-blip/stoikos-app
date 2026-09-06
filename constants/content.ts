@@ -56,8 +56,28 @@ const SOURCES: Record<string, L> = {
   tradition:      { tr: 'Stoacı Gelenek',    en: 'Stoic Tradition',    de: 'Stoische Tradition',   ru: 'Стоическая традиция', fr: 'Tradition stoïcienne', es: 'Tradición estoica' },
 };
 
+// Alıntılar antik kaynaklardan birebir çeviri DEĞİL — sadeleştirilmiş
+// uyarlamalar. Bu işaret künyenin parçası olarak üretiliyor ki alıntı
+// uygulamadan çıktığında da (paylaşım metni ve paylaşım görseli) birlikte
+// gitsin. Yalnız liste dibindeki nota bırakılırsa paylaşımda düşüyor ve
+// dışarıya birebir alıntı gibi görünen bir künye çıkıyor.
+const ADAPTED: L = {
+  tr: 'serbest uyarlama',
+  en: 'freely adapted',
+  de: 'frei bearbeitet',
+  ru: 'вольное переложение',
+  fr: 'adaptation libre',
+  es: 'adaptación libre',
+};
+
+// Bu iki kaynak zaten birebir alıntı iddiasında değil ("Stoacı Gelenek",
+// "Rivayet"); işareti tekrarlamak gereksiz olur.
+const NO_ADAPT_MARK = new Set(['tradition', 'attributed']);
+
 function sourceName(id: string, lang: Lang): string {
-  return pick(SOURCES[id], lang, id);
+  const base = pick(SOURCES[id], lang, id);
+  if (!base || NO_ADAPT_MARK.has(id)) return base;
+  return `${base} · ${pick(ADAPTED, lang)}`;
 }
 
 // ─── Alıntılar ────────────────────────────────────────────

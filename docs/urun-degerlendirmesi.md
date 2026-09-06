@@ -53,9 +53,19 @@ Bunlar korunmalı, üstüne inşa edilmeli:
 
 # Bulgular
 
-## 1. Atıf bütünlüğü — en ciddi mesele
+## 1. ✅ Atıf bütünlüğü — çözüldü (6 Eylül 2026)
 
-**Durum.** 164 alıntının **104'ü** "Marcus Aurelius, *Meditationes*" gibi
+> **Yapılan:** Uyarlama işareti künyenin parçası hâline getirildi
+> (`content.ts` → `sourceName`): artık her yerde
+> "Meditationes · serbest uyarlama" yazıyor, altı dilde. Künyeyi tüketen üç
+> yüzey (ana ekran kartı, bilgelik listesi, paylaşım metni ve görseli) tek
+> değişiklikle düzeldi — işaret alıntı uygulamadan çıkarken de birlikte
+> gidiyor. "Stoacı Gelenek" ve "Rivayet" kaynakları zaten iddiasız olduğu
+> için işaretsiz bırakıldı. Koç promptuna da uydurma atıf yasağı eklendi.
+>
+> Aşağıdaki tespit, ne yapıldığının ve neden yapıldığının kaydı olarak duruyor.
+
+**Durum (düzeltmeden önce).** 164 alıntının **104'ü** "Marcus Aurelius, *Meditationes*" gibi
 belirli ve doğrulanabilir bir esere atıf yapıyor. Ama uygulamanın kendisi
 `wisdom.attribution` ile şunu söylüyor:
 
@@ -303,7 +313,7 @@ yapmıyor.
 # Öncelik listesi
 
 **Yayından önce**
-1. **Atıf dilini yumuşat** (kart, paylaşım, koç promptu) — itibar riski
+1. ✅ ~~Atıf dilini yumuşat~~ — yapıldı 6 Eylül 2026
 2. **Ücretsiz kotayı haftalığa çevir + 14–30 günlük deneme** — sattığınız şey denenebilsin
 3. **Yıllık plan ekle** ($44,99–49,99) — kategorinin ana gelir kanalı, reklamın tek matematiksel yolu
 4. **EULA'yı uygulamaya bağla, fiyatı RevenueCat'ten al** — ayrıntı `docs/magazaya-cikis.md`

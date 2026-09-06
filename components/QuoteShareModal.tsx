@@ -32,7 +32,10 @@ export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClos
     } catch (e) {
       // Görsel yakalama olmazsa (örn. Expo Go) metin olarak paylaş
       try {
-        await Share.share({ message: `"${quote!.text}" — ${quote!.author}, ${quote!.source}\n\n— Stoikos` });
+        // Künye `quote.source` üzerinden uyarlama işaretini zaten taşıyor
+        // (bkz. content.ts → sourceName), böylece paylaşım dışarı birebir
+        // alıntı iddiasıyla çıkmıyor.
+        await Share.share({ message: `"${quote!.text}"\n— ${quote!.author}, ${quote!.source}\n\n— Stoikos` });
       } catch {}
     } finally {
       setBusy(false);

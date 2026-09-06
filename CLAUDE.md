@@ -51,10 +51,10 @@
 > 📋 **Ürün ve pazar değerlendirmesi: `docs/urun-degerlendirmesi.md`**
 > (Eylül 2026). Uygulama baştan sona incelendi; içerik envanteri, bulgular,
 > rakip ve fiyat verisi orada. Çıkan **yayın öncesi** dört madde:
-> 1. **Atıf dilini yumuşat** — 104 alıntı belirli bir esere atıf yapıyor ama
->    uygulamanın kendi notu bunların "esinlenerek sadeleştirilmiş" olduğunu
->    söylüyor; paylaşımda o not düşüyor ve koç promptunda uydurma atıfa karşı
->    kural yok. Tek gerçek itibar riski bu.
+> 1. ✅ ~~Atıf dilini yumuşat~~ — yapıldı (6 Eylül 2026). Uyarlama işareti
+>    künyenin parçası oldu (`content.ts` → `sourceName`): "Meditationes ·
+>    serbest uyarlama", altı dilde. Kart, paylaşım metni ve paylaşım görseli
+>    üçü birden düzeldi. Koç promptuna uydurma atıf yasağı eklendi.
 > 2. **Ücretsiz kotayı yenilenen hakka çevir** — 5 ömür boyu mesaj, satılan
 >    özelliğin (hafıza) yaşanmasını yapısal olarak engelliyor.
 > 3. **Yıllık plan ekle** — kategorinin ana gelir kanalı; aylık planla ücretli
