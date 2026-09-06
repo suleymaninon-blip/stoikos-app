@@ -13,6 +13,8 @@ import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
+import { usePlus } from '../../constants/entitlement';
+import { Paywall } from '../../components/Paywall';
 
 // ─── QuoteCard ─────────────────────────────────────────────
 function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
@@ -288,6 +290,8 @@ export default function WisdomScreen() {
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [selectedPhilo, setSelectedPhilo] = useState<Philosopher | null>(null);
   const [playingKey, setPlayingKey] = useState<string | null>(null);
+  const { plus } = usePlus();
+  const [paywallOpen, setPaywallOpen] = useState(false);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
@@ -318,7 +322,10 @@ export default function WisdomScreen() {
   useEffect(() => { return () => { stopAudio(); }; }, []);
   useEffect(() => { stopAudio(); setPlayingKey(null); }, [lang]);
 
+  // Kavramların sesli anlatımı (216 dosya, ElevenLabs'ta üretildi) Plus'a dahil.
+  // Kavram metninin kendisi ücretsiz — kilitlenen yalnızca dinleme.
   function togglePlay(key: string) {
+    if (!plus) { setPaywallOpen(true); return; }
     if (playingKey === key) {
       stopAudio();
       setPlayingKey(null);
@@ -479,6 +486,8 @@ export default function WisdomScreen() {
         closeLabel={t('wisdom.close')}
         onClose={() => setShareQuote(null)}
       />
+
+      <Paywall visible={paywallOpen} onClose={() => setPaywallOpen(false)} />
     </SafeAreaView>
   );
 }

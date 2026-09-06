@@ -26,9 +26,16 @@ const API = 'https://api.anthropic.com/v1/messages';
 
 // Ücretsiz koç hakkı — ÖMÜR BOYU (yenilenmez). Dolunca abonelik gerekir.
 //
-// ⚠️ GEÇİCİ: Test grubu şu an koçu sınırsız kullanıyor; 5'e indirince hepsi
-// bir anda duvara çarpardı — üstelik satın alınabilecek bir şey yokken.
-// Mağazaya çıkarken (RevenueCat bağlanınca) bunu 5 YAP.
+// ⚠️ SIRA ÖNEMLİ — bunu RevenueCat bağlanmadan düşürmeyin.
+// Bu dosya `main`'e girer girmez Worker otomatik deploy oluyor. Değer bugün
+// düşürülürse test grubu duvara çarpar ama satın alınabilecek bir şey yoktur;
+// Paywall `onSubscribe` verilmediği için "YAKINDA" durumunda kalıyor.
+//
+// Yayına çıkarken yapılacak (ayrıntı: docs/urun-degerlendirmesi.md → bulgu 2):
+// düz bir "5 ömür boyu" DEĞİL, yenilenen bir hak. Koçun satış gerekçesi
+// hafıza, ama hafızanın değeri ancak farklı günlerde dönüp koçun seni
+// hatırladığını görünce anlaşılıyor — tek oturumda biten 5 mesaj bunu
+// yapısal olarak engelliyor. Önerilen: ilk 3 hafta haftada 3, sonra ayda 1.
 const FREE_COACH_MESSAGES = 50;
 
 // Claude'a gönderilen sohbet geçmişi bu kadar mesajla sınırlı.
@@ -77,9 +84,21 @@ function buildSystemPrompt(lang: string): string {
 ## ALINTI KULLANIMI: SADECE GERÇEKTEN UYDUĞUNDA
 - Her yanıta alıntı sıkıştırma. Çoğu yanıtta alıntı OLMASIN.
 - Yalnızca bir Stoacı söz söylediğin şeyi gerçekten güçlendiriyorsa kullan.
-- Kullanacaksan ayrı satırda > ile ver:
-> "Söz buraya." — Yazar, Kaynak
 - Bir yanıtta en fazla bir alıntı.
+
+### UYDURMA ATIF YASAK (çok önemli)
+- **Asla uydurma alıntı ya da uydurma kaynak künyesi verme.** Bir cümlenin
+  belirli bir esere (Meditationes, Mektuplar, Encheiridion, Söylevler…) ait
+  olduğundan emin değilsen o künyeyi YAZMA. Emin olmadığın bir cümleyi tırnak
+  içinde belirli bir yazara atfetme.
+- Şüphedeysen fikri **atıfsız** aktar; bu her zaman güvenlidir ve yeterlidir:
+  "Stoacılar şöyle der…", "Epiktetos'un yaklaşımı şudur…",
+  "Bu düşüncenin Stoacı karşılığı…" gibi.
+- Künye vereceksen biçim şu; kitap adını ancak gerçekten eminsen ekle:
+> "Söz buraya." — Yazar
+- Kendi cümleni kurup onu bir filozofun ağzına koymak, uydurma atıftır.
+  Güzel bir cümle kurabilirsin — ama tırnak ve isim ekleme, kendi sözün olarak
+  söyle.
 
 ## STOACI ÖZ
 - Kontrol ikilemi: neyin elimizde olduğunu, neyin olmadığını ayırmak.
@@ -350,6 +369,21 @@ export default {
       // Hafıza güncellemesini arka planda yap (yanıtı bekletme)
       ctx.waitUntil(updateMemory(env, userId, lang, `(Günlük yansıma) ${t}`, '', prev));
       return json({ ok: true });
+    }
+
+    // Tek yetki kaynağı. Uygulama açılışta bir kez sorar; koç, programlar ve
+    // sesli anlatım hep buna bakar.
+    //
+    // Deneme süresi BURADA sayılmıyor ve sayılmamalı: 14 günlük ücretsiz
+    // deneme mağazanın "introductory offer" mekanizmasıyla veriliyor, yani
+    // makbuza ve Apple ID / Google hesabına bağlı. Kendi sayacımızı yazsaydık
+    // userId cihazda üretildiği için uygulama silinip kurulunca sıfırlanırdı.
+    // Deneme aktifken RevenueCat da bu kullanıcıyı "abone" döner, dolayısıyla
+    // burada ayrı bir dal gerekmiyor.
+    if (req.method === 'GET' && url.pathname === '/entitlement') {
+      const userId = url.searchParams.get('userId') || '';
+      if (!userId) return json({ error: 'bad_request' }, 400);
+      return json({ plus: await hasActiveSubscription(env, userId) });
     }
 
     // Kalan ücretsiz hak — uygulama koç ekranını açınca sorar
