@@ -3,6 +3,11 @@
 > Bu dosya, App Store ve Google Play'e çıkış sürecinin durumunu tutar.
 > Alınan kararlar, kalan işler ve kolay unutulan tuzaklar burada.
 > Genel proje bilgisi için `CLAUDE.md`.
+>
+> **Ürünün kendisine ve pazara dair değerlendirme:
+> `docs/urun-degerlendirmesi.md`** — atıf riski, ücretsiz kota tasarımı,
+> yıllık plan gerekçesi, rakipler ve fiyat verisi. Aşağıdaki 5–8. maddeler
+> oradan geliyor.
 
 ## Alınan kararlar
 
@@ -10,7 +15,7 @@
 |---|---|
 | Para modeli | Freemium. İçerik bedava, **yalnız koç** abonelik. |
 | Fiyat | **$6,99 / ay** |
-| Dönem | Aylık birincil. Yıllık (~$49,99, %40 indirim) **eklenmedi** — istenirse eklenebilir, aylığı kaldırmadan. |
+| Dönem | Aylık birincil. Yıllık **eklenmedi** — ⚠️ bu karar gözden geçirilmeli, gerekçe aşağıda. |
 | Platform | **iOS + Android**, ikisi birden |
 | Google hesap türü | **Kişisel** (kurumsal değil) |
 | Hesap sahibi | **Eş adına** — kimlik doğrulaması, sözleşme onayı, banka hesabı ve vergi yükümlülüğü onun üzerinde |
@@ -104,7 +109,52 @@ bağlanmalı.
 - RevenueCat `appUserId` = bizim `userId` (aynı değer).
 - Arayüzde tek bağlantı noktası: `Paywall`'a `onSubscribe` prop'u geçmek. Verilmediğinde buton "YAKINDA" durumunda kalıyor — kasten böyle, satın alınamayan bir butona "ABONE OL" yazmamak için.
 
-### 5. Node sürümü (acil değil)
+### 5. Yıllık plan — **eklenmeli** (Eylül 2026 değerlendirmesi)
+
+Başta "istenirse eklenir" diye bırakılmıştı; sektör verisi bunun bir tercih
+değil zorunluluk olduğunu gösteriyor:
+
+- Sağlık & Fitness kategorisinde abonelik gelirinin **%60–68'i** yıllık
+  planlardan geliyor.
+- Ödeyen abone başına edinme maliyeti **$50–100**. $6,99'dan net ~$5,94 →
+  geri kazanım **9–17 ay**. Ama **aylık + yapay zekâ** planlarında 12. ay
+  elde tutma **%6,1** (RevenueCat, 1 milyar+ işlem). Yani aylık planla ücretli
+  reklam matematiksel olarak geri dönmüyor.
+- Nişteki tipik yıllık indirim %40–55 → **$44,99–49,99/yıl** piyasaya oturur.
+
+Fiyatın kendisi sorun değil: $6,99 global medyanın ($12,99) ve nişin altında.
+Eksik olan yıllık seçenek.
+
+### 6. Ücretsiz kota — 5 ömür boyu yerine yenilenen hak
+
+`FREE_COACH_MESSAGES = 5` **ömür boyu** ve yenilenmiyor. Sorun: koçun satış
+gerekçesi **hafıza**, ama hafızanın değeri ancak farklı günlerde dönüp
+koçun seni hatırladığını görünce anlaşılır. 5 mesajını tek oturumda harcayan
+kullanıcı, para vermesini istediğimiz özelliği **hiç yaşamadan** duvara
+çarpıyor. (Nişteki bir rakip ücretsiz katmanda günde 5 veriyor.)
+
+Öneri: ilk 3 hafta haftada 3 mesaj (~9 mesaj, 3 ayrı oturum), sonra ayda 1
+tadımlık. Etkin kullanıcı başına ~$0,22 — karşılanabilir.
+
+Ayrıca deneme süresi uzun tutulmalı: 17–32 günlük denemeler %42,5 dönüşüyor,
+4 günden kısa olanlar %25,5.
+
+### 7. Ödeme ekranındaki fiyat sabit yazılı — düzeltilmeli
+
+`constants/i18n.tsx` → `paywall.price` altı dilde **`$6,99` olarak sabit**.
+Ama mağaza Türkiye'de TL, Almanya'da EUR tahsil edecek. Gösterilen fiyatın
+tahsil edilenle uyuşmaması hem Apple kılavuzuna aykırı hem kullanıcıyı
+yanıltır. RevenueCat'in döndürdüğü **yerelleştirilmiş fiyat dizesi**
+kullanılmalı; şu anki değer geçici yer tutucudur.
+
+### 8. Değerlendirme istemi yok — eklenmeli
+
+`expo-store-review` kullanılmıyor; uygulama hiç puan istemiyor. Organik
+keşfin en güçlü kaldıracı mağaza puanı ve yorum sayısı. İyi zamanlanmış tek
+bir `StoreReview.requestReview()` (7 günlük süreklilikte ya da bir program
+bitiminde) muhtemelen en yüksek getirili tek satır.
+
+### 9. Node sürümü (acil değil)
 Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kaldırıyor ve işleri Node 24'e zorluyor. Uyarı düzeyinde, şimdilik çalışıyor. Fırsat olunca 22'ye çekilecek.
 
 ## Mağaza tarafında kalan işler

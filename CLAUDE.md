@@ -37,7 +37,8 @@
 - `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: **yalnız istatistik** — süreklilik/haftalık/son7/egzersiz dağılımı/söz; sağ üstte ⚙ → Ayarlar).
 - `app/settings.tsx` — **Ayarlar** (push'lu ekran, ⚙ ile açılır): dil, bildirim, ✨ tanıtımı tekrar göster, 🧠 koç hafıza reset, Destek & Hakkında, sürüm, admin (Meydan Okuma bayrağı arkasında). Ayarlar buraya İlerleme'den taşındı.
 - `app/journal.tsx` — **Yansımaların** (push'lu, Pratik'teki "Geçmiş →" linkiyle açılır): geçmiş günlük yansımalar, tarihli kartlar (AsyncStorage `stoikos_journal_<tarih>`). Günlük yansıma kaydedilince, **yalnız kullanıcı açık rıza verdiyse** (KVKK; `COACH_CONSENT_KEY='stoikos_journal_coach_consent'`, **varsayılan KAPALI**, günlük kartındaki onay kutusu) koç hafızasına işlenir: `addReflectionToMemory` (api.ts) → backend `POST /memory/note` → `updateMemory` ile KV'ye merge (günde 20 limit). Rıza kapalıyken yansıma **yalnız cihazda** kalır, hiçbir yere gönderilmez. (Bekleyen: gizlilik politikası metni.)
-- `app/programs.tsx`, `challenge*.tsx`.
+- `app/programs.tsx` + `constants/programs.ts` — **Programlar**: rehberli çok günlük yolculuklar. 2 program × 7 gün (Kontrol Dairesi, İç Sakinlik), altı dilde tam (fr/es Eylül 2026'da eklendi). İlerleme cihazda (`stoikos_program_<id>`), her gün bir öncekini tamamlayınca açılıyor. Ana ekrandan erişiliyor. **Elde tutmanın en ucuz kaldıracı burası** — üretim maliyeti yalnız metin, ve koç aboneliğinin aksine ChatGPT ikame edemez.
+- `app/challenge*.tsx`.
 - `app/breathe.tsx` — eski tam ekran nefes (artık erişilemez, silinmedi).
 
 ## Önemli kararlar
@@ -46,6 +47,21 @@
 - Meydan Okuma feature flag arkasında gizli (kod/D1 duruyor).
 
 ## BEKLEYEN İŞLER (öncelik sırası)
+
+> 📋 **Ürün ve pazar değerlendirmesi: `docs/urun-degerlendirmesi.md`**
+> (Eylül 2026). Uygulama baştan sona incelendi; içerik envanteri, bulgular,
+> rakip ve fiyat verisi orada. Çıkan **yayın öncesi** dört madde:
+> 1. **Atıf dilini yumuşat** — 104 alıntı belirli bir esere atıf yapıyor ama
+>    uygulamanın kendi notu bunların "esinlenerek sadeleştirilmiş" olduğunu
+>    söylüyor; paylaşımda o not düşüyor ve koç promptunda uydurma atıfa karşı
+>    kural yok. Tek gerçek itibar riski bu.
+> 2. **Ücretsiz kotayı yenilenen hakka çevir** — 5 ömür boyu mesaj, satılan
+>    özelliğin (hafıza) yaşanmasını yapısal olarak engelliyor.
+> 3. **Yıllık plan ekle** — kategorinin ana gelir kanalı; aylık planla ücretli
+>    reklam matematiksel olarak geri dönmüyor.
+> 4. **Değerlendirme istemi ekle** (`expo-store-review`) — hiç yok; organik
+>    keşfin en güçlü kaldıracı.
+
 1. ✅ ~~Koç backend rate limit~~ — KV tabanlı (`hitLimit`/`coachRateLimited`, `backend/src/index.ts`). userId: 6/dk + 120/gün; IP (`CF-Connecting-IP`): 12/dk + 300/gün. Aşımda 429 + Türkçe `reason`. Frontend: `sendCoach` 429'da `e.userMessage`, coach.tsx onu balon olarak gösterir. Deploy edildi + canlı test geçti.
 2. ✅ ~~`constants/content.ts` alıntılar & filozoflar çevirisi~~ — Alıntılar 37–164 (128 adet) + 10 filozof tüm alanları EN/DE/RU/FR/ES'e çevrildi (commit 6ed2b650).
 3. ✅ ~~Logo animasyon sahnesi~~ — Tanıtım turuna slayt 0 olarak eklendi: `LogoSceneBoundary` (SVG stroke draw ~2.5s → nefes parlaması → STOIKOS fade-in); native hata için `OmegaFallback` + ErrorBoundary.
