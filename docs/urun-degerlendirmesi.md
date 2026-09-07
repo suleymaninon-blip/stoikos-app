@@ -194,9 +194,15 @@ Arayüz bunları güvenle atlıyor (`concept.example ? ... : null`), görsel hat
 
 ## 7. Ufak ama görünür
 
-- **Emoji paleti bozuyor.** Ana ekrandaki 🔊 ve Pratik'teki 🌙 kendi parlak
-  renklerinde çiziliyor, sıcak altın-taş paletinin içinde yabancı duruyor.
-  SVG ikonla değiştirilmeli.
+- ~~**Emoji paleti bozuyor.**~~ — 6 Eylül 2026'da çözüldü. Emoji kendi renginde
+  çizildiği için `color` almıyordu; Pratik ekranında sabah `☀` (metin glifi,
+  altın) ile akşam `🌙` (emoji, parlak sarı) aynı ekranda iki farklı görsel dil
+  oluşturuyordu. Dört yerde SVG'ye geçildi (`components/Icons.tsx`): nefes
+  orbunun ses düğmesi, Pratik'in sabah/akşam ikonları, kavram modalinin
+  dinleme düğmesi, ana ekranın süreklilik satırı. Akşam ikonu `Colors.moon`
+  alıyor — bölüm etiketlerinin zaten yaptığı ayrımı koruyor.
+  **Alt sekme ve modül listesindeki `☀` bilerek bırakıldı:** oradaki
+  `⌂ ☀ ◎ ◈ ◷` tutarlı bir glif ailesi, tek üyesini SVG yapmak aileyi bozardı.
 - **Gizlilik bağlantısı `github.io` gösteriyor.** `stoikos.app` alan adı
   sizin; mağaza incelemesinde kurumsal görünmüyor.
 - ~~Programlarda fr/es yok~~ — 6 Eylül 2026'da tamamlandı.
@@ -334,7 +340,7 @@ yapmıyor.
 **Sonra**
 9. İlk 7 kavramı derinleştir
 10. Hafıza sürekliliği (kimlik cihaza bağlı olmasın)
-11. Emoji → SVG ikon; gizlilik bağlantısını `stoikos.app`'e taşı
+11. ✅ ~~Emoji → SVG ikon~~ (6 Eylül 2026); gizlilik bağlantısını `stoikos.app`'e taşı
 12. Aboneliğe ikinci bacak: yeni programlar + sesli kurslar premium katmanda
 
 ---

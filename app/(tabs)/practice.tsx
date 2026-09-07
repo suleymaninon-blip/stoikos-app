@@ -8,6 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
+import { DayPartIcon, DayPart } from '../../components/Icons';
 import { useLang } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
@@ -16,13 +17,17 @@ const COMPLETED_KEY = 'stoikos_completed_';
 const JOURNAL_KEY = 'stoikos_journal_';
 const COACH_CONSENT_KEY = 'stoikos_journal_coach_consent'; // açık rıza (KVKK), varsayılan kapalı
 
+// Sabah altın, akşam ay mavisi — bölüm etiketleri (moonTag/moonBadge) zaten
+// bu ayrımı yapıyor, ikonlar da ona uyuyor.
+const ICON_COLOR: Record<DayPart, string> = { morning: Colors.sand, evening: Colors.moon };
+
 // ─── Sade liste satırı (dokununca rehberli kart açılır) ────
 function ExerciseRow({
   exercise, completed, icon, onOpen, tapHint,
 }: {
   exercise: Exercise;
   completed: boolean;
-  icon: string;
+  icon: DayPart;
   onOpen: () => void;
   tapHint: string;
 }) {
@@ -31,7 +36,7 @@ function ExerciseRow({
       <View style={[styles.rowCheck, completed && styles.rowCheckDone]}>
         {completed && <Text style={styles.rowCheckMark}>✓</Text>}
       </View>
-      <Text style={styles.rowIcon}>{icon}</Text>
+      <View style={styles.rowIcon}><DayPartIcon part={icon} size={16} color={ICON_COLOR[icon]} /></View>
       <Text style={[styles.rowName, completed && styles.rowNameDone]} numberOfLines={1}>{exercise.name}</Text>
       <Text style={styles.rowDuration}>{exercise.duration}</Text>
       <Text style={styles.rowChevron}>›</Text>
@@ -43,8 +48,8 @@ function ExerciseRow({
 function ExerciseModal({
   exercise, icon, completed, onToggle, onClose, labels,
 }: {
-  exercise: (Exercise & { icon: string }) | null;
-  icon: string;
+  exercise: (Exercise & { icon: DayPart }) | null;
+  icon: DayPart;
   completed: boolean;
   onToggle: () => void;
   onClose: () => void;
@@ -55,7 +60,7 @@ function ExerciseModal({
     <Modal transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
-          <Text style={styles.modalIcon}>{icon}</Text>
+          <View style={styles.modalIcon}><DayPartIcon part={icon} size={44} color={ICON_COLOR[icon]} /></View>
           <Text style={styles.modalDuration}>{exercise.duration}</Text>
           <Text style={styles.modalName}>{exercise.name}</Text>
           <View style={styles.modalDivider} />
@@ -86,7 +91,7 @@ export default function PracticeScreen() {
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
   const [coachConsent, setCoachConsent] = useState(false); // yansımayı koça iletme izni
-  const [selected, setSelected] = useState<(Exercise & { icon: string }) | null>(null);
+  const [selected, setSelected] = useState<(Exercise & { icon: DayPart }) | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const { morning: MORNING_EXERCISES, evening: EVENING_EXERCISES } = getExercises(lang, t('unit.min'));
@@ -171,7 +176,7 @@ export default function PracticeScreen() {
           {/* Morning */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionIcon}>☀</Text>
+              <View style={styles.sectionIcon}><DayPartIcon part="morning" size={22} color={ICON_COLOR.morning} /></View>
               <View>
                 <Text style={styles.sectionTag}>{t('practice.morningTag')}</Text>
                 <Text style={styles.sectionTitle}>{t('practice.morningTitle')}</Text>
@@ -186,9 +191,9 @@ export default function PracticeScreen() {
               <ExerciseRow
                 key={ex.id}
                 exercise={ex}
-                icon="☀"
+                icon="morning"
                 completed={completed.has(ex.id)}
-                onOpen={() => setSelected({ ...ex, icon: '☀' })}
+                onOpen={() => setSelected({ ...ex, icon: 'morning' })}
                 tapHint={t('practice.tapHint')}
               />
             ))}
@@ -197,7 +202,7 @@ export default function PracticeScreen() {
           {/* Evening */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionIcon}>🌙</Text>
+              <View style={styles.sectionIcon}><DayPartIcon part="evening" size={22} color={ICON_COLOR.evening} /></View>
               <View>
                 <Text style={[styles.sectionTag, styles.moonTag]}>{t('practice.eveningTag')}</Text>
                 <Text style={styles.sectionTitle}>{t('practice.eveningTitle')}</Text>
@@ -212,9 +217,9 @@ export default function PracticeScreen() {
               <ExerciseRow
                 key={ex.id}
                 exercise={ex}
-                icon="🌙"
+                icon="evening"
                 completed={completed.has(ex.id)}
-                onOpen={() => setSelected({ ...ex, icon: '🌙' })}
+                onOpen={() => setSelected({ ...ex, icon: 'evening' })}
                 tapHint={t('practice.tapHint')}
               />
             ))}
@@ -276,9 +281,10 @@ export default function PracticeScreen() {
         </KeyboardAvoidingView>
       </Animated.View>
 
+      {/* Seçili egzersiz yokken modal zaten null dönüyor; icon yedeği tip için. */}
       <ExerciseModal
         exercise={selected}
-        icon={selected?.icon || ''}
+        icon={selected?.icon ?? 'morning'}
         completed={selected ? completed.has(selected.id) : false}
         onToggle={() => {
           if (!selected) return;
@@ -322,7 +328,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
-  sectionIcon: { fontSize: 22 },
+  sectionIcon: { width: 22, height: 22 },
   sectionTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.sand, marginBottom: 2 },
   sectionTitle: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.text, letterSpacing: 0.3 },
   sectionBadge: {
@@ -356,7 +362,7 @@ const styles = StyleSheet.create({
   },
   rowCheckDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   rowCheckMark: { fontSize: 12, color: Colors.stone, fontWeight: '700' },
-  rowIcon: { fontSize: 16 },
+  rowIcon: { width: 16, height: 16 },
   rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
   rowNameDone: { color: Colors.muted },
   rowDuration: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
@@ -368,7 +374,7 @@ const styles = StyleSheet.create({
     width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center',
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
   },
-  modalIcon: { fontSize: 44, marginBottom: 8 },
+  modalIcon: { marginBottom: 8 },
   modalDuration: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalName: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
   modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },

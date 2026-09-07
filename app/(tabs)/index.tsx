@@ -12,6 +12,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
+import { MoonIcon } from '../../components/Icons';
 import { getTodaysQuote } from '../../constants/content';
 import { useLang, localeOf } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
@@ -124,9 +125,12 @@ export default function HomeScreen() {
 
           {/* Baskısız süreklilik */}
           <View style={styles.continuity}>
-            <Text style={styles.continuityLabel}>
-              🌙 {t('home.continuity')} · {streak} {t('progress.streakUnit')}
-            </Text>
+            <View style={styles.continuityRow}>
+              <MoonIcon size={13} color={Colors.moon} />
+              <Text style={styles.continuityLabel}>
+                {t('home.continuity')} · {streak} {t('progress.streakUnit')}
+              </Text>
+            </View>
             <View style={styles.dots}>
               {weekDays.map((done, i) => {
                 const isToday = i === weekDays.length - 1;
@@ -185,7 +189,8 @@ const styles = StyleSheet.create({
   rowArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.sand },
 
   continuity: { alignItems: 'center', paddingVertical: 8 },
-  continuityLabel: { fontFamily: Fonts.jost, fontSize: 12, letterSpacing: 1, color: Colors.muted, marginBottom: 14 },
+  continuityRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 14 },
+  continuityLabel: { fontFamily: Fonts.jost, fontSize: 12, letterSpacing: 1, color: Colors.muted },
   dots: { flexDirection: 'row', gap: 10 },
   dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'rgba(194,168,120,0.18)' },
   dotDone: { backgroundColor: 'rgba(194,168,120,0.5)' },
