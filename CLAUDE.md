@@ -19,6 +19,8 @@
 ## Mimari / Önemli dosyalar
 - `constants/i18n.tsx` — 6 dil (TR/EN/DE/RU/FR/ES), `LanguageProvider`, `useLang`, tüm UI metinleri. Dil whitelist'i `LANGUAGES`'tan türer.
 - `constants/content.ts` — AUTHORS (15, "tradition" dahil), SOURCES, **164 alıntı** (`QUOTES_RAW`, id 1-164, yenilerde `theme`), **12 kavram** (`CONCEPTS_RAW`, `practice` alanı), egzersizler, koç. `type L = Partial<...>` + `pick()` (eksik dil → İng/TR yedek). `getAudioItems` (yalnız tr/en/de/ru/fr/es kavram sesi).
+- **Kavram metinleri derinleştirildi** (Eylül 2026): 12 kavramın `desc` alanı çok paragraflı, altı dilde tam. Beş adımlı kalıp: (1) okuyucunun yaşadığı bir andan aç, tanımdan değil; (2) "sen" diye konuş; (3) kavramın en yaygın yanlış anlaşılmasını adıyla çürüt; (4) tek somut imge, kendi paragrafında; (5) kapanış bilgi değil duygu. Akademik gönderme yok — filozof adı ancak bir hikâye anlatıyorsa girer.
+  ⚠️ **İlk paragrafa dokunma.** `getAudioItems` sesi `latin + name + desc'in ilk paragrafı`ndan üretiyor ve kart önizlemesi (`numberOfLines={2}`) de oradan besleniyor. İlk paragraf değişirse 216 mp3'ün ilgili olanları bayatlar (`npm run gen-audio` gerekir). Sonraki paragraflar serbest.
 - `constants/theme.ts` — sıcak altın/taş paleti (`Colors`, `colors`, `Fonts`).
 - `constants/config.ts` — `FEATURES.meydanOkuma=false` (gizli), `APP_INFO` (destek e-posta/mağaza linkleri + `privacyUrl` — **PLACEHOLDER, doldurulacak**).
 - **Gizlilik politikası**: kaynak `docs/gizlilik-politikasi.md` (md taslak) + yayınlanan `public/gizlilik.html` (export'ta `dist/`'e kopyalanır → `…/stoikos-app/gizlilik.html`). Ayarlar→Hakkında'da "🔒 Gizlilik Politikası" satırı `APP_INFO.privacyUrl`'i açar. İçindeki 〔...〕 alanları + EN çevirisi + avukat kontrolü bekliyor.
