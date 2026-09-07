@@ -9,9 +9,13 @@ Playwright ile çekildi; boyutlar mağazaların istediği piksel değerlerine
 | `iphone-*` | **1290×2796** | App Store, iPhone 6.7" (zorunlu boyut) |
 | `android-*` | **1080×1920** | Google Play, telefon |
 
-Beş ekran: ana (nefes orbu + günün alıntısı), bilgelik (alıntı tekerleği),
-koç (sohbet), pratik, ilerleme. App Store en az 3, Play en az 2 istiyor —
-ikisi de karşılanıyor.
+Beş ekran her iki boyutta: ana (nefes orbu + günün alıntısı), bilgelik
+(alıntı tekerleği), koç (sohbet), pratik, ilerleme. App Store en az 3,
+Play en az 2 istiyor — ikisi de karşılanıyor.
+
+Ayrıca yalnız iPhone boyutunda iki ekran daha: `iphone-6-programs.png`
+(Plus kilidi) ve `iphone-7-plus.png` (ödeme ekranı). Bunlar mağaza için
+zorunlu değil; ödeme modelini göstermek için duruyor.
 
 ## Yeniden çekmek
 
