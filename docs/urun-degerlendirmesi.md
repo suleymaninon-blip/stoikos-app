@@ -160,12 +160,18 @@ görmeye yeter), sonra ayda 1 tadımlık. Etkin kullanıcı başına ~$0,22.
 yedekleme/geri yükleme kodu. (Üçüncü parti girişi eklenirse Apple, Apple ile
 Giriş'i de zorunlu tutuyor; KVKK/GDPR yükü de artar.)
 
-## 4. Değerlendirme istemi hiç yok
+## 4. ✅ Değerlendirme istemi — eklendi (6 Eylül 2026)
 
-`expo-store-review` kullanılmıyor; uygulama hiç puan istemiyor. Organik
-keşfin en güçlü kaldıracı mağaza puanı ve yorum sayısıdır. İyi zamanlanmış
-tek bir `StoreReview.requestReview()` — 7 günlük süreklilikte ya da bir
-program bitiminde — bu listedeki muhtemelen **en yüksek getirili tek satır**.
+> **Yapılan:** `constants/review.ts` → `maybeAskForReview(trigger)`.
+> İki tetik, ikisi de bir başarıya bağlı: **7 günlük süreklilik**
+> (`hooks/useStreak.ts`) ve **bir programın bitirilmesi** (`app/programs.tsx`).
+> Kullanıcıya yalnızca bir kez soruluyor; Apple yılda 3 istemle sınırlayıp
+> fazlasını sessizce yuttuğu için ısrar kazanç getirmiyor, tek şans hak
+> edilmiş bir ana saklanıyor. Web'de sessiz no-op.
+
+**Durum (eklemeden önce).** `expo-store-review` kullanılmıyordu; uygulama hiç
+puan istemiyordu. Organik keşfin en güçlü kaldıracı mağaza puanı ve yorum
+sayısıdır — bu listedeki muhtemelen **en yüksek getirili tek satırdı**.
 
 ## 5. Elde tutma ince
 
@@ -188,9 +194,15 @@ Arayüz bunları güvenle atlıyor (`concept.example ? ... : null`), görsel hat
 
 ## 7. Ufak ama görünür
 
-- **Emoji paleti bozuyor.** Ana ekrandaki 🔊 ve Pratik'teki 🌙 kendi parlak
-  renklerinde çiziliyor, sıcak altın-taş paletinin içinde yabancı duruyor.
-  SVG ikonla değiştirilmeli.
+- ~~**Emoji paleti bozuyor.**~~ — 6 Eylül 2026'da çözüldü. Emoji kendi renginde
+  çizildiği için `color` almıyordu; Pratik ekranında sabah `☀` (metin glifi,
+  altın) ile akşam `🌙` (emoji, parlak sarı) aynı ekranda iki farklı görsel dil
+  oluşturuyordu. Dört yerde SVG'ye geçildi (`components/Icons.tsx`): nefes
+  orbunun ses düğmesi, Pratik'in sabah/akşam ikonları, kavram modalinin
+  dinleme düğmesi, ana ekranın süreklilik satırı. Akşam ikonu `Colors.moon`
+  alıyor — bölüm etiketlerinin zaten yaptığı ayrımı koruyor.
+  **Alt sekme ve modül listesindeki `☀` bilerek bırakıldı:** oradaki
+  `⌂ ☀ ◎ ◈ ◷` tutarlı bir glif ailesi, tek üyesini SVG yapmak aileyi bozardı.
 - **Gizlilik bağlantısı `github.io` gösteriyor.** `stoikos.app` alan adı
   sizin; mağaza incelemesinde kurumsal görünmüyor.
 - ~~Programlarda fr/es yok~~ — 6 Eylül 2026'da tamamlandı.
@@ -317,7 +329,7 @@ yapmıyor.
 2. **Ücretsiz kotayı haftalığa çevir + 14–30 günlük deneme** — sattığınız şey denenebilsin
 3. ✅ ~~Yıllık plan ekle~~ — yapıldı 6 Eylül 2026: **$49,99/yıl**, %40 tasarruf, ödeme ekranında önseçili
 4. **EULA'yı uygulamaya bağla, fiyatı RevenueCat'ten al** — ayrıntı `docs/magazaya-cikis.md`
-5. **Değerlendirme istemi ekle** (`expo-store-review`) — organik keşfin en büyük kaldıracı
+5. ✅ ~~Değerlendirme istemi ekle~~ — yapıldı 6 Eylül 2026: 7 günlük süreklilik ve program bitişi tetikleri, bir kez soruluyor
 
 **Yayından hemen sonra**
 6. Türkiye'ye ayrı fiyat
@@ -328,7 +340,7 @@ yapmıyor.
 **Sonra**
 9. İlk 7 kavramı derinleştir
 10. Hafıza sürekliliği (kimlik cihaza bağlı olmasın)
-11. Emoji → SVG ikon; gizlilik bağlantısını `stoikos.app`'e taşı
+11. ✅ ~~Emoji → SVG ikon~~ (6 Eylül 2026); gizlilik bağlantısını `stoikos.app`'e taşı
 12. Aboneliğe ikinci bacak: yeni programlar + sesli kurslar premium katmanda
 
 ---

@@ -15,6 +15,7 @@ import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
 import { usePlus } from '../../constants/entitlement';
 import { Paywall } from '../../components/Paywall';
+import { SoundIcon, StopIcon } from '../../components/Icons';
 
 // ─── QuoteCard ─────────────────────────────────────────────
 function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
@@ -91,7 +92,9 @@ function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabe
             <Text style={styles.modalTr}>{concept.name}</Text>
             {audio && (
               <TouchableOpacity onPress={() => onToggle(key)} style={[styles.modalListenBtn, playing && styles.listenBtnActive]}>
-                <Text style={styles.listenIcon}>{playing ? '⏹' : '🔊'}</Text>
+                <View style={styles.listenIcon}>
+                  {playing ? <StopIcon size={14} color={Colors.sand} /> : <SoundIcon size={14} color={Colors.sand} />}
+                </View>
               </TouchableOpacity>
             )}
             <View style={styles.modalDivider} />
@@ -562,7 +565,7 @@ const styles = StyleSheet.create({
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
   listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
-  listenIcon: { fontSize: 14, color: Colors.sand },
+  listenIcon: { width: 14, height: 14 },
   favBtnActive: { backgroundColor: 'rgba(212,146,74,0.2)', borderColor: Colors.accent },
   favIconActive: { color: Colors.accent },
   modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)', marginTop: 4, marginBottom: 4 },

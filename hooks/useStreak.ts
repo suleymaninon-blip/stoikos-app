@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { maybeAskForReview } from '../constants/review';
 
 const STREAK_KEY = 'stoikos_streak';
 const STREAK_LAST_DATE_KEY = 'stoikos_streak_last_date';
@@ -35,6 +36,11 @@ export function useStreak() {
         }
         await AsyncStorage.setItem(STREAK_KEY, newStreak.toString());
         await AsyncStorage.setItem(STREAK_LAST_DATE_KEY, todayStr);
+
+        // Yedi gün üst üste: alışkanlık kurulmuş, uygulamadan fayda görülüyor.
+        // Değerlendirme istemi için hak edilmiş an. (İstem yalnızca bir kez
+        // sorulur; kontrol maybeAskForReview içinde.)
+        if (newStreak >= 7) maybeAskForReview('streak7');
       } else if (lastDate && lastDate !== todayStr && lastDate !== yesterdayStr) {
         const lastDateObj = new Date(lastDate);
         const diffDays = Math.floor((today.getTime() - lastDateObj.getTime()) / 86400000);

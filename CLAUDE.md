@@ -37,6 +37,8 @@
 - `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: **yalnız istatistik** — süreklilik/haftalık/son7/egzersiz dağılımı/söz; sağ üstte ⚙ → Ayarlar).
 - `app/settings.tsx` — **Ayarlar** (push'lu ekran, ⚙ ile açılır): dil, bildirim, ✨ tanıtımı tekrar göster, 🧠 koç hafıza reset, Destek & Hakkında, sürüm, admin (Meydan Okuma bayrağı arkasında). Ayarlar buraya İlerleme'den taşındı.
 - `app/journal.tsx` — **Yansımaların** (push'lu, Pratik'teki "Geçmiş →" linkiyle açılır): geçmiş günlük yansımalar, tarihli kartlar (AsyncStorage `stoikos_journal_<tarih>`). Günlük yansıma kaydedilince, **yalnız kullanıcı açık rıza verdiyse** (KVKK; `COACH_CONSENT_KEY='stoikos_journal_coach_consent'`, **varsayılan KAPALI**, günlük kartındaki onay kutusu) koç hafızasına işlenir: `addReflectionToMemory` (api.ts) → backend `POST /memory/note` → `updateMemory` ile KV'ye merge (günde 20 limit). Rıza kapalıyken yansıma **yalnız cihazda** kalır, hiçbir yere gönderilmez. (Bekleyen: gizlilik politikası metni.)
+- `components/Icons.tsx` — **arayüz ikonları** (SunIcon, MoonIcon, SoundIcon, StopIcon, DayPartIcon). `PhilosopherSymbol` ile aynı üslup: 24×24, 1.5 çizgi, yuvarlak uç, `color` prop'u alır. Emoji yerine bunlar kullanılıyor çünkü emoji kendi renginde çizilip paleti bozuyordu. Alt sekme/modül listesindeki `⌂ ☀ ◎ ◈ ◷` glif ailesi bilerek dokunulmadan bırakıldı.
+- `constants/review.ts` — **mağaza değerlendirme istemi**. `maybeAskForReview(trigger)`; iki tetik: 7 günlük süreklilik (`useStreak`) ve program bitişi (`programs.tsx`). Kullanıcıya bir kez sorulur (`stoikos_review_asked`), web'de no-op. Apple yılda 3 istemle sınırladığı için ısrar edilmiyor.
 - `app/programs.tsx` + `constants/programs.ts` — **Programlar**: rehberli çok günlük yolculuklar. 2 program × 7 gün (Kontrol Dairesi, İç Sakinlik), altı dilde tam (fr/es Eylül 2026'da eklendi). İlerleme cihazda (`stoikos_program_<id>`), her gün bir öncekini tamamlayınca açılıyor. Ana ekrandan erişiliyor. **Elde tutmanın en ucuz kaldıracı burası** — üretim maliyeti yalnız metin, ve koç aboneliğinin aksine ChatGPT ikame edemez.
 - `app/challenge*.tsx`.
 - `app/breathe.tsx` — eski tam ekran nefes (artık erişilemez, silinmedi).
@@ -79,6 +81,7 @@
    - `hasActiveSubscription()` hâlâ KV stub'ı (`sub:<userId>`=`'1'`). Gerçek doğrulama **sunucuda** RevenueCat REST ile yapılacak; `appUserId` = bizim `userId`.
    - ✅ Bitti: EULA (TR+EN), ödeme ekranında fiyat/süre/koşullar metni, atıf dili yumuşatıldı, Plus paketi + kapılar + 6 dilde metinler, mağaza metinleri yeni modele göre güncellendi.
    - ⏸️ **`FREE_COACH_MESSAGES` bilerek 50'de bırakıldı.** RevenueCat bağlanmadan düşürülmemeli: `backend/` `main`'e girince Worker deploy oluyor ve kullanıcı satın alınamayan bir duvara çarpar.
+   - ✅ Değerlendirme istemi eklendi (`constants/review.ts`).
    - ⏳ Kalan: **RevenueCat** (`Paywall`'ın `onSubscribe` prop'u artık seçilen planı alıyor: `(plan: 'annual' | 'monthly') => void`; verilmezse buton kasten "YAKINDA"), **yerelleştirilmiş fiyat** (dört fiyat dizesi de sabit yazılı, RevenueCat'ten gelmeli), **EULA'ya tıklanabilir bağlantı**.
 8. 🏪 **Mağaza materyalleri** — metinler ve **görseller hazır**.
    - Metinler: 6 dil, karakter sınırları doğrulanmış (bağlantı `docs/magazaya-cikis.md` içinde).

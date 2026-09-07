@@ -3,6 +3,7 @@ import { Animated, Easing, View, Text, StyleSheet, Pressable, TouchableOpacity, 
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
+import { SoundIcon } from './Icons';
 import {
   isBreathSoundSupported, getSoundPref, setSoundPref,
   startBreathSound, stopBreathSound,
@@ -169,7 +170,9 @@ export default function BreathOrb({
           accessibilityState={{ checked: soundOn }}
           accessibilityLabel={soundLabel}
         >
-          <Text style={[styles.soundIcon, soundOn && styles.soundIconOn]}>{soundOn ? '🔊' : '🔇'}</Text>
+          <View style={[styles.soundIcon, soundOn && styles.soundIconOn]}>
+            <SoundIcon size={17} on={soundOn} color={Colors.sand} />
+          </View>
         </TouchableOpacity>
       )}
     </View>
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
     width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center',
     backgroundColor: 'rgba(194,168,120,0.08)',
   },
-  soundIcon: { fontSize: 15, opacity: 0.55 },
+  soundIcon: { opacity: 0.55 },
   soundIconOn: { opacity: 1 },
   orbWrap: { width: 180, height: 180, alignItems: 'center', justifyContent: 'center', marginBottom: 18 },
   halo: {
