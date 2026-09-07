@@ -23,37 +23,20 @@
 
 ## Şu an canlıda ne var
 
-Kod tarafı hazır. Aşağıdakiler `main`'de ve yayında:
+PR #13 birleştirildi (6 Eylül 2026). `main`'de ve yayında:
 
-- **Ücretsiz kota** — `FREE_COACH_MESSAGES` (backend), KV'de `used:<userId>` ömür boyu sayacı, dolunca `402` + `quota_exceeded`. `GET /coach/quota?userId=` kalan hakkı döner. Hak yalnız başarılı yanıttan sonra düşer.
-- **Ödeme duvarı arayüzü** — `components/Paywall.tsx`, koç başlığında kalan hak rozeti, hak bitince tek eylem butonu. 6 dilde. (Canlıdaki sürüm hâlâ yalnız-koç metniyle; Plus paketi dalda bekliyor.)
-- **Geçmiş kırpma** — `MAX_HISTORY_MESSAGES = 12` (backend, yetkili yer) + uygulama son 24 mesajı yükler. Maliyet mesaj başına sabitlendi.
-- **Dil düzeltmesi** — backend 429'a `scope` (`minute`/`day`) ekledi, çeviriyi uygulama yapıyor. Eskiden tüm hata metinleri Türkçeydi.
-- **Otomatik deploy** — `backend/` değişip `main`'e push edilince Worker deploy olur (`.github/workflows/deploy-backend.yml`, repo secret `CLOUDFLARE_API_TOKEN`).
-
-## ⚠️ Dalda bekleyen, canlıda OLMAYAN değişiklikler
-
-Aşağıdakiler `claude/stoikosta-wnVG4` dalında; `main`'e **birleştirilmedi**,
-dolayısıyla ne web sürümünde ne Worker'da canlı değil.
-
-| Değişiklik | Dosya |
-|---|---|
-| Koç promptunda uydurma atıf yasağı | `backend/src/index.ts` |
-| Atıf dili yumuşatıldı (künyede uyarlama işareti) | `constants/content.ts` |
-| Kullanım koşulları (EULA), TR + EN | `public/terms.html`, `public/terms-en.html` |
-| Ödeme ekranında fiyat/süre/koşullar | `components/Paywall.tsx`, `constants/i18n.tsx` |
-| **Stoikos Plus paketi + kapılar** | `constants/entitlement.tsx`, `app/programs.tsx`, `app/(tabs)/wisdom.tsx`, `backend/src/index.ts` |
-| Mağaza görselleri ve üretim betikleri | `store-assets/`, `scripts/shoot-*.js` |
-| Mağaza metinleri (artık sürüm kontrolünde) | `scripts/store-content.js`, `scripts/build-store-page.js` |
-
-**Bu paket birleştirilmeye hazır.** `backend/` değişikliği `main`'e girer
-girmez Worker otomatik deploy oluyor — ama bu pakette backend'e giren tek şey
-koç promptundaki uydurma atıf yasağı, ki saf iyileştirme.
-
-`FREE_COACH_MESSAGES` bilerek **50'de bırakıldı** (bkz. aşağıda 1. madde).
-Bir ara 5 yapılmıştı; RevenueCat bağlanmadan canlıya girerse test grubu
-satın alınamayan bir duvara çarpacağı için geri alındı. Kotayı düşürmek
-yayın için zorunlu, ama sırası RevenueCat'ten sonra.
+- **Stoikos Plus paketi** — koç + tüm programlar + sesli anlatım. Tek yetki
+  kaynağı `constants/entitlement.tsx` (`usePlus`) ← backend `GET /entitlement`.
+  Kapılar: programlar, sesli anlatım. Aylık $6,99 / yıllık $49,99, 14 gün deneme.
+- **Atıf dili yumuşatıldı** — künyede "· serbest uyarlama", altı dilde; paylaşım
+  metni ve görseliyle birlikte dışarı da gidiyor. Koç promptunda uydurma atıf yasağı.
+- **Kullanım koşulları** — `public/terms.html` + `terms-en.html`, sürüm 1.1.
+- **Ücretsiz kota** — `FREE_COACH_MESSAGES` **50** (bilerek; bkz. 1. madde).
+  KV'de `used:<userId>` sayacı, dolunca `402`. Hak yalnız başarılı yanıttan sonra düşer.
+- **Geçmiş kırpma** — `MAX_HISTORY_MESSAGES = 12`; maliyet mesaj başına sabit.
+- **Mağaza görselleri, teaser videosu, mağaza metinleri** — `store-assets/`,
+  `scripts/`. Hepsi üretim betikleriyle yeniden üretilebilir.
+- **Otomatik deploy** — `backend/` değişip `main`'e push edilince Worker deploy olur.
 
 ## Kritik yol
 
@@ -166,12 +149,22 @@ tahsil edilenle uyuşmaması hem Apple kılavuzuna aykırı hem kullanıcıyı
 yanıltır. RevenueCat'in döndürdüğü **yerelleştirilmiş fiyat dizesi**
 kullanılmalı; şu anki değer geçici yer tutucudur.
 
-### 8. Değerlendirme istemi yok — eklenmeli
+### 8. ✅ Değerlendirme istemi — eklendi (6 Eylül 2026)
 
-`expo-store-review` kullanılmıyor; uygulama hiç puan istemiyor. Organik
-keşfin en güçlü kaldıracı mağaza puanı ve yorum sayısı. İyi zamanlanmış tek
-bir `StoreReview.requestReview()` (7 günlük süreklilikte ya da bir program
-bitiminde) muhtemelen en yüksek getirili tek satır.
+`constants/review.ts` → `maybeAskForReview(trigger)`. İki tetik, ikisi de bir
+başarıya bağlı; rastgele açılışta sorulmuyor:
+
+- **7 günlük süreklilik** (`hooks/useStreak.ts`, sürekliliğin arttığı an)
+- **Bir programın bitirilmesi** (`app/programs.tsx`, son gün işaretlenince)
+
+Kullanıcıya **yalnızca bir kez** soruluyor (`stoikos_review_asked`). Sebebi:
+Apple yılda en fazla 3 istem gösterip fazlasını sessizce yutuyor, yani ısrar
+kazanç getirmiyor — tek şansı hak edilmiş bir ana saklamak daha iyi. Bayrak
+istemden önce yazılıyor; amaç kaç kez gösterildiğini saymak değil, bir kez
+denemiş olmak.
+
+Web'de sessiz no-op (`isAvailableAsync()` false döner). İstem 1,5 sn gecikmeli
+açılıyor ki kullanıcı önce başardığı şeyi görsün.
 
 ### 9. Node sürümü (acil değil)
 Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kaldırıyor ve işleri Node 24'e zorluyor. Uyarı düzeyinde, şimdilik çalışıyor. Fırsat olunca 22'ye çekilecek.

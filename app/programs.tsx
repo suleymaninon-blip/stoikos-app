@@ -8,6 +8,7 @@ import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
 import { getPrograms, getProgress, setDayDone, Program } from '../constants/programs';
 import { usePlus } from '../constants/entitlement';
+import { maybeAskForReview } from '../constants/review';
 import { Paywall } from '../components/Paywall';
 
 export default function ProgramsScreen() {
@@ -34,6 +35,11 @@ export default function ProgramsScreen() {
     const done = (progress[pid] || []).includes(idx);
     const next = await setDayDone(pid, idx, !done);
     setProgress((prev) => ({ ...prev, [pid]: next }));
+
+    // Bir yolculuk baştan sona bitti — değerlendirme istemi için ikinci
+    // hak edilmiş an. (Geri alma işaretlenirken tetiklenmesin diye !done.)
+    const total = programs.find((p) => p.id === pid)?.dayCount;
+    if (!done && total != null && next.length === total) maybeAskForReview('programDone');
   }
 
   function isUnlocked(pid: string, idx: number): boolean {
