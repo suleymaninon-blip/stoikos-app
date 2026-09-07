@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Uygulamanın kendi font dosyaları — ağ yok. */
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:300;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_300Light.ttf') format('truetype'); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+
+  #stage {
+    position:relative; width:1080px; height:1920px; overflow:hidden;
+    background:#0a0906;
+  }
+  /* Sahne boyunca büyüyen sıcak hale — zemini tek renk bırakmıyor */
+  #glow {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:1700px; height:1700px; border-radius:50%; opacity:0;
+    background:radial-gradient(circle,
+      rgba(194,168,120,.20) 0%, rgba(194,168,120,.08) 40%, rgba(194,168,120,0) 70%);
+  }
+
+  .layer { position:absolute; inset:0; display:grid; place-items:center; }
+  .block { width:860px; text-align:center; }
+
+  .dim {
+    font-family:'Jost',sans-serif; font-weight:300; font-size:58px; line-height:1.45;
+    color:#8a8070; letter-spacing:.5px;
+  }
+  .ask {
+    font-family:'Cormorant',Georgia,serif; font-style:italic; font-size:82px;
+    color:#cabfa8;
+  }
+  .say {
+    font-family:'Cormorant',Georgia,serif; font-style:italic; font-size:70px;
+    line-height:1.35; color:#ece4d4;
+  }
+  .quote {
+    font-family:'Cormorant',Georgia,serif; font-style:italic; font-size:66px;
+    line-height:1.42; color:#ece4d4;
+  }
+  .attr {
+    font-family:'Jost',sans-serif; font-weight:300; font-size:34px; letter-spacing:2px;
+    color:#8a8070; margin-top:46px;
+  }
+  .feat {
+    font-family:'Jost',sans-serif; font-weight:300; font-size:36px; letter-spacing:2.4px;
+    color:#cabfa8;
+  }
+  .word {
+    font-family:'Cinzel',serif; font-weight:600; font-size:112px; color:#d8c49a;
+  }
+  .omega {
+    font-family:'Cinzel',serif; font-weight:600; font-size:76px; color:#c2a878;
+  }
+  .tag {
+    font-family:'Jost',sans-serif; font-weight:300; font-size:34px; letter-spacing:2.2px;
+    color:#8a8070; margin-top:34px;
+  }
+
+  /* Nefes orbu — uygulamanın imza görseli, CSS ile yeniden kuruldu */
+  #orbWrap { position:absolute; left:50%; top:760px; transform:translateX(-50%); }
+  .ring { position:absolute; left:50%; top:50%; border-radius:50%; border:2px solid rgba(194,168,120,.22); }
+  #r1 { width:560px; height:560px; margin:-280px 0 0 -280px; }
+  #r2 { width:460px; height:460px; margin:-230px 0 0 -230px; border-color:rgba(194,168,120,.32); }
+  #orb {
+    position:absolute; left:50%; top:50%; width:344px; height:344px; margin:-172px 0 0 -172px;
+    border-radius:50%;
+    background:radial-gradient(circle at 38% 32%, #d8c49a 0%, #bda476 34%, #8a7550 66%, #4a4030 100%);
+  }
+
+  /* Uygulama ekranı — tek telefon, aralarında geçiş yapıyor */
+  #phone {
+    position:absolute; left:50%; top:355px; transform:translateX(-50%);
+    width:600px; height:1300px; border-radius:50px; overflow:hidden;
+    border:2px solid rgba(194,168,120,.28); background:#14120e;
+    box-shadow:0 40px 120px rgba(0,0,0,.6);
+  }
+  #phone img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow"></div>
+
+  <div class="layer" id="L1"><div class="block"><div class="dim" id="l1a"></div><div class="dim" id="l1b" style="margin-top:26px"></div></div></div>
+  <div class="layer" id="L2"><div class="block"><div class="ask" id="l2"></div></div></div>
+
+  <div id="orbWrap"><div class="ring" id="r1"></div><div class="ring" id="r2"></div><div id="orb"></div></div>
+  <div class="layer" id="L3" style="align-items:end"><div class="block" style="margin-bottom:300px"><div class="say" id="l3"></div></div></div>
+
+  <div class="layer" id="L4"><div class="block"><div class="quote" id="l4"></div><div class="attr" id="l4a"></div></div></div>
+
+  <div id="phone">
+    <img id="p0" src="../../store-assets/iphone-1-home.png">
+    <img id="p1" src="../../store-assets/iphone-2-wisdom.png">
+    <img id="p2" src="../../store-assets/iphone-3-coach.png">
+    <img id="p3" src="../../store-assets/iphone-5-progress.png">
+  </div>
+  <div class="layer" id="L5" style="align-items:end"><div class="block" style="margin-bottom:150px"><div class="feat" id="l5"></div></div></div>
+
+  <div class="layer" id="L6"><div class="block">
+    <div class="omega" id="l6o">Ω</div>
+    <div class="word" id="l6w" style="margin-top:34px">STOIKOS</div>
+    <div class="tag" id="l6t"></div>
+  </div></div>
+</div>
+
+<script>
+// ─── Metin (dile göre değişen tek katman) ───────────────────
+const COPY = {
+  tr: { s1a:'Dün endişelendin.', s1b:'Bugün de endişeleniyorsun.', s2:'Peki yarın?',
+        s3:'Sakinlik bir yetenek değil,\nbir pratiktir.',
+        s4:'İnsanları rahatsız eden şeyler değil,\nşeyler hakkındaki düşünceleridir.',
+        s4a:'EPİKTETOS · ENCHEIRIDION',
+        s5:'164 söz · 10 filozof · 12 kavram · 6 dil',
+        s6:'STOACI BİLGELİK, GÜNLÜK HAYATTA' },
+  en: { s1a:'Yesterday you worried.', s1b:'Today you still do.', s2:'And tomorrow?',
+        s3:'Calm is not a talent.\nIt is a practice.',
+        s4:'People are disturbed not by things,\nbut by their opinions about things.',
+        s4a:'EPICTETUS · ENCHIRIDION',
+        s5:'164 quotes · 10 philosophers · 12 concepts · 6 languages',
+        s6:'STOIC WISDOM, IN DAILY LIFE' },
+};
+
+// ─── Zamanlama yardımcıları ─────────────────────────────────
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const pr = (t, t0, t1) => cl((t - t0) / (t1 - t0));
+const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+// a'da açılır, b'de tam, c'de kapanmaya başlar, d'de yok
+const fade = (t, a, b, c, d) => ease(pr(t, a, b)) * (1 - ease(pr(t, c, d)));
+const mix = (a, b, x) => a + (b - a) * x;
+
+function set(el, opacity, dy = 0, extra = '') {
+  el.style.opacity = opacity;
+  el.style.transform = `translateY(${dy}px) ${extra}`;
+}
+
+let L; // seçili dil metni
+
+function renderFrame(t) {
+  const $ = (id) => document.getElementById(id);
+
+  // Zemin: baştaki neredeyse-siyahtan uygulamanın sıcak zeminine
+  const warm = ease(pr(t, 1800, 4200));
+  const r = Math.round(mix(10, 20, warm)), g = Math.round(mix(9, 18, warm)), b = Math.round(mix(6, 14, warm));
+  $('stage').style.background = `rgb(${r},${g},${b})`;
+  $('glow').style.opacity = fade(t, 2600, 5200, 17600, 19600) * 0.9;
+
+  // ── S1 0–2sn: kaygı
+  set($('l1a'), fade(t, 150, 750, 1750, 2100), mix(18, 0, ease(pr(t, 150, 900))));
+  set($('l1b'), fade(t, 850, 1450, 1750, 2100), mix(18, 0, ease(pr(t, 850, 1600))));
+
+  // ── S2 2–3sn: soru
+  set($('l2'), fade(t, 2050, 2450, 2900, 3250), mix(14, 0, ease(pr(t, 2050, 2700))));
+
+  // ── S3 3–8sn: nefes orbu
+  const orbIn = fade(t, 3050, 3900, 7500, 8100);
+  // 4 sn'lik nefes döngüsü: 2 sn al, 2 sn ver
+  const cyc = ((t - 3050) % 4000) / 4000;
+  const breath = (1 - Math.cos(cyc * Math.PI * 2)) / 2;      // 0→1→0 yumuşak
+  const scale = mix(0.88, 1.07, breath) * mix(0.72, 1, ease(pr(t, 3050, 3900)));
+  $('orbWrap').style.opacity = orbIn;
+  $('orbWrap').style.transform = `translateX(-50%) scale(${scale.toFixed(4)})`;
+  $('orb').style.boxShadow = `0 0 ${Math.round(mix(60, 150, breath))}px rgba(194,168,120,${mix(.18, .40, breath).toFixed(3)})`;
+  $('r2').style.opacity = mix(0.5, 1, breath);
+  set($('l3'), fade(t, 4200, 4900, 7400, 7900), mix(16, 0, ease(pr(t, 4200, 5100))));
+
+  // ── S4 8–14sn: alıntı
+  set($('l4'), fade(t, 8300, 9200, 13200, 13850), mix(20, 0, ease(pr(t, 8300, 9500))));
+  set($('l4a'), fade(t, 9900, 10500, 13200, 13850));
+
+  // ── S5 14–18sn: uygulama ekranları
+  const phIn = fade(t, 14050, 14800, 17500, 18050);
+  $('phone').style.opacity = phIn;
+  $('phone').style.transform =
+    `translateX(-50%) translateY(${mix(30, 0, ease(pr(t, 14050, 15000))).toFixed(1)}px) scale(${mix(0.96, 1, ease(pr(t, 14050, 15200))).toFixed(4)})`;
+  // Dört ekran. Geçiş KISA (180 ms) tutuldu: iki yoğun arayüz uzun süre
+  // üst üste binerse ikisinin metni birbirine karışıp bulanık görünüyor.
+  const shots = [14100, 15050, 16000, 16950];
+  const XF = 180;
+  shots.forEach((s, i) => {
+    const el = $('p' + i);
+    const inOp = ease(pr(t, s, s + XF));
+    const outOp = i < 3 ? ease(pr(t, shots[i + 1], shots[i + 1] + XF)) : 0;
+    el.style.opacity = cl(inOp - outOp);
+  });
+  set($('l5'), fade(t, 15000, 15650, 17500, 18000));
+
+  // ── S6 18–20sn: kapanış
+  const wIn = ease(pr(t, 18350, 19250));
+  set($('l6o'), fade(t, 18100, 18650, 19980, 20000));
+  $('l6w').style.opacity = fade(t, 18350, 19100, 19980, 20000);
+  $('l6w').style.letterSpacing = `${mix(2, 20, wIn).toFixed(2)}px`;
+  set($('l6t'), fade(t, 19050, 19550, 19980, 20000));
+}
+
+function init(lang) {
+  L = COPY[lang] || COPY.tr;
+  const put = (id, v) => { const e = document.getElementById(id); e.textContent = v; e.style.whiteSpace = 'pre-line'; };
+  put('l1a', L.s1a); put('l1b', L.s1b); put('l2', L.s2); put('l3', L.s3);
+  put('l4', L.s4); put('l4a', L.s4a); put('l5', L.s5); put('l6t', L.s6);
+  renderFrame(0);
+}
+window.init = init;
+window.renderFrame = renderFrame;
+</script>
+</body>
+</html>

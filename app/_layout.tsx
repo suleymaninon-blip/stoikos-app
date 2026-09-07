@@ -8,6 +8,7 @@ import { Jost_300Light, Jost_400Regular, Jost_500Medium } from '@expo-google-fon
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider } from '../constants/i18n';
+import { EntitlementProvider } from '../constants/entitlement';
 import { BrandIntro } from '../components/BrandIntro';
 import { Onboarding } from '../components/Onboarding';
 import { registerServiceWorker } from '../constants/registerSW';
@@ -50,17 +51,19 @@ export default function RootLayout() {
 
   return (
     <LanguageProvider>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
-      </Stack>
-      {showOnboarding && <Onboarding onDone={finishOnboarding} />}
-      {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
+      <EntitlementProvider>
+        <StatusBar style="light" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
+        </Stack>
+        {showOnboarding && <Onboarding onDone={finishOnboarding} />}
+        {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
+      </EntitlementProvider>
     </LanguageProvider>
   );
 }

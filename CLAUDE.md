@@ -22,6 +22,8 @@
 - `constants/theme.ts` — sıcak altın/taş paleti (`Colors`, `colors`, `Fonts`).
 - `constants/config.ts` — `FEATURES.meydanOkuma=false` (gizli), `APP_INFO` (destek e-posta/mağaza linkleri + `privacyUrl` — **PLACEHOLDER, doldurulacak**).
 - **Gizlilik politikası**: kaynak `docs/gizlilik-politikasi.md` (md taslak) + yayınlanan `public/gizlilik.html` (export'ta `dist/`'e kopyalanır → `…/stoikos-app/gizlilik.html`). Ayarlar→Hakkında'da "🔒 Gizlilik Politikası" satırı `APP_INFO.privacyUrl`'i açar. İçindeki 〔...〕 alanları + EN çevirisi + avukat kontrolü bekliyor.
+- **Kullanım koşulları (EULA)**: `public/terms.html` (TR) + `public/terms-en.html` (EN). Apple abonelik satan uygulamada zorunlu tutuyor, yoksa reddediyor. Gizlilik politikasının tasarımını izler. **Avukat kontrolü bekliyor.** Henüz uygulama içinden bağlantı verilmiyor — Paywall'da yalnızca metin olarak anılıyor, tıklanabilir değil (RevenueCat bağlanırken eklenecek).
+- **Mağaza görselleri**: `store-assets/` — ekran görüntüleri (iPhone 1290×2796, Android 1080×1920), Play öne çıkan görseli (1024×500, 6 dil), alfasız kare simgeler. Üretim betikleri `scripts/shoot-store.js`, `scripts/shoot-feature.js`, `scripts/make-store-icons.js`. Ayrıntı ve tuzaklar: `store-assets/README.md`. Ekran görüntüsü çekmek için Expo web sunucusu bu ortamda `--offline` ister (`EXPO_OFFLINE=1 … --offline`), yoksa `api.expo.dev`'e ulaşamayıp çöker.
 - `constants/breathSound.ts` — orb nefes sesi: `assets/audio/breath-orb.m4a` (AAC, ~4dk, expo-av, native+web). Orb **basılı tutulunca çalar (döngü), bırakılınca durur**. Sağ üstteki 🔊/🔇 yalnız aç/kapa (sessize alma) tercihi, varsayılan AÇIK. (Eski Web-Audio synth ambiyans kaldırıldı.) `metro.config.js`'e `m4a` assetExt eklendi.
 - (Titreşim/haptics özelliği kaldırıldı: `constants/breathHaptics.ts` silindi, orb'daki 📳 toggle çıkarıldı.)
 - `constants/audioManifest.ts` — OTOMATİK üretilir (`npm run gen-audio`), 216 mp3. Elle düzenleme.
@@ -35,7 +37,8 @@
 - `app/(tabs)/practice.tsx`, `progress.tsx` (İlerleme: **yalnız istatistik** — süreklilik/haftalık/son7/egzersiz dağılımı/söz; sağ üstte ⚙ → Ayarlar).
 - `app/settings.tsx` — **Ayarlar** (push'lu ekran, ⚙ ile açılır): dil, bildirim, ✨ tanıtımı tekrar göster, 🧠 koç hafıza reset, Destek & Hakkında, sürüm, admin (Meydan Okuma bayrağı arkasında). Ayarlar buraya İlerleme'den taşındı.
 - `app/journal.tsx` — **Yansımaların** (push'lu, Pratik'teki "Geçmiş →" linkiyle açılır): geçmiş günlük yansımalar, tarihli kartlar (AsyncStorage `stoikos_journal_<tarih>`). Günlük yansıma kaydedilince, **yalnız kullanıcı açık rıza verdiyse** (KVKK; `COACH_CONSENT_KEY='stoikos_journal_coach_consent'`, **varsayılan KAPALI**, günlük kartındaki onay kutusu) koç hafızasına işlenir: `addReflectionToMemory` (api.ts) → backend `POST /memory/note` → `updateMemory` ile KV'ye merge (günde 20 limit). Rıza kapalıyken yansıma **yalnız cihazda** kalır, hiçbir yere gönderilmez. (Bekleyen: gizlilik politikası metni.)
-- `app/programs.tsx`, `challenge*.tsx`.
+- `app/programs.tsx` + `constants/programs.ts` — **Programlar**: rehberli çok günlük yolculuklar. 2 program × 7 gün (Kontrol Dairesi, İç Sakinlik), altı dilde tam (fr/es Eylül 2026'da eklendi). İlerleme cihazda (`stoikos_program_<id>`), her gün bir öncekini tamamlayınca açılıyor. Ana ekrandan erişiliyor. **Elde tutmanın en ucuz kaldıracı burası** — üretim maliyeti yalnız metin, ve koç aboneliğinin aksine ChatGPT ikame edemez.
+- `app/challenge*.tsx`.
 - `app/breathe.tsx` — eski tam ekran nefes (artık erişilemez, silinmedi).
 
 ## Önemli kararlar
@@ -44,19 +47,47 @@
 - Meydan Okuma feature flag arkasında gizli (kod/D1 duruyor).
 
 ## BEKLEYEN İŞLER (öncelik sırası)
+
+> 📋 **Ürün ve pazar değerlendirmesi: `docs/urun-degerlendirmesi.md`**
+> (Eylül 2026). Uygulama baştan sona incelendi; içerik envanteri, bulgular,
+> rakip ve fiyat verisi orada. Çıkan **yayın öncesi** dört madde:
+> 1. ✅ ~~Atıf dilini yumuşat~~ — yapıldı (6 Eylül 2026). Uyarlama işareti
+>    künyenin parçası oldu (`content.ts` → `sourceName`): "Meditationes ·
+>    serbest uyarlama", altı dilde. Kart, paylaşım metni ve paylaşım görseli
+>    üçü birden düzeldi. Koç promptuna uydurma atıf yasağı eklendi.
+> 2. **Ücretsiz kotayı yenilenen hakka çevir** — 5 ömür boyu mesaj, satılan
+>    özelliğin (hafıza) yaşanmasını yapısal olarak engelliyor.
+> 3. **Yıllık plan ekle** — kategorinin ana gelir kanalı; aylık planla ücretli
+>    reklam matematiksel olarak geri dönmüyor.
+> 4. **Değerlendirme istemi ekle** (`expo-store-review`) — hiç yok; organik
+>    keşfin en güçlü kaldıracı.
+
 1. ✅ ~~Koç backend rate limit~~ — KV tabanlı (`hitLimit`/`coachRateLimited`, `backend/src/index.ts`). userId: 6/dk + 120/gün; IP (`CF-Connecting-IP`): 12/dk + 300/gün. Aşımda 429 + Türkçe `reason`. Frontend: `sendCoach` 429'da `e.userMessage`, coach.tsx onu balon olarak gösterir. Deploy edildi + canlı test geçti.
 2. ✅ ~~`constants/content.ts` alıntılar & filozoflar çevirisi~~ — Alıntılar 37–164 (128 adet) + 10 filozof tüm alanları EN/DE/RU/FR/ES'e çevrildi (commit 6ed2b650).
 3. ✅ ~~Logo animasyon sahnesi~~ — Tanıtım turuna slayt 0 olarak eklendi: `LogoSceneBoundary` (SVG stroke draw ~2.5s → nefes parlaması → STOIKOS fade-in); native hata için `OmegaFallback` + ErrorBoundary.
 4. ✅ ~~Alan adı & e-posta~~ — `stoikos.app` (Squarespace), DNS Cloudflare'e bağlandı, `support@stoikos.app` → Gmail yönlendirmesi aktif.
 5. ✅ ~~Gizlilik politikası~~ — TR (`public/gizlilik.html`) + EN (`public/privacy.html`) tamamlandı, GitHub Pages'te yayında. Ayarlar'da dile göre doğru link açılıyor. **Kalan: avukat kontrolü.**
 6. ✅ ~~`config.ts` destek e-postası~~ — `support@stoikos.app` güncellendi.
-7. 💳 **Para kazanma & mağazaya çıkış** — kod tarafı hazır, mağaza tarafı kullanıcıda.
-   👉 **Ayrıntı: `docs/magazaya-cikis.md`** — alınan kararlar, kritik yol (Google'ın 14 gün kuralı takvimi belirliyor), kalan işler, maliyet modeli, mağaza metinleri bağlantısı.
-   - Özet: ücretsiz kota + ödeme duvarı arayüzü **canlıda**. Fiyat **$6,99/ay** (aylık; yıllık eklenmedi). Hesaplar **kişisel**, eş adına, iOS+Android.
-   - `hasActiveSubscription()` KV stub'ı (`sub:<userId>`=`'1'` → sınırsız, test hesabı işaretlemek için). Gerçek doğrulama **sunucuda** RevenueCat REST ile yapılacak; `appUserId` = bizim `userId`.
-   - ⚠️ **Yayına çıkmadan yapılacaklar:** `FREE_COACH_MESSAGES` 50 → **5**; **kullanım koşulları (EULA) eklenecek** (Apple abonelikte zorunlu, bizde yok — sık ret sebebi); ödeme ekranına aboneliğin adı/süresi/fiyatı + iki bağlantı yazılacak; RevenueCat `Paywall`'ın `onSubscribe` prop'una bağlanacak.
-8. 🏪 **Mağaza materyalleri**: metinler **hazır** (6 dil, karakter sınırları doğrulanmış — bağlantı `docs/magazaya-cikis.md` içinde). Kalan: ekran görüntüleri, Play öne çıkan görsel (1024×500), `config.ts` `storeUrl`.
-9. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
+7. 💳 **Para modeli: STOIKOS PLUS** (6 Eylül 2026'da genişletildi)
+   👉 Gerekçe `docs/urun-degerlendirmesi.md`, mağaza süreci `docs/magazaya-cikis.md`.
+   - **Hep ücretsiz:** 164 alıntı, 12 kavram, 10 filozof, nefes orbu, günlük pratik, ilerleme. İndirme sebebi ve mağaza puanı motoru burası; kapatılmıyor.
+   - **Plus:** koç, tüm programlar, kavramların sesli anlatımı, sonradan eklenen içerik. **$6,99/ay veya $49,99/yıl** (%40 tasarruf, yıllık önseçili), **14 gün ücretsiz deneme.**
+   - **Neden genişletildi:** yalnız koç satmak, taklit edilmesi en kolay şeyi satıp taklit edilmesi zor olan her şeyi bedava vermek demekti. Sektör verisi de yapay zekâ aboneliklerinin en kötü elde tutan tür olduğunu gösteriyor (aylık planda 12. ay %6,1 — RevenueCat). Paket, kullanıcı koçtan sıkıldığında da ayakta kalıyor. Ayrım: **metalaşmış olan bedava, üretilmiş olan paralı.**
+   - **Deneme uygulamada SAYILMIYOR** — mağazanın *introductory offer* mekanizmasıyla veriliyor, makbuza ve Apple ID / Google hesabına bağlı, silip kurunca sıfırlanmıyor. Kendi sayacımız `userId` cihazda üretildiği için baypas edilirdi. Deneme sürerken RevenueCat kullanıcıyı zaten abone döner.
+   - **Tek yetki kaynağı:** `constants/entitlement.tsx` → `usePlus()`, backend `GET /entitlement`. Ağ hatasında son bilinen değer önbellekten kullanılır (abone çevrimdışı erişimini kaybetmesin). Kapılar: `app/programs.tsx`, `app/(tabs)/wisdom.tsx` (sesli anlatım); koç zaten sunucuda korunuyor.
+   - ⚠️ **Yerel içeriğin kilidi istemcide** — programlar ve ses uygulamayla birlikte geliyor, kilit bir hız kesici, kırılmaz duvar değil. Bilerek kabul edildi; asıl kapı koçta ve o sunucuda.
+   - `hasActiveSubscription()` hâlâ KV stub'ı (`sub:<userId>`=`'1'`). Gerçek doğrulama **sunucuda** RevenueCat REST ile yapılacak; `appUserId` = bizim `userId`.
+   - ✅ Bitti: EULA (TR+EN), ödeme ekranında fiyat/süre/koşullar metni, atıf dili yumuşatıldı, Plus paketi + kapılar + 6 dilde metinler, mağaza metinleri yeni modele göre güncellendi.
+   - ⏸️ **`FREE_COACH_MESSAGES` bilerek 50'de bırakıldı.** RevenueCat bağlanmadan düşürülmemeli: `backend/` `main`'e girince Worker deploy oluyor ve kullanıcı satın alınamayan bir duvara çarpar.
+   - ⏳ Kalan: **RevenueCat** (`Paywall`'ın `onSubscribe` prop'u artık seçilen planı alıyor: `(plan: 'annual' | 'monthly') => void`; verilmezse buton kasten "YAKINDA"), **yerelleştirilmiş fiyat** (dört fiyat dizesi de sabit yazılı, RevenueCat'ten gelmeli), **EULA'ya tıklanabilir bağlantı**.
+8. 🏪 **Mağaza materyalleri** — metinler ve **görseller hazır**.
+   - Metinler: 6 dil, karakter sınırları doğrulanmış (bağlantı `docs/magazaya-cikis.md` içinde).
+   - Görseller: `store-assets/` — ekran görüntüleri, Play öne çıkan görseli, alfasız simgeler. Üretim betikleriyle birlikte, yeniden çekmek tek komut.
+   - Kalan: `config.ts` `storeUrl` (yayına girmeden doldurulamaz), yaş sınırı anketi, kategori seçimi.
+9. 🎬 **Video teaser** — 20 sn konsept hazır (storyboard + 6 dilde seslendirme + prodüksiyon künyesi), bağlantı `docs/magazaya-cikis.md` → Pazarlama. Çekilebilir; yalnız kapanıştaki "bio'da link" için yayın beklesin.
+10. 🍎 **Apple Developer kaydı takıldı** — 2FA açık ama kayıt "tamamlanamadı" veriyor, hesap programa kayıtlı değil, $99 ödenmedi. Sırayla denenecek: bekleyip tekrar → Apple Developer **uygulamasından** kayıt → Developer Support. Ayrıntı `docs/magazaya-cikis.md`.
+11. 🤖 **Google Play** — hesap açık, üç doğrulama bekliyor (kimlik, telefon, **Android cihaz**). Elde Android telefon yok, bu çözülmeden Play'de uygulama oluşturulamıyor.
+12. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
 
 ## Güvenlik
 - ElevenLabs anahtarı paylaşıldıysa **iptal/yenile**.

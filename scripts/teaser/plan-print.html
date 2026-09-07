@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cinzel'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_400Regular.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:300;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_300Light.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:500;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf') format('truetype'); }
+
+  /* Markanın altın–taş paleti kâğıt için çevrildi: zemin açık, altın
+     okunabilirlik için koyulaştırıldı. Fontlar uygulamayla aynı. */
+  :root {
+    --paper:#fbf9f4; --panel:#f4f0e5; --panel2:#efe9db;
+    --ink:#221e18; --ink2:#4d4638; --muted:#7d7463; --faint:#a09884;
+    --gold:#8f7137; --goldLine:#c2a878; --rule:#ded5c2;
+    --warn:#9a6b1f; --warnBg:#fdf4e3;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  @page { size:A4; margin:17mm 15mm 15mm; }
+  body {
+    background:var(--paper); color:var(--ink);
+    font-family:'Jost',-apple-system,sans-serif; font-weight:300;
+    font-size:9.6pt; line-height:1.5;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .mono { font-family:'DejaVu Sans Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+
+  /* ── Kapak ── */
+  .cover { padding-bottom:14pt; border-bottom:1.5pt solid var(--goldLine); margin-bottom:16pt; }
+  .omega { font-family:'Cinzel',serif; font-weight:600; font-size:20pt; color:var(--gold); line-height:1; }
+  h1 {
+    font-family:'Cinzel',serif; font-weight:600; font-size:21pt; letter-spacing:.6pt;
+    color:var(--ink); margin:9pt 0 6pt;
+  }
+  .sub { font-size:10.5pt; color:var(--ink2); max-width:62ch; }
+  .chips { display:flex; flex-wrap:wrap; gap:5pt; margin-top:11pt; }
+  .chip {
+    font-size:8pt; letter-spacing:.4pt; color:var(--ink2);
+    background:var(--panel); border:.5pt solid var(--rule); border-radius:20pt; padding:2.5pt 8pt;
+  }
+  .chip b { color:var(--gold); font-weight:500; }
+
+  h2 {
+    font-family:'Cinzel',serif; font-weight:400; font-size:13pt; color:var(--gold);
+    margin:18pt 0 7pt; letter-spacing:.4pt;
+    padding-bottom:3pt; border-bottom:.5pt solid var(--rule);
+  }
+  h2:first-of-type { margin-top:6pt; }
+  p.note { color:var(--ink2); margin:5pt 0 9pt; max-width:66ch; }
+
+  /* ── Zaman şeridi ── */
+  .ribbon { display:flex; gap:2pt; height:30pt; margin:4pt 0 3pt; }
+  .seg {
+    background:var(--panel); border:.5pt solid var(--rule);
+    border-bottom:2pt solid var(--goldLine); border-radius:2pt;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:3pt 4pt; min-width:0; overflow:hidden;
+  }
+  .seg b { font-family:'Cinzel',serif; font-weight:600; font-size:9pt; color:var(--gold); line-height:1; }
+  .seg span { font-size:6.6pt; color:var(--muted); margin-top:1.5pt; white-space:nowrap; }
+  .scale { display:flex; justify-content:space-between; font-size:7pt; color:var(--muted); }
+
+  /* ── Sahne ── */
+  .scene {
+    border:.5pt solid var(--rule); border-radius:3pt; margin-bottom:9pt;
+    break-inside:avoid; overflow:hidden;
+  }
+  .s-head {
+    display:flex; align-items:baseline; gap:9pt;
+    background:var(--panel); padding:5pt 9pt; border-bottom:.5pt solid var(--rule);
+  }
+  .s-n { font-family:'Cinzel',serif; font-weight:600; font-size:12pt; color:var(--gold); line-height:1; }
+  .s-tc { font-size:8.4pt; color:var(--ink2); }
+  .s-dur { font-size:7.6pt; color:var(--muted); margin-left:auto; }
+  .s-body { padding:7pt 9pt 8pt; }
+  .lbl {
+    font-size:6.8pt; letter-spacing:1pt; text-transform:uppercase;
+    color:var(--muted); margin-bottom:2.5pt;
+  }
+  .visual { font-size:9.2pt; line-height:1.5; color:var(--ink2); margin-bottom:7pt; }
+
+  table.langs { width:100%; border-collapse:collapse; }
+  table.langs th {
+    font-size:6.8pt; letter-spacing:.8pt; text-transform:uppercase; color:var(--muted);
+    font-weight:400; text-align:left; padding:0 5pt 3pt 0; border-bottom:.5pt solid var(--rule);
+  }
+  table.langs td { padding:4pt 5pt 4pt 0; border-bottom:.5pt solid #ece5d5; vertical-align:top; font-size:8.8pt; }
+  table.langs tr:last-child td { border-bottom:none; }
+  td.lg { width:44pt; color:var(--gold); font-weight:500; font-size:8pt; letter-spacing:.5pt; white-space:nowrap; }
+  td.ov { width:41%; font-family:'Cormorant',Georgia,serif; font-style:italic; font-size:10pt;
+          line-height:1.3; color:var(--ink); white-space:pre-line; }
+  td.vo { color:var(--ink2); line-height:1.4; }
+  td.bd { width:46pt; text-align:right; color:var(--muted); font-size:7.6pt; white-space:nowrap; }
+  td.bd.over { color:var(--warn); font-weight:500; }
+  .attr { display:block; font-family:'Jost',sans-serif; font-style:normal; font-size:7.2pt;
+          letter-spacing:.6pt; color:var(--muted); margin-top:2.5pt; }
+  .silent { color:var(--muted); font-style:italic; }
+
+  /* ── Künye tablosu ── */
+  table.spec { width:100%; border-collapse:collapse; }
+  table.spec th {
+    width:88pt; text-align:left; font-size:7pt; letter-spacing:.8pt; text-transform:uppercase;
+    color:var(--muted); font-weight:400; padding:5pt 8pt 5pt 0; vertical-align:top;
+    border-bottom:.5pt solid var(--rule);
+  }
+  table.spec td { padding:5pt 0; border-bottom:.5pt solid var(--rule); color:var(--ink2); }
+  table.spec td b { color:var(--ink); font-weight:500; }
+
+  ol.steps { list-style:none; counter-reset:s; }
+  ol.steps li {
+    counter-increment:s; position:relative; padding:4.5pt 0 4.5pt 20pt;
+    border-bottom:.5pt solid #ece5d5;
+  }
+  ol.steps li:last-child { border-bottom:none; }
+  ol.steps li::before {
+    content:counter(s); position:absolute; left:0; top:5pt;
+    font-family:'Cinzel',serif; font-size:8.5pt; color:var(--gold);
+  }
+  ol.steps b { font-weight:500; color:var(--ink); }
+  ol.steps span { display:block; color:var(--muted); font-size:8.4pt; margin-top:1pt; }
+
+  .callout {
+    background:var(--warnBg); border:.5pt solid #e6cf9e; border-left:2pt solid var(--warn);
+    border-radius:2pt; padding:7pt 10pt; margin:8pt 0; break-inside:avoid;
+  }
+  .callout b { color:var(--warn); font-weight:500; }
+  .callout + .callout { margin-top:6pt; }
+
+  .status { display:flex; gap:6pt; flex-wrap:wrap; margin:6pt 0 2pt; }
+  .st {
+    flex:1 1 150pt; border:.5pt solid var(--rule); border-radius:3pt;
+    background:var(--panel); padding:6pt 9pt;
+  }
+  .st b { display:block; font-weight:500; color:var(--ink); font-size:9pt; }
+  .st span { color:var(--muted); font-size:8.2pt; }
+  .st.done { border-left:2pt solid #6f8a52; }
+  .st.todo { border-left:2pt solid var(--warn); }
+
+  footer {
+    margin-top:16pt; padding-top:7pt; border-top:.5pt solid var(--rule);
+    font-size:7.6pt; color:var(--muted);
+  }
+  .pagebreak { break-before:page; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="omega">Ω</div>
+  <h1>Stoikos — Teaser Prodüksiyon Planı</h1>
+  <p class="sub">Instagram Reels, TikTok ve Facebook için 20 saniyelik tanıtım.
+    Görsel yönerge altı dilde ortak; değişen yalnızca ekran metni ve seslendirme.</p>
+  <div class="chips">
+    <span class="chip">Süre <b>0:20</b></span>
+    <span class="chip">Oran <b>9:16</b></span>
+    <span class="chip">Çıktı <b>1080×1920</b></span>
+    <span class="chip">Kare hızı <b>30 fps</b></span>
+    <span class="chip">Sahne <b>6</b></span>
+    <span class="chip">Dil <b>6</b></span>
+  </div>
+</div>
+
+<h2>Ritim</h2>
+<div class="ribbon">
+  <div class="seg" style="flex:2"><b>1</b><span>2 sn</span></div>
+  <div class="seg" style="flex:1"><b>2</b><span>1</span></div>
+  <div class="seg" style="flex:5"><b>3</b><span>5 sn</span></div>
+  <div class="seg" style="flex:6"><b>4</b><span>6 sn</span></div>
+  <div class="seg" style="flex:4"><b>5</b><span>4 sn</span></div>
+  <div class="seg" style="flex:2"><b>6</b><span>2 sn</span></div>
+</div>
+<div class="scale"><span>0:00</span><span>0:05</span><span>0:10</span><span>0:15</span><span>0:20</span></div>
+
+<h2>Durum</h2>
+<div class="status">
+  <div class="st done"><b>Görsel kurgu hazır</b><span>Türkçe ve İngilizce, sessiz MP4 olarak render edildi</span></div>
+  <div class="st todo"><b>Dört dil bekliyor</b><span>Almanca, Rusça, Fransızca, İspanyolca</span></div>
+  <div class="st todo"><b>Ses eksik</b><span>Seslendirme ve müzik dışarıda eklenecek</span></div>
+</div>
+
+<h2>Sahneler</h2>
+<p class="note">Görsel yönerge her dilde aynı — kurgu bir kez kurulur, dil başına yalnızca
+  ses ve metin katmanı değişir. Sağdaki sütun, seslendirmenin tahmini süresini
+  (dakikada 130 kelime) kullanılabilir pencereyle karşılaştırır. <b>Pencere sahne
+  süresiyle aynı değildir:</b> 2. sahne sessiz olduğu için 1. sahnenin sesi oraya
+  taşabilir. Yalnızca %10'dan fazla aşan satırlar işaretlidir.</p>
+<div id="scenes"></div>
+
+<div class="pagebreak"></div>
+
+<h2>Prodüksiyon künyesi</h2>
+<table class="spec">
+  <tr><th>Çözünürlük</th><td><b>1080×1920</b>, 9:16 dikey · MP4 / H.264 High · yuv420p · 30 fps</td></tr>
+  <tr><th>Palet</th><td>Uygulamanın sıcak altın–taş paleti. Zemin <b>#14120e</b>, vurgu <b>#c2a878</b>, metin <b>#ece4d4</b></td></tr>
+  <tr><th>Tipografi</th><td><b>Cinzel</b> kelime markası · <b>Cormorant Garamond İtalik</b> alıntı ve slogan · <b>Jost</b> alt metin. Uygulamayla birebir aynı</td></tr>
+  <tr><th>Müzik</th><td>Ambient piyano, ritimsiz. Ólafur Arnalds / Nils Frahm dokusunda. Kaynak: Epidemic Sound veya Artlist — <b>ticari lisans şart</b></td></tr>
+  <tr><th>Seslendirme</th><td>Sakin, sıcak, yavaş; dakikada ~130 kelime. Uygulamanın kavram seslendirmeleriyle aynı ses tercih edilir — TR: Şükrü Terzi · EN: Donovan · DE: David · RU: Artem Lebedev · FR: Yann · ES: Miguel</td></tr>
+  <tr><th>Geçişler</th><td>Yalnızca yumuşak açılma–kararma ve yavaş ölçek. Sert kesme, sarsıntı veya hızlı zoom yok</td></tr>
+  <tr><th>Metin süresi</th><td>Her ekran metni en az <b>2 saniye</b> görünür. Okunmayan metin yok sayılır</td></tr>
+  <tr><th>Altyazı</th><td>Sesi kapalı izleyen için ekran metinleri yeterli; ayrıca gömülü altyazı gerekmiyor</td></tr>
+</table>
+
+<h2>Üretim sırası</h2>
+<ol class="steps">
+  <li><b>Görsel kurguyu al</b><span>Sessiz MP4 hazır: <span class="mono">store-assets/teaser-&lt;dil&gt;-1080x1920.mp4</span>. Yeniden üretmek için <span class="mono">node scripts/teaser/render-teaser.js</span></span></li>
+  <li><b>Seslendirmeyi kaydet</b><span>Sessiz oda, iyi mikrofon. Sahne süreleri sesin gerçek uzunluğuna göre birkaç kare oynatılabilir</span></li>
+  <li><b>Müziği lisansla</b><span>Ambient piyano. Ücretsiz kaynak kullanılmamalı — reklam ticari kullanımdır</span></li>
+  <li><b>Sesi bindir</b><span>CapCut (mobil, hızlı) ya da DaVinci Resolve (ücretsiz, ses kontrolü daha iyi). Müzik seslendirmenin altında, ~%20 seviyede</span></li>
+  <li><b>Telefonda izle</b><span>Sesi kapatıp bir kez daha izle — anlaşılıyor mu? İzleyicilerin çoğu sessiz izler</span></li>
+  <li><b>Diğer dilleri çıkar</b><span>Kurgu bir kez kurulduktan sonra dil başına yalnızca ses ve metin katmanı değişir</span></li>
+</ol>
+
+<h2>Dikkat edilecekler</h2>
+<div class="callout">
+  <b>Almanca ve Fransızca seslendirme bütçeyi aşıyor.</b> Bu iki dil yapısal olarak
+  daha uzun. Kayıtta tempo biraz hızlandırılmalı ya da sahne 5'ten yarım saniye ödünç
+  alınıp sahne 3 ve 4'e verilmeli. Kalan dört dil süreye uyuyor.
+</div>
+<div class="callout">
+  <b>Reklam yayını, uygulamanın mağazada olmasını bekler.</b> Metne "bio'da link"
+  yazılacaksa önce Apple ve Google onayları gerekiyor. Video şimdiden hazır edilebilir;
+  yalnızca yayın beklesin.
+</div>
+<div class="callout">
+  <b>Uygulama ekranları değişirse teaser eskir.</b> Sahne 5 gerçek ekran görüntülerini
+  kullanıyor. Arayüz değiştiğinde önce ekran görüntüleri yeniden çekilmeli
+  (<span class="mono">scripts/shoot-store.js</span>), sonra video yeniden render edilmeli.
+</div>
+
+<footer>
+  Kelime bütçeleri dakikada 130 kelimelik seslendirme hızına ve sahne başına %15 nefes
+  payına göre hesaplandı. Sahne 4'teki alıntı uygulamanın kendi içeriğinden alındı
+  (Epiktetos, <i>Encheiridion</i>; altı dilde mevcut). Sahne 3'teki nefes orbu ekran
+  kaydı değil, aynı görsel dilde yeniden kuruldu.
+</footer>
+
+<script>
+// `win` = seslendirme için gerçekte kullanılabilir kesintisiz süre (saniye).
+// Sahne süresiyle aynı DEĞİL: sahne 2 sessiz olduğu için 1. sahnenin sesi
+// oraya taşabilir, yani 1. sahnenin penceresi 2 değil 3 saniye.
+const SCENES = [
+  { n:1, tc:'00:00 – 00:02', dur:'2 saniye', win:3.0,
+    visual:'Neredeyse siyah ekran. Metin soluk gri, ortada, tek satır halinde beliriyor. Hareket yok, müzik henüz girmedi — yalnızca oda tonu.' },
+  { n:2, tc:'00:02 – 00:03', dur:'1 saniye', win:0,
+    visual:'Zemin ısınmaya başlıyor: gri, sıcak taş tonuna kayıyor. Metin bir soru olarak kalıyor. Müzik ilk notasıyla giriyor.' },
+  { n:3, tc:'00:03 – 00:08', dur:'5 saniye', win:5.0,
+    visual:'Nefes orbu ekranın merkezinde, dört saniyelik döngüyle genişleyip daralıyor. Metin orbun altında, orbun ritmine uyacak kadar yavaş beliriyor.' },
+  { n:4, tc:'00:08 – 00:14', dur:'6 saniye', win:6.0,
+    visual:'Orb arkada soluyor, odak alıntıya geçiyor. Alıntı satır satır açılıyor; yazar adı bir saniye sonra geliyor. Videonun en sakin, en uzun duraklaması burası.' },
+  { n:5, tc:'00:14 – 00:18', dur:'4 saniye', win:4.0,
+    visual:'Tek telefon çerçevesi, içinde dört uygulama ekranı sırayla: ana ekran, bilgelik, koç, ilerleme. Her biri ~1 saniye. Geçiş kısa (180 ms) — uzun tutulunca iki arayüzün metni birbirine karışıyor.' },
+  { n:6, tc:'00:18 – 00:20', dur:'2 saniye', win:2.0,
+    visual:'Ω işareti ortaya yerleşiyor, STOIKOS harf aralığı açılarak beliriyor. Müzik son notada asılı kalıyor, kesilmiyor.' },
+];
+
+const L = {
+  tr:{ lbl:'Türkçe', s:[
+    { ov:'Dün endişelendin.\nBugün de endişeleniyorsun.', vo:'Dün endişelendin. Bugün de öyle.' },
+    { ov:'Peki yarın?', vo:null },
+    { ov:'Sakinlik bir yetenek değil,\nbir pratiktir.', vo:'İki bin yıl önce bir Roma imparatoru aynı şeyi yaşadı.' },
+    { ov:'İnsanları rahatsız eden şeyler değil,\nşeyler hakkındaki düşünceleridir.', at:'Epiktetos · Encheiridion', vo:'Cevabını yazdı. O defter hâlâ duruyor — ve işe yarıyor.' },
+    { ov:'164 söz · 10 filozof\n12 kavram · 6 dil', vo:'Yüz altmış dört söz, on filozof, seni tanıyan bir koç.' },
+    { ov:'STOIKOS\nStoacı bilgelik, günlük hayatta', vo:'Stoikos. Bio\'da link.' } ] },
+  en:{ lbl:'English', s:[
+    { ov:'Yesterday you worried.\nToday you still do.', vo:'Yesterday you worried. Today too.' },
+    { ov:'And tomorrow?', vo:null },
+    { ov:'Calm is not a talent.\nIt is a practice.', vo:'Two thousand years ago, a Roman emperor felt the same.' },
+    { ov:'People are disturbed not by things,\nbut by their opinions about things.', at:'Epictetus · Enchiridion', vo:'He wrote his answer down. The notebook survived — and it works.' },
+    { ov:'164 quotes · 10 philosophers\n12 concepts · 6 languages', vo:'A hundred sixty-four quotes, ten philosophers, a coach that knows you.' },
+    { ov:'STOIKOS\nStoic wisdom, in daily life', vo:'Stoikos. Link in bio.' } ] },
+  de:{ lbl:'Deutsch', s:[
+    { ov:'Gestern hast du dir Sorgen gemacht.\nHeute auch.', vo:'Gestern hast du dir Sorgen gemacht. Heute auch.' },
+    { ov:'Und morgen?', vo:null },
+    { ov:'Ruhe ist kein Talent.\nSie ist eine Übung.', vo:'Vor zweitausend Jahren ging es einem römischen Kaiser genauso.' },
+    { ov:'Nicht die Dinge beunruhigen die Menschen,\nsondern ihre Urteile über die Dinge.', at:'Epiktet · Encheiridion', vo:'Er schrieb seine Antwort auf. Sie ist geblieben — und sie wirkt.' },
+    { ov:'164 Zitate · 10 Philosophen\n12 Konzepte · 6 Sprachen', vo:'Hundertvierundsechzig Zitate, zehn Philosophen, ein Coach, der dich kennt.' },
+    { ov:'STOIKOS\nStoische Weisheit im Alltag', vo:'Stoikos. Link in der Bio.' } ] },
+  ru:{ lbl:'Русский', s:[
+    { ov:'Вчера ты тревожился.\nСегодня тоже.', vo:'Вчера ты тревожился. Сегодня тоже.' },
+    { ov:'А завтра?', vo:null },
+    { ov:'Спокойствие — не талант.\nЭто практика.', vo:'Две тысячи лет назад римский император чувствовал то же самое.' },
+    { ov:'Людей беспокоят не вещи,\nа их мнения о вещах.', at:'Эпиктет · Энхиридион', vo:'Он записал свой ответ. Записи сохранились — и они работают.' },
+    { ov:'164 цитаты · 10 философов\n12 понятий · 6 языков', vo:'Сто шестьдесят четыре цитаты, десять философов, коуч, который тебя знает.' },
+    { ov:'STOIKOS\nМудрость стоиков каждый день', vo:'Stoikos. Ссылка в описании.' } ] },
+  fr:{ lbl:'Français', s:[
+    { ov:'Hier tu t\'inquiétais.\nAujourd\'hui aussi.', vo:'Hier tu t\'inquiétais. Aujourd\'hui aussi.' },
+    { ov:'Et demain ?', vo:null },
+    { ov:'Le calme n\'est pas un talent.\nC\'est une pratique.', vo:'Il y a deux mille ans, un empereur romain ressentait la même chose.' },
+    { ov:'Ce ne sont pas les choses qui troublent les hommes,\nmais les opinions qu\'ils en ont.', at:'Épictète · Manuel', vo:'Il a écrit sa réponse. Elle nous est parvenue — et elle fonctionne.' },
+    { ov:'164 citations · 10 philosophes\n12 concepts · 6 langues', vo:'Cent soixante-quatre citations, dix philosophes, un coach qui te connaît.' },
+    { ov:'STOIKOS\nLa sagesse stoïcienne au quotidien', vo:'Stoikos. Lien dans la bio.' } ] },
+  es:{ lbl:'Español', s:[
+    { ov:'Ayer te preocupaste.\nHoy también.', vo:'Ayer te preocupaste. Hoy también.' },
+    { ov:'¿Y mañana?', vo:null },
+    { ov:'La calma no es un talento.\nEs una práctica.', vo:'Hace dos mil años, un emperador romano sintió lo mismo.' },
+    { ov:'A las personas no las perturban las cosas,\nsino las opiniones que tienen de ellas.', at:'Epicteto · Enquiridión', vo:'Escribió su respuesta. El cuaderno sobrevivió — y funciona.' },
+    { ov:'164 citas · 10 filósofos\n12 conceptos · 6 idiomas', vo:'Ciento sesenta y cuatro citas, diez filósofos, un coach que te conoce.' },
+    { ov:'STOIKOS\nSabiduría estoica cada día', vo:'Stoikos. Enlace en la bio.' } ] },
+};
+
+const wc = (s) => s.trim().split(/\s+/).filter(Boolean).length;
+const esc = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+// Sakin seslendirme ~130 kelime/dakika = 2,17 kelime/saniye.
+const WPS = 130 / 60;
+// %10 tolerans: kayıtta tempo bu kadar oynatılabiliyor, her küçük taşmayı
+// sorun olarak işaretlemek gürültü yaratır.
+const TOL = 1.10;
+const sec = (x) => x.toFixed(1).replace('.', ',');
+
+document.getElementById('scenes').innerHTML = SCENES.map((sc, i) => {
+  const rows = Object.values(L).map((d) => {
+    const e = d.s[i];
+    const est = e.vo ? wc(e.vo) / WPS : 0;
+    const over = sc.win > 0 && est > sc.win * TOL;
+    const cell = !e.vo ? '—' : `${sec(est)} / ${sec(sc.win)} sn`;
+    return `<tr>
+      <td class="lg">${d.lbl}</td>
+      <td class="ov">${esc(e.ov)}${e.at ? `<span class="attr">— ${esc(e.at)}</span>` : ''}</td>
+      <td class="vo">${e.vo ? esc(e.vo) : '<span class="silent">Sessiz sahne</span>'}</td>
+      <td class="bd${over ? ' over' : ''}">${cell}</td>
+    </tr>`;
+  }).join('');
+  const winNote = sc.win === 0 ? ''
+    : sc.win > parseFloat(sc.dur) ? ` · ses penceresi ${sec(sc.win)} sn (sonraki sahne sessiz)` : '';
+  return `<div class="scene">
+    <div class="s-head"><span class="s-n">${sc.n}</span><span class="s-tc mono">${sc.tc}</span><span class="s-dur">${sc.dur}${winNote}</span></div>
+    <div class="s-body">
+      <div class="lbl">Görsel — tüm dillerde ortak</div>
+      <div class="visual">${esc(sc.visual)}</div>
+      <table class="langs">
+        <tr><th style="width:44pt">Dil</th><th style="width:41%">Ekran metni</th><th>Seslendirme</th><th style="text-align:right">Süre / pencere</th></tr>
+        ${rows}
+      </table>
+    </div>
+  </div>`;
+}).join('');
+</script>
+</body>
+</html>
