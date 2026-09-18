@@ -96,6 +96,12 @@
 10. 🍎 **Apple Developer kaydı takıldı** — 2FA açık ama kayıt "tamamlanamadı" veriyor, hesap programa kayıtlı değil, $99 ödenmedi. Sırayla denenecek: bekleyip tekrar → Apple Developer **uygulamasından** kayıt → Developer Support. Ayrıntı `docs/magazaya-cikis.md`.
 11. 🤖 **Google Play** — hesap açık, üç doğrulama bekliyor (kimlik, telefon, **Android cihaz**). Elde Android telefon yok, bu çözülmeden Play'de uygulama oluşturulamıyor.
 12. 🔊 Orb sesi: mevcut `assets/audio/breath-orb.m4a` çalışıyor; seamless loop istenirse değiştirilebilir.
+13. 🎮 **İkinci ürün: oyun** — sakinleştirici taş dizme oyunu `Cairn — Denge`
+    tasarlandı: `docs/oyun-tasarimi.md` (18 Eylül 2026). Tasarım taslağı, kod
+    yok. STOIKOS'un paletini/yazı tiplerini/alıntılarını ve yayın hattını miras
+    alır, ayrı Expo uygulaması olması önerilir. Karar bekleyen üç soru belgenin
+    sonunda. ⚠️ Önerilen sıra: STOIKOS'un RevenueCat + Apple kaydı bitmeden
+    başlanmasın.
 
 ## Güvenlik
 - ElevenLabs anahtarı paylaşıldıysa **iptal/yenile**.
