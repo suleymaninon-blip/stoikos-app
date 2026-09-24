@@ -8,6 +8,7 @@ import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
 import { getPrograms, getProgress, setDayDone, Program } from '../constants/programs';
 import { usePlus } from '../constants/entitlement';
+import { ENFORCE_PLUS_GATE } from '../constants/config';
 import { maybeAskForReview } from '../constants/review';
 import { Paywall } from '../components/Paywall';
 
@@ -20,6 +21,9 @@ export default function ProgramsScreen() {
   // Programlar Stoikos Plus'a dahil. Kilitliyken kart gizlenmiyor — ne olduğu
   // görünsün, dokununca ödeme duvarı açılsın; kapatmak yerine tanıtmak.
   const { plus } = usePlus();
+  // ⚠️ ENFORCE_PLUS_GATE geçici olarak false (bkz. constants/config.ts).
+  // Ad bilerek `unlocked` değil: aşağıda gün kilidi için o ad kullanılıyor.
+  const plusOk = plus || !ENFORCE_PLUS_GATE;
   const [paywallOpen, setPaywallOpen] = useState(false);
 
   const loadAll = useCallback(async () => {
@@ -140,7 +144,7 @@ export default function ProgramsScreen() {
               <TouchableOpacity
                 key={p.id}
                 style={[styles.card, { backgroundColor: p.color }]}
-                onPress={() => (plus ? setOpenId(p.id) : setPaywallOpen(true))}
+                onPress={() => (plusOk ? setOpenId(p.id) : setPaywallOpen(true))}
                 activeOpacity={0.85}
               >
                 <View style={styles.cardHead}>
@@ -149,12 +153,12 @@ export default function ProgramsScreen() {
                     <Text style={styles.cardTitle}>{p.title}</Text>
                     <Text style={styles.cardSub}>{p.subtitle}</Text>
                   </View>
-                  {!plus && <Text style={styles.cardBadge}>{t('plus.badge')}</Text>}
+                  {!plusOk && <Text style={styles.cardBadge}>{t('plus.badge')}</Text>}
                 </View>
                 <View style={styles.cardTrack}><View style={[styles.cardFill, { width: `${pct * 100}%` }]} /></View>
                 <View style={styles.cardFoot}>
                   <Text style={styles.cardProgress}>{t('programs.progress', { done, total: p.dayCount })}</Text>
-                  <Text style={styles.cardCta}>{plus ? `${label} →` : t('plus.unlock')}</Text>
+                  <Text style={styles.cardCta}>{plusOk ? `${label} →` : t('plus.unlock')}</Text>
                 </View>
               </TouchableOpacity>
             );
