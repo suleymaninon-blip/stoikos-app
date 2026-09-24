@@ -29,7 +29,7 @@ Bir daha saymaya gerek kalmasın:
 | Kavram | 12 · altı dilde tam (7'si ~120 karakter, 5'i ~700) |
 | Filozof | 10 · altı dilde tam |
 | Egzersiz | 5 (3 sabah, 2 akşam) |
-| Program | 3 × 7 gün = 21 gün · altı dilde tam (fr/es ve 3. program Eylül 2026'da eklendi) |
+| Program | 4 × 7 gün = 28 gün · altı dilde tam (fr/es ve 3.–4. programlar Eylül 2026'da eklendi) |
 | Arayüz metni | 234 anahtar × 6 dil · eksiksiz |
 | Çalışma sağlığı | 8 ekranın hiçbirinde yakalanmamış istisna yok |
 
@@ -178,10 +178,12 @@ sayısıdır — bu listedeki muhtemelen **en yüksek getirili tek satırdı**.
 5 egzersiz sonsuza dek tekrar ediyor; 2 program = 14 gün. 30. günde kullanıcıyı
 geri getiren şey belirsiz.
 
-> **Kısmen giderildi (Eylül 2026):** üçüncü program eklendi — *Öfkeyle Çalışmak*,
-> 7 gün, altı dilde. Rehberli içerik 14 günden 21 güne çıktı. Bulgunun kendisi
-> hâlâ geçerli: 21 gün de sonlu ve 30. gün sorusu duruyor; ama en ucuz kaldıraç
-> olduğu doğrulandı, program başına maliyet yalnız metin.
+> **Kısmen giderildi (Eylül 2026):** iki program eklendi — *Öfkeyle Çalışmak* ve
+> *Başkalarının Gözü*, ikisi de 7 gün, altı dilde. Rehberli içerik 14 günden
+> **28 güne** çıktı, yani bulgunun işaret ettiği "30. gün" eşiğine ulaşıldı.
+> Bulgu yine de kapatılmadı: 28 gün de sonlu ve programı bitiren kullanıcıyı
+> ertesi gün geri getiren şey hâlâ tanımlı değil. Doğrulanan kısım şu — bu
+> gerçekten en ucuz kaldıraç, program başına maliyet yalnız metin.
 
 Programların üretim maliyeti sıfır (yalnız metin) ve koç aboneliğinin aksine
 ChatGPT ikame edemez — tasarlanmış, sıralanmış, ilerlemesi izlenen bir şey.
