@@ -59,6 +59,15 @@
 
 ## BEKLEYEN İŞLER (öncelik sırası)
 
+> 🚨 **0. GERİ ALINACAK — `ENFORCE_PLUS_GATE = false`** (24 Eylül 2026)
+> `constants/config.ts` içindeki bu bayrak **test için** kapatıldı; şu an
+> programlar ve kavram sesli anlatımı **herkese açık**. Sebep: RevenueCat
+> bağlı olmadığı için ödeme ekranındaki buton "YAKINDA" durumunda ve test
+> eden kişi satın alarak da içeri giremiyordu.
+> **Yayından önce `true` yapılacak** — tek satır, başka yere dokunulmuyor.
+> Koç etkilenmiyor (kapısı sunucuda), yani gelir kaybı yok; ama Plus
+> paketinin içi şu an boş görünüyor.
+
 > 📋 **Ürün ve pazar değerlendirmesi: `docs/urun-degerlendirmesi.md`**
 > (Eylül 2026). Uygulama baştan sona incelendi; içerik envanteri, bulgular,
 > rakip ve fiyat verisi orada. Çıkan **yayın öncesi** dört madde:

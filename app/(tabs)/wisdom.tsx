@@ -15,6 +15,7 @@ import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
 import { usePlus } from '../../constants/entitlement';
 import { Paywall } from '../../components/Paywall';
+import { ENFORCE_PLUS_GATE } from '../../constants/config';
 import { SoundIcon, StopIcon } from '../../components/Icons';
 
 // ─── QuoteCard ─────────────────────────────────────────────
@@ -294,6 +295,8 @@ export default function WisdomScreen() {
   const [selectedPhilo, setSelectedPhilo] = useState<Philosopher | null>(null);
   const [playingKey, setPlayingKey] = useState<string | null>(null);
   const { plus } = usePlus();
+  // ⚠️ ENFORCE_PLUS_GATE geçici olarak false (bkz. constants/config.ts).
+  const plusOk = plus || !ENFORCE_PLUS_GATE;
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -328,7 +331,7 @@ export default function WisdomScreen() {
   // Kavramların sesli anlatımı (216 dosya, ElevenLabs'ta üretildi) Plus'a dahil.
   // Kavram metninin kendisi ücretsiz — kilitlenen yalnızca dinleme.
   function togglePlay(key: string) {
-    if (!plus) { setPaywallOpen(true); return; }
+    if (!plusOk) { setPaywallOpen(true); return; }
     if (playingKey === key) {
       stopAudio();
       setPlayingKey(null);
