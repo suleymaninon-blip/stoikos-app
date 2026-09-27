@@ -4,9 +4,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
+import { JOURNAL_KEY } from '../constants/journal';
 import { useLang, localeOf } from '../constants/i18n';
 
-const JOURNAL_KEY = 'stoikos_journal_';
+// JOURNAL_KEY artık constants/journal.ts'te.
 
 type Entry = { key: string; date: Date; text: string };
 
