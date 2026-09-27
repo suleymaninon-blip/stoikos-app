@@ -8,13 +8,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
+import { JOURNAL_KEY } from '../../constants/journal';
 import { DayPartIcon, DayPart } from '../../components/Icons';
 import { useLang } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
 
 const COMPLETED_KEY = 'stoikos_completed_';
-const JOURNAL_KEY = 'stoikos_journal_';
+// JOURNAL_KEY artık constants/journal.ts'te (program kapanışı da yazıyor).
 const COACH_CONSENT_KEY = 'stoikos_journal_coach_consent'; // açık rıza (KVKK), varsayılan kapalı
 
 // Sabah altın, akşam ay mavisi — bölüm etiketleri (moonTag/moonBadge) zaten

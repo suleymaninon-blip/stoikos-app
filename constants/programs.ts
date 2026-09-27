@@ -337,3 +337,29 @@ export async function setDayDone(id: string, day: number, done: boolean): Promis
   await AsyncStorage.setItem(KEY(id), JSON.stringify(arr));
   return arr;
 }
+
+/**
+ * Yolculuğu baştan başlat.
+ *
+ * Stoacı pratiğin kendisi tekrar üzerine kurulu — Marcus aynı defteri yıllarca
+ * tuttu, yeni bir program aramadı. Bitmiş bir programı yeniden açabilmek,
+ * yeni içerik üretmeden sonsuz tekrar veriyor.
+ *
+ * Kapanış yansıması bayrağı da siliniyor: yolculuk yeniden yaşanacaksa
+ * sonunda yeniden yazılabilmeli.
+ */
+export async function resetProgress(id: string): Promise<void> {
+  await AsyncStorage.multiRemove([KEY(id), REFLECT_KEY(id)]);
+}
+
+// ─── Kapanış yansıması (program başına bir kez sorulur) ───
+const REFLECT_KEY = (id: string) => `stoikos_program_reflected_${id}`;
+
+export async function hasReflected(id: string): Promise<boolean> {
+  return (await AsyncStorage.getItem(REFLECT_KEY(id))) === '1';
+}
+
+/** Yazıldı ya da atlandı — ikisinde de bir daha sorulmuyor. */
+export async function markReflected(id: string): Promise<void> {
+  await AsyncStorage.setItem(REFLECT_KEY(id), '1');
+}

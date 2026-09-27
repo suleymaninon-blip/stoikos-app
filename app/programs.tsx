@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Modal, Pressable,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Modal, Pressable, TextInput,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
-import { getPrograms, getProgress, setDayDone, Program } from '../constants/programs';
+import { getPrograms, getProgress, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
+import { appendToJournalToday } from '../constants/journal';
 import { usePlus } from '../constants/entitlement';
 import { ENFORCE_PLUS_GATE } from '../constants/config';
 import { maybeAskForReview } from '../constants/review';
@@ -25,10 +26,16 @@ export default function ProgramsScreen() {
   // Ad bilerek `unlocked` değil: aşağıda gün kilidi için o ad kullanılıyor.
   const plusOk = plus || !ENFORCE_PLUS_GATE;
   const [paywallOpen, setPaywallOpen] = useState(false);
+  // Bitiş akışı: kapanış yansıması (atlanabilir) + yeniden başlatma
+  const [reflected, setReflected] = useState<Record<string, boolean>>({});
+  const [reflection, setReflection] = useState('');
+  const [restartArmed, setRestartArmed] = useState(false);
 
   const loadAll = useCallback(async () => {
     const entries = await Promise.all(programs.map(async (p) => [p.id, await getProgress(p.id)] as const));
     setProgress(Object.fromEntries(entries));
+    const flags = await Promise.all(programs.map(async (p) => [p.id, await hasReflected(p.id)] as const));
+    setReflected(Object.fromEntries(flags));
   }, [lang]);
 
   useFocusEffect(useCallback(() => { loadAll(); }, [loadAll]));
@@ -51,6 +58,40 @@ export default function ProgramsScreen() {
     return (progress[pid] || []).includes(idx - 1);
   }
 
+  const isComplete = (p: Program) => (progress[p.id] || []).length === p.dayCount;
+
+  /**
+   * Kapanış yansımasını bugünün günlüğüne EKLER (üzerine yazmaz — günde tek
+   * kayıt var, sabah yazılmış bir yansıma silinmemeli).
+   *
+   * Koç hafızasına GÖNDERİLMİYOR. Pratik ekranındaki KVKK onay kutusu günlük
+   * yansımalar için verilmiş bir rıza; program kapanışını da oraya akıtmak
+   * kullanıcının onayladığından fazlasını göndermek olurdu.
+   */
+  async function saveReflection(p: Program) {
+    const txt = reflection.trim();
+    if (txt) {
+      await appendToJournalToday(`${t('programs.journalHeader', { program: p.title })}\n${txt}`);
+    }
+    await markReflected(p.id);
+    setReflected((prev) => ({ ...prev, [p.id]: true }));
+    setReflection('');
+  }
+
+  /** Atlamak da "cevaplandı" sayılıyor — bitirmiş kullanıcıya ısrar edilmiyor. */
+  async function skipReflection(p: Program) {
+    await markReflected(p.id);
+    setReflected((prev) => ({ ...prev, [p.id]: true }));
+    setReflection('');
+  }
+
+  async function restart(pid: string) {
+    await resetProgress(pid);
+    setProgress((prev) => ({ ...prev, [pid]: [] }));
+    setReflected((prev) => ({ ...prev, [pid]: false }));
+    setRestartArmed(false);
+  }
+
   // ─── DETAY ───
   if (open) {
     const done = progress[open.id] || [];
@@ -65,7 +106,80 @@ export default function ProgramsScreen() {
           <Text style={styles.detailTitle}>{open.title}</Text>
           <Text style={styles.detailSub}>{open.subtitle}</Text>
           <Text style={styles.detailProgress}>{t('programs.progress', { done: done.length, total: open.dayCount })}</Text>
-          {done.length === open.dayCount && <Text style={styles.finished}>{t('programs.finished')}</Text>}
+          {done.length === open.dayCount && (() => {
+            // Bitiş akışı. Amaç 6. programa zincirlemek değil — yolculuklar
+            // giriş rampası, günlük pratik ise sonsuza dek tekrar eden asıl iş.
+            const next = programs.find((p) => p.id !== open.id && !isComplete(p));
+            return (
+              <View style={styles.finishBox}>
+                <Text style={styles.finished}>{t('programs.finished')}</Text>
+
+                {!reflected[open.id] ? (
+                  <View style={styles.reflectWrap}>
+                    <Text style={styles.reflectPrompt}>{t('programs.reflectPrompt')}</Text>
+                    <Text style={styles.reflectHint}>{t('programs.reflectHint')}</Text>
+                    <TextInput
+                      style={styles.reflectInput}
+                      value={reflection}
+                      onChangeText={setReflection}
+                      placeholder={t('programs.reflectPlaceholder')}
+                      placeholderTextColor={Colors.faint}
+                      multiline
+                      textAlignVertical="top"
+                    />
+                    <Text style={styles.reflectNote}>{t('programs.reflectNote')}</Text>
+                    <View style={styles.reflectRow}>
+                      <TouchableOpacity onPress={() => skipReflection(open)} hitSlop={8}>
+                        <Text style={styles.reflectSkip}>{t('programs.reflectSkip')}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.reflectBtn, !reflection.trim() && styles.reflectBtnOff]}
+                        onPress={() => saveReflection(open)}
+                        disabled={!reflection.trim()}
+                        activeOpacity={0.85}
+                      >
+                        <Text style={styles.reflectBtnText}>{t('programs.reflectSave')}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  <Text style={styles.reflectSaved}>{t('programs.reflectSaved')}</Text>
+                )}
+
+                {next ? (
+                  <TouchableOpacity
+                    style={styles.nextBtn}
+                    onPress={() => { setOpenId(next.id); setRestartArmed(false); }}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={styles.nextLabel}>{t('programs.nextUp')}</Text>
+                    <Text style={styles.nextTitle}>{next.icon}  {next.title}</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.allDoneBox}>
+                    <Text style={styles.allDoneTitle}>{t('programs.allDone')}</Text>
+                    <Text style={styles.allDoneBody}>{t('programs.allDoneBody')}</Text>
+                    <TouchableOpacity
+                      style={styles.practiceBtn}
+                      onPress={() => router.replace('/(tabs)/practice')}
+                      activeOpacity={0.85}
+                    >
+                      <Text style={styles.practiceBtnText}>{t('programs.toPractice')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                <TouchableOpacity
+                  onPress={() => (restartArmed ? restart(open.id) : setRestartArmed(true))}
+                  hitSlop={8}
+                >
+                  <Text style={[styles.restart, restartArmed && styles.restartArmed]}>
+                    {restartArmed ? t('programs.restartConfirm') : t('programs.restart')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })()}
 
           <View style={{ marginTop: 18 }}>
             {open.days.map((d, i) => {
@@ -203,6 +317,38 @@ const styles = StyleSheet.create({
   detailSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 4 },
   detailProgress: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, textAlign: 'center', letterSpacing: 1, marginTop: 12 },
   finished: { fontFamily: Fonts.cormorantItalic, fontSize: 15, color: Colors.sand, textAlign: 'center', marginTop: 8 },
+
+  // ─── Bitiş akışı ───
+  finishBox: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)', gap: 16 },
+
+  reflectWrap: { gap: 8 },
+  reflectPrompt: { fontFamily: Fonts.cormorant, fontSize: 19, color: Colors.text, textAlign: 'center' },
+  reflectHint: { fontFamily: Fonts.jostLight, fontSize: 13, color: Colors.muted, textAlign: 'center' },
+  reflectInput: {
+    marginTop: 4, minHeight: 92, backgroundColor: Colors.stone, borderRadius: 12, padding: 12,
+    fontFamily: Fonts.jost, fontSize: 15, color: Colors.text,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+  },
+  reflectNote: { fontFamily: Fonts.jostLight, fontSize: 11.5, color: Colors.faint, textAlign: 'center' },
+  reflectRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
+  reflectSkip: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted },
+  reflectBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 11, paddingHorizontal: 20 },
+  reflectBtnOff: { opacity: 0.35 },
+  reflectBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.bg, letterSpacing: 0.4 },
+  reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
+
+  nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', gap: 4 },
+  nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 10.5, letterSpacing: 2, textTransform: 'uppercase', color: Colors.sand },
+  nextTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text },
+
+  allDoneBox: { gap: 10 },
+  allDoneTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text, textAlign: 'center' },
+  allDoneBody: { fontFamily: Fonts.jostLight, fontSize: 14.5, lineHeight: 23, color: Colors.text2, textAlign: 'center' },
+  practiceBtn: { marginTop: 4, backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  practiceBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.bg, letterSpacing: 0.4 },
+
+  restart: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.faint, textAlign: 'center' },
+  restartArmed: { color: Colors.sand },
 
   dayRow: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   dayRowLocked: { opacity: 0.55 },
