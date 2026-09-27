@@ -221,13 +221,24 @@ export default function ProgramsScreen() {
                     <Text style={styles.modalBody}>{d.body}</Text>
                     <TouchableOpacity
                       style={[styles.modalBtn, completed && styles.modalBtnDone]}
-                      onPress={() => toggleDay(open.id, dayIdx)}
+                      onPress={() => {
+                        toggleDay(open.id, dayIdx!);
+                        // Pratik ekranıyla aynı davranış: tamamlayınca kısa bir
+                        // "✦ Tamamlandı" onayı görünsün, sonra kart kendiliğinden
+                        // kapansın; geri alınca hemen kapansın. Kart açık kalırsa
+                        // hem yeni açılan günü hem de 7. günde beliren bitiş
+                        // bloğunu örtüyordu.
+                        if (completed) setDayIdx(null);
+                        else setTimeout(() => setDayIdx(null), 320);
+                      }}
                       activeOpacity={0.85}
                     >
                       <Text style={[styles.modalBtnText, completed && styles.modalBtnTextDone]}>
                         {completed ? t('programs.undo') : t('programs.complete')}
                       </Text>
                     </TouchableOpacity>
+
+                    {completed && <Text style={styles.modalDoneNote}>✦ {t('programs.done')}</Text>}
                   </>
                 );
               })()}
@@ -373,4 +384,6 @@ const styles = StyleSheet.create({
   modalBtnDone: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   modalBtnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.stone },
   modalBtnTextDone: { color: Colors.muted },
+  // Pratik ekranındakiyle birebir aynı — iki ekran aynı onayı göstermeli.
+  modalDoneNote: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.sand, marginTop: 14 },
 });
