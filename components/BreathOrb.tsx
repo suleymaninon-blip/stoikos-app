@@ -6,7 +6,7 @@ import { Colors, Fonts } from '../constants/theme';
 import { SoundIcon } from './Icons';
 import {
   isBreathSoundSupported, getSoundPref, setSoundPref,
-  startBreathSound, stopBreathSound, prepareBreathSound,
+  startBreathSound, stopBreathSound,
 } from '../constants/breathSound';
 
 type Props = {
@@ -46,16 +46,11 @@ export default function BreathOrb({
   const [soundOn, setSoundOn] = useState(false);
   const soundOnRef = useRef(false);
 
-  // Tercihleri yükle + sesi ÖNCEDEN hazırla.
-  // Ön yükleme kritik: dosya 2,7 MB ve ilk basışta indirilmeye başlarsa
-  // iOS Safari'nin dokunma yetkisi düşüyor, play() sessizce reddediliyor.
+  // Tercihleri yükle.
+  // ⚠️ Sesi burada ÖN YÜKLEME. Ses öğesi bir kullanıcı dokunuşu içinde
+  // doğmazsa iOS Safari onu kalıcı olarak susturuyor (bkz. breathSound.ts).
   useEffect(() => {
-    if (!soundSupported) return;
-    getSoundPref().then((on) => {
-      setSoundOn(on);
-      soundOnRef.current = on;
-      if (on) prepareBreathSound();
-    });
+    if (soundSupported) getSoundPref().then((on) => { setSoundOn(on); soundOnRef.current = on; });
   }, [soundSupported]);
 
   // Sürekli nefes animasyonu (her zaman çalışır).

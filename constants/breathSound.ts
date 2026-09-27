@@ -36,8 +36,33 @@ let loading = false;
 let wantPlaying = false;      // kullanıcı şu an çalmasını istiyor mu (basılı mı)
 let audioModeSet = false;
 
-async function ensureLoaded(): Promise<void> {
-  if (sound || loading) return;
+const SOURCE = require('../assets/audio/breath-orb.mp3');
+
+/**
+ * Sesi çalmaya başla.
+ *
+ * ⚠️ iOS Safari kuralı — bu fonksiyonun biçimi kazara değil:
+ * bir ses öğesi, ömründe EN AZ BİR KEZ kullanıcı dokunuşu içinde play()
+ * çağrılmadıysa iOS onu kalıcı olarak reddediyor. Bu yüzden öğe mount'ta
+ * DEĞİL, ilk basışın içinde `shouldPlay: true` ile oluşturuluyor —
+ * kavramların sesli anlatımında (constants/audio.ts) çalıştığı kanıtlanmış
+ * desen bu. Bir kez böyle açıldıktan sonra sonraki basışlarda düz
+ * `playAsync()` yetiyor.
+ *
+ * (Önceki bir deneme sesi mount'ta ön yüklüyordu; dosyayı indirme sorununu
+ * çözüyor ama öğe hiçbir dokunuş içinde doğmadığı için iOS'ta sesi tümden
+ * susturuyordu. Ön yükleme yapılacaksa ses öğesi değil, yalnız DOSYA
+ * önbelleğe alınmalı.)
+ */
+export async function startBreathSound(): Promise<void> {
+  wantPlaying = true;
+
+  if (sound) {
+    try { await sound.playAsync(); } catch {}
+    return;
+  }
+  if (loading) return;
+
   loading = true;
   try {
     if (!audioModeSet) {
@@ -45,43 +70,17 @@ async function ensureLoaded(): Promise<void> {
       audioModeSet = true;
     }
     const { sound: s } = await Audio.Sound.createAsync(
-      require('../assets/audio/breath-orb.mp3'),
-      // shouldPlay: kullanıcı hâlâ basılı tutuyorsa oluşturma anında başlasın.
-      // Kavram anlatımındaki çalışan desen bu (constants/audio.ts) — sesi
-      // oluşturup SONRA ayrıca play() çağırmak iOS'ta reddediliyor.
-      { isLooping: true, volume: 0.85, shouldPlay: wantPlaying }
+      SOURCE,
+      { isLooping: true, volume: 0.85, shouldPlay: true },
     );
     sound = s;
+    // Yükleme biterken kullanıcı bırakmışsa hemen sustur.
+    if (!wantPlaying) { try { await s.pauseAsync(); } catch {} }
   } catch {
     // yüklenemezse sessiz geç
   } finally {
     loading = false;
   }
-}
-
-/**
- * Sesi önceden yükle — orb ekrana gelince çağrılır, dokunma sırasında DEĞİL.
- *
- * Sebep: dosya 2,7 MB. İlk basışta indirilmeye başlanırsa iOS Safari'nin
- * verdiği dokunma yetkisi indirme bitene kadar düşüyor ve `play()`
- * reddediliyor (sessizce, çünkü aşağıdaki catch'ler yutuyor). Önceden
- * yüklenince basış anında yapılacak tek iş `playAsync()` kalıyor.
- */
-export async function prepareBreathSound(): Promise<void> {
-  await ensureLoaded();
-}
-
-export async function startBreathSound(): Promise<void> {
-  wantPlaying = true;
-  // ⚠️ Buradan önce await KOYMA. iOS Safari, kullanıcı hareketiyle aynı
-  // görev içinde çağrılmayan play()'i reddediyor; araya giren her await
-  // yetkiyi düşürüyor. (setPositionAsync(0) de bu yüzden kaldırıldı —
-  // stopAsync zaten konumu sıfırlıyor, gereksizdi.)
-  if (sound) {
-    try { await sound.playAsync(); } catch {}
-    return;
-  }
-  await ensureLoaded();   // shouldPlay ile oluşturulur, ayrıca play gerekmez
 }
 
 export async function stopBreathSound(): Promise<void> {
