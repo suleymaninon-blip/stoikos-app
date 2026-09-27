@@ -36,6 +36,43 @@ let loading = false;
 let wantPlaying = false;      // kullanıcı şu an çalmasını istiyor mu (basılı mı)
 let audioModeSet = false;
 
+/**
+ * Son hata — TEŞHİS İÇİN.
+ *
+ * Bu modüldeki catch'ler sessizdi ve bu bir sorunu iki hafta gizledi
+ * (bkz. CLAUDE.md, .m4a/video olayı). Sessiz başarısızlık, olmayan bir
+ * özellikten daha kötü: kullanıcı da geliştirici de neyin bozulduğunu
+ * göremiyor. Artık hata saklanıyor ve orb altında küçük bir satırda
+ * gösteriliyor.
+ */
+let lastError: string | null = null;
+let lastStatus: string | null = null;
+
+/** Orb altında gösterilen teşhis satırı: hata varsa o, yoksa oynatma durumu. */
+export function getBreathSoundDiag(): string | null { return lastError ?? lastStatus; }
+
+/**
+ * Çalmaya başladıktan kısa süre sonra gerçekten ses çıkıp çıkmadığını yakalar.
+ * Hata YOKKEN de sessizlik olabiliyor (iOS sessizce reddedebiliyor), o yüzden
+ * "hata yok" tek başına yeterli bilgi değil.
+ */
+function probe(s: Audio.Sound): void {
+  setTimeout(async () => {
+    try {
+      const st: any = await s.getStatusAsync();
+      if (!st?.isLoaded) { lastStatus = 'yüklenmedi'; return; }
+      lastStatus = st.isPlaying
+        ? `çalıyor · ${(st.positionMillis / 1000).toFixed(1)}sn · ses ${st.volume}`
+        : `duraklatıldı · ${(st.positionMillis / 1000).toFixed(1)}sn`;
+    } catch (e) { note('getStatus', e); }
+  }, 900);
+}
+
+function note(where: string, e: unknown): void {
+  const msg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+  lastError = `${where} → ${msg}`.slice(0, 160);
+}
+
 const SOURCE = require('../assets/audio/breath-orb.mp3');
 
 /**
@@ -58,15 +95,21 @@ export async function startBreathSound(): Promise<void> {
   wantPlaying = true;
 
   if (sound) {
-    try { await sound.playAsync(); } catch {}
+    try { lastError = null; await sound.playAsync(); probe(sound); } catch (e) { note('playAsync', e); }
     return;
   }
   if (loading) return;
 
   loading = true;
+  lastError = null;
   try {
     if (!audioModeSet) {
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true, shouldDuckAndroid: true });
+      try {
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true, shouldDuckAndroid: true });
+      } catch (e) {
+        // Web'de bu çağrı desteklenmeyebilir; ses üretimini engellememeli.
+        note('setAudioMode', e);
+      }
       audioModeSet = true;
     }
     const { sound: s } = await Audio.Sound.createAsync(
@@ -74,10 +117,11 @@ export async function startBreathSound(): Promise<void> {
       { isLooping: true, volume: 0.85, shouldPlay: true },
     );
     sound = s;
+    probe(s);
     // Yükleme biterken kullanıcı bırakmışsa hemen sustur.
     if (!wantPlaying) { try { await s.pauseAsync(); } catch {} }
-  } catch {
-    // yüklenemezse sessiz geç
+  } catch (e) {
+    note('createAsync', e);
   } finally {
     loading = false;
   }
@@ -86,5 +130,5 @@ export async function startBreathSound(): Promise<void> {
 export async function stopBreathSound(): Promise<void> {
   wantPlaying = false;
   if (!sound) return;
-  try { await sound.stopAsync(); } catch {}
+  try { await sound.stopAsync(); } catch (e) { note('stopAsync', e); }
 }

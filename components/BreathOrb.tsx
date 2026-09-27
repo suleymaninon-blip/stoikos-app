@@ -6,7 +6,7 @@ import { Colors, Fonts } from '../constants/theme';
 import { SoundIcon } from './Icons';
 import {
   isBreathSoundSupported, getSoundPref, setSoundPref,
-  startBreathSound, stopBreathSound,
+  startBreathSound, stopBreathSound, getBreathSoundDiag,
 } from '../constants/breathSound';
 
 type Props = {
@@ -45,6 +45,8 @@ export default function BreathOrb({
   const soundSupported = isBreathSoundSupported();
   const [soundOn, setSoundOn] = useState(false);
   const soundOnRef = useRef(false);
+  // Ses teşhis satırı — sessiz başarısızlığı görünür kılar (bkz. breathSound.ts).
+  const [diag, setDiag] = useState<string | null>(null);
 
   // Tercihleri yükle.
   // ⚠️ Sesi burada ÖN YÜKLEME. Ses öğesi bir kullanıcı dokunuşu içinde
@@ -94,7 +96,10 @@ export default function BreathOrb({
     heldRef.current = true;
     setHeld(true);
     Animated.timing(hold, { toValue: 1, duration: 320, easing: Easing.out(Easing.ease), useNativeDriver: true }).start();
-    if (soundOnRef.current) startBreathSound(); // basılı tutunca ses başlar
+    if (soundOnRef.current) {
+      startBreathSound(); // basılı tutunca ses başlar
+      setTimeout(() => setDiag(getBreathSoundDiag()), 1200);
+    }
   }, [hold]);
 
   const onPressOut = useCallback(() => {
@@ -160,6 +165,7 @@ export default function BreathOrb({
 
         <Animated.Text style={[styles.title, { opacity: textFade }]}>{title}</Animated.Text>
         {!held && <Text style={styles.sub}>{tapHint}</Text>}
+        {soundOn && diag && <Text style={styles.diag}>ses: {diag}</Text>}
       </Pressable>
 
       {/* Ses toggle — sağ üst (kartın kardeşi) */}
@@ -217,5 +223,6 @@ const styles = StyleSheet.create({
   orbGradient: { flex: 1 },
   holdGlow: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(245,205,120,0.6)' },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.sand2, marginBottom: 6, minHeight: 28 },
+  diag: { fontFamily: Fonts.jostLight, fontSize: 10.5, color: Colors.faint, textAlign: 'center', marginTop: 6 },
   sub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
 });
