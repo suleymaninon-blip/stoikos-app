@@ -1,6 +1,13 @@
-// Orb nefes sesi — gerçek ses dosyası (assets/audio/breath-orb.m4a), expo-av ile.
+// Orb nefes sesi — assets/audio/breath-orb.mp3, expo-av ile.
 // Native + web çalışır. Orb basılı tutulunca çalar (döngü), bırakılınca durur.
 // Tüm çağrılar try/catch ile sarılı → ses yüklenemezse uygulama çökmez, sessiz geçer.
+//
+// ⚠️ Eskiden `breath-orb.m4a` idi ve SES ÇIKMIYORDU. Sebep: o dosya aslında bir
+// VİDEO'ydu — adı .m4a yapılmış, içinde 960×540 H.264 izi (10 fps, 2 kb/s
+// yer tutucu) + AAC ses izi olan bir MP4. Tarayıcının `<audio>` öğesi böyle bir
+// dosyayı çözemiyor: "DEMUXER_ERROR_NO_SUPPORTED_STREAMS". Ses izi çıkarılıp
+// MP3'e alındı; dosya 5,7 MB → 2,7 MB'a da indi. Uygulamadaki 72 anlatım
+// dosyası da MP3 ve sorunsuz çalışıyor, yani biçim kanıtlı.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
 
@@ -38,7 +45,7 @@ async function ensureLoaded(): Promise<void> {
       audioModeSet = true;
     }
     const { sound: s } = await Audio.Sound.createAsync(
-      require('../assets/audio/breath-orb.m4a'),
+      require('../assets/audio/breath-orb.mp3'),
       { isLooping: true, volume: 0.85 }
     );
     sound = s;
