@@ -54,11 +54,14 @@ async function synth(text: string, voiceId: string): Promise<Buffer> {
 }
 
 (async () => {
-  // Yalnız KAVRAM seslerini üret (key 'c...'); alıntılar atlanır.
-  // (Alıntılarda 🔊 butonu yok; ayrıca yeni alıntıların yalnız TR'si var.)
-  const onlyConcepts = process.argv.includes('--all') ? false : true;
-  const items = getAudioItems().filter((it) => (onlyConcepts ? it.key.startsWith('c') : true));
-  console.log(`${items.length} aday klip (${onlyConcepts ? 'yalnız kavramlar' : 'hepsi'}). Eksikler üretilecek...\n`);
+  // Yalnızca KAVRAM sesi üretiliyor. Alıntı seslendirmesi Eylül 2026'da
+  // kaldırıldı: uygulamada hiçbir ekranda çalma düğmesi yoktu, buna rağmen
+  // 144 dosya (16 MB) pakete giriyordu. 164 alıntıyı altı dilde seslendirmek
+  // ~103 MB demek ve gömülü ses o ölçekte sürdürülemez (bkz. CLAUDE.md →
+  // "Ses boyutu tavana yakın"). İstenirse önce talep üzerine indirme
+  // mimarisi kurulmalı; `getAudioItems` de artık yalnız kavram döndürüyor.
+  const items = getAudioItems();
+  console.log(`${items.length} aday klip (kavramlar). Eksikler üretilecek...\n`);
   let made = 0;
 
   for (const it of items) {
