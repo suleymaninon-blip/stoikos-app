@@ -321,7 +321,7 @@ Hiçbiri modeli değiştirmiyor, hepsi zaten yapılmalı.
 
 **Daha sağlam yol — aboneliğe ikinci bacak tak.**
 Elde sıfır marjinal maliyetli iki varlık daha var: **programlar** ve
-**216 dosyalık sesli anlatım**. Bunlar büyüyen bir premium katmana konursa,
+**72 dosyalık sesli anlatım** (12 kavram × 6 dil; 144 alıntı dosyası 27 Eylül 2026'da silindi — hiçbir ekran çalmıyordu). Bunlar büyüyen bir premium katmana konursa,
 kullanıcı koçtan sıkıldığında abonelik ölmez.
 
 Bu, "içerik hep ücretsiz" sözünü bozmaz: **mevcut** içerik ücretsiz kalır,
