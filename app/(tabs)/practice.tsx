@@ -12,6 +12,7 @@ import { JOURNAL_KEY } from '../../constants/journal';
 import { DayPartIcon, DayPart } from '../../components/Icons';
 import { useLang } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
+import { getTodaysReflectionPrompt } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
 
 const COMPLETED_KEY = 'stoikos_completed_';
@@ -240,7 +241,10 @@ export default function PracticeScreen() {
                 <Text style={styles.journalHistoryLink}>{t('practice.journalHistory')}</Text>
               </TouchableOpacity>
             </View>
-            <Text style={styles.journalHint}>{t('practice.journalHint')}</Text>
+            {/* Günün yansıma sorusu — 28'lik setten döner (content.ts).
+                Eskiden burada her gün aynı sabit cümle vardı; günlük katmanın
+                hiç değişmemesi 36. günde uygulamayı 6. günle aynı yapıyordu. */}
+            <Text style={styles.journalHint}>{getTodaysReflectionPrompt(lang)}</Text>
             <TextInput
               style={styles.journalInput}
               placeholder={t('practice.journalPlaceholder')}
@@ -396,7 +400,7 @@ const styles = StyleSheet.create({
   journalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   journalTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: 'rgba(100,160,220,0.8)' },
   journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(100,160,220,0.9)', letterSpacing: 0.3 },
-  journalHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 17, marginBottom: 12 },
+  journalHint: { fontFamily: Fonts.jost, fontSize: 13.5, color: Colors.text2, lineHeight: 21, marginBottom: 12 },
   consentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 },
   consentBox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1.5, borderColor: 'rgba(100,160,220,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
   consentBoxOn: { backgroundColor: 'rgba(100,160,220,0.85)', borderColor: 'rgba(100,160,220,0.85)' },
