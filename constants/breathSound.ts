@@ -46,27 +46,10 @@ let audioModeSet = false;
  * gösteriliyor.
  */
 let lastError: string | null = null;
-let lastStatus: string | null = null;
 
-/** Orb altında gösterilen teşhis satırı: hata varsa o, yoksa oynatma durumu. */
-export function getBreathSoundDiag(): string | null { return lastError ?? lastStatus; }
-
-/**
- * Çalmaya başladıktan kısa süre sonra gerçekten ses çıkıp çıkmadığını yakalar.
- * Hata YOKKEN de sessizlik olabiliyor (iOS sessizce reddedebiliyor), o yüzden
- * "hata yok" tek başına yeterli bilgi değil.
- */
-function probe(s: Audio.Sound): void {
-  setTimeout(async () => {
-    try {
-      const st: any = await s.getStatusAsync();
-      if (!st?.isLoaded) { lastStatus = 'yüklenmedi'; return; }
-      lastStatus = st.isPlaying
-        ? `çalıyor · ${(st.positionMillis / 1000).toFixed(1)}sn · ses ${st.volume}`
-        : `duraklatıldı · ${(st.positionMillis / 1000).toFixed(1)}sn`;
-    } catch (e) { note('getStatus', e); }
-  }, 900);
-}
+/** Son hata — teşhis için saklanıyor. Sessiz catch'ler bu modülde iki ayrı
+ *  hatayı haftalarca gizledi; bir daha sessizce yutulmasın. */
+export function getBreathSoundError(): string | null { return lastError; }
 
 function note(where: string, e: unknown): void {
   const msg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
@@ -95,7 +78,7 @@ export async function startBreathSound(): Promise<void> {
   wantPlaying = true;
 
   if (sound) {
-    try { lastError = null; await sound.playAsync(); probe(sound); } catch (e) { note('playAsync', e); }
+    try { lastError = null; await sound.playAsync(); } catch (e) { note('playAsync', e); }
     return;
   }
   if (loading) return;
@@ -117,7 +100,6 @@ export async function startBreathSound(): Promise<void> {
       { isLooping: true, volume: 0.85, shouldPlay: true },
     );
     sound = s;
-    probe(s);
     // Yükleme biterken kullanıcı bırakmışsa hemen sustur.
     if (!wantPlaying) { try { await s.pauseAsync(); } catch {} }
   } catch (e) {
