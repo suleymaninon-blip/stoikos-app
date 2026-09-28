@@ -5,6 +5,19 @@ import type { Lang } from './i18n';
 
 export const NOTIFY_STORAGE = 'stoikos_notify_enabled';
 
+/**
+ * Zamanlanmış yerel bildirim WEB'DE YOK.
+ *
+ * Tarayıcıların "her gün 09:00'da bildirim gönder" diye bir API'si bulunmuyor
+ * (Notification Triggers önerisi terk edildi); expo-notifications da bu yüzden
+ * scheduleNotificationAsync / cancelAllScheduledNotificationsAsync'i web'de
+ * desteklemiyor — çağrılınca FIRLATIYOR ("... is not available on web").
+ * Önceden bu hata Onboarding'de boş bir catch'le yutuluyor, Ayarlar'da hiç
+ * yakalanmıyordu: kullanıcı düğmeye basıyor, hiçbir şey olmuyordu.
+ * Mobil uygulamada (iOS/Android) sorunsuz çalışır.
+ */
+export const REMINDERS_SUPPORTED = Platform.OS !== 'web';
+
 // Bildirim metinleri (4 dil)
 const TEXTS: Record<Lang, { morningT: string; morningB: string; eveningT: string; eveningB: string }> = {
   tr: {
@@ -68,6 +81,7 @@ async function ensurePermission(): Promise<boolean> {
 
 // Günlük sabah (09:00) ve akşam (21:00) hatırlatıcıları kur
 export async function enableReminders(lang: Lang): Promise<boolean> {
+  if (!REMINDERS_SUPPORTED) return false;
   const ok = await ensurePermission();
   if (!ok) return false;
 
@@ -95,13 +109,13 @@ export async function enableReminders(lang: Lang): Promise<boolean> {
 }
 
 export async function disableReminders(): Promise<void> {
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  if (REMINDERS_SUPPORTED) await Notifications.cancelAllScheduledNotificationsAsync();
   await AsyncStorage.setItem(NOTIFY_STORAGE, '0');
 }
 
 // Dil değişince, açıksa hatırlatıcıları yeni dille yeniden kur
 export async function refreshRemindersLanguage(lang: Lang): Promise<void> {
-  if (await isNotifyEnabled()) {
+  if (REMINDERS_SUPPORTED && await isNotifyEnabled()) {
     await enableReminders(lang);
   }
 }

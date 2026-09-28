@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang, LANGUAGES } from '../constants/i18n';
-import { isNotifyEnabled, enableReminders, disableReminders } from '../constants/notify';
+import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
@@ -25,13 +25,18 @@ export default function SettingsScreen() {
   useEffect(() => { AsyncStorage.getItem(ADMIN_KEY_STORAGE).then((k) => k && setAdminKey(k)); }, []);
 
   async function toggleNotify() {
-    if (notifyOn) {
-      await disableReminders();
-      setNotifyOn(false);
-    } else {
-      const ok = await enableReminders(lang);
-      if (ok) setNotifyOn(true);
-      else Alert.alert('Stoikos', t('notify.denied'));
+    if (!REMINDERS_SUPPORTED) return;   // web: kart zaten açıklama gösteriyor
+    try {
+      if (notifyOn) {
+        await disableReminders();
+        setNotifyOn(false);
+      } else {
+        const ok = await enableReminders(lang);
+        if (ok) setNotifyOn(true);
+        else Alert.alert('Stoikos', t('notify.denied'));
+      }
+    } catch {
+      Alert.alert('Stoikos', t('notify.denied'));
     }
   }
 
@@ -112,14 +117,23 @@ export default function SettingsScreen() {
         </View>
 
         {/* Günlük hatırlatıcılar */}
-        <TouchableOpacity style={styles.notifyCard} onPress={toggleNotify} activeOpacity={0.85}>
+        <TouchableOpacity
+          style={[styles.notifyCard, !REMINDERS_SUPPORTED && styles.notifyCardOff]}
+          onPress={toggleNotify}
+          disabled={!REMINDERS_SUPPORTED}
+          activeOpacity={0.85}
+        >
           <View style={{ flex: 1 }}>
             <Text style={styles.notifyTitle}>{t('notify.title')}</Text>
-            <Text style={styles.notifyHint}>{t('notify.hint')}</Text>
+            <Text style={styles.notifyHint}>
+              {REMINDERS_SUPPORTED ? t('notify.hint') : t('notify.webOnly')}
+            </Text>
           </View>
-          <View style={[styles.toggle, notifyOn && styles.toggleOn]}>
-            <View style={[styles.toggleKnob, notifyOn && styles.toggleKnobOn]} />
-          </View>
+          {REMINDERS_SUPPORTED && (
+            <View style={[styles.toggle, notifyOn && styles.toggleOn]}>
+              <View style={[styles.toggleKnob, notifyOn && styles.toggleKnobOn]} />
+            </View>
+          )}
         </TouchableOpacity>
 
         {/* Tanıtımı tekrar göster */}
@@ -209,6 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 20,
     borderWidth: 1, borderColor: 'rgba(212,146,74,0.18)',
   },
+  notifyCardOff: { opacity: 0.7 },
   notifyTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3, marginBottom: 4 },
   notifyHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 16 },
   toggle: { width: 46, height: 27, borderRadius: 14, backgroundColor: Colors.stone4, padding: 3, justifyContent: 'center' },

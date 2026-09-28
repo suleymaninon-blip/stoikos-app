@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang, LANGUAGES } from '../constants/i18n';
-import { enableReminders, disableReminders } from '../constants/notify';
+import { enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -194,10 +194,14 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   );
 
   const toggleReminders = async () => {
+    // Web'de zamanlanmış bildirim yok (bkz. notify.ts). Eskiden burada hata boş
+    // bir catch'le yutuluyordu ve düğme hiçbir şey yapmıyordu; artık düğme
+    // web'de pasif ve nedenini söylüyor.
+    if (!REMINDERS_SUPPORTED) return;
     try {
       if (!remindOn) { const ok = await enableReminders(lang); setRemindOn(ok); }
       else { await disableReminders(); setRemindOn(false); }
-    } catch { /* web/desteklenmiyor → sessiz geç */ }
+    } catch { setRemindOn(false); }
   };
 
   return (
@@ -278,14 +282,18 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
                     {s.reminders && (
                       <TouchableOpacity
-                        style={[styles.remindBtn, remindOn && styles.remindBtnOn]}
+                        style={[styles.remindBtn, remindOn && styles.remindBtnOn, !REMINDERS_SUPPORTED && styles.remindBtnOff]}
                         onPress={toggleReminders}
+                        disabled={!REMINDERS_SUPPORTED}
                         activeOpacity={0.85}
                       >
                         <Text style={[styles.remindText, remindOn && styles.remindTextOn]}>
                           {remindOn ? t('onb.remindOn') : t('onb.remind')}
                         </Text>
                       </TouchableOpacity>
+                    )}
+                    {!REMINDERS_SUPPORTED && (
+                      <Text style={styles.remindWebNote}>{t('notify.webOnly')}</Text>
                     )}
                   </>
                 )}
@@ -355,6 +363,8 @@ const styles = StyleSheet.create({
     marginTop: 26, borderRadius: 22, paddingHorizontal: 22, paddingVertical: 12,
     backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(194,168,120,0.3)',
   },
+  remindBtnOff: { opacity: 0.45 },
+  remindWebNote: { fontFamily: Fonts.jostLight, fontSize: 12.5, color: Colors.muted, textAlign: 'center', marginTop: 12, lineHeight: 18, paddingHorizontal: 12 },
   remindBtnOn: { backgroundColor: 'rgba(194,168,120,0.18)', borderColor: Colors.sand },
   remindText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, letterSpacing: 0.3 },
   remindTextOn: { color: Colors.sand2 },
