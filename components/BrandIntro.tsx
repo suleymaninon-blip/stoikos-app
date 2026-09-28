@@ -1,10 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+
+/** Işığın dikey merkezi (ekran yüksekliğinin oranı). Logo grubu ortalı ama
+ *  Ω merkezin biraz üstünde — en parlak nokta Ω ile STOIKOS arasına düşsün. */
+const GLOW_CENTER_Y = 0.46;
 
 export function BrandIntro({ onFinish }: { onFinish: () => void }) {
   const { t } = useLang();
@@ -45,18 +49,35 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
 
   return (
     <Animated.View style={[styles.container, { opacity: screenFade }]} pointerEvents="none">
-      {/* arka plan ışıltısı */}
-      <Animated.View style={[styles.glowWrap, { opacity: glow }]}>
-        <LinearGradient
-          colors={['rgba(212,146,74,0.22)', 'rgba(196,169,106,0.06)', 'transparent']}
-          style={styles.glow}
-          start={{ x: 0.5, y: 0.5 }}
-          end={{ x: 0.5, y: 1 }}
-        />
+      {/* Logonun ARKASINDA sıcak ışıltı — radyal.
+          Önceden bir dairenin içine konmuş DOĞRUSAL gradyandı (y 0.5 → 1):
+          dairenin üst yarısı tam parlak kalıyor, sönme ortadan aşağı
+          başlıyordu. Sonuç logonun üstünde düz bir ışık kubbesiydi, Ω ise
+          sönmenin başladığı karanlık bölgeye düşüyordu.
+          userSpaceOnUse: ekran kare olmadığı için yüzde yarıçap elipse
+          dönerdi; piksel cinsinden yarıçap daireyi korur. */}
+      <Animated.View style={[StyleSheet.absoluteFill, { opacity: glow }]} pointerEvents="none">
+        <Svg width={width} height={height}>
+          <Defs>
+            <RadialGradient
+              id="introGlow"
+              cx={width / 2}
+              cy={height * GLOW_CENTER_Y}
+              r={width * 0.78}
+              gradientUnits="userSpaceOnUse"
+            >
+              <Stop offset="0" stopColor="#d4924a" stopOpacity="0.26" />
+              <Stop offset="0.42" stopColor="#c4a96a" stopOpacity="0.09" />
+              <Stop offset="1" stopColor="#c4a96a" stopOpacity="0" />
+            </RadialGradient>
+          </Defs>
+          <Rect x="0" y="0" width={width} height={height} fill="url(#introGlow)" />
+        </Svg>
       </Animated.View>
 
-      {/* dev soluk Ω (dekor) */}
-      <Animated.Text style={[styles.omegaFaint, { opacity: Animated.multiply(glow, 0.5) }]}>Ω</Animated.Text>
+      {/* (Arkadaki 240px'lik soluk Ω kaldırıldı: %5 opaklıkta ne net filigran
+          ne görünmezdi, ayakları ince çizginin iki ucunda dışarı taşıyordu.
+          Ekranda iki Ω vardı; küçük altın Ω tek başına yeterince güçlü.) */}
 
       {/* ana Ω */}
       <Animated.Text style={[styles.omega, { opacity: omegaOpacity, transform: [{ scale: omegaScale }] }]}>Ω</Animated.Text>
@@ -87,9 +108,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 999,
   },
-  glowWrap: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
-  glow: { width: width * 1.4, height: width * 1.4, borderRadius: width },
-  omegaFaint: { position: 'absolute', fontFamily: Fonts.cinzel, fontSize: 240, color: 'rgba(196,169,106,0.05)', lineHeight: 260 },
   omega: { fontFamily: Fonts.cinzelBold, fontSize: 76, color: Colors.sand2, lineHeight: 84, marginBottom: 6 },
   name: { fontFamily: Fonts.cinzelBold, fontSize: 34, letterSpacing: 8, color: Colors.sand3, marginTop: -4 },
   lineRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18, marginBottom: 14 },
