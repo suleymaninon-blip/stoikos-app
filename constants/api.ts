@@ -83,11 +83,12 @@ export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<Coach
 // Koç hafızasını sıfırla
 export async function resetMemory(): Promise<void> {
   const userId = await getUserId();
-  await fetch(`${BACKEND_URL}/memory/reset`, {
+  const res = await fetch(`${BACKEND_URL}/memory/reset`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ userId }),
   });
+  if (!res.ok) throw new Error(`memory reset ${res.status}`);
 }
 
 // Günlük yansımayı koç hafızasına işle (fire-and-forget; başarısızsa sessiz)

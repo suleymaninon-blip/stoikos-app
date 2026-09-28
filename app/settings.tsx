@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, TextInput,
-  StyleSheet, SafeAreaView, Alert, Linking, Share, Platform,
+  StyleSheet, SafeAreaView, Linking, Share, Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
@@ -13,6 +13,7 @@ import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
+import { notify, confirmAction } from '../constants/dialog';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -33,22 +34,29 @@ export default function SettingsScreen() {
       } else {
         const ok = await enableReminders(lang);
         if (ok) setNotifyOn(true);
-        else Alert.alert('Stoikos', t('notify.denied'));
+        else notify('Stoikos', t('notify.denied'));
       }
     } catch {
-      Alert.alert('Stoikos', t('notify.denied'));
+      notify('Stoikos', t('notify.denied'));
     }
   }
 
-  function resetCoachMemory() {
-    Alert.alert(
-      t('memory.resetTitle'),
-      t('memory.resetMsg'),
-      [
-        { text: t('progress.cancel'), style: 'cancel' },
-        { text: t('progress.reset'), style: 'destructive', onPress: () => { resetMemory(); } },
-      ]
-    );
+  async function resetCoachMemory() {
+    const ok = await confirmAction({
+      title: t('memory.resetTitle'),
+      message: t('memory.resetMsg'),
+      confirmText: t('progress.reset'),
+      cancelText: t('progress.cancel'),
+      destructive: true,
+    });
+    if (!ok) return;
+    // Silindiğini ancak sunucu onaylarsa söylüyoruz — gizlilik sözü bu.
+    try {
+      await resetMemory();
+      notify(t('memory.resetTitle'), t('memory.resetDone'));
+    } catch {
+      notify(t('memory.resetTitle'), t('memory.resetFailed'));
+    }
   }
 
   async function showOnboardingAgain() {
@@ -59,16 +67,19 @@ export default function SettingsScreen() {
   async function shareApp() {
     try { await Share.share({ message: `${t('about.shareMsg')} ${APP_INFO.shareUrl}` }); } catch {}
   }
+  // Mağaza bağlantısı yoksa (web, ya da yayından önce) satır hiç gösterilmez;
+  // eskiden kendi sitemize düşüyordu, "Değerlendir" diyip siteyi açmak yanıltıcı.
+  const storeUrl = Platform.OS === 'ios' ? APP_INFO.storeUrl.ios
+    : Platform.OS === 'android' ? APP_INFO.storeUrl.android : '';
   function rateApp() {
-    const store = Platform.OS === 'ios' ? APP_INFO.storeUrl.ios : APP_INFO.storeUrl.android;
-    Linking.openURL(store || APP_INFO.shareUrl).catch(() => {});
+    if (storeUrl) Linking.openURL(storeUrl).catch(() => {});
   }
   function contactSupport() {
     const url = `mailto:${APP_INFO.supportEmail}?subject=${encodeURIComponent(t('about.supportSubject'))}`;
-    Linking.openURL(url).catch(() => Alert.alert(t('about.support'), APP_INFO.supportEmail));
+    Linking.openURL(url).catch(() => notify(t('about.support'), APP_INFO.supportEmail));
   }
   function showAbout() {
-    Alert.alert('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
+    notify('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
   }
   function openPrivacy() {
     const url = lang === 'tr' ? APP_INFO.privacyUrl : APP_INFO.privacyUrlEn;
@@ -151,7 +162,7 @@ export default function SettingsScreen() {
         <View style={styles.aboutCard}>
           {[
             { icon: '↗', label: t('about.share'), onPress: shareApp },
-            { icon: '★', label: t('about.rate'), onPress: rateApp },
+            ...(storeUrl ? [{ icon: '★', label: t('about.rate'), onPress: rateApp }] : []),
             { icon: '✉', label: t('about.support'), onPress: contactSupport },
             { icon: '🔒', label: t('about.privacy'), onPress: openPrivacy },
             { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
