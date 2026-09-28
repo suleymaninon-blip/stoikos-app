@@ -51,10 +51,10 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
             : null}
         </View>
         <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]}>
-          <Text style={[styles.listenIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
+          <Text style={[styles.glyphIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn}>
-          <Text style={styles.listenIcon}>↗</Text>
+          <Text style={styles.glyphIcon}>↗</Text>
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -566,9 +566,15 @@ const styles = StyleSheet.create({
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
   quoteAuthorLink: { color: Colors.accent },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
-  listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
+  listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.38)' },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
+  // SVG sarmalayıcı (kavram hoparlörü, satır ~96) — View'e uygulanıyor, boyut doğru.
   listenIcon: { width: 14, height: 14 },
+  // Metin glifi (♡ ♥ ↗) — Text'e uygulanıyor. Bir glif için width/height
+  // neredeyse hiçbir şey yapmaz; fontSize ve color şart. Önceden ikisi AYNI
+  // stili paylaşıyordu, bu yüzden glifler renksiz kalıp varsayılan koyu renge
+  // düşüyordu ve paylaş düğmesi karanlıkta kayboluyordu.
+  glyphIcon: { fontSize: 15, lineHeight: 18, color: Colors.sand2 },
   favBtnActive: { backgroundColor: 'rgba(212,146,74,0.2)', borderColor: Colors.accent },
   favIconActive: { color: Colors.accent },
   modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)', marginTop: 4, marginBottom: 4 },
