@@ -1,6 +1,7 @@
 # Arkadaşınla Program — Tasarım Notu
 
-> Durum: **taslak, yapılmadı.** Hedef sürüm: v1.1 (yayından sonraki ilk güncelleme).
+> Durum: **taslak, yapılmadı.** Ekranlar, veri altyapısı ve API sözleşmesinin ayrıntısı en alttaki **Ek A–E**'de.
+> Hedef sürüm: v1.1 (yayından sonraki ilk güncelleme).
 > Tarih: 28 Eylül 2026.
 
 ## 1. Neden bu, neden birebir mesajlaşma değil
@@ -239,3 +240,511 @@ geçmeden önce neden artmadığı anlaşılmalı.
 - Tek başına ilerlemeyle eşleşmeli ilerleme ayrı mı tutulsun? *Öneri:* evet;
   eşleşme bitince kullanıcı kaldığı günle tek başına devam edebilir (ilerleme
   yerel anahtara kopyalanır).
+
+---
+
+# EKLER — Uygulama düzeyinde ayrıntı
+
+> Aşağıdaki üç ek, yukarıdaki kararları kodlanabilir hâle getirir. Çelişki
+> olursa **ekler geçerlidir** (daha sonra ve daha ayrıntılı yazıldılar).
+
+## Ek A — Ekranlar
+
+Mevcut yapı: `app/programs.tsx` tek ekran — program listesi, `openId` ile
+açılan program detayı (gün listesi) ve `dayIdx` ile açılan gün modalı. Ana
+ekranda programlara giden tek satır var (`ModuleRow` "❖"). Yeni tasarım bu
+yapıyı bozmaz; üstüne katman ekler.
+
+### A1. Program listesi (değişiklik küçük)
+
+```
+┌──────────────────────────────────────┐
+│ ◎  Kontrol Dairesi            3/7    │
+│    7 günde huzurun temeli            │
+│    👥 Ayşe ile · Ayşe 4/7            │  ← yalnız eşleşme varsa
+├──────────────────────────────────────┤
+│ ▲  Öfkeyle Çalışmak           0/7    │
+│    👥 Davet bekleniyor · 6 gün       │  ← açık davet varsa
+└──────────────────────────────────────┘
+```
+
+Durumlar: eşleşme yok → satır yok · davet açık → "Davet bekleniyor · N gün" ·
+aktif → "<ad> ile · <ad> n/7" · arkadaş bugün bir şey yaptıysa satır başında
+altın nokta (okunmamış olay).
+
+### A2. Program detayı — tek başına (yeni satır)
+
+Gün listesinin **üstüne**, program başlığının altına:
+
+```
+  ┌────────────────────────────────────┐
+  │ 👥  Bir arkadaşla yürü           › │
+  │     Birbirinizin ilerlemesini görün │
+  └────────────────────────────────────┘
+```
+
+Görünürlük kuralları:
+| Durum | Satır |
+|---|---|
+| Plus + eşleşme yok + kullanıcının başka aktif eşleşmesi yok | görünür |
+| Plus değil | görünür, dokununca Paywall (metin: "Arkadaşını davet etmek Plus'a dahil") |
+| Başka programda aktif eşleşme var | gizli (v1: tek aktif eşleşme) |
+| Web | görünür (özellik web'de de çalışır; yalnız push yok) |
+
+### A3. Davet alt sayfası (yeni, `components/PairInviteSheet.tsx`)
+
+Üç adım, aynı sayfada sırayla:
+
+```
+Adım 1 — Ad                      Adım 2 — Hazır                 Adım 3 — Beklerken
+┌─────────────────────────┐      ┌─────────────────────────┐    ┌─────────────────────────┐
+│ Arkadaşın seni nasıl    │      │     K 7 M 4 Q P         │    │ Davet gönderildi        │
+│ görsün?                 │      │                         │    │ 7 gün geçerli           │
+│ [ Ayşe              ]   │      │ [  Davet gönder  ↗  ]   │    │                         │
+│ En çok 20 karakter      │      │ [  Kodu kopyala     ]   │    │ K7M4QP  · Kopyala       │
+│                         │      │                         │    │ Tekrar gönder           │
+│ [   Devam   ]           │      │ Arkadaşın katılınca     │    │ Daveti iptal et         │
+└─────────────────────────┘      │ burada göreceksin.      │    └─────────────────────────┘
+                                 └─────────────────────────┘
+```
+
+- Takma ad `stoikos_pair_nickname` anahtarında hatırlanır; ikinci davette dolu gelir.
+- "Davet gönder" → `Share.share` (web'de `navigator.share`, yoksa panoya kopyala +
+  "Kopyalandı" bildirimi — `Alert` değil, `constants/dialog.ts` → `notify`).
+- Hata durumları: 402 → Paywall · 409 (zaten aktif eşleşme) → mesaj · ağ hatası →
+  "Bağlanılamadı, tekrar dene" ve adım 1'de kal.
+- Yeniden başlatma uyarısı: kullanıcının o programda tek başına ilerlemesi
+  varsa adım 1'in altında: "Birlikte 1. günden başlayacaksınız. Tek başına
+  ilerlemen (3/7) saklanır." (Ek B4'e bak — silinmez.)
+
+### A4. Katılma ekranı (yeni, `app/join/[code].tsx`)
+
+Giriş yolları: `stoikos://davet/K7M4QP` · web `…/stoikos-app/join/K7M4QP` ·
+Ayarlar/Onboarding'deki "Davet kodum var" alanı → `router.push('/join/' + kod)`.
+
+```
+┌──────────────────────────────────────┐
+│                 ▲                    │
+│   Ayşe seni birlikte yürümeye        │
+│   çağırıyor                          │
+│                                      │
+│   ÖFKEYLE ÇALIŞMAK · 7 gün           │
+│   "Öfke geldiğinde ilk iş: ertele."  │  ← 1. günün ilk cümlesi
+│                                      │
+│   Ayşe seni nasıl görsün?            │
+│   [ Mehmet            ]              │
+│                                      │
+│   [        Katıl        ]            │
+│   Vazgeç                             │
+│                                      │
+│   Görünen: takma adın ve hangi       │
+│   günde olduğun. Yansımaların        │
+│   paylaşılmaz.                       │  ← gizlilik özeti, her zaman görünür
+└──────────────────────────────────────┘
+```
+
+Durumlar (`GET /pair/preview` yanıtına göre):
+| Yanıt | Ekran |
+|---|---|
+| 200 | yukarıdaki |
+| 404 `not_found` | "Bu kod bulunamadı. Harfleri kontrol et." + kod giriş alanı |
+| 410 `expired` / `used` | "Bu davetin süresi dolmuş / kullanılmış. Ayşe'den yenisini iste." |
+| 409 `self` | "Kendi davetine katılamazsın." (aynı userId) |
+| 409 `already_paired` | "Zaten bir programı birlikte yürüyorsun. Önce onu bırak." |
+| ağ hatası | tekrar dene düğmesi |
+
+Katıl → `POST /pair/join` → başarıda `router.replace('/programs?open=<programId>')`.
+Onboarding tamamlanmamışsa katılma ekranı onboarding **sonrasına** ertelenir
+(kod `stoikos_pending_invite`'ta bekler).
+
+### A5. Program detayı — birlikte (değişen ekran)
+
+```
+┌──────────────────────────────────────┐
+│ ▲ Öfkeyle Çalışmak                   │
+│ 👥 Ayşe ile          Sen 3/7 · A 4/7 │
+│ Ayşe 4. günü bitirdi · 2 sa önce     │
+├──────────────────────────────────────┤
+│ 1  Ertele                     ● ●    │  ← sol nokta sen, sağ nokta Ayşe
+│ 2  İstemsiz olanı ayır        ● ●    │     dolu: bitti · boş halka: bitmedi
+│ 3  Yargıyı bul                ● ●    │
+│ 4  Yargıyı değiştir           ○ ●    │
+│ 5  Bedeli gör  🔒             ○ ○    │
+├──────────────────────────────────────┤
+│ AYŞE'YE YAZ                          │
+│ (Bugünü bitirdim ✓)(Aklımdasın)(🔥)… │  ← yatay kaydırılan çipler
+│                                      │
+│ Ayşe: Sen de yapabilirsin 💪 · dün   │  ← son 3 olay (mesaj + gün bitirme)
+│ Sen:  Teşekkürler 🙏 · dün           │
+├──────────────────────────────────────┤
+│ Birlikte yürümeyi bırak              │  ← en altta, sönük
+└──────────────────────────────────────┘
+```
+
+- Nokta renkleri program rengini kullanır; erişilebilirlik için her nokta
+  `accessibilityLabel` alır ("Ayşe: tamamladı").
+- Çipe dokununca iyimser güncelleme: olay listeye hemen eklenir, çip 1 sn
+  "Gönderildi ✓" olur; sunucu reddederse geri alınır ve çipin altında neden
+  yazar (ör. `waiting` günlük sınırı: "Bugün zaten haber verdin").
+- `waiting` çipi yalnız arkadaş **en az 1 gün geride** ise görünür.
+- "Birlikte yürümeyi bırak" → `confirmAction` (iki dokunuş değil, onay kutusu;
+  geri alınamaz) → `POST /pair/leave`.
+- Arkadaş ayrıldıysa: üst satır "Ayşe birlikte yürümeyi bıraktı. Tek başına
+  devam edebilirsin." ve ekran tek başına görünüme döner (ilerleme korunur).
+
+### A6. Gün modalı (küçük değişiklik)
+
+"Tamamladım" işaretlenince mevcut kapanma davranışı aynen kalır. Eşleşme
+varsa modalın alt notu: "Ayşe'ye haber verildi." Bu, gün bitirmenin
+arkadaşa görünür olduğunu ilk kullanımda açıkça söyler.
+
+### A7. Bitiş (mevcut bitiş akışına ek)
+
+| Durum | Ek blok (kapanış yansımasının **üstünde**) |
+|---|---|
+| İkisi de bitirdi | "İkiniz de yedi günü tamamladınız." + `Sıradakini birlikte başlat` |
+| Sen bitirdin, arkadaş bitirmedi | "Ayşe 4. günde. Ona cesaret ver." + çip şeridi |
+| Arkadaş bitirdi, sen bitirmedin | (bitiş ekranı henüz yok; A5'teki durum satırı yeter) |
+| Misafirsin ve ikiniz de bitirdiniz | `Sıradakini birlikte başlat` → Paywall (misafir geçişi bitti) |
+
+`Sıradakini birlikte başlat` → yeni program için `POST /pair/create` +
+`autoInvite: pairId` (Ek C3): arkadaşa kod göndermeye gerek kalmadan aynı iki
+kişi yeni eşleşmeye düşer; arkadaşın ekranında "Ayşe sıradaki programı
+önerdi · Katıl / Şimdi değil".
+
+### A8. Diğer yerler
+
+- **Ana ekran:** `ModuleRow` "❖ Programlar" açıklaması eşleşme varsa değişir:
+  "Ayşe ile · Ayşe bugün 4. günü bitirdi". Okunmamış olay varsa altın nokta.
+- **Ayarlar:** "Davet kodum var" satırı → 6 haneli kod alanı (büyük harfe
+  çevirir, alfabe dışı karakterde uyarır — Ek B3) → A4.
+- **Onboarding:** son slayda küçük bağlantı "Davet kodun mu var?" (yalnız
+  uygulamayı bir davetle indirenler için; bağlantı sönük).
+
+## Ek B — Veri altyapısı
+
+### B1. Sunucu (D1) — kesin şema
+
+§7'deki şemanın yerine geçer. Değişiklikler: gün ilerlemesi JSON yerine ayrı
+tablo (tekil işaretleme çakışmasız olsun diye), `pair_reads` (okunmadı
+noktası), `invites` ayrı tablo (bir eşleşme birden çok davet geçmişi taşıyabilsin).
+
+```sql
+-- Eşleşme: iki kişilik program yolculuğu
+CREATE TABLE IF NOT EXISTS pairs (
+  id            TEXT PRIMARY KEY,               -- 'p_' + 20 rastgele karakter
+  program_id    TEXT NOT NULL,                  -- programs.ts id'si
+  status        TEXT NOT NULL DEFAULT 'open',   -- open | active | ended
+  end_reason    TEXT,                           -- left | inactive | cancelled
+  prev_pair_id  TEXT,                           -- "sıradakini birlikte" zinciri
+  created_at    INTEGER NOT NULL,
+  last_activity INTEGER NOT NULL,
+  ended_at      INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_pairs_status_act ON pairs (status, last_activity);
+
+-- Üyeler. user_id YALNIZ sunucuda; istemciye member_id gider.
+CREATE TABLE IF NOT EXISTS pair_members (
+  pair_id    TEXT NOT NULL,
+  member_id  TEXT NOT NULL,                     -- 'm_' + 12 rastgele karakter
+  user_id    TEXT NOT NULL,
+  nickname   TEXT NOT NULL,
+  role       TEXT NOT NULL,                     -- host | guest
+  joined_at  INTEGER NOT NULL,
+  left_at    INTEGER,
+  PRIMARY KEY (pair_id, member_id)
+);
+CREATE INDEX IF NOT EXISTS idx_pm_user ON pair_members (user_id, left_at);
+
+-- Davet kodları
+CREATE TABLE IF NOT EXISTS pair_invites (
+  code       TEXT PRIMARY KEY,                  -- 6 karakter, alfabe Ek B3
+  pair_id    TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  used_at    INTEGER,
+  used_by    TEXT                               -- member_id
+);
+
+-- Gün ilerlemesi (eşleşme içindeki)
+CREATE TABLE IF NOT EXISTS pair_days (
+  pair_id   TEXT NOT NULL,
+  member_id TEXT NOT NULL,
+  day       INTEGER NOT NULL,                   -- 0 tabanlı, programs.ts ile aynı
+  done_at   INTEGER NOT NULL,
+  PRIMARY KEY (pair_id, member_id, day)
+);
+
+-- Olay akışı: gün bitirme + hazır mesaj + sistem olayları
+CREATE TABLE IF NOT EXISTS pair_events (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  pair_id     TEXT NOT NULL,
+  from_member TEXT NOT NULL,                    -- sistem olayında 'sys'
+  kind        TEXT NOT NULL,                    -- day_done | msg | joined | left | next_proposed
+  payload     TEXT NOT NULL,                    -- gün no | mesaj anahtarı | yeni pair_id
+  created_at  INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_pe_pair ON pair_events (pair_id, id);
+
+-- Okundu imleci (altın nokta için)
+CREATE TABLE IF NOT EXISTS pair_reads (
+  pair_id    TEXT NOT NULL,
+  member_id  TEXT NOT NULL,
+  last_event INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (pair_id, member_id)
+);
+```
+
+Neden D1, KV değil: eşleşme ilişkisel (iki üye, olaylar, "kullanıcının aktif
+eşleşmesi var mı" sorgusu); KV'de bu sorgular tam tarama ister. D1 zaten
+Meydan Okuma için bağlı (`env.DB`), yeni kaynak gerekmez.
+
+### B2. Veri yaşam döngüsü
+
+| Olay | Ne olur |
+|---|---|
+| Davet oluşturuldu | `pairs(open)` + `pair_members(host)` + `pair_invites` |
+| 7 gün katılım yok | davet geçersiz; cron `pairs` → `ended/cancelled` |
+| Katılım | `status=active`, `used_at`, `pair_members(guest)`, `joined` olayı |
+| Ayrılma | `left_at`, `status=ended/left`, `left` olayı |
+| 14 gün hareketsiz | cron → `ended/inactive` |
+| `ended` + 30 gün | cron **fiziksel olarak siler**: 5 tablodaki tüm satırlar |
+| Hafıza sıfırlama (`/memory/reset`) | eşleşmelere dokunmaz (ayrı veri; gizlilik metni bunu söylemeli) |
+
+Silme süresi (30 gün) gizlilik politikasına aynen yazılmalı.
+
+### B3. Kimlikler ve kodlar
+
+- `pair_id`, `member_id`: `crypto.getRandomValues` ile, Worker'da.
+- Davet kodu alfabesi: `ABCDEFGHJKMNPQRSTUVWXYZ2345679` (30 karakter; `I L O 0 1 8`
+  yok). 6 hane → 30⁶ ≈ 729 milyon. Çakışmada yeniden üret (en çok 5 deneme).
+- İstemci girişini normalleştirme: büyük harfe çevir, boşluk ve tireyi sil.
+  Alfabede olmayan karakter (`I L O 0 1 8`) görülürse **tahmin edip
+  düzeltme yapılmaz** — yanlış bir koda eşleştirebilir; bunun yerine
+  "Bu karakter kodlarda yok" uyarısı gösterilir.
+- **`user_id` hiçbir yanıtta yer almaz.** Test: her `/pair/*` yanıtı
+  `JSON.stringify` edilip `u_` öneki aranır; birim testte zorunlu.
+
+### B4. İstemci (AsyncStorage)
+
+| Anahtar | İçerik | Not |
+|---|---|---|
+| `stoikos_pair_state` | son `/pair/state` yanıtı | çevrimdışı görünüm için önbellek |
+| `stoikos_pair_outbox` | gönderilemeyen `day`/`msg` istekleri | Ek B5 |
+| `stoikos_pair_nickname` | son kullanılan takma ad | |
+| `stoikos_pending_invite` | onboarding bitmeden gelen kod | |
+| `stoikos_program_<id>` | **tek başına** ilerleme — dokunulmaz | |
+| `stoikos_program_pair_<pairId>` | eşleşmeli ilerlemenin yerel kopyası | |
+
+İki ilerleme bilerek ayrı: eşleşme bitince kullanıcıya "Kaldığın yerden tek
+başına devam et" sunulur → `stoikos_program_pair_<pairId>` içeriği
+`stoikos_program_<id>`'ye kopyalanır (tek başına ilerleme daha ileriyse
+dokunulmaz — büyük olan kazanır).
+
+Gün kilidi (`isUnlocked`) eşleşme varsa `stoikos_program_pair_<pairId>`'e
+bakar; kural aynı: kendi önceki günün bitmişse açık.
+
+### B5. Senkronizasyon
+
+- **Çekme:** program ekranı odaklanınca + açıkken 60 sn'de bir + uygulama
+  ön plana gelince `GET /pair/state?since=<son olay id>`. Gerçek zamanlı
+  bağlantı (WebSocket/Durable Object) **gerekmez**: olaylar günde birkaç tane.
+- **Gönderme:** yerel yazım önce (`stoikos_program_pair_<pairId>`), sonra
+  `POST`. Başarısızsa `stoikos_pair_outbox`'a eklenir; sonraki çekmede sırayla
+  yeniden denenir. İstekler **idempotent**: `pair_days` birincil anahtarı aynı
+  günün iki kez yazılmasını engeller; mesajlar istemci üretimli `clientId`
+  taşır (Ek C), sunucu aynı `clientId`'yi ikinci kez yazmaz.
+- **Çakışma:** tek yazarlı veri (her üye yalnız kendi günlerini yazar), bu
+  yüzden birleştirme kuralı gerekmez.
+
+### B6. Maliyet
+
+Kullanıcı başına günde ~3 yazma + ~30 okuma (60 sn çekme, ekran açıkken).
+D1 ücretsiz katmanı günde 5 milyon okuma / 100 bin yazma → ~30 bin günlük
+aktif eşleşmeli kullanıcıya kadar ek maliyet yok. Claude çağrısı yalnız takma
+ad denetiminde (eşleşme başına 2 × Haiku, ~$0,0002).
+
+## Ek C — Backend uç noktaları (API sözleşmesi)
+
+Ortak kurallar:
+- Tüm yollar `backend/src/index.ts` içinde, `/pair/` önekiyle; mevcut `json()`
+  ve `CORS` kullanılır.
+- Kimlik: şimdilik diğer uçlarla aynı — `userId` gövdede (POST) ya da sorguda
+  (GET). RevenueCat'e geçişte hepsi birlikte değişecek.
+- Hata biçimi: `{ "error": "<kod>" }` + HTTP durumu. **Kullanıcıya görünen
+  metin istemcide çevrilir** (koçtaki `scope` deseni); sunucu Türkçe cümle döndürmez.
+- Hız sınırı: mevcut `hitLimit`. Varsayılan kullanıcı başına dakikada 20,
+  kod deneyen uçlarda (`preview`, `join`) IP başına dakikada 10 + günde 100.
+- Takma ad: `trim`, kontrol karakterleri silinir, 1–20 karakter, sonra Haiku
+  denetimi (`moderateNickname`, `moderateQuote` deseni). Reddedilirse
+  `400 nickname_rejected`.
+
+### C1. `POST /pair/create`
+
+```json
+// istek
+{ "userId": "u_…", "programId": "anger", "nickname": "Ayşe",
+  "autoInvite": "p_önceki" }            // isteğe bağlı, A7
+// 200
+{ "pairId": "p_x9…", "code": "K7M4QP", "expiresAt": 1759700000000,
+  "link": "https://stoikos.app/davet/K7M4QP" }
+```
+Hatalar: `402 plus_required` · `409 already_paired` (açık/aktif eşleşme var;
+yanıtta `pairId` döner, istemci onu açar) · `400 bad_program` ·
+`400 nickname_rejected` · `429 rate_limited`.
+`autoInvite` verilirse: önceki eşleşmenin iki üyesi de bu eşleşmeye doğrudan
+eklenir, davet kodu üretilmez, diğer üyeye `next_proposed` olayı yazılır;
+üye kabul edene kadar `status=open` kalır (kabul: C3 `join` + `pairId`).
+Misafir önceki eşleşmede misafirse bu kez de Plus kontrolü **davet eden** için yapılır.
+
+### C2. `GET /pair/preview?code=K7M4QP&userId=u_…`
+
+```json
+// 200
+{ "programId": "anger", "hostNickname": "Ayşe", "expiresAt": 1759700000000 }
+```
+Hatalar: `404 not_found` · `410 expired` · `410 used` · `409 self` ·
+`409 already_paired`. **Kimseyi katmaz**, yalnız okur.
+
+### C3. `POST /pair/join`
+
+```json
+// istek (kodla)
+{ "userId": "u_…", "code": "K7M4QP", "nickname": "Mehmet" }
+// istek (A7 önerisini kabul)
+{ "userId": "u_…", "pairId": "p_yeni" }
+// 200
+{ "pairId": "p_x9…", "memberId": "m_…", "programId": "anger", "guest": true }
+```
+Hatalar: C2'ninkiler + `400 nickname_rejected`. İşlem tek D1 `batch` içinde:
+kod `used_at IS NULL` koşuluyla güncellenir, etkilenen satır 0 ise `410 used`
+(aynı anda iki kişinin katılması yarışını böyle kapatır).
+`guest`: katılanın kendi Plus'ı yoksa `true`.
+
+### C4. `GET /pair/state?userId=u_…&since=0`
+
+```json
+// 200
+{
+  "pair": {                              // aktif ya da açık eşleşme yoksa null
+    "pairId": "p_x9…", "programId": "anger", "status": "active",
+    "me":     { "memberId": "m_a…", "nickname": "Mehmet", "role": "guest",
+                "days": [0,1,2] },
+    "friend": { "memberId": "m_b…", "nickname": "Ayşe", "role": "host",
+                "days": [0,1,2,3], "left": false },
+    "invite": null,                      // açıkken { "code", "expiresAt" }
+    "guest":  true,
+    "waitingSentToday": false,
+    "proposal": null                     // A7: { "pairId", "programId" }
+  },
+  "events": [
+    { "id": 812, "from": "m_b…", "kind": "day_done", "payload": "3", "at": 1759… },
+    { "id": 813, "from": "m_b…", "kind": "msg", "payload": "cheer", "at": 1759… }
+  ],
+  "unread": 2,
+  "lastEventId": 813
+}
+```
+`since` verilirse yalnız daha yeni olaylar döner (en çok 50). `me.days`
+sunucudaki kayıttır; istemci kendi yerel kopyasıyla birleştirip eksikleri
+outbox'tan gönderir.
+
+### C5. `POST /pair/day`
+
+```json
+{ "userId": "u_…", "pairId": "p_x9…", "day": 3, "done": true }
+// 200
+{ "ok": true, "days": [0,1,2,3] }
+```
+Kurallar: `day` aralık dışıysa `400 bad_day` · önceki gün bitmemişse
+`409 locked` (istemci zaten engelliyor; sunucu tutarlılık için) ·
+`done:false` işareti kaldırır, olay **yazmaz** (arkadaşa "geri aldı"
+bildirimi gitmesin) · `done:true` ilk kez yazılıyorsa `day_done` olayı.
+`last_activity` güncellenir.
+
+### C6. `POST /pair/msg`
+
+```json
+{ "userId": "u_…", "pairId": "p_x9…", "key": "cheer", "clientId": "c_17…" }
+// 200
+{ "ok": true, "eventId": 814 }
+```
+Kurallar: `key` beyaz listede (`done hard cheer waiting thinking thanks fire
+together`) değilse `400 bad_key` · `waiting` günde 1 → `429 waiting_limit` ·
+genel sınır eşleşme başına kişi başı günde 20 mesaj → `429 rate_limited` ·
+aynı `clientId` ikinci kez → önceki `eventId` ile `200` (idempotent).
+
+### C7. `POST /pair/read`
+
+```json
+{ "userId": "u_…", "pairId": "p_x9…", "lastEventId": 814 }
+// 200
+{ "ok": true }
+```
+Altın noktayı söndürür. Program detayı açıldığında çağrılır.
+
+### C8. `POST /pair/leave`
+
+```json
+{ "userId": "u_…", "pairId": "p_x9…" }
+// 200
+{ "ok": true, "days": [0,1,2] }         // tek başına devam için
+```
+Açık davetteyse (arkadaş henüz katılmadıysa) aynı uç daveti iptal eder
+(`end_reason=cancelled`).
+
+### C9. `GET /pair/entitlement?userId=u_…&programId=anger`
+
+```json
+{ "guest": true }
+```
+İstemcide `usePlus()` ile birlikte okunur ve önbelleklenir (Plus kararındaki
+çevrimdışı ilke aynen). `plusOk = plus || !ENFORCE_PLUS_GATE || guest`.
+Misafir geçişi eşleşme `active` iken ve eşleşmenin `program_id`'si için geçerli;
+eşleşme bitince o programı **bitirmesine** izin verilir (yarıda kesilmez),
+yeni programa geçemez.
+
+### C10. Zamanlanmış iş (`scheduled`, günde 1)
+
+`wrangler.toml` → `[triggers] crons = ["17 3 * * *"]`.
+1. Süresi geçmiş açık davetler → `ended/cancelled`.
+2. 14 gün `last_activity` olmayan aktifler → `ended/inactive` + `left` olayı ('sys').
+3. `ended_at` 30 günden eski eşleşmeler → 5 tablodan fiziksel silme.
+
+### C11. Test listesi (backend)
+
+- İki kullanıcı: davet → önizleme → katılma → iki taraf da `state`'te birbirini görüyor.
+- Aynı koda eşzamanlı iki katılım → biri `410 used`.
+- Kendi koduna katılma → `409 self`.
+- Aktif eşleşme varken yeni davet → `409 already_paired`.
+- `waiting` iki kez aynı gün → ikincisi `429`.
+- Aynı `clientId` iki kez → tek olay.
+- `done:false` → olay yok.
+- Ayrıl → arkadaşın `state`'inde `friend.left = true`; misafir o programı bitirebiliyor.
+- Hiçbir yanıtta `u_` öneki yok.
+- Cron: 14 gün sonrası `inactive`, 44 gün sonrası satır yok.
+
+## Ek D — Metin anahtarları (i18n, 6 dil)
+
+`pair.row`, `pair.rowSub`, `pair.plusNeeded`, `pair.nickQ`, `pair.nickHint`,
+`pair.continue`, `pair.send`, `pair.copy`, `pair.copied`, `pair.sentTitle`,
+`pair.validDays`, `pair.resend`, `pair.cancelInvite`, `pair.restartNote`,
+`pair.shareMsg`, `pair.joinTitle`, `pair.join`, `pair.notNow`, `pair.privacyNote`,
+`pair.err.notFound`, `pair.err.expired`, `pair.err.used`, `pair.err.self`,
+`pair.err.alreadyPaired`, `pair.err.nickRejected`, `pair.err.network`,
+`pair.with`, `pair.friendDid`, `pair.writeTo`, `pair.sentOk`, `pair.waitingLimit`,
+`pair.leave`, `pair.leaveConfirm`, `pair.friendLeft`, `pair.continueSolo`,
+`pair.notified`, `pair.bothDone`, `pair.nudgeFriend`, `pair.nextTogether`,
+`pair.proposal`, `pair.haveCode`, `pair.badChar`, `pair.pending`,
+`pair.msg.done|hard|cheer|waiting|thinking|thanks|fire|together` → **~50 anahtar × 6 dil**.
+
+## Ek E — Yapım sırası
+
+Her adım kendi başına birleştirilebilir, önceki adım olmadan çalışmayan bir
+şey yayına çıkmaz (hepsi `FEATURES.pairs = false` bayrağı arkasında):
+
+1. Şema + C1–C4 + C8 + testler (backend, bayrak arkasında zararsız).
+2. `constants/pairs.ts` + A3 davet + A4 katılma → iki cihazda uçtan uca katılma.
+3. A5 birlikte görünüm + C5–C7 + outbox.
+4. A1, A7, A8 + C9 misafir geçişi.
+5. C10 cron, gizlilik metni, i18n tamamlama.
+6. Bayrağı aç.
