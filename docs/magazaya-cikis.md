@@ -198,6 +198,15 @@ Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kal
   uygulamasından** kayıt (iPhone/iPad/Mac — web yerine uygulama akışı sık
   çalışıyor); sonuç alınamazsa Apple Developer Support'a başvuru.
 - $99 henüz ödenmedi.
+- **4 Ekim 2026 — uygulama yolu da kapalı.** Apple Developer uygulamasında
+  (iPhone, Bilge İnön hesabı) "Enroll Now" pasif ve altında: *"Enrollment
+  through the Apple Developer app is not available for this Apple Account.
+  Visit developer.apple.com/programs/enroll/."* Web de "tamamlanamadı"
+  verdiği için engel **hesap düzeyinde**, cihaz ya da tarayıcıyla ilgili değil.
+  Sıradaki adımlar: (1) **Apple Developer Support** — Membership and Account →
+  Program Enrollment, telefonla geri arama iste; (2) paralel olarak
+  **Süleyman'ın kendi Apple hesabıyla** kayıt denemesi (satıcı adı da onun
+  adı olur).
 
 ### Android cihaz ihtiyacı (tek seferlik değil)
 
