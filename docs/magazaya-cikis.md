@@ -209,7 +209,9 @@ Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kal
   adı olur).
 - **Destek talebi açıldı** — vaka no **102985513125** (eurodev@apple.com).
   7 Ekim 2026 20:30 Apple (John) devletçe verilmiş fotoğraflı kimlik istedi;
-  21:03'te kimlik aynı yazışmaya yanıt olarak gönderildi. 11 Ekim itibarıyla
+  kimlik (iki görsel, ön/arka) Apple'ın güvenli yükleme sayfası
+  **gigafiles.apple.com** üzerinden yüklendi, ikisi de yeşil tikli; 21:03'te
+  yazışmaya "gönderildi" yanıtı atıldı. 11 Ekim itibarıyla
   yanıt yok (arada yalnız 2 iş günü). Takip: ~14 Ekim'e kadar yanıt gelmezse
   aynı yazışmaya hatırlatma + hafta içi telefonla vaka numarasıyla arama.
 
