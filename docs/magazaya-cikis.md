@@ -214,6 +214,9 @@ Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kal
   yazışmaya "gönderildi" yanıtı atıldı. 11 Ekim itibarıyla
   yanıt yok (arada yalnız 2 iş günü). Takip: ~14 Ekim'e kadar yanıt gelmezse
   aynı yazışmaya hatırlatma + hafta içi telefonla vaka numarasıyla arama.
+- ✅ **Kimlik doğrulandı** (Apple, Inchara, vaka 102985513125): kişisel
+  bilgiler doğrulandı, kayda web'den ya da Apple Developer uygulamasından
+  devam edilebilir. Kalan: kaydı tamamla + $99 öde + onay e-postasını bekle.
 
 ### Android cihaz ihtiyacı (tek seferlik değil)
 
