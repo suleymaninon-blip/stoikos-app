@@ -217,6 +217,12 @@ Her iki workflow da `node-version: 20` kullanıyor; GitHub bunu kullanımdan kal
 - ✅ **Kimlik doğrulandı** (Apple, Inchara, vaka 102985513125): kişisel
   bilgiler doğrulandı, kayda web'den ya da Apple Developer uygulamasından
   devam edilebilir. Kalan: kaydı tamamla + $99 öde + onay e-postasını bekle.
+- ✅ **Ödeme yapıldı** (15 Ekim 2026, web). Uygulamada "Enroll Now" hâlâ
+  pasifti; web'de kayıt kaldığı yerden devam etti (adres/kimlik yeniden
+  istenmedi). Bireysel (Individual / Sole Proprietor) → mağazada satıcı adı
+  **Bilge İnön**. Ücret **1.029 TL** / 1 yıl (Apple'ın Türkiye yerel fiyatı).
+  Kayıt kimliği **V5P979DNU2**, sipariş no **W1468151326**.
+  Bekleyen: "Welcome to the Apple Developer Program" onay e-postası (≤48 sa).
 
 ### Android cihaz ihtiyacı (tek seferlik değil)
 
