@@ -26,6 +26,6 @@ find dist -name "*.html" -exec sed -i \
 
 mkdir site
 mv dist "site$BASE"
-cp website/index.html website/404.html site/
+cp -r website/. site/   # açılış sayfası, 404, img/, media/
 cp public/gizlilik.html public/privacy.html public/terms.html public/terms-en.html site/
 echo "site/ hazır:"; ls site

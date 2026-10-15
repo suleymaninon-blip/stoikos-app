@@ -12,7 +12,10 @@
 
 ## Yayın / Deploy
 - **Site: https://stoikos.app** — **Cloudflare Pages** projesi `stoikos-app`, bu GitHub deposuna bağlı. `main`'e her push'ta Cloudflare kendisi derler (diğer dallar önizleme olarak `<hash>.stoikos-app.pages.dev`'e düşer). Ayarlar (Cloudflare → Workers & Pages → stoikos-app → Settings → Build): kök dizin **boş** (depo kökü), build komutu **`bash scripts/build-site.sh`**, çıktı **`site`**. Alan adı Cloudflare DNS'te `stoikos.app` CNAME → `stoikos-app.pages.dev` (Proxied). Yapı:
-  - `/` → `website/index.html` (açılış sayfası; altbilgide "Web'de dene", gizlilik, koşullar)
+  - `/` → `website/index.html` — **tanıtım sayfası** (Ekim 2026; Haziran'daki "yakında" sayfasının yerine). TR/EN (tarayıcı diline göre + TR/EN düğmesi, sözlük sayfa içindeki `EN` nesnesinde). Bölümler: giriş (gerçekçi iPhone çerçevesinde ana ekran), sayılar, hikâye, 5 özellik, 20 sn tanıtım videosu, alıntı, Ücretsiz/Plus, gizlilik, SSS, son çağrı. Görseller `website/img/` (ekranlar `store-assets/iphone-*.png`'den 780px webp), videolar `website/media/`.
+    - **Atmosfer fotoğrafları için 3 yuva** (`hero`, `story`, `quote`): dosyayı `website/img/` altına koyup sayfanın sonundaki `PHOTOS` nesnesine yaz; boşken CSS degradesi görünür. Kaynak: Unsplash/Pexels (ticari kullanım serbest). Bu ortam o sitelere erişemiyor — kullanıcı indirip gönderiyor.
+    - Ekran görüntüleri TR ve eski (ör. Programlar ekranında 2 program, Plus'ta "YAKINDA"); `scripts/shoot-store.js` ile yeniden çekilip webp'ye çevrilmeli.
+    - Telefon çerçevesi CSS; ekran görüntülerinde durum çubuğu olmadığı için JS bir "9:41" çubuğu ekliyor ve ekran onun altında başlıyor (`.phone .screen{padding-top}` — yüzde, **genişliğe** göre hesaplanır).
   - `/app/` → Expo web uygulaması (test edenler bunu kullanıyor)
   - `/gizlilik.html`, `/privacy.html`, `/terms.html`, `/terms-en.html` → yasal sayfalar (Apple'a verilecek adresler)
   - `/404.html` → bulunamayan her yolu `/app/`'e yönlendirir
