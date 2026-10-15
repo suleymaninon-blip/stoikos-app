@@ -105,7 +105,8 @@ h2 em{font-style:italic;color:var(--gold2)}
 /* ── Hikâye bandı ── */
 .story{position:relative;padding:140px 0;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 20% 50%,rgba(196,169,106,.07),transparent 60%)}
 .story .photo{z-index:-1}
-.story .photo::after{background:linear-gradient(90deg,rgba(20,18,14,.35) 0%,rgba(20,18,14,.85) 55%,rgba(20,18,14,.97) 100%)}
+.story .photo{background-size:auto 125%;background-position:12% 42%;background-repeat:no-repeat;background-color:#0e0c09}
+.story .photo::after{background:linear-gradient(90deg,rgba(20,18,14,0) 0%,rgba(20,18,14,.15) 35%,rgba(20,18,14,.88) 58%,rgba(20,18,14,.97) 100%),linear-gradient(0deg,var(--bg) 0%,transparent 18%,transparent 82%,var(--bg) 100%)}
 .story .wrap{display:flex;justify-content:flex-end}
 .story-mark{position:absolute;z-index:-1;left:8%;top:50%;transform:translateY(-50%);font-family:var(--serif);font-size:clamp(220px,30vw,420px);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(196,169,106,.22);transition:opacity 1.2s}
 .story .photo.on ~ .story-mark{opacity:0}
@@ -222,7 +223,8 @@ footer a:hover{color:var(--gold2)}
   .stat:nth-child(4){border-left:0}
   .stat:nth-child(n+4){border-top:1px solid var(--line)}
   .story .wrap{justify-content:center}
-  .story .photo::after{background:rgba(20,18,14,.82)}
+  .story .photo{background-size:cover;background-position:50% 40%}
+  .story .photo::after{background:rgba(20,18,14,.80)}
   .story-mark{left:50%;transform:translate(-50%,-50%);opacity:.5}
   .film{text-align:center}
   .plans,.privacy-box{grid-template-columns:1fr}
@@ -519,7 +521,7 @@ footer a:hover{color:var(--gold2)}
  */
 var PHOTOS = {
   hero:  '/img/photo-hero.webp',   // Sounion, Poseidon Tapınağı — yatayda aynalandı (tapınak sağda, yazı solda)
-  // story: '/img/photo-story.jpg',
+  story: '/img/photo-story.webp',  // mermer filozof büstü — sitenin altın tonuna göre tonlandı (duotone)
   // quote: '/img/photo-quote.jpg',
 };
 document.querySelectorAll('[data-photo]').forEach(function (el) {
