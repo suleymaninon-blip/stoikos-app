@@ -1,270 +1,633 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Stoikos</title>
-<meta name="description" content="Stoikos — coming soon.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stoikos — Stoacı Bilgelik</title>
+<meta name="description" content="Sakinlik bir yetenek değil, bir pratiktir. 164 söz, 10 filozof, 12 kavram, nefes ve seni dinleyen bir Stoacı koç.">
+<meta name="theme-color" content="#14120e">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="apple-touch-icon" href="/img/icon-180.png">
+<meta property="og:title" content="Stoikos — Stoacı Bilgelik">
+<meta property="og:description" content="Sakinlik bir yetenek değil, bir pratiktir.">
+<meta property="og:image" content="https://stoikos.app/img/screen-1-home.webp">
+<meta property="og:url" content="https://stoikos.app/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#14120e; --bg2:#1a1713; --surface:#1f1b16; --surface2:#26211b;
+  --line:rgba(196,169,106,.16); --line2:rgba(196,169,106,.28);
+  --gold:#c4a96a; --gold2:#d8c49a; --ember:#d4924a;
+  --text:#ece4d4; --text2:#cabfa8; --dim:#8a8070; --faint:#5a5348;
+  --serif:'Cinzel',Georgia,serif; --display:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --wrap:1160px; --gut:20px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;width:100%;background:#14120e;overflow:hidden;font-family:'Jost',sans-serif}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.65;overflow-x:hidden}
+img,video{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.eyebrow{font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+h1,h2,h3{font-weight:400;text-wrap:balance}
+h2{font-family:var(--display);font-size:clamp(32px,4.4vw,52px);line-height:1.1;color:var(--text)}
+h2 em{font-style:italic;color:var(--gold2)}
+.lead{font-size:clamp(16px,1.6vw,18px);color:var(--text2);max-width:52ch}
 
-#glowBg{
-  position:fixed;border-radius:50%;pointer-events:none;z-index:1;
-  width:560px;height:560px;
-  background:radial-gradient(circle,rgba(194,168,120,.08) 0%,transparent 65%);
-  top:38%;left:50%;transform:translate(-50%,-50%);
-  animation:glowBreathe 4s ease-in-out 2.5s infinite;
-}
-@keyframes glowBreathe{
-  0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}
-  50%    {opacity:1; transform:translate(-50%,-50%) scale(1.1)}
-}
+/* ── Fotoğraf yuvaları: dosya eklenince JS arka planı doldurur, yoksa degrade kalır ── */
+.photo{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
+.photo.on{opacity:1}
+.photo::after{content:"";position:absolute;inset:0}
 
-#scene{
-  position:fixed;z-index:10;text-align:center;
-  top:38%;left:50%;transform:translate(-50%,-50%);
-  width:clamp(260px,50vw,600px);
-}
-#omega{
-  font-family:'Cinzel',serif;
-  font-size:clamp(90px,18vw,150px);
-  color:#d8c49a;line-height:.85;display:block;opacity:0;
-}
-#brand{
-  font-family:'Cinzel',serif;
-  font-size:clamp(15px,3.2vw,24px);
-  letter-spacing:clamp(6px,1.6vw,12px);
-  color:#cabfa8;margin-top:20px;opacity:0;
-}
+/* ── Üst menü ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(20,18,14,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);letter-spacing:.24em;font-size:15px;color:var(--gold2)}
+.brand .om{font-size:24px;letter-spacing:0;color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--text2)}
+.nav-links a:hover{color:var(--gold2)}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--dim);font:500 11.5px var(--sans);letter-spacing:.1em;padding:6px 11px;cursor:pointer}
+.lang button.on{background:rgba(196,169,106,.16);color:var(--gold2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;font:400 14.5px var(--sans);padding:12px 22px;transition:transform .2s,background .2s,border-color .2s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-gold{background:linear-gradient(180deg,#d8c49a,#b89a5c);color:#1a160f;font-weight:500;box-shadow:0 8px 30px rgba(196,169,106,.22)}
+.btn-ghost{border:1px solid var(--line2);color:var(--gold2)}
+.btn-ghost:hover{background:rgba(196,169,106,.08)}
+.nav .btn{padding:9px 18px;font-size:13.5px}
 
-#grassWrap{
-  position:fixed;bottom:0;left:0;right:0;
-  height:52vh;opacity:0;pointer-events:none;z-index:5;
-}
-#grassHorizon{
-  position:absolute;top:0;left:0;right:0;height:40%;
-  background:linear-gradient(to bottom,rgba(80,165,190,.14) 0%,rgba(80,165,190,.05) 40%,transparent 100%);
-}
-#grassFade{
-  position:absolute;top:0;left:0;right:0;height:28%;
-  background:linear-gradient(to bottom,#14120e 0%,transparent 100%);
-}
-#grassSvg{position:absolute;bottom:0;left:0;width:100%;height:100%}
+/* ── Giriş ── */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden;isolation:isolate}
+.hero .photo::after{background:linear-gradient(90deg,rgba(20,18,14,.96) 0%,rgba(20,18,14,.78) 45%,rgba(20,18,14,.45) 100%),linear-gradient(0deg,var(--bg) 0%,transparent 30%)}
+.hero-glow{position:absolute;z-index:-1;width:900px;height:900px;right:-200px;top:50%;transform:translateY(-50%);background:radial-gradient(circle,rgba(212,146,74,.16) 0%,rgba(196,169,106,.06) 35%,transparent 65%);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:40px;width:100%}
+.hero h1{font-family:var(--display);font-size:clamp(44px,6.4vw,84px);line-height:1.02;margin:18px 0 22px;color:var(--text)}
+.hero h1 em{font-style:italic;color:var(--gold2)}
+.hero .lead{margin-bottom:34px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.store{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line2);border-radius:12px;padding:8px 16px 8px 13px;color:var(--text2);background:rgba(255,255,255,.02)}
+.store svg{width:22px;height:22px;fill:var(--text2)}
+.store small{display:block;font-size:10px;letter-spacing:.08em;color:var(--dim);line-height:1.2}
+.store b{display:block;font-weight:400;font-size:15px;color:var(--text);line-height:1.2}
+.hero-note{margin-top:18px;font-size:13px;color:var(--dim)}
+.hero-phone{display:flex;justify-content:center}
 
-@keyframes sway1{0%,100%{transform:rotate(-1.8deg)}50%{transform:rotate(2.2deg)}}
-@keyframes sway2{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(1.4deg)}}
-@keyframes sway3{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(2.8deg)}}
-@keyframes sway4{0%,100%{transform:rotate(-2deg)}  50%{transform:rotate(1.8deg)}}
+/* ── Gerçekçi iPhone çerçevesi ── */
+.phone{position:relative;width:min(300px,72vw);aspect-ratio:1290/2796;border-radius:16% / 7.4%;padding:3.4%;
+  background:linear-gradient(145deg,#4a443b 0%,#1c1914 30%,#0d0b09 55%,#2e2a24 100%);
+  box-shadow:0 0 0 1px rgba(255,255,255,.08) inset,0 0 0 2px #0a0907,0 50px 100px -20px rgba(0,0,0,.85),0 30px 60px -30px rgba(212,146,74,.25)}
+.phone::before{content:"";position:absolute;inset:1.2%;border-radius:15% / 7%;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset;pointer-events:none}
+.phone .screen{position:relative;width:100%;height:100%;border-radius:13.6% / 6.3%;overflow:hidden;background:#14120e}
+.phone .screen{padding-top:14.4%} /* yüzde genişliğe göre: ≈ yüksekliğin %6,6sı */
+.phone .screen img{width:100%;height:100%;object-fit:contain;object-position:top}
+/* Durum çubuğu: ekran görüntülerinde yok; çentik başlıkları kapatmasın diye ekran onun altında başlar */
+.sbar{position:absolute;top:0;left:0;right:0;height:6.4%;display:flex;align-items:center;justify-content:space-between;padding:0 9% 0 10%;font:500 clamp(9px,1.1vw,13px)/1 -apple-system,'SF Pro Text',var(--sans);color:#ece4d4;z-index:2}
+.sbar svg{height:.9em;width:auto;fill:#ece4d4}
+.sbar .r{display:flex;gap:.35em;align-items:center}
+.phone .island{position:absolute;top:2.1%;left:50%;transform:translateX(-50%);width:30%;height:3.3%;border-radius:999px;background:#000;z-index:3}
+.phone .glare{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 32%);pointer-events:none;z-index:4}
+.phone.tilt{transform:perspective(1600px) rotateY(-14deg) rotateX(4deg);transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.phone.tilt:hover{transform:perspective(1600px) rotateY(-6deg) rotateX(2deg)}
 
-#sunlight{
-  position:fixed;inset:0;pointer-events:none;z-index:2;opacity:0;
-  background:radial-gradient(ellipse 75% 85% at 6% 6%,
-    rgba(255,195,60,.18) 0%,rgba(255,175,40,.08) 32%,
-    rgba(220,160,30,.02) 58%,transparent 74%);
-}
-#overlay{position:fixed;inset:0;background:#14120e;opacity:0;pointer-events:none;z-index:50}
+/* ── Sayılar ── */
+.stats{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2)}
+.stats .wrap{display:grid;grid-template-columns:repeat(5,1fr);text-align:center}
+.stat{padding:30px 10px}
+.stat+.stat{border-left:1px solid var(--line)}
+.stat b{display:block;font-family:var(--display);font-size:42px;font-weight:400;color:var(--gold2);line-height:1}
+.stat span{font-size:13px;color:var(--dim);letter-spacing:.04em}
 
-footer{
-  position:fixed;bottom:20px;left:0;right:0;
-  text-align:center;font-size:11px;color:#5a5348;opacity:0;z-index:20;
-}
-footer a{color:#6b6453;text-decoration:none}
-footer a:hover{color:#c2a878}
+/* ── Hikâye bandı ── */
+.story{position:relative;padding:140px 0;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 20% 50%,rgba(196,169,106,.07),transparent 60%)}
+.story .photo{z-index:-1}
+.story .photo::after{background:linear-gradient(90deg,rgba(20,18,14,.35) 0%,rgba(20,18,14,.85) 55%,rgba(20,18,14,.97) 100%)}
+.story .wrap{display:flex;justify-content:flex-end}
+.story-mark{position:absolute;z-index:-1;left:8%;top:50%;transform:translateY(-50%);font-family:var(--serif);font-size:clamp(220px,30vw,420px);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(196,169,106,.22);transition:opacity 1.2s}
+.story .photo.on ~ .story-mark{opacity:0}
+.story-text{max-width:560px}
+.story-text p{font-family:var(--display);font-size:clamp(22px,2.4vw,28px);line-height:1.45;color:var(--text2);margin-top:22px}
+.story-text p.small{font-family:var(--sans);font-size:16px;line-height:1.7;color:var(--dim)}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes omegaReveal{
-  0%  {opacity:0;transform:scale(.75);filter:drop-shadow(0 0 80px rgba(216,196,154,.6))}
-  45% {opacity:1;transform:scale(1.05);filter:drop-shadow(0 0 40px rgba(216,196,154,.35))}
-  100%{opacity:1;transform:scale(1);  filter:drop-shadow(0 0 20px rgba(216,196,154,.12))}
+/* ── Özellikler ── */
+.features{padding:120px 0 60px;overflow:hidden}
+.features-head{text-align:center;max-width:720px;margin:0 auto 90px}
+.features-head h2{margin:14px 0 18px}
+.features-head .lead{margin:0 auto}
+.feat{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:60px;padding:50px 0}
+.feat:nth-child(even) .feat-media{order:2}
+.feat-media{display:flex;justify-content:center;position:relative}
+.feat-media::before{content:"";position:absolute;width:min(420px,100vw);height:min(420px,100vw);border-radius:50%;background:radial-gradient(circle,rgba(196,169,106,.13),transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);z-index:-1}
+.feat-media .phone{width:min(270px,64vw)}
+.feat-text{max-width:470px}
+.feat-text .num{font-family:var(--serif);font-size:13px;letter-spacing:.2em;color:var(--faint)}
+.feat-text h3{font-family:var(--display);font-size:clamp(30px,3.4vw,42px);line-height:1.12;margin:10px 0 16px;color:var(--text)}
+.feat-text h3 em{font-style:italic;color:var(--gold2)}
+.feat-text p{color:var(--text2);font-size:16.5px}
+.feat-text ul{list-style:none;margin-top:20px;display:grid;gap:9px}
+.feat-text li{position:relative;padding-left:22px;color:var(--text2);font-size:15px}
+.feat-text li::before{content:"";position:absolute;left:0;top:.72em;width:9px;height:1px;background:var(--gold)}
+.tag{display:inline-block;margin-left:8px;font:500 10px var(--sans);letter-spacing:.14em;color:var(--gold);border:1px solid var(--line2);border-radius:999px;padding:2px 8px;vertical-align:middle}
+
+/* ── Video ── */
+.film{padding:90px 0}
+.film .wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center}
+.film-frame{position:relative;width:min(340px,80vw);aspect-ratio:9/16;border-radius:22px;overflow:hidden;margin:0 auto;border:1px solid var(--line2);box-shadow:0 40px 90px -30px rgba(0,0,0,.9);background:#0f0d0a}
+.film-frame video{width:100%;height:100%;object-fit:cover}
+.film-frame button{position:absolute;inset:0;margin:auto;width:74px;height:74px;border-radius:50%;border:1px solid rgba(216,196,154,.5);background:rgba(20,18,14,.55);backdrop-filter:blur(6px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.film-frame button:hover{transform:scale(1.06)}
+.film-frame button svg{width:24px;height:24px;fill:var(--gold2);margin-left:4px}
+.film-frame.playing button{opacity:0;pointer-events:none}
+
+/* ── Alıntı bandı ── */
+.quote{position:relative;padding:150px 0;text-align:center;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 50% 50%,rgba(212,146,74,.10),transparent 60%),var(--bg2)}
+.quote .photo{z-index:-1}
+.quote .photo::after{background:rgba(20,18,14,.72)}
+.quote blockquote{font-family:var(--display);font-style:italic;font-size:clamp(28px,4vw,48px);line-height:1.25;color:var(--text);max-width:900px;margin:0 auto}
+.quote cite{display:block;margin-top:26px;font:400 13px var(--sans);font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.quote .om{font-family:var(--serif);font-size:30px;color:var(--gold);margin-bottom:26px}
+
+/* ── Fiyat ── */
+.pricing{padding:130px 0}
+.pricing-head{text-align:center;max-width:680px;margin:0 auto 60px}
+.pricing-head h2{margin:14px 0 16px}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:900px;margin:0 auto}
+.plan{position:relative;border:1px solid var(--line);border-radius:22px;padding:36px 32px;background:var(--surface)}
+.plan.plus{border-color:var(--line2);background:linear-gradient(180deg,rgba(196,169,106,.10),rgba(196,169,106,.02) 40%),var(--surface)}
+.plan h3{font-family:var(--serif);font-size:20px;letter-spacing:.14em;color:var(--gold2)}
+.plan .price{font-family:var(--display);font-size:46px;line-height:1;margin:18px 0 6px;color:var(--text)}
+.plan .price small{font-family:var(--sans);font-size:15px;color:var(--dim)}
+.plan .sub{font-size:14px;color:var(--dim);min-height:44px}
+.plan ul{list-style:none;margin:24px 0 0;display:grid;gap:11px;border-top:1px solid var(--line);padding-top:22px}
+.plan li{position:relative;padding-left:26px;font-size:15px;color:var(--text2)}
+.plan li::before{content:"";position:absolute;left:2px;top:.55em;width:11px;height:6px;border-left:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);transform:rotate(-45deg)}
+.badge{position:absolute;top:-12px;right:24px;background:var(--gold);color:#1a160f;font:500 11px var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:999px}
+.fine{text-align:center;margin-top:26px;font-size:13px;color:var(--faint)}
+
+/* ── Gizlilik ── */
+.privacy{padding:30px 0 110px}
+.privacy-box{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.privacy-box div{padding:34px 30px}
+.privacy-box div+div{border-left:1px solid var(--line)}
+.privacy-box svg{width:26px;height:26px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;margin-bottom:16px}
+.privacy-box h4{font-family:var(--display);font-size:24px;font-weight:400;color:var(--text);margin-bottom:6px}
+.privacy-box p{font-size:15px;color:var(--dim)}
+
+/* ── SSS ── */
+.faq{padding:40px 0 120px}
+.faq .wrap{max-width:820px}
+.faq h2{text-align:center;margin-bottom:44px}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:22px 40px 22px 0;position:relative;font-size:18px;color:var(--text)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:24px;color:var(--gold);transition:transform .3s}
+details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
+details p{padding:0 0 24px;color:var(--text2);font-size:15.5px;max-width:68ch}
+
+/* ── Son çağrı + alt bilgi ── */
+.final{position:relative;padding:120px 0;text-align:center;border-top:1px solid var(--line);background:radial-gradient(ellipse at 50% 0%,rgba(196,169,106,.12),transparent 60%)}
+.final .om{font-family:var(--serif);font-size:56px;color:var(--gold);line-height:1}
+.final h2{margin:24px auto 30px;max-width:720px}
+.final .ctas{justify-content:center}
+footer{border-top:1px solid var(--line);padding:40px 0 calc(40px + env(safe-area-inset-bottom));font-size:13.5px;color:var(--dim)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:22px}
+footer a:hover{color:var(--gold2)}
+.disclaimer{width:100%;font-size:12.5px;color:var(--faint);border-top:1px solid rgba(196,169,106,.08);padding-top:20px}
+
+/* ── Belirme animasyonu ── */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.phone.tilt{transform:none}html{scroll-behavior:auto}}
+
+/* ── Duyarlı ── */
+@media (max-width:960px){
+  .nav-links a.hide-m{display:none}
+  .hero .wrap,.feat,.film .wrap{grid-template-columns:1fr}
+  .hero{text-align:center;padding-top:100px}
+  .hero .lead{margin-left:auto;margin-right:auto}
+  .hero .ctas{justify-content:center}
+  .hero-glow{right:50%;transform:translate(50%,-30%)}
+  .hero .photo::after{background:linear-gradient(0deg,rgba(20,18,14,.98) 0%,rgba(20,18,14,.80) 55%,rgba(20,18,14,.55) 100%)}
+  .phone.tilt{transform:none}
+  .feat{gap:34px;padding:40px 0;text-align:center}
+  .feat:nth-child(even) .feat-media{order:0}
+  .feat-text{margin:0 auto}
+  .feat-text ul{text-align:left;max-width:420px;margin-left:auto;margin-right:auto}
+  .stats .wrap{grid-template-columns:repeat(3,1fr)}
+  .stat:nth-child(4){border-left:0}
+  .stat:nth-child(n+4){border-top:1px solid var(--line)}
+  .story .wrap{justify-content:center}
+  .story .photo::after{background:rgba(20,18,14,.82)}
+  .story-mark{left:50%;transform:translate(-50%,-50%);opacity:.5}
+  .film{text-align:center}
+  .plans,.privacy-box{grid-template-columns:1fr}
+  .privacy-box div+div{border-left:0;border-top:1px solid var(--line)}
 }
-@keyframes grassReveal{
-  0%  {opacity:0;transform:translateY(20px)}
-  100%{opacity:1;transform:translateY(0)}
+@media (max-width:560px){
+  :root{--gut:16px}
+  .nav-links{gap:12px}
+  .nav .btn{display:none}
+  .stats .wrap{grid-template-columns:repeat(2,1fr)}
+  .stat:nth-child(odd){border-left:0}
+  .stat:nth-child(even){border-left:1px solid var(--line)}
+  .stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .stat:last-child{grid-column:1/-1}
+  .stat b{font-size:36px}
+  .features,.pricing{padding:90px 0 40px}
+  .story,.quote{padding:100px 0}
+  .plan{padding:30px 24px}
+  .store{flex:1 1 150px;justify-content:center}
+  .hero .btn{flex:1 1 100%}
 }
-@keyframes sunGlow{
-  0%,100%{filter:drop-shadow(0 0 14px rgba(255,200,80,1)) drop-shadow(0 0 38px rgba(255,150,20,.65)) drop-shadow(0 0 80px rgba(255,120,0,.3))}
-  50%    {filter:drop-shadow(0 0 22px rgba(255,220,100,1)) drop-shadow(0 0 55px rgba(255,170,30,.85)) drop-shadow(0 0 110px rgba(255,130,0,.5))}
-}
-@keyframes lightBreathe{0%,100%{opacity:.75}50%{opacity:1}}
 </style>
 </head>
 <body>
 
-<div id="glowBg"></div>
+<!-- ═══ Üst menü ═══ -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a href="#top" class="brand" aria-label="Stoikos"><span class="om">Ω</span>STOIKOS</a>
+    <nav class="nav-links">
+      <a href="#ozellikler" class="hide-m" data-i="nav.features">Özellikler</a>
+      <a href="#plus" class="hide-m" data-i="nav.plus">Plus</a>
+      <a href="#sss" class="hide-m" data-i="nav.faq">SSS</a>
+      <div class="lang" role="group" aria-label="Dil / Language">
+        <button type="button" data-lang="tr">TR</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <a href="/app/" class="btn btn-gold" data-i="cta.web">Web'de dene</a>
+    </nav>
+  </div>
+</header>
 
-<div id="scene">
-  <span id="omega">Ω</span>
-  <div id="brand">STOIKOS</div>
-</div>
+<main id="top">
 
-<div id="grassWrap">
-  <div id="grassHorizon"></div>
-  <svg id="grassSvg" preserveAspectRatio="xMidYMax meet"></svg>
-  <div id="grassFade"></div>
-</div>
+<!-- ═══ Giriş ═══ -->
+<section class="hero">
+  <div class="photo" data-photo="hero"></div>
+  <div class="hero-glow"></div>
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i="hero.eyebrow">Antik bilgelik · Günlük hayat</div>
+      <h1 data-i="hero.title" data-html>Sakinlik bir yetenek değil, <em>bir pratiktir.</em></h1>
+      <p class="lead" data-i="hero.lead">164 söz, 10 filozof, 12 kavram, nefes ve seni dinleyen bir Stoacı koç. Zor bir toplantıdan önce, bir tartışmadan sonra, uyuyamadığın bir gecede.</p>
+      <div class="ctas">
+        <span class="store" aria-label="App Store">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.21 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.67-2.15.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.32-.89-2.33-3.56zM14.18 6.15c.61-.74 1.02-1.76.91-2.78-.88.04-1.94.59-2.57 1.32-.56.65-1.06 1.69-.93 2.69.98.08 1.98-.5 2.59-1.23z"/></svg>
+          <span><small data-i="store.soon">YAKINDA</small><b>App Store</b></span>
+        </span>
+        <span class="store" aria-label="Google Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.1 2.6a1.5 1.5 0 0 0-.6 1.2v16.4c0 .5.2.9.6 1.2l9.3-9.4L4.1 2.6zm10.4 8.3 2.6-2.6L6.2 2.2l8.3 8.7zm0 2.2-8.3 8.7 10.9-6.1-2.6-2.6zm5.6-3.3-2.2-1.2-2.8 2.9 2.8 2.9 2.2-1.2c.9-.5.9-1.9 0-2.4z"/></svg>
+          <span><small data-i="store.soon">YAKINDA</small><b>Google Play</b></span>
+        </span>
+        <a href="/app/" class="btn btn-ghost" data-i="cta.webArrow">Web'de hemen dene →</a>
+      </div>
+      <p class="hero-note" data-i="hero.note">Hesap gerekmez · Reklam yok · 6 dil</p>
+    </div>
+    <div class="hero-phone reveal">
+      <div class="phone tilt">
+        <div class="screen"><div class="island"></div><img src="/img/screen-1-home.webp" alt="Stoikos ana ekranı: nefes orbu ve günün alıntısı" width="390" height="845" fetchpriority="high"></div>
+        <div class="glare"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div id="sunlight"></div>
-<div id="overlay"></div>
+<!-- ═══ Sayılar ═══ -->
+<section class="stats" aria-label="Stoikos içinde">
+  <div class="wrap">
+    <div class="stat"><b>164</b><span data-i="stat.quotes">söz</span></div>
+    <div class="stat"><b>15</b><span data-i="stat.thinkers">Stoacı düşünür</span></div>
+    <div class="stat"><b>12</b><span data-i="stat.concepts">temel kavram</span></div>
+    <div class="stat"><b>5</b><span data-i="stat.programs">rehberli program</span></div>
+    <div class="stat"><b>6</b><span data-i="stat.langs">dil</span></div>
+  </div>
+</section>
 
-<footer id="footer">
-  <a href="/app/" id="appLink">Try on web</a>
-  &nbsp;·&nbsp;
-  <a href="privacy.html" id="privacyLink">Privacy Policy</a>
-  &nbsp;·&nbsp;
-  <a href="terms-en.html" id="termsLink">Terms</a>
-  &nbsp;·&nbsp;
-  <a href="mailto:support@stoikos.app">support@stoikos.app</a>
-  &nbsp;·&nbsp;
-  © 2026 Stoikos
+<!-- ═══ Hikâye ═══ -->
+<section class="story">
+  <div class="photo" data-photo="story"></div>
+  <div class="story-mark" aria-hidden="true">Ω</div>
+  <div class="wrap">
+    <div class="story-text reveal">
+      <div class="eyebrow" data-i="story.eyebrow">İki bin yıllık bir defter</div>
+      <p data-i="story.p1">İki bin yıl önce bir Roma imparatoru, geceleri kendine notlar tutuyordu: nasıl daha sabırlı, daha adil, daha az öfkeli olabileceğine dair. Bugün hâlâ aynı şeyi soruyoruz.</p>
+      <p class="small" data-i="story.p2">Stoikos bu felsefeyi gününe getiriyor — teori olarak değil, ihtiyaç duyduğun anda kullanabileceğin bir şey olarak.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Özellikler ═══ -->
+<section class="features" id="ozellikler">
+  <div class="wrap">
+    <div class="features-head reveal">
+      <div class="eyebrow" data-i="feat.eyebrow">İçinde ne var</div>
+      <h2 data-i="feat.title" data-html>Felsefe değil, <em>pratik.</em></h2>
+      <p class="lead" data-i="feat.lead">Her bölüm tek bir şey yapmak için tasarlandı: o an ne hissediyorsan, ona Stoacı bir karşılık bulmak.</p>
+    </div>
+
+    <div class="feat reveal">
+      <div class="feat-media"><div class="phone"><div class="screen"><div class="island"></div><img src="/img/screen-1-home.webp" alt="" loading="lazy" width="390" height="845"></div><div class="glare"></div></div></div>
+      <div class="feat-text">
+        <div class="num">01</div>
+        <h3 data-i="f1.title" data-html>Nefes al. <em>Orbu tut.</em></h3>
+        <p data-i="f1.text">Ana ekrandaki orbu basılı tut ve onunla nefes al. Ayarlanacak bir şey yok, süre yok, hedef yok — yalnızca sen ve nefesin.</p>
+      </div>
+    </div>
+
+    <div class="feat reveal">
+      <div class="feat-media"><div class="phone"><div class="screen"><div class="island"></div><img src="/img/screen-2-wisdom.webp" alt="" loading="lazy" width="390" height="845"></div><div class="glare"></div></div></div>
+      <div class="feat-text">
+        <div class="num">02</div>
+        <h3 data-i="f2.title" data-html>15 düşünürden <em>164 söz.</em></h3>
+        <p data-i="f2.text">Marcus Aurelius, Epiktetos, Seneca ve diğerleri. Filozofa ya da ruh haline göre süz; beğendiklerini sakla, paylaş.</p>
+        <ul>
+          <li data-i="f2.l1">10 filozof kartı: bir köle, bir imparator, gemisi batmış bir tüccar</li>
+          <li data-i="f2.l2">12 temel kavram: Amor Fati, Memento Mori, Kontrol Dairesi…</li>
+          <li data-i="f2.l3">Her kavramla birlikte deneyebileceğin bir pratik</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feat reveal">
+      <div class="feat-media"><div class="phone"><div class="screen"><div class="island"></div><img src="/img/screen-3-coach.webp" alt="" loading="lazy" width="390" height="845"></div><div class="glare"></div></div></div>
+      <div class="feat-text">
+        <div class="num">03</div>
+        <h3><span data-i="f3.title" data-html>Seni dinleyen <em>bir koç.</em></span><span class="tag">PLUS</span></h3>
+        <p data-i="f3.text">Gerçek bir soru sor, Stoacı bir cevap al. Alıntı makinesi değil; neyle uğraştığını hatırlayan, acele etmeyen bir yol arkadaşı.</p>
+      </div>
+    </div>
+
+    <div class="feat reveal">
+      <div class="feat-media"><div class="phone"><div class="screen"><div class="island"></div><img src="/img/screen-4-practice.webp" alt="" loading="lazy" width="390" height="845"></div><div class="glare"></div></div></div>
+      <div class="feat-text">
+        <div class="num">04</div>
+        <h3 data-i="f4.title" data-html>Sabah niyeti, <em>akşam yansıması.</em></h3>
+        <p data-i="f4.text">Kısa günlük egzersizler ve her gün değişen bir yansıma sorusu. Yazdıkların yalnızca senin cihazında kalır.</p>
+      </div>
+    </div>
+
+    <div class="feat reveal">
+      <div class="feat-media"><div class="phone"><div class="screen"><div class="island"></div><img src="/img/screen-6-programs.webp" alt="" loading="lazy" width="390" height="845"></div><div class="glare"></div></div></div>
+      <div class="feat-text">
+        <div class="num">05</div>
+        <h3><span data-i="f5.title" data-html>Yedi günlük <em>yolculuklar.</em></span><span class="tag">PLUS</span></h3>
+        <p data-i="f5.text">Her gün bir adım: öfkeyle çalışmak, başkalarının gözünden kurtulmak, zamanın kısalığını hissetmek. Beş program, otuz beş gün.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Video ═══ -->
+<section class="film">
+  <div class="wrap">
+    <div class="film-frame reveal" id="film">
+      <video id="filmVideo" playsinline loop preload="none" poster="/media/teaser-poster.jpg">
+        <source src="/media/teaser-tr.mp4" type="video/mp4">
+      </video>
+      <button type="button" aria-label="Videoyu oynat" id="filmPlay"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg></button>
+    </div>
+    <div class="reveal">
+      <div class="eyebrow" data-i="film.eyebrow">20 saniyede Stoikos</div>
+      <h2 style="margin:14px 0 18px" data-i="film.title" data-html>Gürültünün içinde <em>bir durak.</em></h2>
+      <p class="lead" data-i="film.lead">Bildirimler, haberler, yetişmesi gereken işler. Stoikos sana daha fazlasını vermiyor — biraz durmayı hatırlatıyor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Alıntı ═══ -->
+<section class="quote">
+  <div class="photo" data-photo="quote"></div>
+  <div class="wrap reveal">
+    <div class="om">Ω</div>
+    <blockquote data-i="quote.text">“Seni rahatsız eden olaylar değil, onlar hakkındaki yargılarındır.”</blockquote>
+    <cite data-i="quote.cite">Epiktetos · Enkheiridion’dan uyarlama</cite>
+  </div>
+</section>
+
+<!-- ═══ Fiyat ═══ -->
+<section class="pricing" id="plus">
+  <div class="wrap">
+    <div class="pricing-head reveal">
+      <div class="eyebrow" data-i="price.eyebrow">Ücretsiz başla</div>
+      <h2 data-i="price.title" data-html>Bilgelik ücretsiz. <em>Derinleşmek için Plus.</em></h2>
+      <p class="lead" style="margin:0 auto" data-i="price.lead">Sözler, kavramlar, filozoflar, nefes ve günlük pratik her zaman ücretsiz kalır.</p>
+    </div>
+    <div class="plans">
+      <div class="plan reveal">
+        <h3 data-i="plan.free">ÜCRETSİZ</h3>
+        <div class="price">$0 <small data-i="plan.forever">/ her zaman</small></div>
+        <p class="sub" data-i="plan.freeSub">İndir ve hemen başla. Hesap yok, reklam yok.</p>
+        <ul>
+          <li data-i="plan.f1">164 söz ve 10 filozof</li>
+          <li data-i="plan.f2">12 temel kavram ve pratikleri</li>
+          <li data-i="plan.f3">Nefes orbu</li>
+          <li data-i="plan.f4">Günlük pratik ve yansıma günlüğü</li>
+          <li data-i="plan.f5">İlerleme ve süreklilik</li>
+        </ul>
+      </div>
+      <div class="plan plus reveal">
+        <span class="badge" data-i="plan.trial">14 gün ücretsiz</span>
+        <h3>STOIKOS PLUS</h3>
+        <div class="price">$49,99 <small data-i="plan.year">/ yıl</small></div>
+        <p class="sub" data-i="plan.plusSub">Ayda yaklaşık $4,17 · ya da aylık $6,99</p>
+        <ul>
+          <li data-i="plan.p1">Ücretsiz olan her şey</li>
+          <li data-i="plan.p2">Seni hatırlayan Stoacı koç</li>
+          <li data-i="plan.p3">Tüm rehberli programlar</li>
+          <li data-i="plan.p4">Kavramların sesli anlatımı</li>
+          <li data-i="plan.p5">Sonradan eklenen her yeni içerik</li>
+        </ul>
+      </div>
+    </div>
+    <p class="fine" data-i="price.fine">Fiyatlar ülkene göre mağazada yerel para biriminde gösterilir. Abonelik istediğin zaman iptal edilebilir.</p>
+  </div>
+</section>
+
+<!-- ═══ Gizlilik ═══ -->
+<section class="privacy">
+  <div class="wrap">
+    <div class="privacy-box reveal">
+      <div>
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <h4 data-i="priv.t1">Günlüğün sende kalır</h4>
+        <p data-i="priv.p1">Yansımaların cihazında saklanır. İzin vermediğin sürece hiçbir yere gönderilmez.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>
+        <h4 data-i="priv.t2">Reklam yok</h4>
+        <p data-i="priv.p2">Dikkatini satmıyoruz. Uygulama, sakinliği bozan hiçbir şey göstermez.</p>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z"/></svg>
+        <h4 data-i="priv.t3">Hesap gerekmez</h4>
+        <p data-i="priv.p3">E-posta, şifre, kayıt yok. Aç ve başla.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SSS ═══ -->
+<section class="faq" id="sss">
+  <div class="wrap">
+    <h2 class="reveal" data-i="faq.title">Sık sorulanlar</h2>
+    <details class="reveal"><summary data-i="faq.q1">Stoacılık nedir, bilmem gerekiyor mu?</summary><p data-i="faq.a1">Hayır. Stoacılık, kontrol edebildiğin ile edemediğin şeyi ayırmaya dayanan iki bin yıllık pratik bir felsefe. Uygulama her kavramı sade bir dille ve günlük bir örnekle anlatıyor; hiçbir ön bilgi gerekmez.</p></details>
+    <details class="reveal"><summary data-i="faq.q2">Ücretsiz sürümde neler var?</summary><p data-i="faq.a2">164 söz, 10 filozof, 12 kavram, nefes orbu, günlük pratik, yansıma günlüğü ve ilerleme takibi — bunlar her zaman ücretsiz. Koç, rehberli programlar ve kavramların sesli anlatımı Stoikos Plus ile açılır.</p></details>
+    <details class="reveal"><summary data-i="faq.q3">Koç nasıl çalışıyor?</summary><p data-i="faq.a3">Koç, Stoacı düşünceyle konuşan bir yapay zekâ. Ona yaşadığın bir durumu anlatırsın; seni yargılamadan, Stoacıların bakışıyla düşünmene yardım eder. Önemli bilgileri hatırlar ve hafızasını istediğin zaman Ayarlar'dan silebilirsin.</p></details>
+    <details class="reveal"><summary data-i="faq.q4">Hangi dillerde kullanabilirim?</summary><p data-i="faq.a4">Türkçe, İngilizce, Almanca, Rusça, Fransızca ve İspanyolca. Dili uygulama içinden istediğin zaman değiştirebilirsin.</p></details>
+    <details class="reveal"><summary data-i="faq.q5">Stoikos bir terapi uygulaması mı?</summary><p data-i="faq.a5">Hayır. Stoikos bir felsefe ve öz-yansıma aracıdır; terapi ya da tıbbi tedavi değildir. Zor bir dönemden geçiyorsan bir uzmana danışmanı öneririz.</p></details>
+    <details class="reveal"><summary data-i="faq.q6">Uygulama ne zaman mağazalarda?</summary><p data-i="faq.a6">App Store ve Google Play için son hazırlıkları yapıyoruz. O zamana kadar web sürümünü hemen deneyebilirsin.</p></details>
+  </div>
+</section>
+
+<!-- ═══ Son çağrı ═══ -->
+<section class="final">
+  <div class="wrap reveal">
+    <div class="om">Ω</div>
+    <h2 data-i="final.title" data-html>Bugün, <em>küçük bir adımla başla.</em></h2>
+    <div class="ctas">
+      <a href="/app/" class="btn btn-gold" data-i="cta.webArrow">Web'de hemen dene →</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="om">Ω</span>STOIKOS</div>
+    <nav>
+      <a href="/gizlilik.html" id="lnkPrivacy" data-i="foot.privacy">Gizlilik Politikası</a>
+      <a href="/terms.html" id="lnkTerms" data-i="foot.terms">Kullanım Koşulları</a>
+      <a href="mailto:support@stoikos.app">support@stoikos.app</a>
+      <span>© 2026 Stoikos</span>
+    </nav>
+    <p class="disclaimer" data-i="foot.disclaimer">Stoikos bir terapi ya da tıbbi tedavi değildir. Zor bir dönemden geçiyorsan bir uzmana danışmanı öneririz.</p>
+  </div>
 </footer>
 
 <script>
-/* lang */
-if ((navigator.language||'').toLowerCase().startsWith('tr')) {
-  const l = document.getElementById('privacyLink');
-  l.href = 'gizlilik.html'; l.textContent = 'Gizlilik Politikası';
-  const t = document.getElementById('termsLink');
-  t.href = 'terms.html'; t.textContent = 'Kullanım Koşulları';
-  document.getElementById('appLink').textContent = "Web'de dene";
-}
-
-/* ── build grass (once) ── */
-(function(){
-  const svg = document.getElementById('grassSvg');
-  const W=1440, H=420;
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  const anims=['sway1','sway2','sway3','sway4'], r=Math.random;
-
-  function blade(x,h,lean,sw,op){
-    const tx=x+lean,ty=H-h,cx=x+lean*.38,cy=H-h*.62;
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    const hsl=`hsl(${40+r()*22},${38+r()*28}%,${58+r()*26}%)`;
-    g.setAttribute('style',
-      `transform-origin:${x.toFixed(1)}px ${H}px;`+
-      `animation:${anims[0|r()*4]} ${(1.7+r()*1.6).toFixed(2)}s ease-in-out ${(r()*2.2).toFixed(2)}s infinite`);
-    const s=document.createElementNS('http://www.w3.org/2000/svg','path');
-    s.setAttribute('d',`M${x.toFixed(1)} ${H} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)}`);
-    s.setAttribute('stroke',hsl);s.setAttribute('stroke-width',sw.toString());
-    s.setAttribute('fill','none');s.setAttribute('stroke-linecap','round');
-    s.setAttribute('opacity',op.toString());g.appendChild(s);
-    if(r()>.22){
-      const sl=14+r()*30,sk=(r()-.5)*22;
-      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-      p.setAttribute('d',`M${tx.toFixed(1)} ${ty.toFixed(1)} Q${(tx+sk).toFixed(1)} ${(ty+sl*.4).toFixed(1)} ${(tx+sk*1.6).toFixed(1)} ${(ty+sl).toFixed(1)}`);
-      p.setAttribute('stroke',hsl);p.setAttribute('stroke-width',(sw*.7).toString());
-      p.setAttribute('fill','none');p.setAttribute('stroke-linecap','round');
-      p.setAttribute('opacity',(op*.85).toString());g.appendChild(p);
-    }
-    return g;
-  }
-  for(let i=0;i<320;i++) svg.appendChild(blade((i/320)*W+(r()-.5)*28,110+r()*160,(r()-.42)*38,.7+r()*1.1,.5+r()*.45));
-  for(let i=0;i<60;i++)  svg.appendChild(blade(r()*W,200+r()*130,(r()-.4)*28,1.4+r()*.9,.75+r()*.25));
-})();
-
-/* ── cycle engine ── */
-const EL={
-  scene:   document.getElementById('scene'),
-  omega:   document.getElementById('omega'),
-  brand:   document.getElementById('brand'),
-  glow:    document.getElementById('glowBg'),
-  grass:   document.getElementById('grassWrap'),
-  sun:     document.getElementById('sunlight'),
-  overlay: document.getElementById('overlay'),
-  footer:  document.getElementById('footer'),
+/* ── Fotoğraf yuvaları ──────────────────────────────────────────────
+ * Atmosfer fotoğrafları eklenince buraya yazılır (website/img/ altına konur).
+ * Boş bırakılan yuvada CSS degradesi görünür; sayfa fotoğrafsız da tamamlanmış durur.
+ * Örnek: hero: '/img/photo-hero.jpg'
+ */
+var PHOTOS = {
+  // hero:  '/img/photo-hero.jpg',
+  // story: '/img/photo-story.jpg',
+  // quote: '/img/photo-quote.jpg',
 };
+document.querySelectorAll('[data-photo]').forEach(function (el) {
+  var src = PHOTOS[el.getAttribute('data-photo')];
+  if (!src) return;
+  var img = new Image();
+  img.onload = function () { el.style.backgroundImage = 'url(' + src + ')'; el.classList.add('on'); };
+  img.src = src;
+});
 
-const T=[];
-function sched(fn,ms){T.push(setTimeout(fn,ms));}
-function clearT(){T.forEach(clearTimeout);T.length=0;}
-
-function tr(el,props,ms,delay){
-  el.style.transition=Object.keys(props).map(p=>`${p} ${ms}ms ease ${delay||0}ms`).join(',');
-  Object.entries(props).forEach(([p,v])=>{ el.style[p]=v; });
-}
-
-let footerShown=false;
-
-function play(){
-  clearT();
-  [EL.scene,EL.omega,EL.brand,EL.grass,EL.sun].forEach(el=>{
-    el.style.cssText=''; void el.offsetWidth;
+/* ── Dil ────────────────────────────────────────────────────────── */
+var EN = {
+  'nav.features':'Features','nav.plus':'Plus','nav.faq':'FAQ',
+  'cta.web':'Try on web','cta.webArrow':'Try it on the web →','store.soon':'COMING SOON',
+  'hero.eyebrow':'Ancient wisdom · Everyday life',
+  'hero.title':'Calm is not a talent. <em>It is a practice.</em>',
+  'hero.lead':'164 quotes, 10 philosophers, 12 concepts, breathing, and a Stoic coach that listens. Before a hard meeting, after an argument, on a night you can’t sleep.',
+  'hero.note':'No account · No ads · 6 languages',
+  'stat.quotes':'quotes','stat.thinkers':'Stoic thinkers','stat.concepts':'core concepts','stat.programs':'guided programs','stat.langs':'languages',
+  'story.eyebrow':'A two-thousand-year-old notebook',
+  'story.p1':'Two thousand years ago, a Roman emperor kept private notes at night: how to be more patient, more just, less angry. We are still asking the same questions.',
+  'story.p2':'Stoikos brings that philosophy into your day — not as theory, but as something you can use the moment you need it.',
+  'feat.eyebrow':'What’s inside','feat.title':'Not philosophy. <em>Practice.</em>',
+  'feat.lead':'Every part is built for one thing: finding a Stoic answer to whatever you’re feeling right now.',
+  'f1.title':'Breathe. <em>Hold the orb.</em>','f1.text':'Press and hold the orb on the home screen and breathe with it. Nothing to configure, no timer, no goal — just you and your breath.',
+  'f2.title':'164 quotes from <em>15 thinkers.</em>','f2.text':'Marcus Aurelius, Epictetus, Seneca and more. Filter by philosopher or by how you feel; save the ones you love, share them.',
+  'f2.l1':'10 philosopher cards: a slave, an emperor, a shipwrecked merchant','f2.l2':'12 core concepts: Amor Fati, Memento Mori, the Dichotomy of Control…','f2.l3':'A practice to try with every concept',
+  'f3.title':'A coach that <em>listens.</em>','f3.text':'Ask a real question, get a Stoic answer. Not a quote machine — an unhurried companion that remembers what you’ve been working through.',
+  'f4.title':'Morning intention, <em>evening reflection.</em>','f4.text':'Short daily exercises and a reflection question that changes every day. What you write stays on your device.',
+  'f5.title':'Seven-day <em>journeys.</em>','f5.text':'One step a day: working with anger, freeing yourself from others’ eyes, feeling the shortness of time. Five programs, thirty-five days.',
+  'film.eyebrow':'Stoikos in 20 seconds','film.title':'A pause <em>inside the noise.</em>','film.lead':'Notifications, news, things to catch up on. Stoikos doesn’t give you more — it reminds you to pause.',
+  'quote.text':'“Men are disturbed not by things, but by the views they take of them.”','quote.cite':'Epictetus · adapted from the Enchiridion',
+  'price.eyebrow':'Start free','price.title':'Wisdom is free. <em>Plus is for going deeper.</em>','price.lead':'Quotes, concepts, philosophers, breathing and daily practice stay free — always.',
+  'plan.free':'FREE','plan.forever':'/ forever','plan.freeSub':'Download and start. No account, no ads.',
+  'plan.f1':'164 quotes and 10 philosophers','plan.f2':'12 core concepts with practices','plan.f3':'Breathing orb','plan.f4':'Daily practice and reflection journal','plan.f5':'Progress and streaks',
+  'plan.trial':'14 days free','plan.year':'/ year','plan.plusSub':'About $4.17 a month · or $6.99 monthly',
+  'plan.p1':'Everything in Free','plan.p2':'A Stoic coach that remembers you','plan.p3':'All guided programs','plan.p4':'Narrated concepts','plan.p5':'Every new piece of content we add',
+  'price.fine':'Prices are shown in your local currency in the store. Cancel anytime.',
+  'priv.t1':'Your journal stays with you','priv.p1':'Your reflections are stored on your device. Nothing is sent anywhere unless you allow it.',
+  'priv.t2':'No ads','priv.p2':'We don’t sell your attention. Nothing in the app breaks the calm.',
+  'priv.t3':'No account needed','priv.p3':'No email, no password, no sign-up. Open it and begin.',
+  'faq.title':'Questions',
+  'faq.q1':'What is Stoicism — do I need to know it?','faq.a1':'No. Stoicism is a two-thousand-year-old practical philosophy built on separating what you can control from what you can’t. The app explains every concept in plain words with an everyday example; no background needed.',
+  'faq.q2':'What’s in the free version?','faq.a2':'164 quotes, 10 philosophers, 12 concepts, the breathing orb, daily practice, the reflection journal and progress tracking — always free. The coach, guided programs and narrated concepts open with Stoikos Plus.',
+  'faq.q3':'How does the coach work?','faq.a3':'The coach is an AI that thinks the way the Stoics did. Describe what you’re going through; it helps you look at it through a Stoic lens, without judgment. It remembers what matters, and you can erase its memory anytime in Settings.',
+  'faq.q4':'Which languages are supported?','faq.a4':'Turkish, English, German, Russian, French and Spanish. You can switch language inside the app at any time.',
+  'faq.q5':'Is Stoikos a therapy app?','faq.a5':'No. Stoikos is a tool for philosophy and self-reflection; it is not therapy or medical treatment. If you are going through a difficult time, please speak with a professional.',
+  'faq.q6':'When will it be in the stores?','faq.a6':'We are making the final preparations for the App Store and Google Play. Until then, you can try the web version right away.',
+  'final.title':'Today, <em>begin with one small step.</em>',
+  'foot.privacy':'Privacy Policy','foot.terms':'Terms of Use',
+  'foot.disclaimer':'Stoikos is not therapy or medical treatment. If you are going through a difficult time, please speak with a professional.'
+};
+var TR = {};
+document.querySelectorAll('[data-i]').forEach(function (el) {
+  TR[el.getAttribute('data-i')] = el.hasAttribute('data-html') ? el.innerHTML : el.textContent;
+});
+function setLang(l) {
+  var d = l === 'en' ? EN : TR;
+  document.querySelectorAll('[data-i]').forEach(function (el) {
+    var v = d[el.getAttribute('data-i')];
+    if (v == null) return;
+    if (el.hasAttribute('data-html')) el.innerHTML = v; else el.textContent = v;
   });
-  EL.glow.style.cssText=''; void EL.glow.offsetWidth;
-  EL.overlay.style.cssText='opacity:0;transition:opacity 1.5s ease;';
-
-  /* P1 — logo */
-  EL.omega.style.animation='omegaReveal 2.2s cubic-bezier(.4,0,.2,1) .5s forwards';
-  EL.brand.style.animation='fadeUp 1s ease 2.8s both';
-  if(!footerShown){
-    EL.footer.style.animation='fadeUp 1s ease 3.4s both';
-    sched(()=>{EL.footer.style.animation='';EL.footer.style.opacity='1';footerShown=true;},5000);
-  }
-
-  /* P2 — grass + logo raise */
-  sched(()=>{
-    EL.scene.style.transition='top 1.8s cubic-bezier(.4,0,.2,1)';
-    EL.scene.style.top='30%';
-  },6400);
-  sched(()=>{
-    EL.grass.style.animation='grassReveal 2.2s ease forwards';
-  },6500);
-
-  /* P3 — sun transform (3 sn sonra) */
-  sched(sunTransform,9500);
+  document.documentElement.lang = l;
+  document.title = l === 'en' ? 'Stoikos — Stoic Wisdom' : 'Stoikos — Stoacı Bilgelik';
+  document.getElementById('lnkPrivacy').href = l === 'en' ? '/privacy.html' : '/gizlilik.html';
+  document.getElementById('lnkTerms').href = l === 'en' ? '/terms-en.html' : '/terms.html';
+  var v = document.getElementById('filmVideo');
+  var want = l === 'en' ? '/media/teaser-en.mp4' : '/media/teaser-tr.mp4';
+  var s = v.querySelector('source');
+  if (s.getAttribute('src') !== want) { s.setAttribute('src', want); v.load(); document.getElementById('film').classList.remove('playing'); }
+  document.querySelectorAll('.lang button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-lang') === l); });
+  try { localStorage.setItem('stoikos_site_lang', l); } catch (e) {}
 }
+var saved = null;
+try { saved = localStorage.getItem('stoikos_site_lang'); } catch (e) {}
+setLang(saved || ((navigator.language || '').toLowerCase().indexOf('tr') === 0 ? 'tr' : 'en'));
+document.querySelectorAll('.lang button').forEach(function (b) {
+  b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
+});
 
-function sunTransform(){
-  /* scene → sol üst köşe */
-  tr(EL.scene,{top:'52px',left:'52px',transform:'translate(0,0)'},2500);
-  tr(EL.brand,{opacity:'0'},1200);
+/* ── Telefon durum çubukları ── */
+var SBAR = '<span>9:41</span><span class="r">'
+  + '<svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".7"/><rect x="5" y="5.5" width="3" height="6.5" rx=".7"/><rect x="10" y="3" width="3" height="9" rx=".7"/><rect x="15" y="0" width="3" height="12" rx=".7"/></svg>'
+  + '<svg viewBox="0 0 16 12"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.3-1.3A10.3 10.3 0 0 0 8 .4 10.3 10.3 0 0 0 .7 3.3L2 4.6a8.6 8.6 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.4l1.3-1.3A6.6 6.6 0 0 0 8 4a6.6 6.6 0 0 0-4.7 1.9l1.3 1.3c.9-.9 2.1-1.4 3.4-1.4zm0 3.6c-.5 0-.9.2-1.2.5L8 11.2l1.2-1.3c-.3-.3-.7-.5-1.2-.5z"/></svg>'
+  + '<svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="#ece4d4" stroke-opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="1.8"/><rect x="23.6" y="4" width="1.6" height="4" rx=".8" fill-opacity=".45"/></svg></span>';
+document.querySelectorAll('.phone .screen').forEach(function (sc) {
+  var d = document.createElement('div'); d.className = 'sbar'; d.setAttribute('aria-hidden', 'true'); d.innerHTML = SBAR;
+  sc.insertBefore(d, sc.firstChild);
+});
 
-  /* glow güneşi takip eder */
-  tr(EL.glow,{top:'80px',left:'80px',transform:'translate(0,0)',width:'280px',height:'280px'},2500);
+/* ── Video: dokununca sesli oynar ── */
+document.getElementById('filmPlay').addEventListener('click', function () {
+  var v = document.getElementById('filmVideo');
+  v.controls = true; v.play(); document.getElementById('film').classList.add('playing');
+});
 
-  /* Ω → altın güneş */
-  EL.omega.style.transition='font-size 2.5s ease,color 2.5s ease,filter 2.5s ease';
-  EL.omega.style.fontSize='54px';
-  EL.omega.style.color='#FFD98A';
-  EL.omega.style.filter=
-    'drop-shadow(0 0 16px rgba(255,205,80,1)) '+
-    'drop-shadow(0 0 40px rgba(255,160,20,.7)) '+
-    'drop-shadow(0 0 90px rgba(255,120,0,.35))';
-
-  /* geçiş bittikten sonra pulsing güneş */
-  sched(()=>{
-    EL.omega.style.transition='';
-    EL.omega.style.animation='sunGlow 3s ease-in-out infinite';
-  },2600);
-
-  /* aydınlatma (geçiş sonrası) */
-  sched(illuminate,2500);
+/* ── Menü arka planı + belirme ── */
+var nav = document.getElementById('nav');
+function onScroll() { nav.classList.toggle('scrolled', window.scrollY > 20); }
+window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+if ('IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+} else {
+  document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
 }
-
-function illuminate(){
-  EL.sun.style.transition='opacity 1.5s ease';
-  EL.sun.style.opacity='1';
-  sched(()=>{ EL.sun.style.animation='lightBreathe 3.5s ease-in-out infinite'; },1600);
-
-  EL.grass.style.transition='filter 2s ease';
-  EL.grass.style.filter='sepia(.12) saturate(1.2) brightness(1.08)';
-
-  /* 6 saniye sonra döngü devam eder */
-  sched(cycleReset,6000);
-}
-
-function cycleReset(){
-  tr(EL.overlay,{opacity:'1'},2000);
-  sched(()=>{
-    play();
-    sched(()=>{ tr(EL.overlay,{opacity:'0'},1200); },200);
-  },2300);
-}
-
-play();
 </script>
 </body>
 </html>
