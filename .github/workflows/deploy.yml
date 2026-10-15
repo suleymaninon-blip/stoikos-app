@@ -1,8 +1,17 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (yönlendirme)
+
+# Asıl site artık https://stoikos.app — Cloudflare Pages, bu depoya bağlı
+# (kök dizin = depo kökü, build komutu = bash scripts/build-site.sh, çıktı = site).
+#
+# Eski test adresi suleymaninon-blip.github.io/stoikos-app/... hâlâ elde
+# dolaşıyor. Burada yalnız o adresleri yeni siteye gönderen bir yönlendirme
+# sayfası yayınlanıyor; uygulamanın kendisi artık burada derlenmiyor.
 
 on:
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -18,42 +27,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      # Site yapısı (stoikos.app):
-      #   /            → website/index.html (açılış sayfası)
-      #   /app/        → Expo web uygulaması
-      #   /gizlilik.html, /privacy.html, /terms*.html → yasal sayfalar
-      #   /404.html    → eski adresleri (github.io/stoikos-app/...) /app'e yönlendirir
-      # Uygulamanın kök yolu app.json → experiments.baseUrl ile AYNI olmalı.
-      - name: Export web build
-        env:
-          EXPO_BASE_URL: /app
-        run: npx expo export --platform web
-
-      - name: Fix asset paths
-        run: |
-          find dist -name "*.html" -exec sed -i \
-            -e 's|src="/_expo/|src="/app/_expo/|g' \
-            -e 's|href="/_expo/|href="/app/_expo/|g' \
-            -e 's|url(/assets/|url(/app/assets/|g' \
-            -e 's|href="/assets/|href="/app/assets/|g' \
-            {} \;
-
-      - name: Assemble site
+      - name: Build redirect site
         run: |
           mkdir site
-          mv dist site/app
-          cp website/index.html website/404.html site/
-          cp public/gizlilik.html public/privacy.html public/terms.html public/terms-en.html site/
+          cat > site/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="tr"><head><meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Stoikos taşındı</title>
+          <link rel="canonical" href="https://stoikos.app/app/">
+          <meta http-equiv="refresh" content="0; url=https://stoikos.app/app/">
+          <script>location.replace('https://stoikos.app/app/');</script>
+          <style>body{margin:0;background:#14120e;color:#c4a96a;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh}a{color:#c4a96a}</style>
+          </head><body><p>Stoikos taşındı → <a href="https://stoikos.app/app/">stoikos.app</a></p></body></html>
+          HTML
+          cp site/index.html site/404.html
 
       - uses: actions/upload-pages-artifact@v3
         with:

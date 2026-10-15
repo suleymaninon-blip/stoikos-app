@@ -8,15 +8,18 @@
 - Web önizleme: `EXPO_BASE_URL= npx expo start --web --port 8081`
 - Telefonda (Expo Go, native): `npx expo start --tunnel --port 8082` → QR okut.
 - tsc: `node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json` (backend/ hataları Cloudflare tipleri, alakasız).
-- Web yayını: `EXPO_BASE_URL=/app node node_modules/expo/bin/cli export --platform web` (site birleştirme adımları `.github/workflows/deploy.yml` içinde)
+- Web yayını (site): `bash scripts/build-site.sh` → `site/` (Cloudflare Pages aynı betiği çalıştırır)
 
 ## Yayın / Deploy
-- **Site: https://stoikos.app** (GitHub Pages + özel alan adı; push to `main` → GitHub Action otomatik deploy). Yapı:
+- **Site: https://stoikos.app** — **Cloudflare Pages** projesi `stoikos-app`, bu GitHub deposuna bağlı. `main`'e her push'ta Cloudflare kendisi derler (diğer dallar önizleme olarak `<hash>.stoikos-app.pages.dev`'e düşer). Ayarlar (Cloudflare → Workers & Pages → stoikos-app → Settings → Build): kök dizin **boş** (depo kökü), build komutu **`bash scripts/build-site.sh`**, çıktı **`site`**. Alan adı Cloudflare DNS'te `stoikos.app` CNAME → `stoikos-app.pages.dev` (Proxied). Yapı:
   - `/` → `website/index.html` (açılış sayfası; altbilgide "Web'de dene", gizlilik, koşullar)
   - `/app/` → Expo web uygulaması (test edenler bunu kullanıyor)
   - `/gizlilik.html`, `/privacy.html`, `/terms.html`, `/terms-en.html` → yasal sayfalar (Apple'a verilecek adresler)
-  - `/404.html` → bulunamayan her yolu `/app/`'e yönlendirir. Eski `suleymaninon-blip.github.io/stoikos-app/...` adreslerini GitHub `stoikos.app/...`'e çeviriyor; böylece eski bağlantılar kırılmıyor (kök adres açılış sayfasına düşer).
-- **app.json** `experiments.baseUrl: "/app"` ŞART ve workflow'daki `EXPO_BASE_URL` ile **aynı** olmalı (farklıysa web "Unmatched Route" verir ya da varlıklar 404 olur). Web-only; native'i etkilemez. Ekim 2026'ya kadar `/stoikos-app` idi.
+  - `/404.html` → bulunamayan her yolu `/app/`'e yönlendirir
+  - Yerelde üretmek: `npm ci && bash scripts/build-site.sh` → `site/`
+- **GitHub Pages yalnız yönlendirme**: eski test adresi `suleymaninon-blip.github.io/stoikos-app/...` her yolda `https://stoikos.app/app/`'e gider (`.github/workflows/deploy.yml`, yalnız o dosya değişince çalışır). Haziran–Ekim 2026 arası uygulama oradan yayınlanıyordu.
+- ⚠️ E-posta (`support@stoikos.app`) Cloudflare Email Routing ile çalışıyor: DNS'teki **MX** ve **TXT** kayıtlarına dokunma.
+- **app.json** `experiments.baseUrl: "/app"` ŞART ve `scripts/build-site.sh` içindeki `BASE` ile **aynı** olmalı (farklıysa web "Unmatched Route" verir ya da varlıklar 404 olur). Web-only; native'i etkilemez. Ekim 2026'ya kadar `/stoikos-app` idi.
 - **Otomatik güncelleme (web):** `public/sw.js` (ağ-öncelikli HTML → bayat sürüm kalmaz, hash'li varlık cache-first, skipWaiting+clientsClaim, eski cache temizlenir) + `constants/registerSW.ts` (`_layout.tsx`'te çağrılır; native no-op; yeni sürümde açık sekmeyi 1 kez otomatik yeniler; `readyState` guard'lı). Test edenlerin cache temizleme derdi bitti. SW yolu `process.env.EXPO_BASE_URL`'den türer (export'ta gömülür).
 - **Backend**: Cloudflare Worker `stoikos-backend.stoikos-app.workers.dev` (wrangler). Koç (Claude proxy, KV hafıza) + Meydan Okuma (D1). **Otomatik deploy:** `backend/` değişip `main`'e push edilince `.github/workflows/deploy-backend.yml` Worker'ı deploy eder (repo secret `CLOUDFLARE_API_TOKEN`; deploy öncesi tsc). Elle gerekirse `cd backend && npx wrangler deploy`.
 

@@ -6,14 +6,15 @@
 <title>Stoikos</title>
 <script>
 /*
- * Uygulama eskiden suleymaninon-blip.github.io/stoikos-app adresindeydi.
- * Özel alan adı bağlanınca GitHub eski adresleri stoikos.app/<yol>'a
- * yönlendiriyor; uygulama ise artık /app altında. Bulunamayan her yolu
- * uygulamaya gönderiyoruz, böylece test edenlerin eski bağlantıları bozulmaz.
- * Hedef her zaman uygulamanın girişi: dışa aktarım tek sayfalık
- * (web.output = "single"), /app/settings gibi alt yollar dosya olarak yok.
+ * Bulunamayan her yolu uygulamanın girişine (/app/) gönderir — eski ya da
+ * yanlış yazılmış bağlantılar boş sayfada kalmasın. Uygulama tek sayfalık
+ * dışa aktarılıyor (web.output = "single"), /app/settings gibi alt yollar
+ * dosya olarak yok; onlar için aşağıdaki bağlantı gösterilir.
  */
-location.replace('/app/' + location.search + location.hash);
+// Güvenlik: zaten /app altındaysak (ör. uygulama derlenmemiş) döngüye girme.
+if (location.pathname.indexOf('/app') !== 0) {
+  location.replace('/app/' + location.search + location.hash);
+}
 </script>
 <style>
   body { margin: 0; background: #14120e; color: #c4a96a; font-family: -apple-system, system-ui, sans-serif;
