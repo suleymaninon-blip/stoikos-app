@@ -62,7 +62,8 @@ h2 em{font-style:italic;color:var(--gold2)}
 
 /* ── Giriş ── */
 .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden;isolation:isolate}
-.hero .photo::after{background:linear-gradient(90deg,rgba(20,18,14,.96) 0%,rgba(20,18,14,.78) 45%,rgba(20,18,14,.45) 100%),linear-gradient(0deg,var(--bg) 0%,transparent 30%)}
+.hero .photo{z-index:-2} /* yazının ALTINDA kalsın: .wrap konumlandırılmamış, z-index'siz mutlak öğe onun üstüne çizilir */
+.hero .photo::after{background:linear-gradient(90deg,rgba(20,18,14,.93) 0%,rgba(20,18,14,.72) 38%,rgba(20,18,14,.30) 75%,rgba(20,18,14,.20) 100%),linear-gradient(0deg,var(--bg) 0%,transparent 28%)}
 .hero-glow{position:absolute;z-index:-1;width:900px;height:900px;right:-200px;top:50%;transform:translateY(-50%);background:radial-gradient(circle,rgba(212,146,74,.16) 0%,rgba(196,169,106,.06) 35%,transparent 65%);pointer-events:none}
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:40px;width:100%}
 .hero h1{font-family:var(--display);font-size:clamp(44px,6.4vw,84px);line-height:1.02;margin:18px 0 22px;color:var(--text)}
@@ -517,7 +518,7 @@ footer a:hover{color:var(--gold2)}
  * Örnek: hero: '/img/photo-hero.jpg'
  */
 var PHOTOS = {
-  // hero:  '/img/photo-hero.jpg',
+  hero:  '/img/photo-hero.webp',   // Sounion, Poseidon Tapınağı — yatayda aynalandı (tapınak sağda, yazı solda)
   // story: '/img/photo-story.jpg',
   // quote: '/img/photo-quote.jpg',
 };
