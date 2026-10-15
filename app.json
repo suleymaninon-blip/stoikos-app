@@ -35,7 +35,7 @@
     },
     "experiments": {
       "typedRoutes": true,
-      "baseUrl": "/stoikos-app"
+      "baseUrl": "/app"
     },
     "extra": {
       "router": {

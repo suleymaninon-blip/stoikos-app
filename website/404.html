@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stoikos</title>
+<script>
+/*
+ * Uygulama eskiden suleymaninon-blip.github.io/stoikos-app adresindeydi.
+ * Özel alan adı bağlanınca GitHub eski adresleri stoikos.app/<yol>'a
+ * yönlendiriyor; uygulama ise artık /app altında. Bulunamayan her yolu
+ * uygulamaya gönderiyoruz, böylece test edenlerin eski bağlantıları bozulmaz.
+ * Hedef her zaman uygulamanın girişi: dışa aktarım tek sayfalık
+ * (web.output = "single"), /app/settings gibi alt yollar dosya olarak yok.
+ */
+location.replace('/app/' + location.search + location.hash);
+</script>
+<style>
+  body { margin: 0; background: #14120e; color: #c4a96a; font-family: -apple-system, system-ui, sans-serif;
+         display: flex; align-items: center; justify-content: center; height: 100vh; }
+  a { color: #c4a96a; }
+</style>
+</head>
+<body>
+  <p><a href="/app/">Stoikos</a></p>
+</body>
+</html>

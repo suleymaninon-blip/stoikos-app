@@ -28,23 +28,36 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      # Site yapısı (stoikos.app):
+      #   /            → website/index.html (açılış sayfası)
+      #   /app/        → Expo web uygulaması
+      #   /gizlilik.html, /privacy.html, /terms*.html → yasal sayfalar
+      #   /404.html    → eski adresleri (github.io/stoikos-app/...) /app'e yönlendirir
+      # Uygulamanın kök yolu app.json → experiments.baseUrl ile AYNI olmalı.
       - name: Export web build
         env:
-          EXPO_BASE_URL: /stoikos-app
+          EXPO_BASE_URL: /app
         run: npx expo export --platform web
 
-      - name: Fix asset paths for GitHub Pages
+      - name: Fix asset paths
         run: |
           find dist -name "*.html" -exec sed -i \
-            -e 's|src="/_expo/|src="/stoikos-app/_expo/|g' \
-            -e 's|href="/_expo/|href="/stoikos-app/_expo/|g' \
-            -e 's|url(/assets/|url(/stoikos-app/assets/|g' \
-            -e 's|href="/assets/|href="/stoikos-app/assets/|g' \
+            -e 's|src="/_expo/|src="/app/_expo/|g' \
+            -e 's|href="/_expo/|href="/app/_expo/|g' \
+            -e 's|url(/assets/|url(/app/assets/|g' \
+            -e 's|href="/assets/|href="/app/assets/|g' \
             {} \;
+
+      - name: Assemble site
+        run: |
+          mkdir site
+          mv dist site/app
+          cp website/index.html website/404.html site/
+          cp public/gizlilik.html public/privacy.html public/terms.html public/terms-en.html site/
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build
