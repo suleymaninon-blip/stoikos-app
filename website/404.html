@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stoikos</title>
+<script>
+/*
+ * Bulunamayan her yolu uygulamanın girişine (/app/) gönderir — eski ya da
+ * yanlış yazılmış bağlantılar boş sayfada kalmasın. Uygulama tek sayfalık
+ * dışa aktarılıyor (web.output = "single"), /app/settings gibi alt yollar
+ * dosya olarak yok; onlar için aşağıdaki bağlantı gösterilir.
+ */
+// Güvenlik: zaten /app altındaysak (ör. uygulama derlenmemiş) döngüye girme.
+if (location.pathname.indexOf('/app') !== 0) {
+  location.replace('/app/' + location.search + location.hash);
+}
+</script>
+<style>
+  body { margin: 0; background: #14120e; color: #c4a96a; font-family: -apple-system, system-ui, sans-serif;
+         display: flex; align-items: center; justify-content: center; height: 100vh; }
+  a { color: #c4a96a; }
+</style>
+</head>
+<body>
+  <p><a href="/app/">Stoikos</a></p>
+</body>
+</html>

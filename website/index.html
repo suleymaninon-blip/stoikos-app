@@ -111,7 +111,11 @@ footer a:hover{color:#c2a878}
 <div id="overlay"></div>
 
 <footer id="footer">
+  <a href="/app/" id="appLink">Try on web</a>
+  &nbsp;·&nbsp;
   <a href="privacy.html" id="privacyLink">Privacy Policy</a>
+  &nbsp;·&nbsp;
+  <a href="terms-en.html" id="termsLink">Terms</a>
   &nbsp;·&nbsp;
   <a href="mailto:support@stoikos.app">support@stoikos.app</a>
   &nbsp;·&nbsp;
@@ -123,6 +127,9 @@ footer a:hover{color:#c2a878}
 if ((navigator.language||'').toLowerCase().startsWith('tr')) {
   const l = document.getElementById('privacyLink');
   l.href = 'gizlilik.html'; l.textContent = 'Gizlilik Politikası';
+  const t = document.getElementById('termsLink');
+  t.href = 'terms.html'; t.textContent = 'Kullanım Koşulları';
+  document.getElementById('appLink').textContent = "Web'de dene";
 }
 
 /* ── build grass (once) ── */
