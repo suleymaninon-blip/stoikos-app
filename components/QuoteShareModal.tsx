@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { Colors, Fonts } from '../constants/theme';
+import StoikosMark from './StoikosMark';
 
 export interface ShareableQuote { text: string; author: string; source: string; }
 
@@ -54,13 +55,16 @@ export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClos
               start={{ x: 1, y: 0 }}
               end={{ x: 0, y: 1 }}
             />
-            <Text style={styles.cardOmegaFaint}>Ω</Text>
+            <View style={styles.cardOmegaFaint}><StoikosMark size={130} variant="line" color="rgb(196,169,106)" opacity={0.07} /></View>
             <Text style={styles.cardStar}>✦</Text>
             <Text style={styles.cardQuote}>“{quote.text}”</Text>
             <Text style={styles.cardAuthor}>— {quote.author}</Text>
             <Text style={styles.cardSource}>{quote.source}</Text>
             <View style={styles.cardFooter}>
-              <Text style={styles.cardBrand}>Ω  STOIKOS</Text>
+              <View style={styles.cardBrandRow}>
+                <StoikosMark size={18} />
+                <Text style={styles.cardBrand}>STOIKOS</Text>
+              </View>
               <Text style={styles.cardTagline}>{tagline}</Text>
             </View>
           </View>
@@ -88,12 +92,13 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.3)', overflow: 'hidden', justifyContent: 'center',
   },
   cardGlow: { position: 'absolute', top: 0, right: 0, width: 280, height: 200 },
-  cardOmegaFaint: { position: 'absolute', top: 10, right: 16, fontFamily: Fonts.cinzel, fontSize: 120, color: 'rgba(196,169,106,0.06)', lineHeight: 130 },
+  cardOmegaFaint: { position: 'absolute', top: 6, right: 6 },
   cardStar: { fontSize: 12, color: Colors.sand, opacity: 0.7, marginBottom: 16 },
   cardQuote: { fontFamily: Fonts.cormorantItalic, fontSize: 24, lineHeight: 34, color: Colors.sand3, marginBottom: 18 },
   cardAuthor: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand, letterSpacing: 0.5 },
   cardSource: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, fontStyle: 'italic', marginTop: 2 },
   cardFooter: { marginTop: 26, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },
+  cardBrandRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   cardBrand: { fontFamily: Fonts.cinzelBold, fontSize: 13, letterSpacing: 3, color: Colors.sand2 },
   cardTagline: { fontFamily: Fonts.jostLight, fontSize: 9, letterSpacing: 1.5, color: Colors.muted, marginTop: 2 },
 

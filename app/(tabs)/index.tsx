@@ -19,6 +19,7 @@ import { useStreak } from '../../hooks/useStreak';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
+import StoikosMark from '../../components/StoikosMark';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
@@ -148,7 +149,9 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <Text style={styles.omega}>Ω</Text>
+          <View style={styles.omega}>
+            <StoikosMark size={96} variant="line" color="rgb(194,168,120)" opacity={0.06} />
+          </View>
 
         </Animated.View>
       </ScrollView>
@@ -196,5 +199,5 @@ const styles = StyleSheet.create({
   dotDone: { backgroundColor: 'rgba(194,168,120,0.5)' },
   dotToday: { backgroundColor: Colors.sand2, width: 9, height: 9, borderRadius: 4.5 },
 
-  omega: { fontFamily: Fonts.cinzel, fontSize: 80, color: 'rgba(194,168,120,0.04)', textAlign: 'right', marginTop: 24, marginRight: -10 },
+  omega: { alignSelf: 'flex-end', marginTop: 24, marginRight: -10 },
 });

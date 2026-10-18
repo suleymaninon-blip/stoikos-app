@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-nati
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
+import StoikosMark from './StoikosMark';
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,8 +80,10 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
           ne görünmezdi, ayakları ince çizginin iki ucunda dışarı taşıyordu.
           Ekranda iki Ω vardı; küçük altın Ω tek başına yeterince güçlü.) */}
 
-      {/* ana Ω */}
-      <Animated.Text style={[styles.omega, { opacity: omegaOpacity, transform: [{ scale: omegaScale }] }]}>Ω</Animated.Text>
+      {/* ana işaret (nefes orbu + Ω) */}
+      <Animated.View style={[styles.omega, { opacity: omegaOpacity, transform: [{ scale: omegaScale }] }]}>
+        <StoikosMark size={112} />
+      </Animated.View>
 
       {/* STOIKOS */}
       <Animated.Text style={[styles.name, { opacity: nameOpacity, transform: [{ translateY: nameUp }] }]}>
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 999,
   },
-  omega: { fontFamily: Fonts.cinzelBold, fontSize: 76, color: Colors.sand2, lineHeight: 84, marginBottom: 6 },
+  omega: { marginBottom: 2 },
   name: { fontFamily: Fonts.cinzelBold, fontSize: 34, letterSpacing: 8, color: Colors.sand3, marginTop: -4 },
   lineRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18, marginBottom: 14 },
   line: { height: 1, backgroundColor: 'rgba(196,169,106,0.4)' },

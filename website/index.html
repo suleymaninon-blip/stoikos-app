@@ -47,7 +47,8 @@ h2 em{font-style:italic;color:var(--gold2)}
 .nav.scrolled{background:rgba(20,18,14,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
 .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);letter-spacing:.24em;font-size:15px;color:var(--gold2)}
-.brand .om{font-size:24px;letter-spacing:0;color:var(--gold)}
+.mk{display:block;flex:none}
+.brand .mk{width:30px;height:30px;--mk-w:44}
 .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;color:var(--text2)}
 .nav-links a:hover{color:var(--gold2)}
 .lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
@@ -150,7 +151,8 @@ h2 em{font-style:italic;color:var(--gold2)}
 .quote .photo::after{background:radial-gradient(ellipse at 50% 50%,rgba(20,18,14,.55),rgba(20,18,14,.80) 70%),linear-gradient(0deg,var(--bg) 0%,transparent 20%,transparent 80%,var(--bg) 100%)}
 .quote blockquote{font-family:var(--display);font-style:italic;font-size:clamp(28px,4vw,48px);line-height:1.25;color:var(--text);max-width:900px;margin:0 auto}
 .quote cite{display:block;margin-top:26px;font:400 13px var(--sans);font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
-.quote .om{font-family:var(--serif);font-size:30px;color:var(--gold);margin-bottom:26px}
+.quote .om{display:flex;justify-content:center;margin-bottom:22px}
+.quote .om .mk{width:46px;height:46px;--mk-w:40}
 
 /* ── Fiyat ── */
 .pricing{padding:130px 0}
@@ -191,7 +193,8 @@ details p{padding:0 0 24px;color:var(--text2);font-size:15.5px;max-width:68ch}
 
 /* ── Son çağrı + alt bilgi ── */
 .final{position:relative;padding:120px 0;text-align:center;border-top:1px solid var(--line);background:radial-gradient(ellipse at 50% 0%,rgba(196,169,106,.12),transparent 60%)}
-.final .om{font-family:var(--serif);font-size:56px;color:var(--gold);line-height:1}
+.final .om{display:flex;justify-content:center}
+.final .om .mk{width:92px;height:92px}
 .final h2{margin:24px auto 30px;max-width:720px}
 .final .ctas{justify-content:center}
 footer{border-top:1px solid var(--line);padding:40px 0 calc(40px + env(safe-area-inset-bottom));font-size:13.5px;color:var(--dim)}
@@ -249,11 +252,25 @@ footer a:hover{color:var(--gold2)}
 </style>
 </head>
 <body>
+<!-- Stoikos işareti (nefes orbu + Ω). components/StoikosMark.tsx ve scripts/brand/mark.js ile aynı geometri. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="mkGold" gradientUnits="userSpaceOnUse" x1="0" y1="250" x2="0" y2="760"><stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/></linearGradient>
+    <radialGradient id="mkOrb" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/></radialGradient>
+    <radialGradient id="mkGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/></radialGradient>
+  </defs>
+  <symbol id="mark" viewBox="192 162 640 640">
+    <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".13" stroke-width="5"/>
+    <circle cx="512" cy="477" r="200" fill="url(#mkGlow)"/>
+    <circle cx="512" cy="477" r="128" fill="url(#mkOrb)"/>
+    <path d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkGold)" stroke-width="var(--mk-w,34)" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
 
 <!-- ═══ Üst menü ═══ -->
 <header class="nav" id="nav">
   <div class="wrap">
-    <a href="#top" class="brand" aria-label="Stoikos"><span class="om">Ω</span>STOIKOS</a>
+    <a href="#top" class="brand" aria-label="Stoikos"><svg class="mk" aria-hidden="true"><use href="#mark"/></svg>STOIKOS</a>
     <nav class="nav-links">
       <a href="#ozellikler" class="hide-m" data-i="nav.features">Özellikler</a>
       <a href="#plus" class="hide-m" data-i="nav.plus">Plus</a>
@@ -406,7 +423,7 @@ footer a:hover{color:var(--gold2)}
 <section class="quote">
   <div class="photo" data-photo="quote"></div>
   <div class="wrap reveal">
-    <div class="om">Ω</div>
+    <div class="om"><svg class="mk" aria-hidden="true"><use href="#mark"/></svg></div>
     <blockquote data-i="quote.text">“Seni rahatsız eden olaylar değil, onlar hakkındaki yargılarındır.”</blockquote>
     <cite data-i="quote.cite">Epiktetos · Enkheiridion’dan uyarlama</cite>
   </div>
@@ -490,7 +507,7 @@ footer a:hover{color:var(--gold2)}
 <!-- ═══ Son çağrı ═══ -->
 <section class="final">
   <div class="wrap reveal">
-    <div class="om">Ω</div>
+    <div class="om"><svg class="mk" aria-hidden="true"><use href="#mark"/></svg></div>
     <h2 data-i="final.title" data-html>Bugün, <em>küçük bir adımla başla.</em></h2>
     <div class="ctas">
       <a href="/app/" class="btn btn-gold" data-i="cta.webArrow">Web'de hemen dene →</a>
@@ -502,7 +519,7 @@ footer a:hover{color:var(--gold2)}
 
 <footer>
   <div class="wrap">
-    <div class="brand"><span class="om">Ω</span>STOIKOS</div>
+    <div class="brand"><svg class="mk" aria-hidden="true"><use href="#mark"/></svg>STOIKOS</div>
     <nav>
       <a href="/gizlilik.html" id="lnkPrivacy" data-i="foot.privacy">Gizlilik Politikası</a>
       <a href="/terms.html" id="lnkTerms" data-i="foot.terms">Kullanım Koşulları</a>
