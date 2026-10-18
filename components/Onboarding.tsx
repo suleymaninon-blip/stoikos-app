@@ -311,7 +311,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                         </Text>
                       </TouchableOpacity>
                     )}
-                    {!REMINDERS_SUPPORTED && (
+                    {s.reminders && !REMINDERS_SUPPORTED && (
                       <Text style={styles.remindWebNote}>{t('notify.webOnly')}</Text>
                     )}
                   </>

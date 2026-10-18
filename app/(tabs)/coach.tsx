@@ -20,6 +20,7 @@ import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
 import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
 import { Paywall } from '../../components/Paywall';
 import StoikosMark from '../../components/StoikosMark';
+import { confirmAction } from '../../constants/dialog';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -229,7 +230,19 @@ export default function CoachScreen() {
     }
   }
 
-  function clearChat() {
+  // Onaysız silmek, tek dokunuşta konuşmayı kaybettiriyordu. Mesaj ayrıca
+  // bunun sunucudaki hafızayı silmediğini söylüyor (o Ayarlar'da).
+  async function clearChat() {
+    if (messages.length > 1) {
+      const ok = await confirmAction({
+        title: t('coach.resetTitle'),
+        message: t('coach.resetMsg'),
+        confirmText: t('progress.reset'),
+        cancelText: t('progress.cancel'),
+        destructive: true,
+      });
+      if (!ok) return;
+    }
     setMessages([makeInitial()]);
     AsyncStorage.removeItem(CHAT_HISTORY_KEY);
   }
@@ -291,6 +304,8 @@ export default function CoachScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
+              {/* İlk kez gelen kişi neyle konuştuğunu ve yazdığının nereye gittiğini bilmeli */}
+              <Text style={styles.disclaimer}>{t('coach.disclaimer')}</Text>
             </View>
           )}
         </ScrollView>
@@ -377,6 +392,7 @@ const styles = StyleSheet.create({
   quoteInlineText: { fontFamily: Fonts.cormorantItalic, fontSize: 12, lineHeight: 18, color: Colors.sand2 },
   timeMeta: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 4, letterSpacing: 0.3 },
   suggestions: { marginTop: 16 },
+  disclaimer: { fontFamily: Fonts.jost, fontSize: 11, lineHeight: 16, color: Colors.muted, marginTop: 18 },
   suggestionsLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)' },
