@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
+import StoikosMark from './StoikosMark';
 
 export type Plan = 'annual' | 'monthly';
 
@@ -41,7 +42,7 @@ export function Paywall({
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.card} onPress={() => {}}>
           <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-            <Text style={styles.omega}>Ω</Text>
+            <View style={styles.omega}><StoikosMark size={52} /></View>
             <Text style={styles.title}>{t('paywall.title')}</Text>
             <Text style={styles.subtitle}>{t('paywall.subtitle')}</Text>
 
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     width: '100%', maxWidth: 420, maxHeight: '90%',
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)',
   },
-  omega: { fontFamily: Fonts.cinzel, fontSize: 34, color: Colors.sand, textAlign: 'center', marginBottom: 10 },
+  omega: { alignItems: 'center', marginBottom: 8 },
   title: { fontFamily: Fonts.cinzel, fontSize: 21, color: Colors.sand2, textAlign: 'center', letterSpacing: 0.8, marginBottom: 6 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, textAlign: 'center', letterSpacing: 0.4, marginBottom: 18 },
 

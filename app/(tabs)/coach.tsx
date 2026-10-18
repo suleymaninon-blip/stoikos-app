@@ -19,6 +19,7 @@ import { useLang } from '../../constants/i18n';
 import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
 import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
 import { Paywall } from '../../components/Paywall';
+import StoikosMark from '../../components/StoikosMark';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -78,7 +79,10 @@ function MessageBubble({ message }: { message: Message }) {
   const { body, quote } = parseResponse(message.content);
   return (
     <Animated.View style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-      <Text style={styles.aiLabel}>Ω  STOIKOS</Text>
+      <View style={styles.aiLabelRow}>
+        <StoikosMark size={12} variant="line" color={Colors.sand} />
+        <Text style={styles.aiLabel}>STOIKOS</Text>
+      </View>
       <View style={styles.aiBubble}>
         <Text style={styles.aiText}>{body}</Text>
         {quote && (
@@ -125,7 +129,10 @@ function TypingIndicator() {
   }, []);
   return (
     <View style={styles.aiBubbleWrap}>
-      <Text style={styles.aiLabel}>Ω  STOIKOS</Text>
+      <View style={styles.aiLabelRow}>
+        <StoikosMark size={12} variant="line" color={Colors.sand} />
+        <Text style={styles.aiLabel}>STOIKOS</Text>
+      </View>
       <View style={[styles.aiBubble, { paddingVertical: 16, paddingHorizontal: 20 }]}>
         <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
           {dots.map((dot, i) => (
@@ -292,7 +299,7 @@ export default function CoachScreen() {
           // Hak bitti: yazma alanı yerine ödeme duvarına götüren tek bir eylem
           <View style={styles.inputArea}>
             <TouchableOpacity style={styles.unlockBtn} onPress={() => setPaywallOpen(true)} activeOpacity={0.85}>
-              <Text style={styles.unlockIcon}>Ω</Text>
+              <StoikosMark size={20} variant="line" color={Colors.stone} />
               <Text style={styles.unlockText}>{t('paywall.title')}</Text>
             </TouchableOpacity>
           </View>
@@ -350,7 +357,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
     backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 15,
   },
-  unlockIcon: { fontFamily: Fonts.cinzel, fontSize: 16, color: Colors.stone },
   unlockText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.stone, letterSpacing: 1 },
   clearBtn: { backgroundColor: Colors.stone3, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   clearBtnText: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted },
@@ -363,7 +369,8 @@ const styles = StyleSheet.create({
   userBubble: { backgroundColor: Colors.stone3, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
   userText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 22, color: Colors.text },
   aiBubbleWrap: { alignItems: 'flex-start' },
-  aiLabel: { fontFamily: Fonts.cinzel, fontSize: 9, letterSpacing: 1.5, color: Colors.sand, opacity: 0.8, marginBottom: 6 },
+  aiLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 6, opacity: 0.8 },
+  aiLabel: { fontFamily: Fonts.cinzel, fontSize: 9, letterSpacing: 1.5, color: Colors.sand },
   aiBubble: { backgroundColor: 'rgba(194,168,120,0.09)', borderRadius: 18, borderBottomLeftRadius: 5, padding: 16, maxWidth: '90%', borderWidth: 1, borderColor: 'rgba(194,168,120,0.18)' },
   aiText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 24, color: Colors.text },
   quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },

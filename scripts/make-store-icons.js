@@ -1,3 +1,5 @@
+// ⚠️ Ekim 2026: yeni ikon tam taşan ve alfasız üretiliyor (scripts/brand/render-icons.js);
+// mağaza simgeleri de oradan çıkıyor. Bu betik eski yuvarlatılmış ikon içindi, artık gerekmiyor.
 // Mağaza simgeleri: kare, saydamlıksız, alfa kanalı olmayan PNG.
 //
 // assets/icon.png köşeleri yuvarlatılmış ve dışı saydam. İki sorun:

@@ -79,7 +79,17 @@
       <div class="orb"></div>
     </div>
     <div class="text">
-      <div class="omega">Ω</div>
+      <div class="omega"><svg width="64" height="64" viewBox="192 162 640 640" aria-hidden="true">
+        <defs>
+          <linearGradient id="fgGold" gradientUnits="userSpaceOnUse" x1="0" y1="250" x2="0" y2="760"><stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/></linearGradient>
+          <radialGradient id="fgOrb" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/></radialGradient>
+          <radialGradient id="fgGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".13" stroke-width="5"/>
+        <circle cx="512" cy="477" r="200" fill="url(#fgGlow)"/>
+        <circle cx="512" cy="477" r="128" fill="url(#fgOrb)"/>
+        <path d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#fgGold)" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg></div>
       <div class="word">STOIKOS</div>
       <div class="tagline" id="tagline"></div>
       <div class="rule"></div>

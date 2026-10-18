@@ -4,17 +4,19 @@ import {
   useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
+import StoikosMark, { MARK_CENTER, MARK_PATH, MARK_PATH_LEN, MARK_VIEWBOX } from './StoikosMark';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang, LANGUAGES } from '../constants/i18n';
 import { enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-// Ω SVG path — viewBox 0 0 100 92, single continuous stroke
-// Arc: large-arc=1 sweep=1 traces the horseshoe going UP and over the top
-const OMEGA_PATH = 'M 4 80 L 26 80 L 26 62 A 28 32 0 1 1 74 62 L 74 80 L 96 80';
-const OMEGA_LEN = 210; // approximate stroke length for dasharray
+// Stoikos işareti (nefes orbu + Ω) — tek sürekli çizgi: sol ayak → kavis → sağ ayak.
+// Biçim components/StoikosMark.tsx'ten gelir; burada yalnız çizim animasyonu var.
+const OMEGA_PATH = MARK_PATH;
+const OMEGA_LEN = MARK_PATH_LEN;
 
 // Fallback: simple fade-in + one breath (no SVG stroke draw)
 function OmegaFallback({ size }: { size: number }) {
@@ -49,43 +51,60 @@ function OmegaFallback({ size }: { size: number }) {
   );
 }
 
-// SVG stroke-draw scene
+// SVG stroke-draw scene: önce kavis çizilir, sonra içinde küre "nefes alarak" belirir.
 function OmegaSvgScene({ size }: { size: number }) {
   const dashOff = useRef(new Animated.Value(OMEGA_LEN)).current;
-  const glowOp = useRef(new Animated.Value(0.7)).current;
+  const orbOp = useRef(new Animated.Value(0)).current;
+  const ringOp = useRef(new Animated.Value(0)).current;
   const glowSc = useRef(new Animated.Value(1)).current;
   const brandOp = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.sequence([
-      // Phase 1: draw Ω over 2.5s (0.5s initial delay)
+      // 1: kavis ve ayaklar çizilir (0,5 sn bekleme + 2,5 sn)
       Animated.timing(dashOff, {
         toValue: 0, duration: 2500, delay: 500,
         easing: Easing.inOut(Easing.ease), useNativeDriver: false,
       }),
-      // Phase 2: one breath glow — in
+      // 2: küre belirir, bir kez nefes alır
       Animated.parallel([
-        Animated.timing(glowOp, { toValue: 1, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(glowSc, { toValue: 1.03, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(orbOp, { toValue: 1, duration: 900, easing: Easing.inOut(Easing.ease), useNativeDriver: false }),
+        Animated.timing(ringOp, { toValue: 1, duration: 900, easing: Easing.inOut(Easing.ease), useNativeDriver: false }),
+        Animated.timing(glowSc, { toValue: 1.04, duration: 900, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
       ]),
-      // Phase 2: breath — out
-      Animated.parallel([
-        Animated.timing(glowOp, { toValue: 0.85, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(glowSc, { toValue: 1, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ]),
-      // Phase 3: STOIKOS fades in
+      Animated.timing(glowSc, { toValue: 1, duration: 750, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      // 3: STOIKOS
       Animated.timing(brandOp, { toValue: 1, duration: 500, useNativeDriver: true }),
     ]).start();
   }, []);
-  const svgH = size * 0.92;
+  const { x: cx, y: cy } = MARK_CENTER;
   return (
     <View style={logoSt.scene}>
-      <Animated.View style={{ transform: [{ scale: glowSc }], opacity: glowOp }}>
-        <Svg width={size} height={svgH} viewBox="0 0 100 92">
+      <Animated.View style={{ transform: [{ scale: glowSc }] }}>
+        <Svg width={size} height={size} viewBox={MARK_VIEWBOX}>
+          <Defs>
+            <SvgLinearGradient id="obGold" x1="0" y1="250" x2="0" y2="760" gradientUnits="userSpaceOnUse">
+              <Stop offset="0" stopColor="#f4e2b8" />
+              <Stop offset="0.45" stopColor="#d4b376" />
+              <Stop offset="1" stopColor="#9a7b44" />
+            </SvgLinearGradient>
+            <RadialGradient id="obOrb" cx="42%" cy="36%" r="70%">
+              <Stop offset="0" stopColor="#f6e6c0" />
+              <Stop offset="0.45" stopColor="#cfae6c" />
+              <Stop offset="1" stopColor="#6e5530" />
+            </RadialGradient>
+            <RadialGradient id="obGlow" cx="50%" cy="50%" r="50%">
+              <Stop offset="0" stopColor="#e2b874" stopOpacity="0.45" />
+              <Stop offset="1" stopColor="#e2b874" stopOpacity="0" />
+            </RadialGradient>
+          </Defs>
+          <AnimatedCircle cx={cx} cy={cy} r={292} fill="none" stroke="#d4b376" strokeWidth={4} strokeOpacity={0.13} opacity={ringOp} />
+          <AnimatedCircle cx={cx} cy={cy} r={200} fill="url(#obGlow)" opacity={orbOp} />
+          <AnimatedCircle cx={cx} cy={cy} r={128} fill="url(#obOrb)" opacity={orbOp} />
           <AnimatedPath
             d={OMEGA_PATH}
             fill="none"
-            stroke={Colors.sand2}
-            strokeWidth="3.5"
+            stroke="url(#obGold)"
+            strokeWidth={34}
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeDasharray={`${OMEGA_LEN}`}
@@ -240,10 +259,10 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
             <View key={s.key} style={[styles.slide, { width }]}>
               <Animated.View style={[styles.slideInner, aStyle]}>
                 {s.key === 'logo' ? (
-                  <LogoSceneBoundary size={Math.min(width * 0.38, 180)} />
+                  <LogoSceneBoundary size={Math.min(width * 0.5, 230)} />
                 ) : s.key === 'welcome' ? (
                   <>
-                    <Text style={styles.omega}>Ω</Text>
+                    <View style={styles.omega}><StoikosMark size={84} /></View>
                     <Text style={styles.brand}>STOIKOS</Text>
                     <Text style={styles.tagline}>{t('setup.tagline')}</Text>
                     <Text style={styles.intro}>{t('onb.intro')}</Text>
@@ -329,7 +348,7 @@ const styles = StyleSheet.create({
   slide: { flex: 1 },
   slideInner: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 36, paddingBottom: 40 },
 
-  omega: { fontFamily: Fonts.cinzel, fontSize: 64, color: Colors.sand, marginBottom: 6 },
+  omega: { marginBottom: 4 },
   brand: { fontFamily: Fonts.cinzelBold, fontSize: 26, letterSpacing: 6, color: Colors.text, marginBottom: 12 },
   tagline: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, textTransform: 'uppercase', marginBottom: 18 },
   intro: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.text2, textAlign: 'center', lineHeight: 30, marginBottom: 36 },
