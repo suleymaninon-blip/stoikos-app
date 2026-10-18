@@ -18,9 +18,12 @@ const fs = require('fs');
 // oturum klasörüne sabit yazılıydı ve o klasör silinince betik çöküyordu.
 const FFMPEG = process.env.FFMPEG_PATH || 'ffmpeg';
 
-const W = 1080, H = 1920, FPS = 30, DURATION_MS = 20000;
+// Aynı boru hattı başka dikey videolar için de kullanılıyor (ör. sosyal medya
+// nefes Reels'i): TEASER_TPL, TEASER_MS ve TEASER_NAME ile şablon, süre ve ad değişir.
+const W = 1080, H = 1920, FPS = 30, DURATION_MS = Number(process.env.TEASER_MS || 20000);
 const FRAMES = Math.round((DURATION_MS / 1000) * FPS);
-const TPL = 'file://' + path.resolve(__dirname, 'teaser.html');
+const TPL = 'file://' + path.resolve(process.env.TEASER_TPL || path.join(__dirname, 'teaser.html'));
+const NAME = process.env.TEASER_NAME || 'teaser';
 const OUT_DIR = process.argv[3] || path.resolve(__dirname, '..', '..', 'store-assets');
 const LANGS = (process.argv[2] || 'tr,en').split(',');
 
@@ -59,7 +62,7 @@ const write = (stream, buf) =>
   const page = await ctx.newPage();
 
   for (const lang of LANGS) {
-    const outFile = path.join(OUT_DIR, `teaser-${lang}-1080x1920.mp4`);
+    const outFile = path.join(OUT_DIR, `${NAME}-${lang}-1080x1920.mp4`);
     process.stdout.write(`\n${lang}: `);
 
     await page.goto(TPL, { waitUntil: 'load' });

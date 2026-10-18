@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Uygulamanın kendi font dosyaları — ağ yok. */
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:300;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_300Light.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:500;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf') format('truetype'); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1350px; overflow:hidden; background:#0a0906; }
+
+  /* Instagram dikey gönderi: 1080×1350 (4:5) */
+  #card {
+    position:relative; width:1080px; height:1350px; overflow:hidden;
+    background:#14120e; color:#ece4d4;
+    display:flex; flex-direction:column; padding:110px 100px 96px;
+  }
+  #card::before {
+    content:''; position:absolute; left:50%; top:42%; width:1500px; height:1500px;
+    transform:translate(-50%,-50%); border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle, rgba(194,168,120,.14) 0%, rgba(194,168,120,.05) 40%, rgba(194,168,120,0) 68%);
+  }
+  #card > * { position:relative; }
+  #card > .count { position:absolute; }
+
+  .eyebrow { font-family:'Jost'; font-weight:500; font-size:26px; letter-spacing:6px; color:#c2a878; text-transform:uppercase; }
+  .count { position:absolute; top:110px; right:100px; font-family:'Jost'; font-weight:300; font-size:26px; letter-spacing:3px; color:#8a8070; }
+  .main { flex:1; display:flex; flex-direction:column; justify-content:center; }
+
+  .qmark { font-family:'Cormorant'; font-size:220px; line-height:.6; color:rgba(194,168,120,.35); height:110px; }
+  .quote { font-family:'Cormorant'; font-style:italic; font-size:76px; line-height:1.28; color:#ece4d4; }
+  .attr { font-family:'Jost'; font-weight:300; font-size:26px; letter-spacing:3.5px; color:#8a8070; margin-top:56px; text-transform:uppercase; }
+  .attr b { font-weight:500; color:#c2a878; }
+
+  .title { font-family:'Cinzel'; font-weight:600; font-size:84px; line-height:1.12; letter-spacing:2px; color:#d8c49a; }
+  .lead { font-family:'Cormorant'; font-style:italic; font-size:58px; line-height:1.3; color:#cabfa8; margin-top:40px; }
+  .h { font-family:'Cormorant'; font-style:italic; font-size:70px; line-height:1.2; color:#ece4d4; margin-bottom:40px; }
+  .body { font-family:'Jost'; font-weight:300; font-size:40px; line-height:1.55; color:#cabfa8; }
+  .body p + p { margin-top:28px; }
+  .body em { font-style:normal; color:#d8c49a; }
+
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:10px; }
+  .col { border:1.5px solid rgba(194,168,120,.25); border-radius:28px; padding:36px 34px; background:rgba(194,168,120,.05); }
+  .col.off { border-color:rgba(138,128,112,.25); background:transparent; }
+  .col h4 { font-family:'Jost'; font-weight:500; font-size:24px; letter-spacing:4px; color:#c2a878; margin-bottom:22px; text-transform:uppercase; }
+  .col.off h4 { color:#8a8070; }
+  .col li { font-family:'Jost'; font-weight:300; font-size:34px; line-height:1.4; color:#ece4d4; list-style:none; margin-bottom:14px; }
+  .col.off li { color:#8a8070; }
+
+  .days li { list-style:none; display:flex; gap:28px; align-items:baseline; font-family:'Jost'; font-weight:300; font-size:38px; color:#ece4d4; padding:16px 0; border-bottom:1px solid rgba(194,168,120,.14); }
+  .days li span { font-family:'Cinzel'; font-weight:600; font-size:30px; color:#c2a878; width:44px; }
+
+  .ask { font-family:'Cormorant'; font-style:italic; font-size:92px; line-height:1.18; color:#ece4d4; text-align:center; }
+  .hint { font-family:'Jost'; font-weight:300; font-size:32px; letter-spacing:1px; color:#8a8070; text-align:center; margin-top:56px; }
+
+  .cta { margin-top:48px; display:inline-block; align-self:flex-start; font-family:'Jost'; font-weight:500; font-size:30px; letter-spacing:3px;
+         color:#14120e; background:#c9a876; border-radius:999px; padding:20px 40px; text-transform:uppercase; }
+
+  .foot { display:flex; align-items:center; gap:18px; }
+  .foot svg { width:56px; height:56px; }
+  .foot .w { font-family:'Cinzel'; font-weight:600; font-size:30px; letter-spacing:8px; color:#d8c49a; }
+  .foot .u { margin-left:auto; font-family:'Jost'; font-weight:300; font-size:28px; letter-spacing:2px; color:#8a8070; }
+  .center { text-align:center; align-items:center; }
+</style>
+</head>
+<body>
+<div id="card"></div>
+
+<!-- Marka işareti — components/StoikosMark.tsx ile aynı geometri -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="mkG" x1="0" y1="250" x2="0" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/>
+    </linearGradient>
+    <radialGradient id="mkO" cx="42%" cy="36%" r="70%">
+      <stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/>
+    </radialGradient>
+    <radialGradient id="mkW" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/>
+    </radialGradient>
+    <symbol id="mark" viewBox="192 162 640 640">
+      <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".13" stroke-width="6"/>
+      <circle cx="512" cy="477" r="200" fill="url(#mkW)"/>
+      <circle cx="512" cy="477" r="128" fill="url(#mkO)"/>
+      <path d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkG)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<script>
+const FOOT = '<div class="foot"><svg><use href="#mark"/></svg><span class="w">STOIKOS</span><span class="u">stoikos.app</span></div>';
+
+// Her kart: { file, html }. Metinler uygulamanın kendi içeriğinden (constants/content.ts,
+// constants/programs.ts) — alıntılar birebir, künyeler "serbest uyarlama" ile.
+function quote(text, author, source) {
+  return `<div class="main"><div class="qmark">“</div><div class="quote">${text}</div>
+    <div class="attr"><b>${author}</b> · ${source} · serbest uyarlama</div></div>${FOOT}`;
+}
+function slide(i, n, eyebrow, inner) {
+  return `<div class="eyebrow">${eyebrow}</div><div class="count">${i} / ${n}</div>
+    <div class="main">${inner}</div>${FOOT}`;
+}
+
+const CARDS = [
+  // 02 — alıntı
+  { file:'02-alinti-epiktetos', html: quote('İnsanları rahatsız eden şeyler değil, şeyler hakkındaki düşünceleridir.', 'Epiktetos', 'Enchiridion') },
+
+  // 03 — carousel: Kontrol Dairesi
+  { file:'03-kontrol-dairesi-1', html: slide(1, 5, 'Stoacı kavram', `<div class="title">Kontrol<br>Dairesi</div>
+      <div class="lead">Huzurun neden hep<br>başkasının elinde?</div>`) },
+  { file:'03-kontrol-dairesi-2', html: slide(2, 5, 'Stoacı kavram', `<div class="h">Her şeyi iki kutuya ayır.</div>
+      <div class="cols">
+        <div class="col"><h4>Elinde</h4><ul><li>Düşüncelerin</li><li>Kararların</li><li>Tepkilerin</li><li>Çaban</li></ul></div>
+        <div class="col off"><h4>Elinde değil</h4><ul><li>Başkalarının ne düşündüğü</li><li>Sonuç</li><li>Trafik, hava</li><li>Geçmiş</li></ul></div>
+      </div>
+      <div class="body" style="margin-top:40px">Enerjini yalnızca birincisine ver.</div>`) },
+  { file:'03-kontrol-dairesi-3', html: slide(3, 5, 'Stoacı kavram', `<div class="h">Umursamamak değil bu.</div>
+      <div class="body"><p>En sık yapılan yanlış anlama bu. Kontrol dairesi seni ilgisiz yapmaz, <em>isabetli</em> yapar.</p>
+      <p>Sonucu değil çabayı üstlenirsin. Sonuç yine önemlidir; ama huzurun artık ona bağlı değildir.</p></div>`) },
+  { file:'03-kontrol-dairesi-4', html: slide(4, 5, 'Stoacı kavram', `<div class="h">Okçu</div>
+      <div class="body"><p>Epiktetos okçuyu örnek verir: nişan alırsın, elinden geleni yaparsın, oku bırakırsın.</p>
+      <p>Bir rüzgâr çıkar ve ok kayar — bu senin başarısızlığın değil.</p>
+      <p><em>Senin işin atıştı, isabet değil.</em></p></div>`) },
+  { file:'03-kontrol-dairesi-5', html: slide(5, 5, 'Bugün dene', `<div class="h">Bir şey seni kaygılandırdığında sor:</div>
+      <div class="lead" style="margin-top:0;color:#d8c49a">“Bu gerçekten benim kontrolümde mi?”</div>
+      <div class="body" style="margin-top:44px">12 Stoacı kavram, her biri bir günlük pratikle. Ücretsiz.</div>
+      <div class="cta">stoikos.app</div>`) },
+
+  // 05 — alıntı
+  { file:'05-alinti-marcus', html: quote('Bugün ölebilirdin; bunun yerine hâlâ hayattasın. Bu zamanı bilgelikle kullan.', 'Marcus Aurelius', 'Meditationes') },
+
+  // 06 — carousel: Memento Mori
+  { file:'06-memento-mori-1', html: slide(1, 4, 'Stoacı kavram', `<div class="title">Memento<br>Mori</div>
+      <div class="lead">Ölümü hatırla.<br>Kulağa karanlık geliyor, değil mi?</div>`) },
+  { file:'06-memento-mori-2', html: slide(2, 4, 'Stoacı kavram', `<div class="h">Ertelediğin bir şey var.</div>
+      <div class="body"><p>Bir telefon, bir özür, bir yolculuk.</p>
+      <p>Zihin hep aynı sessiz varsayımla çalışır: <em>nasılsa vakit var.</em></p></div>`) },
+  { file:'06-memento-mori-3', html: slide(3, 4, 'Stoacı kavram', `<div class="h">Zafer alayı</div>
+      <div class="body"><p>Romalılar bunu bir törenle yaşatırdı: zafer kazanmış komutan şehre girerken arkasında duran biri kulağına aynı sözü fısıldardı —</p>
+      <p><em>sen de bir insansın.</em></p><p>Alkışın en yüksek olduğu anda, tam orada.</p></div>`) },
+  { file:'06-memento-mori-4', html: slide(4, 4, 'Bugün dene', `<div class="h">Karartmaz, netleştirir.</div>
+      <div class="body"><p>Sonsuz zamanın olsaydı hiçbir şeyin değeri olmazdı. <em>Değer sınırdan doğar.</em></p>
+      <p>Bugün ertelediğin tek bir şeyi yap.</p></div>
+      <div class="cta">stoikos.app</div>`) },
+
+  // 07 — alıntı
+  { file:'07-alinti-seneca', html: quote('Yol uzun değil — biz oyalanıyoruz. Ömür kısa değil, biz savuruyoruz.', 'Seneca', 'De Brevitate Vitae') },
+
+  // 08 — yansıma sorusu
+  { file:'08-yansima-sorusu', html: `<div class="eyebrow" style="text-align:center">Akşam yansıması</div>
+      <div class="main"><div class="ask">Bugün nerede sabırlıydın?<br>Bu sana neye mal oldu?</div>
+      <div class="hint">Cevabını yorumlara yaz — ya da yalnızca kendine.</div></div>${FOOT}` },
+
+  // 09 — carousel: Öfkeyle Çalışmak
+  { file:'09-ofke-programi-1', html: slide(1, 4, 'Rehberli program · 7 gün', `<div class="title">Öfkeyle<br>Çalışmak</div>
+      <div class="lead">Amaç öfkelenmemek değil —<br>öfkeliyken karar vermemek.</div>`) },
+  { file:'09-ofke-programi-2', html: slide(2, 4, 'Rehberli program · 7 gün', `<div class="h">Her gün tek bir adım.</div>
+      <ul class="days">
+        <li><span>1</span>Erteleme</li><li><span>2</span>İlk darbe senin değil</li><li><span>3</span>Altındaki cümle</li>
+        <li><span>4</span>İkinci açıklama</li><li><span>5</span>Bedeli</li><li><span>6</span>Sabah hazırlığı</li><li><span>7</span>Akşam muhasebesi</li>
+      </ul>`) },
+  { file:'09-ofke-programi-3', html: slide(3, 4, '1. gün · Erteleme', `<div class="h">Tek kural:<br>hemen hiçbir şey yapma.</div>
+      <div class="body"><p>Öfke geldiğinde cevap verme, mesaj yazma. Yüzünü çevir ve ona kadar say.</p>
+      <p><em>Amaç öfkelenmemek değil — öfkeliyken karar vermemek.</em></p></div>`) },
+  { file:'09-ofke-programi-4', html: slide(4, 4, 'Stoikos Plus', `<div class="h">Beş program,<br>otuz beş gün.</div>
+      <div class="body"><p>Kontrol Dairesi · İç Sakinlik · Öfkeyle Çalışmak · Başkalarının Gözü · Zamanın Kısalığı</p></div>
+      <div class="cta">stoikos.app</div>`) },
+
+  // 10 — carousel: Epiktetos
+  { file:'10-epiktetos-1', html: slide(1, 3, 'Filozoflar', `<div class="title">Epiktetos</div>
+      <div class="lead">Köle doğdu.<br>Özgür bir bilge oldu.</div>
+      <div class="attr" style="margin-top:40px">MS 50–135</div>`) },
+  { file:'10-epiktetos-2', html: slide(2, 3, 'Filozoflar', `<div class="h">“Kırılacağını söylemiştim.”</div>
+      <div class="body"><p>Bir efendinin malıydı. Rivayete göre efendisi bacağını kırdığında sakin sakin böyle demişti.</p>
+      <p>Sonradan özgürlüğüne kavuştu ve bir okul kurdu. Hiçbir şey yazmadı — bildiğimiz her şeyi öğrencisi not aldı.</p></div>`) },
+  { file:'10-epiktetos-3', html: slide(3, 3, 'Filozoflar', `<div class="h">Özgürlük nedir?</div>
+      <div class="body"><p>Ona göre özgürlük, zincirlerin olmaması değil; kimsenin elinden alamayacağı tek şeyin — <em>kendi zihnin ve seçimlerin</em> — farkında olmaktı.</p>
+      <p>Uygulamada 10 Stoacı düşünürün hikâyesi var.</p></div>
+      <div class="cta">stoikos.app</div>`) },
+];
+
+window.CARDS = CARDS;
+window.show = (i) => { document.getElementById('card').innerHTML = CARDS[i].html; };
+</script>
+</body>
+</html>
