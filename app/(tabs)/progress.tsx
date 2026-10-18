@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView,
   StyleSheet, SafeAreaView, Animated,
@@ -8,11 +8,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLang, DAY_LABELS } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
+import StoikosMark from '../../components/StoikosMark';
 import { BREATH_ID } from '../../constants/breathLog';
+import { useStreak } from '../../hooks/useStreak';
 
 const COMPLETED_KEY = 'stoikos_completed_';
-const STREAK_KEY = 'stoikos_streak';
 
 function getLast7Days() {
   return Array.from({ length: 7 }, (_, i) => {
@@ -121,21 +122,27 @@ function ExBreakdown({ counts }: { counts: Record<string, number> }) {
 // ─── Main ──────────────────────────────────────────────────
 export default function ProgressScreen() {
   const { t, lang } = useLang();
-  const [streak, setStreak] = useState(0);
+  // Süreklilik tek yerde hesaplanır (useStreak). Eskiden burada ham anahtar
+  // okunuyordu; ana ekrana uğramadan gelen kişi bugünü sayılmamış görüyordu.
+  const { streak, refresh: refreshStreak } = useStreak();
   const [totalDone, setTotalDone] = useState(0);
   const [totalMoments, setTotalMoments] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
   const [exCounts, setExCounts] = useState<Record<string, number>>({});
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const [loaded, setLoaded] = useState(false);
+
   useEffect(() => {
-    loadStats();
     Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }).start();
-  }, [lang]);
+  }, []);
+
+  // Sekmeler bağlı kalıyor; yalnız mount'ta yüklemek, ana ekranda bir nefes
+  // bitirip buraya dönen kişiye hâlâ sıfır gösteriyordu.
+  useFocusEffect(useCallback(() => { loadStats(); }, [lang]));
 
   async function loadStats() {
-    const streakVal = parseInt((await AsyncStorage.getItem(STREAK_KEY)) || '0');
-    setStreak(streakVal);
+    refreshStreak();
 
     const days = getLast7Days();
     const today = new Date().toDateString();
@@ -166,6 +173,7 @@ export default function ProgressScreen() {
       entries.forEach(([, v]) => { if (v) { try { allTotal += JSON.parse(v).length; } catch {} } });
       setTotalMoments(allTotal);
     } catch {}
+    setLoaded(true);
   }
 
   return (
@@ -194,6 +202,21 @@ export default function ProgressScreen() {
             <Text style={styles.subtitle}>{t('progress.subtitle')}</Text>
           </View>
 
+          {/* İlk gün: sıfırlarla dolu bir sayfa yerine ne olacağını ve nereden başlanacağını söyle */}
+          {loaded && totalMoments === 0 ? (
+            <View style={styles.emptyCard}>
+              <StoikosMark size={44} variant="line" color={Colors.sand} opacity={0.8} />
+              <Text style={styles.emptyTitle}>{t('progress.emptyTitle')}</Text>
+              <Text style={styles.emptyBody}>{t('progress.emptyBody')}</Text>
+              <TouchableOpacity style={styles.emptyBtn} onPress={() => router.navigate('/')} activeOpacity={0.85}>
+                <Text style={styles.emptyBtnText}>{t('progress.emptyBreath')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.emptyLink} onPress={() => router.navigate('/practice')} hitSlop={8}>
+                <Text style={styles.emptyLinkText}>{t('progress.emptyPractice')} →</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+          <>
           {/* Stat boxes — sakin, rekabetsiz */}
           <View style={styles.statsRow}>
             <StatBox label={t('progress.streak')} value={`${streak}`} />
@@ -206,12 +229,14 @@ export default function ProgressScreen() {
 
           {/* Exercise breakdown */}
           <ExBreakdown counts={exCounts} />
+          </>
+          )}
 
           {/* Nazik yansıma */}
           <View style={styles.quoteBox}>
             <Text style={styles.quoteText}>“{t('progress.motivQuote')}”</Text>
             <Text style={styles.quoteAuthor}>{t('progress.motivAuthor')}</Text>
-            <Text style={styles.reflectionSub}>{t('progress.reflectionSub')}</Text>
+            {totalMoments > 0 && <Text style={styles.reflectionSub}>{t('progress.reflectionSub')}</Text>}
           </View>
 
         </ScrollView>
@@ -263,6 +288,18 @@ const styles = StyleSheet.create({
   exTrack: { height: 4, backgroundColor: Colors.stone3, borderRadius: 2, overflow: 'hidden' },
   exFill: { height: '100%', backgroundColor: Colors.accent, borderRadius: 2 },
   exFillEvening: { backgroundColor: 'rgba(100,160,220,0.7)' },
+
+  // Boş durum
+  emptyCard: {
+    backgroundColor: Colors.stone2, borderRadius: 20, paddingVertical: 32, paddingHorizontal: 24, marginBottom: 16,
+    alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+  },
+  emptyTitle: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.text, textAlign: 'center', marginTop: 16, marginBottom: 10 },
+  emptyBody: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, textAlign: 'center', lineHeight: 20, marginBottom: 22 },
+  emptyBtn: { backgroundColor: Colors.sand, borderRadius: 24, paddingVertical: 12, paddingHorizontal: 26 },
+  emptyBtnText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.bg, letterSpacing: 0.4 },
+  emptyLink: { marginTop: 16 },
+  emptyLinkText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.sand },
 
   // Quote
   quoteBox: {
