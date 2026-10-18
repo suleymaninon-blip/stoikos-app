@@ -105,6 +105,9 @@ export default function HomeScreen() {
             tapHint={t('home.breathTap')}
             stopHint={t('home.breathStop')}
             countLabel={t('home.breathCount')}
+            minuteLabel={t('home.breathMin')}
+            noLimitLabel={t('home.breathNoLimit')}
+            onComplete={refresh}
             inhaleLabel={t('home.breathIn')}
             exhaleLabel={t('home.breathOut')}
             soundLabel={t('breathSound.label')}
