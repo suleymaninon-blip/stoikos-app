@@ -99,10 +99,12 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Nefes orbu — dokununca YERİNDE egzersiz başlar (yeni ekran açmaz) */}
+          {/* Nefes çiçeği — bir dokunuşla başlar, bir dokunuşla biter (yeni ekran açmaz) */}
           <BreathOrb
             idleTitle={t('home.breathTitle')}
             tapHint={t('home.breathTap')}
+            stopHint={t('home.breathStop')}
+            countLabel={t('home.breathCount')}
             inhaleLabel={t('home.breathIn')}
             exhaleLabel={t('home.breathOut')}
             soundLabel={t('breathSound.label')}

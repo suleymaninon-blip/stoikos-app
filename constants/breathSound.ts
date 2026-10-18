@@ -1,5 +1,5 @@
 // Orb nefes sesi — assets/audio/breath-orb.mp3, expo-av ile.
-// Native + web çalışır. Orb basılı tutulunca çalar (döngü), bırakılınca durur.
+// Native + web çalışır. Nefes çiçeği başlayınca çalar (döngü), bitince durur (dokun-başlat / dokun-bitir).
 // Tüm çağrılar try/catch ile sarılı → ses yüklenemezse uygulama çökmez, sessiz geçer.
 //
 // ⚠️ Eskiden `breath-orb.m4a` idi ve SES ÇIKMIYORDU. Sebep: o dosya aslında bir
@@ -33,7 +33,7 @@ export async function setSoundPref(on: boolean): Promise<void> {
 
 let sound: Audio.Sound | null = null;
 let loading = false;
-let wantPlaying = false;      // kullanıcı şu an çalmasını istiyor mu (basılı mı)
+let wantPlaying = false;      // kullanıcı şu an çalmasını istiyor mu (egzersiz sürüyor mu)
 let audioModeSet = false;
 
 /**
