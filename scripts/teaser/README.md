@@ -58,13 +58,17 @@ kanalı hiç olmayan dosyada tuhaf davranıyor.
 |---|---|---|
 | 1 | 0–2 sn | Kaygı: "Dün endişelendin. Bugün de endişeleniyorsun." |
 | 2 | 2–3 sn | "Peki yarın?" — zemin ısınmaya başlar |
-| 3 | 3–8 sn | Nefes orbu (4 sn'lik döngü) + "Sakinlik bir yetenek değil, bir pratiktir." |
+| 3 | 3–8 sn | Nefes çiçeği (uygulamadaki gibi tek, 4,5 sn'lik nefes alış) + "Sakinlik bir yetenek değil, bir pratiktir." |
 | 4 | 8–14 sn | Epiktetos alıntısı — videonun en uzun duraklaması |
 | 5 | 14–18 sn | Uygulama ekranları, dördü sırayla |
-| 6 | 18–20 sn | Ω + STOIKOS + slogan |
+| 6 | 18–20 sn | Marka işareti (kavis çizilir, küre belirir) + STOIKOS + slogan |
 
-Sahne 3'teki orb uygulamadan kayıt değil, CSS ile yeniden kuruldu — kayıttan
-daha akıcı ve kare kare denetlenebilir. Sahne 5 `store-assets/` içindeki
+Sahne 3'teki nefes çiçeği uygulamadan kayıt değil, `components/BreathOrb.tsx`'in
+2,67 katı ölçekle CSS ile yeniden kuruldu — kayıttan daha akıcı ve kare kare
+denetlenebilir. Çiçek ya da marka işareti (`components/StoikosMark.tsx`)
+değişirse `teaser.html` de güncellenmeli. Alıntının künyesi sitedekiyle aynı
+("… uyarlama"). Sitedeki kapak görseli `website/media/teaser-poster.jpg`
+7,2. saniyedeki karedir. Sahne 5 `store-assets/` içindeki
 gerçek ekran görüntülerini kullanıyor, dolayısıyla **ekranlar değişince
 teaser de eskir**: önce `scripts/shoot-store.js`, sonra bu betik.
 

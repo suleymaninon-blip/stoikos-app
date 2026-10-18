@@ -56,24 +56,27 @@
   .word {
     font-family:'Cinzel',serif; font-weight:600; font-size:112px; color:#d8c49a;
   }
-  .omega {
-    font-family:'Cinzel',serif; font-weight:600; font-size:76px; color:#c2a878;
-  }
+  /* Marka işareti — components/StoikosMark.tsx ile aynı geometri */
+  #l6o { width:200px; height:200px; margin:0 auto; display:block; }
   .tag {
     font-family:'Jost',sans-serif; font-weight:300; font-size:34px; letter-spacing:2.2px;
     color:#8a8070; margin-top:34px;
   }
 
-  /* Nefes orbu — uygulamanın imza görseli, CSS ile yeniden kuruldu */
-  #orbWrap { position:absolute; left:50%; top:760px; transform:translateX(-50%); }
-  .ring { position:absolute; left:50%; top:50%; border-radius:50%; border:2px solid rgba(194,168,120,.22); }
-  #r1 { width:560px; height:560px; margin:-280px 0 0 -280px; }
-  #r2 { width:460px; height:460px; margin:-230px 0 0 -230px; border-color:rgba(194,168,120,.32); }
-  #orb {
-    position:absolute; left:50%; top:50%; width:344px; height:344px; margin:-172px 0 0 -172px;
-    border-radius:50%;
-    background:radial-gradient(circle at 38% 32%, #d8c49a 0%, #bda476 34%, #8a7550 66%, #4a4030 100%);
+  /* Nefes çiçeği — components/BreathOrb.tsx'in 2,67 katı (210 → 560 px).
+     Altı saydam yaprak: kapalıyken merkezde üst üste, açılırken dışa
+     kayıp 60° dönerek çiçeğe dönüşüyor; binen saydamlıklar merkezi parlatıyor. */
+  #orbWrap { position:absolute; left:50%; top:760px; width:0; height:0; }
+  #halo {
+    position:absolute; left:-280px; top:-280px; width:560px; height:560px; border-radius:50%;
+    background:rgba(240,196,120,.22); filter:blur(30px);
   }
+  #flower { position:absolute; left:0; top:0; width:0; height:0; }
+  .petal {
+    position:absolute; left:-128px; top:-128px; width:256px; height:256px; border-radius:50%;
+  }
+  .petal.a { background:linear-gradient(135deg, rgba(255,236,196,.62), rgba(224,184,112,.38) 50%, rgba(160,120,60,.20)); }
+  .petal.b { background:linear-gradient(135deg, rgba(248,210,150,.56), rgba(212,160,92,.34) 50%, rgba(140,100,48,.18)); }
 
   /* Uygulama ekranı — tek telefon, aralarında geçiş yapıyor */
   #phone {
@@ -92,7 +95,10 @@
   <div class="layer" id="L1"><div class="block"><div class="dim" id="l1a"></div><div class="dim" id="l1b" style="margin-top:26px"></div></div></div>
   <div class="layer" id="L2"><div class="block"><div class="ask" id="l2"></div></div></div>
 
-  <div id="orbWrap"><div class="ring" id="r1"></div><div class="ring" id="r2"></div><div id="orb"></div></div>
+  <div id="orbWrap"><div id="halo"></div><div id="flower">
+    <div class="petal a"></div><div class="petal b"></div><div class="petal a"></div>
+    <div class="petal b"></div><div class="petal a"></div><div class="petal b"></div>
+  </div></div>
   <div class="layer" id="L3" style="align-items:end"><div class="block" style="margin-bottom:300px"><div class="say" id="l3"></div></div></div>
 
   <div class="layer" id="L4"><div class="block"><div class="quote" id="l4"></div><div class="attr" id="l4a"></div></div></div>
@@ -106,7 +112,26 @@
   <div class="layer" id="L5" style="align-items:end"><div class="block" style="margin-bottom:150px"><div class="feat" id="l5"></div></div></div>
 
   <div class="layer" id="L6"><div class="block">
-    <div class="omega" id="l6o">Ω</div>
+    <svg id="l6o" viewBox="192 162 640 640" aria-hidden="true">
+      <defs>
+        <linearGradient id="mkG" x1="0" y1="250" x2="0" y2="760" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/>
+        </linearGradient>
+        <radialGradient id="mkO" cx="42%" cy="36%" r="70%">
+          <stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/>
+        </radialGradient>
+        <radialGradient id="mkW" cx="50%" cy="50%" r="50%">
+          <stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <g id="mkOrb">
+        <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".13" stroke-width="4"/>
+        <circle cx="512" cy="477" r="200" fill="url(#mkW)"/>
+        <circle cx="512" cy="477" r="128" fill="url(#mkO)"/>
+      </g>
+      <path id="mkArc" d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkG)"
+        stroke-width="34" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1500" stroke-dashoffset="1500"/>
+    </svg>
     <div class="word" id="l6w" style="margin-top:34px">STOIKOS</div>
     <div class="tag" id="l6t"></div>
   </div></div>
@@ -118,13 +143,13 @@ const COPY = {
   tr: { s1a:'Dün endişelendin.', s1b:'Bugün de endişeleniyorsun.', s2:'Peki yarın?',
         s3:'Sakinlik bir yetenek değil,\nbir pratiktir.',
         s4:'İnsanları rahatsız eden şeyler değil,\nşeyler hakkındaki düşünceleridir.',
-        s4a:'EPİKTETOS · ENCHEIRIDION',
+        s4a:'EPİKTETOS · ENKHEİRİDİON’DAN UYARLAMA',
         s5:'164 söz · 10 filozof · 12 kavram · 6 dil',
         s6:'STOACI BİLGELİK, GÜNLÜK HAYATTA' },
   en: { s1a:'Yesterday you worried.', s1b:'Today you still do.', s2:'And tomorrow?',
         s3:'Calm is not a talent.\nIt is a practice.',
         s4:'People are disturbed not by things,\nbut by their opinions about things.',
-        s4a:'EPICTETUS · ENCHIRIDION',
+        s4a:'EPICTETUS · ADAPTED FROM THE ENCHIRIDION',
         s5:'164 quotes · 10 philosophers · 12 concepts · 6 languages',
         s6:'STOIC WISDOM, IN DAILY LIFE' },
 };
@@ -160,16 +185,20 @@ function renderFrame(t) {
   // ── S2 2–3sn: soru
   set($('l2'), fade(t, 2050, 2450, 2900, 3250), mix(14, 0, ease(pr(t, 2050, 2700))));
 
-  // ── S3 3–8sn: nefes orbu
-  const orbIn = fade(t, 3050, 3900, 7500, 8100);
-  // 4 sn'lik nefes döngüsü: 2 sn al, 2 sn ver
-  const cyc = ((t - 3050) % 4000) / 4000;
-  const breath = (1 - Math.cos(cyc * Math.PI * 2)) / 2;      // 0→1→0 yumuşak
-  const scale = mix(0.88, 1.07, breath) * mix(0.72, 1, ease(pr(t, 3050, 3900)));
+  // ── S3 3–8sn: nefes çiçeği — uygulamadaki gibi tek, yavaş bir nefes alış
+  // (HALF = 4500 ms): kapalı tomurcuktan tam açık çiçeğe.
+  const orbIn = fade(t, 3050, 3700, 7550, 8100);
+  const sine = (x) => (1 - Math.cos(x * Math.PI)) / 2;          // 0→1 yumuşak
+  const breath = sine(pr(t, 3150, 7650));
   $('orbWrap').style.opacity = orbIn;
-  $('orbWrap').style.transform = `translateX(-50%) scale(${scale.toFixed(4)})`;
-  $('orb').style.boxShadow = `0 0 ${Math.round(mix(60, 150, breath))}px rgba(194,168,120,${mix(.18, .40, breath).toFixed(3)})`;
-  $('r2').style.opacity = mix(0.5, 1, breath);
+  $('flower').style.transform = `rotate(${(60 * breath).toFixed(2)}deg) scale(${mix(0.92, 1.06, breath).toFixed(4)})`;
+  $('halo').style.opacity = mix(0.12, 0.42, breath);
+  $('halo').style.transform = `scale(${mix(0.92, 1.06, breath).toFixed(4)})`;
+  const SPREAD = 128, ps = mix(0.5, 1, breath);
+  [...document.querySelectorAll('.petal')].forEach((el, i) => {
+    const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
+    el.style.transform = `translate(${(Math.cos(a) * SPREAD * breath).toFixed(2)}px, ${(Math.sin(a) * SPREAD * breath).toFixed(2)}px) scale(${ps.toFixed(4)})`;
+  });
   set($('l3'), fade(t, 4200, 4900, 7400, 7900), mix(16, 0, ease(pr(t, 4200, 5100))));
 
   // ── S4 8–14sn: alıntı
@@ -195,7 +224,10 @@ function renderFrame(t) {
 
   // ── S6 18–20sn: kapanış
   const wIn = ease(pr(t, 18350, 19250));
-  set($('l6o'), fade(t, 18100, 18650, 19980, 20000));
+  // İşaret: uygulamanın açılışındaki gibi önce kavis çizilir, sonra küre belirir.
+  $('l6o').style.opacity = fade(t, 18050, 18250, 19980, 20000);
+  $('mkArc').setAttribute('stroke-dashoffset', (1500 * (1 - ease(pr(t, 18050, 18900)))).toFixed(1));
+  $('mkOrb').style.opacity = ease(pr(t, 18650, 19250));
   $('l6w').style.opacity = fade(t, 18350, 19100, 19980, 20000);
   $('l6w').style.letterSpacing = `${mix(2, 20, wIn).toFixed(2)}px`;
   set($('l6t'), fade(t, 19050, 19550, 19980, 20000));
