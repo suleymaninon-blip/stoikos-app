@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Animated, Easing, View, Text, StyleSheet, Pressable, TouchableOpacity, AppState } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Circle } from 'react-native-svg';
 import { useFocusEffect } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
 import { SoundIcon } from './Icons';
@@ -8,6 +9,12 @@ import {
   isBreathSoundSupported, getSoundPref, setSoundPref,
   startBreathSound, stopBreathSound,
 } from '../constants/breathSound';
+import {
+  BREATH_DURATIONS, BreathDuration, MIN_LOGGED_SECONDS,
+  getBreathDuration, setBreathDuration, logBreathSession,
+} from '../constants/breathLog';
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type Props = {
   idleTitle?: string;   // dururken başlık: "Bir an dur"
@@ -17,6 +24,9 @@ type Props = {
   inhaleLabel?: string; // "Nefes al"
   exhaleLabel?: string; // "Nefes ver"
   soundLabel?: string;
+  minuteLabel?: string;   // "{n} dk" — süre seçici ve özet
+  noLimitLabel?: string;  // "Süresiz" — ∞ seçeneğinin erişilebilirlik adı
+  onComplete?: () => void; // seans İlerleme'ye işlendiğinde (ana ekran sürekliliği yenilesin)
 };
 
 /**
@@ -47,6 +57,9 @@ export default function BreathOrb({
   countLabel = '{n} nefes',
   inhaleLabel = 'Nefes al', exhaleLabel = 'Nefes ver',
   soundLabel = 'Sakinleştirici ses',
+  minuteLabel = '{n} dk',
+  noLimitLabel = 'Süresiz',
+  onComplete,
 }: Props) {
   const breath = useRef(new Animated.Value(0)).current;   // 0 = kapalı (verilmiş), 1 = tam açık (alınmış)
   const live = useRef(new Animated.Value(0)).current;     // 0 = dururken, 1 = egzersizde (parlaklık)
@@ -59,7 +72,18 @@ export default function BreathOrb({
   const [phase, setPhase] = useState<'in' | 'out'>('in');
   const [count, setCount] = useState(0);
   const countRef = useRef(0);
-  const [summary, setSummary] = useState<number | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+
+  // Seans süresi (Ekim 2026): 1 / 3 / 5 dk ya da süresiz. Süre bitince çiçek kendiliğinden kapanır.
+  const [duration, setDuration] = useState<BreathDuration>(60);
+  const durationRef = useRef<BreathDuration>(60);
+  const [remaining, setRemaining] = useState(0);
+  const startedAt = useRef(0);
+  const ring = useRef(new Animated.Value(0)).current; // 0..1 — geçen sürenin oranı (halka)
+  useEffect(() => { getBreathDuration().then((d) => { setDuration(d); durationRef.current = d; }); }, []);
+  const chooseDuration = useCallback((d: BreathDuration) => {
+    setDuration(d); durationRef.current = d; setBreathDuration(d);
+  }, []);
 
   const soundSupported = isBreathSoundSupported();
   const [soundOn, setSoundOn] = useState(false);
@@ -125,7 +149,20 @@ export default function BreathOrb({
         if (half % 2 === 0) { countRef.current += 1; setCount(countRef.current); } // her tam ver bittiğinde bir nefes
       }, HALF));
     }, PREP));
-  }, [breath, live]);
+
+    // Süre: kalan saniye, halka ve otomatik bitiş.
+    startedAt.current = Date.now();
+    const dur = durationRef.current;
+    ring.setValue(0);
+    if (dur > 0) {
+      setRemaining(dur);
+      Animated.timing(ring, { toValue: 1, duration: dur * 1000, easing: Easing.linear, useNativeDriver: false }).start();
+      timers.current.push(setInterval(() => {
+        setRemaining(Math.max(0, Math.ceil(dur - (Date.now() - startedAt.current) / 1000)));
+      }, 500));
+      timers.current.push(setTimeout(() => stopRef.current(true), dur * 1000));
+    }
+  }, [breath, live, ring]);
 
   const stop = useCallback((showSummary = true) => {
     if (!activeRef.current) return;
@@ -137,13 +174,26 @@ export default function BreathOrb({
     Animated.timing(live, { toValue: 0, duration: 900, useNativeDriver: true }).start();
     Animated.timing(breath, { toValue: 0.3, duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true })
       .start(() => { if (!activeRef.current) startIdle(); });
+    ring.stopAnimation();
+    Animated.timing(ring, { toValue: 0, duration: 600, useNativeDriver: false }).start();
+
+    const elapsed = (Date.now() - startedAt.current) / 1000;
+    // En az 1 dakikalık seans İlerleme'ye ve sürekliliğe sayılır (süre dolsa da, elle bitse de).
+    if (elapsed >= MIN_LOGGED_SECONDS) logBreathSession().then(() => onComplete?.());
+
     if (showSummary) {
-      if (countRef.current > 0) {
-        setSummary(countRef.current);
-        timers.current.push(setTimeout(() => setSummary(null), 4500));
+      const parts: string[] = [];
+      const mins = Math.floor((elapsed + 1) / 60); // süre dolunca 59,9 sn'yi 1 dk say
+      if (mins >= 1) parts.push(minuteLabel.replace('{n}', String(mins)));
+      if (countRef.current > 0) parts.push(countLabel.replace('{n}', String(countRef.current)));
+      if (parts.length) {
+        setSummary(`✦ ${parts.join(' · ')}`);
+        timers.current.push(setTimeout(() => setSummary(null), 5000));
       }
     }
-  }, [breath, live, startIdle]);
+  }, [breath, live, ring, startIdle, onComplete, minuteLabel, countLabel]);
+  const stopRef = useRef(stop);
+  stopRef.current = stop;
 
   const onPress = useCallback(() => {
     if (activeRef.current) stop(); else start();
@@ -194,11 +244,18 @@ export default function BreathOrb({
   });
 
   const title = active ? (phase === 'in' ? inhaleLabel : exhaleLabel) : idleTitle;
+  const countText = count > 0 ? countLabel.replace('{n}', String(count)) : '';
+  const clock = `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`;
   const sub = active
-    ? `${stopHint}${count > 0 ? ` · ${countLabel.replace('{n}', String(count))}` : ''}`
-    : summary != null
-      ? `✦ ${countLabel.replace('{n}', String(summary))}`
-      : tapHint;
+    ? (duration > 0
+        ? [clock, countText || stopHint].join(' · ')
+        : [stopHint, countText].filter(Boolean).join(' · '))
+    : summary ?? tapHint;
+
+  // Kalan süre halkası (yalnız süreli seansta)
+  const RING_R = SIZE / 2 - 3;
+  const RING_C = 2 * Math.PI * RING_R;
+  const ringOffset = ring.interpolate({ inputRange: [0, 1], outputRange: [RING_C, 0] });
 
   return (
     <View style={styles.wrap}>
@@ -210,6 +267,18 @@ export default function BreathOrb({
         accessibilityLabel={active ? stopHint : tapHint}
       >
         <View style={styles.flowerBox}>
+          {active && duration > 0 && (
+            <Svg width={SIZE} height={SIZE} style={styles.ring} pointerEvents="none">
+              <Circle cx={SIZE / 2} cy={SIZE / 2} r={RING_R} stroke="rgba(216,196,154,0.10)" strokeWidth={2} fill="none" />
+              <AnimatedCircle
+                cx={SIZE / 2} cy={SIZE / 2} r={RING_R}
+                stroke="#d4b376" strokeOpacity={0.85} strokeWidth={2.5} strokeLinecap="round" fill="none"
+                strokeDasharray={`${RING_C} ${RING_C}`}
+                strokeDashoffset={ringOffset}
+                transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
+              />
+            </Svg>
+          )}
           <Animated.View style={[styles.halo, { opacity: haloOpacity, transform: [{ scale: flowerScale }] }]} />
           <Animated.View style={[styles.flower, { opacity: flowerOpacity, transform: [{ rotate }, { scale: flowerScale }] }]}>
             {petals}
@@ -218,6 +287,30 @@ export default function BreathOrb({
 
         <Animated.Text style={[styles.title, { opacity: textFade }]}>{title}</Animated.Text>
         <Text style={styles.sub}>{sub}</Text>
+
+        {/* Egzersizde gizlenmiyor, yalnız sönüyor: kart boyu değişip alttaki içerik zıplamasın. */}
+        {(
+          <View style={[styles.durRow, active && styles.durRowHidden]} pointerEvents={active ? 'none' : 'auto'}>
+            {BREATH_DURATIONS.map((d) => {
+              const on = d === duration;
+              return (
+                <Pressable
+                  key={d}
+                  onPress={() => chooseDuration(d)}
+                  hitSlop={6}
+                  style={[styles.durChip, on && styles.durChipOn]}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: on }}
+                  accessibilityLabel={d === 0 ? noLimitLabel : minuteLabel.replace('{n}', String(d / 60))}
+                >
+                  <Text style={[styles.durText, on && styles.durTextOn]}>
+                    {d === 0 ? '∞' : minuteLabel.replace('{n}', String(d / 60))}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
       </Pressable>
 
       {soundSupported && (
@@ -265,6 +358,16 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(250,228,180,0.22)',
   },
   petalFill: { flex: 1 },
+  ring: { position: 'absolute', top: 0, left: 0 },
+  durRow: { flexDirection: 'row', gap: 8, marginTop: 16 },
+  durRowHidden: { opacity: 0 },
+  durChip: {
+    minWidth: 46, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, alignItems: 'center',
+    borderWidth: 1, borderColor: 'rgba(194,168,120,0.16)',
+  },
+  durChipOn: { backgroundColor: 'rgba(194,168,120,0.14)', borderColor: 'rgba(216,196,154,0.42)' },
+  durText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
+  durTextOn: { color: Colors.sand2 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 23, color: Colors.sand2, marginBottom: 6, minHeight: 30 },
   sub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, minHeight: 16 },
 });

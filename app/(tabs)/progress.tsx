@@ -9,6 +9,7 @@ import { Colors, Fonts } from '../../constants/theme';
 import { useLang, DAY_LABELS } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
 import { router } from 'expo-router';
+import { BREATH_ID } from '../../constants/breathLog';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const STREAK_KEY = 'stoikos_streak';
@@ -80,7 +81,11 @@ function WeekChart({ data }: { data: { day: string; count: number; isToday: bool
 function ExBreakdown({ counts }: { counts: Record<string, number> }) {
   const { t, lang } = useLang();
   const total7 = 7; // max completions per exercise in 7 days
-  const exercises = getExerciseNames(lang);
+  // Nefes seansları (≥1 dk) da günün tamamlananlarına 'breath' olarak yazılıyor (constants/breathLog.ts).
+  const exercises = [
+    ...getExerciseNames(lang),
+    { id: BREATH_ID, name: t('progress.breathRow'), category: 'morning' as const },
+  ];
   return (
     <View style={styles.breakdownWrap}>
       <Text style={styles.sectionLabel}>{t('progress.exBreakdown')}</Text>
