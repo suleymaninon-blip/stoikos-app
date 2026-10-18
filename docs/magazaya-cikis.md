@@ -319,3 +319,10 @@ https://claude.ai/code/artifact/b2c0a5f3-d1f8-4c67-a1e4-0f59335e2a8f
 - **Mağaza görselleri**: `store-assets/` (README'sinde üretim komutları var)
 - Canlı web sürümü: https://suleymaninon-blip.github.io/stoikos-app
 - Backend: https://stoikos-backend.stoikos-app.workers.dev
+
+
+## App Store yayını — ülke ve AB notları (Ekim 2026)
+
+- Varsayılan dağıtım **tüm ülkeler**. **Çin'i çıkar:** Çin App Store'u ICP kayıt numarası istiyor (yabancı bireysel geliştirici için pratikte alınamıyor) ve yapay zekâ koç ek kurallara tabi.
+- **AB tüccar (trader) beyanı** (Dijital Hizmetler Yasası): abonelik satıldığı için büyük ihtimalle "tüccar". Bu durumda adres, telefon ve e-posta **AB mağaza sayfasında herkese açık** görünür. Hesap Bilge İnön adına → ev adresi yerine iş/sanal ofis adresi, ayrı iş telefonu ve `support@stoikos.app` kullanılmalı.
+- Marka koruması mağaza ülkesine bağlı: TR tescili yalnız Türkiye'de dayanak; App Store'da uygulama **adı** ayrıca tekildir (oluşturulunca ayrılır) ama benzer adlara karşı korumaz.
