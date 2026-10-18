@@ -10,159 +10,216 @@ import {
 } from '../constants/breathSound';
 
 type Props = {
-  idleTitle?: string;   // (kullanılmıyor; geriye dönük uyum)
-  tapHint?: string;     // "Parmağını tut & hisset"
+  idleTitle?: string;   // dururken başlık: "Bir an dur"
+  tapHint?: string;     // dururken alt satır: "Başlamak için dokun"
+  stopHint?: string;    // çalışırken alt satır: "Bitirmek için dokun"
+  countLabel?: string;  // "{n} nefes" — çalışırken ve bitince
   inhaleLabel?: string; // "Nefes al"
   exhaleLabel?: string; // "Nefes ver"
   soundLabel?: string;
 };
 
-const HALF = 4500; // ms — nefes al / ver yarı döngüsü (orb, metin ve renk aynı ritim)
+/**
+ * Nefes çiçeği — Apple Watch'taki Farkındalık > Nefes uygulamasından esinlenildi.
+ *
+ * Altı saydam "taç yaprağı" üst üste biniyor: nefes verirken merkezde tek bir
+ * küçük daireye toplanıyor, nefes alırken dışa açılıp dönerek bir çiçeğe
+ * dönüşüyor. Saydamlıklar üst üste bindiği için merkez kendiliğinden parlıyor.
+ *
+ * Etkileşim (Ekim 2026'da değişti): eskiden BASILI TUTUNCA çalışıyordu;
+ * kullanıcı parmağını ekranda tutmak zorunda kalıyordu. Şimdi bir kez DOKUN →
+ * başlar, tekrar DOKUN → biter. Dururken çiçek kapalı ve çok hafif "yaşıyor".
+ *
+ * ⚠️ Ses: startBreathSound() dokunma işleyicisinin İÇİNDE, araya await
+ * girmeden çağrılmalı — iOS Safari kuralı (bkz. constants/breathSound.ts).
+ */
+const HALF = 4500;   // ms — nefes al / ver yarı döngüsü (~6,7 nefes/dk)
+const PREP = 900;    // ms — başlarken çiçeğin önce kapandığı hazırlık
+const PETALS = 6;
+const SIZE = 210;    // çiçeğin kutusu
+const PETAL = 96;    // yaprak çapı
+const SPREAD = 48;   // tam açıkken yaprak merkezinin çiçek merkezine uzaklığı
 
-// Orb her zaman yumuşakça nefes alıp verir.
-// Parmağını BASILI TUTUNCA: nefesle rezone renk parlaması.
-// Parmağını çekince: renk normale döner, nefes devam eder.
 export default function BreathOrb({
-  tapHint = 'Parmağını tut & hisset',
+  idleTitle = 'Bir an dur',
+  tapHint = 'Başlamak için dokun',
+  stopHint = 'Bitirmek için dokun',
+  countLabel = '{n} nefes',
   inhaleLabel = 'Nefes al', exhaleLabel = 'Nefes ver',
   soundLabel = 'Sakinleştirici ses',
 }: Props) {
-  const scale = useRef(new Animated.Value(0.82)).current;
-  const opacity = useRef(new Animated.Value(0.6)).current;
-  const haloScale = useRef(new Animated.Value(0.9)).current;
-  const pulse = useRef(new Animated.Value(0)).current;     // 0 (tam ver) .. 1 (tam al)
-  const hold = useRef(new Animated.Value(0)).current;      // 0 (bırak) .. 1 (basılı)
+  const breath = useRef(new Animated.Value(0)).current;   // 0 = kapalı (verilmiş), 1 = tam açık (alınmış)
+  const live = useRef(new Animated.Value(0)).current;     // 0 = dururken, 1 = egzersizde (parlaklık)
   const textFade = useRef(new Animated.Value(1)).current;
 
   const loopRef = useRef<Animated.CompositeAnimation | null>(null);
-  const phaseTimer = useRef<any>(null);
-  const phaseRef = useRef<'in' | 'out'>('in');
+  const timers = useRef<any[]>([]);
+  const [active, setActive] = useState(false);
+  const activeRef = useRef(false);
   const [phase, setPhase] = useState<'in' | 'out'>('in');
-
-  const [held, setHeld] = useState(false);
-  const heldRef = useRef(false);
+  const [count, setCount] = useState(0);
+  const countRef = useRef(0);
+  const [summary, setSummary] = useState<number | null>(null);
 
   const soundSupported = isBreathSoundSupported();
   const [soundOn, setSoundOn] = useState(false);
   const soundOnRef = useRef(false);
 
-  // Tercihleri yükle.
-  // ⚠️ Sesi burada ÖN YÜKLEME. Ses öğesi bir kullanıcı dokunuşu içinde
-  // doğmazsa iOS Safari onu kalıcı olarak susturuyor (bkz. breathSound.ts).
   useEffect(() => {
     if (soundSupported) getSoundPref().then((on) => { setSoundOn(on); soundOnRef.current = on; });
   }, [soundSupported]);
 
-  // Sürekli nefes animasyonu (her zaman çalışır).
-  useEffect(() => {
-    const sec = (s: number, o: number, h: number, p: number) =>
-      Animated.parallel([
-        Animated.timing(scale, { toValue: s, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: o, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(haloScale, { toValue: h, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(pulse, { toValue: p, duration: HALF, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ]);
+  const clearTimers = () => { timers.current.forEach((t) => { clearTimeout(t); clearInterval(t); }); timers.current = []; };
+
+  // Dururken: çiçek yarı açık, yavaşça nefes alıyor — davetkâr, canlı (Apple Watch'taki gibi).
+  const startIdle = useCallback(() => {
+    loopRef.current?.stop();
     loopRef.current = Animated.loop(Animated.sequence([
-      sec(1.16, 1, 1.3, 1),     // nefes al (büyür, parlaklık artar)
-      sec(0.82, 0.6, 0.9, 0),   // nefes ver (küçülür, parlaklık azalır)
+      Animated.timing(breath, { toValue: 0.5, duration: 3600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      Animated.timing(breath, { toValue: 0.3, duration: 3600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
     ]));
     loopRef.current.start();
+  }, [breath]);
 
-    // Faz takibi (metin ritmi). 'in' ile başlar.
-    phaseRef.current = 'in';
-    phaseTimer.current = setInterval(() => {
-      const next = phaseRef.current === 'in' ? 'out' : 'in';
-      phaseRef.current = next;
-      setPhase(next);
-    }, HALF);
-
-    return () => {
-      loopRef.current?.stop();
-      if (phaseTimer.current) clearInterval(phaseTimer.current);
-    };
-  }, [scale, opacity, haloScale, pulse]);
-
-  // Metin değişiminde kısa fade.
   useEffect(() => {
-    textFade.setValue(0.4);
-    Animated.timing(textFade, { toValue: 1, duration: 280, useNativeDriver: true }).start();
-  }, [phase, textFade]);
+    startIdle();
+    return () => { loopRef.current?.stop(); clearTimers(); };
+  }, [startIdle]);
 
-  // ── Basılı tutma ──
-  const onPressIn = useCallback(() => {
-    if (heldRef.current) return;
-    heldRef.current = true;
-    setHeld(true);
-    Animated.timing(hold, { toValue: 1, duration: 320, easing: Easing.out(Easing.ease), useNativeDriver: true }).start();
-    if (soundOnRef.current) startBreathSound(); // basılı tutunca ses başlar
-  }, [hold]);
+  useEffect(() => {
+    textFade.setValue(0.35);
+    Animated.timing(textFade, { toValue: 1, duration: 320, useNativeDriver: true }).start();
+  }, [phase, active, textFade]);
 
-  const onPressOut = useCallback(() => {
-    if (!heldRef.current) return;
-    heldRef.current = false;
-    setHeld(false);
-    Animated.timing(hold, { toValue: 0, duration: 450, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start();
-    stopBreathSound(); // bırakınca ses durur
-  }, [hold]);
+  // ── Başlat / bitir ──
+  const start = useCallback(() => {
+    activeRef.current = true;
+    setActive(true);
+    setSummary(null);
+    setCount(0);
+    countRef.current = 0;
+    setPhase('out'); // hazırlık: çiçek önce kapanır
+    if (soundOnRef.current) startBreathSound(); // dokunuşun içinde, await yok (iOS)
 
-  // Ses anahtarı yalnız "açık/kapalı" tercihi (sessize alma). Çalma basılı tutmaya bağlı.
+    loopRef.current?.stop();
+    Animated.timing(live, { toValue: 1, duration: 600, useNativeDriver: true }).start();
+    // Önce kısaca tamamen kapan (PREP), sonra döngü: al (HALF) → ver (HALF).
+    const cycle = Animated.loop(Animated.sequence([
+      Animated.timing(breath, { toValue: 1, duration: HALF, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      Animated.timing(breath, { toValue: 0, duration: HALF, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+    ]));
+    loopRef.current = Animated.sequence([
+      Animated.timing(breath, { toValue: 0, duration: PREP, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      cycle,
+    ]);
+    loopRef.current.start();
+
+    clearTimers();
+    timers.current.push(setTimeout(() => {
+      if (!activeRef.current) return;
+      setPhase('in');
+      let half = 0;
+      timers.current.push(setInterval(() => {
+        half += 1;
+        setPhase(half % 2 === 0 ? 'in' : 'out');
+        if (half % 2 === 0) { countRef.current += 1; setCount(countRef.current); } // her tam ver bittiğinde bir nefes
+      }, HALF));
+    }, PREP));
+  }, [breath, live]);
+
+  const stop = useCallback((showSummary = true) => {
+    if (!activeRef.current) return;
+    activeRef.current = false;
+    setActive(false);
+    clearTimers();
+    stopBreathSound();
+    loopRef.current?.stop();
+    Animated.timing(live, { toValue: 0, duration: 900, useNativeDriver: true }).start();
+    Animated.timing(breath, { toValue: 0.3, duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true })
+      .start(() => { if (!activeRef.current) startIdle(); });
+    if (showSummary) {
+      if (countRef.current > 0) {
+        setSummary(countRef.current);
+        timers.current.push(setTimeout(() => setSummary(null), 4500));
+      }
+    }
+  }, [breath, live, startIdle]);
+
+  const onPress = useCallback(() => {
+    if (activeRef.current) stop(); else start();
+  }, [start, stop]);
+
   const toggleSound = useCallback(() => {
     const next = !soundOnRef.current;
     soundOnRef.current = next;
     setSoundOn(next);
     setSoundPref(next);
-    if (!next) stopBreathSound();            // kapatınca anında sustur
-    else if (heldRef.current) startBreathSound(); // açtığında hâlâ basılıysa çal
+    if (!next) stopBreathSound();
+    else if (activeRef.current) startBreathSound();
   }, []);
 
-  // Ekrandan çıkınca / arka planda: ses dursun, basılı durum sıfırlansın.
-  const cleanupLive = useCallback(() => {
-    heldRef.current = false; setHeld(false);
-    hold.setValue(0);
-    stopBreathSound();
-  }, [hold]);
-  useFocusEffect(useCallback(() => () => cleanupLive(), [cleanupLive]));
+  // Ekrandan çıkınca / arka planda: egzersiz sessizce biter.
+  useFocusEffect(useCallback(() => () => stop(false), [stop]));
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (s) => { if (s !== 'active') cleanupLive(); });
+    const sub = AppState.addEventListener('change', (s) => { if (s !== 'active') stop(false); });
     return () => sub.remove();
-  }, [cleanupLive]);
+  }, [stop]);
 
-  const title = phase === 'in' ? inhaleLabel : exhaleLabel;
-  // Renk parlaması: yalnız basılıyken görünür, nefesle (pulse) rezone eder.
-  const glow = Animated.multiply(hold, pulse);
+  // ── Çiçek ──
+  const rotate = breath.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '60deg'] });
+  const flowerScale = breath.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.06] });
+  const petalScale = breath.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] });
+  const flowerOpacity = live.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] });
+  const haloOpacity = Animated.multiply(live, breath.interpolate({ inputRange: [0, 1], outputRange: [0.12, 0.42] }));
+
+  const petals = Array.from({ length: PETALS }, (_, i) => {
+    const a = (i / PETALS) * Math.PI * 2 - Math.PI / 2;
+    const tx = breath.interpolate({ inputRange: [0, 1], outputRange: [0, Math.cos(a) * SPREAD] });
+    const ty = breath.interpolate({ inputRange: [0, 1], outputRange: [0, Math.sin(a) * SPREAD] });
+    return (
+      <Animated.View
+        key={i}
+        style={[styles.petal, { transform: [{ translateX: tx }, { translateY: ty }, { scale: petalScale }] }]}
+      >
+        <LinearGradient
+          colors={i % 2 === 0
+            ? ['rgba(255,236,196,0.62)', 'rgba(224,184,112,0.38)', 'rgba(160,120,60,0.20)']
+            : ['rgba(248,210,150,0.56)', 'rgba(212,160,92,0.34)', 'rgba(140,100,48,0.18)']}
+          start={{ x: 0.2, y: 0.1 }}
+          end={{ x: 0.85, y: 0.95 }}
+          style={styles.petalFill}
+        />
+      </Animated.View>
+    );
+  });
+
+  const title = active ? (phase === 'in' ? inhaleLabel : exhaleLabel) : idleTitle;
+  const sub = active
+    ? `${stopHint}${count > 0 ? ` · ${countLabel.replace('{n}', String(count))}` : ''}`
+    : summary != null
+      ? `✦ ${countLabel.replace('{n}', String(summary))}`
+      : tapHint;
 
   return (
     <View style={styles.wrap}>
       <Pressable
-        style={styles.card}
-        onPressIn={onPressIn}
-        onPressOut={onPressOut}
-        delayLongPress={99999}
+        style={[styles.card, active && styles.cardActive]}
+        onPress={onPress}
         accessibilityRole="button"
-        accessibilityLabel={tapHint}
+        accessibilityState={{ selected: active }}
+        accessibilityLabel={active ? stopHint : tapHint}
       >
-        <View style={styles.orbWrap}>
-          <Animated.View style={[styles.halo, { transform: [{ scale: haloScale }], opacity: Animated.multiply(opacity, 0.5) }]} />
-          {/* Basılıyken nefesle parlayan sıcak dış hale */}
-          <Animated.View style={[styles.holdHalo, { transform: [{ scale: haloScale }], opacity: glow }]} />
-          <Animated.View style={[styles.midRing, { transform: [{ scale }], opacity }]} />
-          <Animated.View style={[styles.orbInner, { transform: [{ scale }], opacity }]}>
-            <LinearGradient
-              colors={['rgba(232,213,163,0.32)', 'rgba(194,168,120,0.12)', 'rgba(194,168,120,0.04)']}
-              start={{ x: 0.3, y: 0.2 }}
-              end={{ x: 0.8, y: 1 }}
-              style={styles.orbGradient}
-            />
-            {/* Basılıyken nefesle parlayan canlı altın katman */}
-            <Animated.View style={[styles.holdGlow, { opacity: glow }]} />
+        <View style={styles.flowerBox}>
+          <Animated.View style={[styles.halo, { opacity: haloOpacity, transform: [{ scale: flowerScale }] }]} />
+          <Animated.View style={[styles.flower, { opacity: flowerOpacity, transform: [{ rotate }, { scale: flowerScale }] }]}>
+            {petals}
           </Animated.View>
         </View>
 
         <Animated.Text style={[styles.title, { opacity: textFade }]}>{title}</Animated.Text>
-        {!held && <Text style={styles.sub}>{tapHint}</Text>}
+        <Text style={styles.sub}>{sub}</Text>
       </Pressable>
 
-      {/* Ses toggle — sağ üst (kartın kardeşi) */}
       {soundSupported && (
         <TouchableOpacity
           style={styles.soundBtn}
@@ -181,15 +238,15 @@ export default function BreathOrb({
   );
 }
 
-const ORB = 124;
 const styles = StyleSheet.create({
   wrap: { marginBottom: 32, position: 'relative' },
   card: {
     backgroundColor: 'rgba(194,168,120,0.07)',
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.14)',
-    borderRadius: 32, paddingVertical: 36, paddingHorizontal: 24,
+    borderRadius: 32, paddingVertical: 30, paddingHorizontal: 24,
     alignItems: 'center',
   },
+  cardActive: { backgroundColor: 'rgba(194,168,120,0.10)', borderColor: 'rgba(194,168,120,0.24)' },
   soundBtn: {
     position: 'absolute', top: 14, right: 16, zIndex: 5,
     width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center',
@@ -197,25 +254,17 @@ const styles = StyleSheet.create({
   },
   soundIcon: { opacity: 0.55 },
   soundIconOn: { opacity: 1 },
-  orbWrap: { width: 180, height: 180, alignItems: 'center', justifyContent: 'center', marginBottom: 18 },
+  flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
   halo: {
-    position: 'absolute', width: 180, height: 180, borderRadius: 90,
-    backgroundColor: 'rgba(216,196,154,0.08)',
+    position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2,
+    backgroundColor: 'rgba(240,196,120,0.22)',
   },
-  holdHalo: {
-    position: 'absolute', width: 180, height: 180, borderRadius: 90,
-    backgroundColor: 'rgba(245,205,120,0.30)',
+  flower: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
+  petal: {
+    position: 'absolute', width: PETAL, height: PETAL, borderRadius: PETAL / 2, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(250,228,180,0.22)',
   },
-  midRing: {
-    position: 'absolute', width: ORB + 26, height: ORB + 26, borderRadius: (ORB + 26) / 2,
-    borderWidth: 1, borderColor: 'rgba(216,196,154,0.16)', backgroundColor: 'rgba(216,196,154,0.04)',
-  },
-  orbInner: {
-    width: ORB, height: ORB, borderRadius: ORB / 2, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(216,196,154,0.28)',
-  },
-  orbGradient: { flex: 1 },
-  holdGlow: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(245,205,120,0.6)' },
-  title: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.sand2, marginBottom: 6, minHeight: 28 },
-  sub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
+  petalFill: { flex: 1 },
+  title: { fontFamily: Fonts.cormorantItalic, fontSize: 23, color: Colors.sand2, marginBottom: 6, minHeight: 30 },
+  sub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, minHeight: 16 },
 });
