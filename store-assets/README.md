@@ -14,8 +14,21 @@ Beş ekran her iki boyutta: ana (nefes orbu + günün alıntısı), bilgelik
 Play en az 2 istiyor — ikisi de karşılanıyor.
 
 Ayrıca yalnız iPhone boyutunda iki ekran daha: `iphone-6-programs.png`
-(Plus kilidi) ve `iphone-7-plus.png` (ödeme ekranı). Bunlar mağaza için
-zorunlu değil; ödeme modelini göstermek için duruyor.
+(beş program, biri bitmiş biri yarıda) ve `iphone-7-plus.png` (ödeme
+ekranı). Bunlar mağaza için zorunlu değil; ödeme modelini göstermek için
+duruyor. İkisi de artık betikte (Ekim 2026'ya kadar elle çekiliyordu).
+
+⚠️ **Ödeme ekranı çekiminde iki taklit var**, ikisi de yalnız o kare için:
+- Koç kotası (`/coach/quota`) sahte bir yanıtla dönüyor ("5 ücretsiz soru
+  kaldı" rozeti görünsün, ona basılınca ödeme ekranı açılsın). Bu ortamda
+  backend'e erişim yok.
+- RevenueCat bağlanana kadar düğme kasten "YAKINDA"; betik çekimden önce
+  DOM'da düğmeyi yayındaki hâline ("ÜCRETSİZ DENE", altın) çeviriyor.
+  RevenueCat bağlanınca bu adım gereksizleşir ama zararsızdır (bulamazsa
+  çekim hata verir — o zaman bu bloğu sil).
+
+Sitedeki telefon çerçeveleri de bu dosyalardan beslenir:
+`convert store-assets/iphone-<ad>.png -resize 780x -quality 82 website/img/screen-<ad>.webp`.
 
 ## Yeniden çekmek
 
@@ -28,6 +41,9 @@ EXPO_BASE_URL= EXPO_OFFLINE=1 npx expo start --web --port 8081 --offline
 
 # 2. Betiği çalıştır
 node scripts/shoot-store.js
+
+# Derlenmiş site (scripts/build-site.sh) doğrudan alt sayfa açamıyor
+# (/app/wisdom → 404 yönlendirmesi), o yüzden geliştirme sunucusu şart.
 ```
 
 ## Ekrandaki veri gerçek değil

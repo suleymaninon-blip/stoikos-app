@@ -5,7 +5,8 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const fs = require('fs');
 const path = require('path');
 
-const BASE = 'http://localhost:8081';
+// Expo geliştirme sunucusu (varsayılan) ya da derlenmiş site: STORE_BASE=http://localhost:8091/app
+const BASE = process.env.STORE_BASE || 'http://localhost:8081';
 const OUT = process.argv[2] || '/home/user/stoikos-app/store-assets';
 
 // Mağaza vitrininde görünecek sohbet. Gerçek bir soru, alıntılı bir yanıt —
@@ -21,7 +22,7 @@ const CHAT = [
 // Süreklilik ve tamamlanmış pratikler — boş bir İlerleme ekranı hiçbir şey anlatmaz.
 // Anahtar biçimi uygulamanınkiyle aynı olmalı: Date.toDateString() ("Sat Sep 05 2026"),
 // ISO değil — aksi halde 7 günlük grafik ve haftalık sayaç boş kalır.
-const EXERCISES = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
+const EXERCISES = ['breath', 'neg_vis', 'intention', 'memento', 'review', 'gratitude'];
 
 function seedProgress() {
   const out = {};
@@ -32,8 +33,9 @@ function seedProgress() {
     if (perDay[i] === 0) continue;
     const d = new Date(today);
     d.setDate(d.getDate() - i);
-    out[`stoikos_completed_${d.toDateString()}`] =
-      JSON.stringify(EXERCISES.slice(0, perDay[i]));
+    // Her gün farklı egzersizlerden başla ki dağılım listesinde 0/7 kalmasın.
+    const picks = Array.from({ length: perDay[i] }, (_, j) => EXERCISES[(i * 2 + j) % EXERCISES.length]);
+    out[`stoikos_completed_${d.toDateString()}`] = JSON.stringify(picks);
   }
   return out;
 }
@@ -47,6 +49,11 @@ const SEED = {
   stoikos_streak: '9',
   stoikos_streak_last_date: new Date().toDateString(),
   stoikos_breath_sound: '1',
+  stoikos_breath_duration: '180',
+  // Programlar ekranı boş görünmesin: biri bitmiş, biri yarıda.
+  stoikos_program_control: JSON.stringify([0, 1, 2, 3, 4, 5, 6]),
+  stoikos_program_anger: JSON.stringify([0, 1, 2]),
+  stoikos_program_reflected_control: '1',
   ...seedProgress(),
 };
 
@@ -61,7 +68,14 @@ const SHOTS = [
   { slug: '3-coach', route: '/coach', label: 'Koç — sohbet' },
   { slug: '4-practice', route: '/practice', label: 'Pratik — günlük egzersizler' },
   { slug: '5-progress', route: '/progress', label: 'İlerleme — süreklilik' },
+  // Yalnız iPhone: ödeme modelini gösteren iki ekran (mağaza için zorunlu değil).
+  { slug: '6-programs', route: '/programs', label: 'Programlar', only: 'iphone' },
+  { slug: '7-plus', route: '/coach', label: 'Stoikos Plus ödeme ekranı', only: 'iphone', paywall: true },
 ];
+
+// Ödeme ekranını açmak için koç kotası rozetine basılıyor; bu ortamda backend
+// yok, o yüzden kota yanıtı taklit ediliyor (yalnız bu çekim için).
+const FAKE_QUOTA = { subscribed: false, used: 45, limit: 50, remaining: 5 };
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
@@ -91,11 +105,29 @@ const SHOTS = [
     page.on('console', (m) => { if (m.type() === 'error') console.error('  [browser]', m.text().slice(0, 160)); });
 
     for (const shot of SHOTS) {
+      if (shot.only && shot.only !== dev.name) continue;
       const file = path.join(OUT, `${dev.name}-${shot.slug}.png`);
       try {
+        if (shot.paywall) await page.route('**/coach/quota**', (r) => r.fulfill({ json: FAKE_QUOTA }));
         await page.goto(BASE + shot.route, { waitUntil: 'networkidle', timeout: 180000 });
         // Fontlar ve ilk animasyon karesi otursun.
         await page.waitForTimeout(4000);
+        if (shot.paywall) {
+          await page.getByText(/ücretsiz soru kaldı/).first().click();
+          await page.waitForTimeout(1500);
+          // RevenueCat bağlanana kadar düğme kasten "YAKINDA" (Paywall.tsx).
+          // Mağaza görseli yayındaki hâli göstermeli: etkin düğmenin metni ve rengi.
+          await page.evaluate(() => {
+            const el = [...document.querySelectorAll('div')].find((d) => d.childElementCount === 0 && d.textContent === 'YAKINDA');
+            if (!el) throw new Error('YAKINDA düğmesi bulunamadı');
+            el.textContent = 'ÜCRETSİZ DENE';
+            el.style.color = '#1c1915';
+            const box = el.parentElement;
+            box.style.backgroundColor = '#c9a876'; // Colors.accent
+            box.style.borderWidth = '0px';
+          });
+          await page.waitForTimeout(300);
+        }
         await page.screenshot({ path: file });
         const kb = (fs.statSync(file).size / 1024).toFixed(0);
         results.push(`ok   ${dev.name}-${shot.slug}.png  ${kb} KB`);

@@ -14,8 +14,9 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const FFMPEG = process.env.FFMPEG_PATH
-  || '/tmp/claude-0/-home-user/1dcc43ab-0312-5771-8259-d03876b1f260/scratchpad/node_modules/ffmpeg-static/ffmpeg';
+// Sistem ffmpeg'i libx264 ile geliyorsa o yeterli; eskiden geçici bir
+// oturum klasörüne sabit yazılıydı ve o klasör silinince betik çöküyordu.
+const FFMPEG = process.env.FFMPEG_PATH || 'ffmpeg';
 
 const W = 1080, H = 1920, FPS = 30, DURATION_MS = 20000;
 const FRAMES = Math.round((DURATION_MS / 1000) * FPS);
