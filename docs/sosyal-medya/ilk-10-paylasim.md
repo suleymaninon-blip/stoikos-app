@@ -91,6 +91,18 @@
 
 **Not:** müzik çok alçak olmalı; videoda nefes ritmi 4,5 sn al / 4,5 sn ver.
 
+**İngilizce sürüm:** `ilk-10/04-nefes-reels-en.mp4` (aynı video, yazılar İngilizce). Yabancı kitleye ya da TikTok'ta ayrı paylaşmak için:
+
+> No need to put your phone down. Just watch the flower.
+>
+> Breathe in as it opens, out as it closes. Five breaths, forty-five seconds.
+>
+> When you're done, leave one word in the comments: how are you now?
+>
+> The same flower is waiting on the home screen of the app — 1, 3 or 5 minutes. Link in bio.
+>
+> #breathwork #breathe #mindfulness #calm #stoicism #stressrelief #meditation
+
 ## 5 · Tek görsel — Marcus Aurelius
 
 **Dosya:** `ilk-10/05-alinti-marcus.jpg`
