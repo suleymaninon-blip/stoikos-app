@@ -4,6 +4,23 @@
 > Fikir: rüzgâr her şeyi eğiyor, filozof sakin kalıyor. Rüzgâr kontrolümüz dışındaki şeyler, duruşu ise elimizde olan (Kontrol Dairesi).
 > Sen sahneleri bir yapay zekâ video aracında üretip bana gönderiyorsun; ben kurgu, renk, yazı, marka işareti, müzik ve 6 dil çıkışını yapıyorum.
 
+## Durum (19 Ekim 2026) — kısa sürüm: 20 sn, 2 sahne daha
+
+Kullanıcı Kling'in **ücretsiz** sürümüyle ilerliyor (kredi günlük geliyor), bu yüzden video **20 sn'ye** kısaltıldı:
+
+| Süre | Sahne | Durum |
+|---|---|---|
+| 0–2 | Kararmış ekran, rüzgâr sesi | kurguda |
+| 2–7 | Patikada yürüyüş — *"Rüzgârı sen seçmezsin."* | ✅ `filozof-videosu/01-yuruyus-kling-720p.mp4` |
+| 7–11 | Başakların üstünde el — *"Yolu da."* | ⏳ önce görsel (Sahne 2), sonra Frames |
+| 11–16 | Siluet: durur, gözlerini kapar — *"Ama nasıl yürüdüğünü seçersin."* | ⏳ Sahne 4 |
+| 16–20 | Marka işareti, STOIKOS | kurguda |
+
+Notlar:
+- Karakter görseli Kling **AI Image (Image 3.0)** ile üretildi; videolar **AI Video → Frames** (görselden video), **Smart Multi-Shot KAPALI** (açıkken 5 sn'yi kesik sahnelere bölüyor).
+- Ücretsiz çıktı 720×1276, 24 fps, sağ altta **"KlingAI 3.0" filigranı**. Kurguda ~%7 yakınlaştırıp kırparak filigran atılacak, 1080×1920'ye büyütülecek.
+- 1080p 5 sn = 60 kredi; denemeler 720p.
+
 ## Nasıl çalışacağız (4 adım)
 
 1. **Önce tek bir karakter görseli üret** (aşağıda "Adım 0"). Bütün sahnelerde aynı adamın görünmesi için bu görseli her sahneye referans olarak vereceksin. Yapay zekâ videosunda en sık sorun budur: her sahnede başka biri çıkar.
