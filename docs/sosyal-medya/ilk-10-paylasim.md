@@ -1,27 +1,28 @@
-# İlk 10 paylaşım — Instagram (TikTok ve Facebook'a da uyar)
+# İlk paylaşımlar (11) — Instagram (TikTok ve Facebook'a da uyar)
 
-> Hazırlandı: 18 Ekim 2026. Görseller ve videolar `docs/sosyal-medya/ilk-10/` klasöründe.
+> Hazırlandı: 18 Ekim 2026, takvim 20 Ekim 2026'da güncellendi (filozof videosu 1. sıraya, tanıtım ikinci haftaya). Görseller ve videolar `docs/sosyal-medya/ilk-10/` klasöründe.
 > Kartlar 1080×1350 (Instagram dikey gönderi), videolar 1080×1920 (Reels/TikTok).
 > Metinler uygulamanın kendi içeriğinden alındı; alıntıların künyesinde "serbest uyarlama" var, uygulamadakiyle aynı.
 
-## Takvim (iki hafta, haftada 5 paylaşım)
+## Takvim (iki hafta, 11 paylaşım)
 
 | # | Gün | Tür | Konu |
 |---|---|---|---|
-| 1 | 1. gün (Pzt) | Reels | 20 sn tanıtım |
+| 1 | 1. gün (Pzt) | Reels | **Rüzgârı sen seçmezsin** (filozof videosu) — sabitle |
 | 2 | 2. gün (Sal) | Tek görsel | Epiktetos alıntısı |
 | 3 | 3. gün (Çar) | Kaydırmalı (5) | Kontrol Dairesi |
 | 4 | 4. gün (Per) | Reels | Benimle 5 nefes al |
 | 5 | 5. gün (Cum) | Tek görsel | Marcus Aurelius alıntısı |
-| 6 | 8. gün (Pzt) | Kaydırmalı (4) | Memento Mori |
-| 7 | 9. gün (Sal) | Tek görsel | Seneca alıntısı |
-| 8 | 10. gün (Çar) | Tek görsel | Akşam yansıma sorusu |
-| 9 | 11. gün (Per) | Kaydırmalı (4) | Öfkeyle Çalışmak programı |
-| 10 | 12. gün (Cum) | Kaydırmalı (3) | Epiktetos kimdi? |
+| 6 | 8. gün (Pzt) | Reels | 20 sn tanıtım |
+| 7 | 9. gün (Sal) | Kaydırmalı (4) | Memento Mori |
+| 8 | 10. gün (Çar) | Tek görsel | Seneca alıntısı |
+| 9 | 11. gün (Per) | Tek görsel | Akşam yansıma sorusu |
+| 10 | 12. gün (Cum) | Kaydırmalı (4) | Öfkeyle Çalışmak programı |
+| 11 | 13. gün (Cmt) | Kaydırmalı (3) | Epiktetos kimdi? |
 
-**Saat:** sabah 08:00–09:00 ya da akşam 21:00–22:00. Uygulamanın kendisi de sabah niyeti ve akşam yansıması üzerine kurulu; yansıma sorusu (#8) mutlaka **akşam** gitmeli.
+**Saat:** sabah 08:00–09:00 ya da akşam 21:00–22:00. Uygulamanın kendisi de sabah niyeti ve akşam yansıması üzerine kurulu; yansıma sorusu (#9) mutlaka **akşam** gitmeli.
 
-**Sıra mantığı:** önce ne olduğumuzu söyle (#1), sonra değer ver (#2–#8), satış en sona (#9 Plus programı). Her üç gönderiden biri hareketli (Reels), çünkü keşfet ekranına en çok onlar düşüyor.
+**Sıra mantığı:** önce akılda kalan bir duygu (#1, filozof videosu), sonra değer ver (#2–#5), ikinci haftanın başında ne olduğumuzu göster (#6 tanıtım), sonra yine değer (#7–#9), satış en sona (#10 Plus programı). Her hafta iki hareketli gönderi (Reels) var, çünkü keşfet ekranına en çok onlar düşüyor.
 
 ## Genel kurallar
 
@@ -34,20 +35,21 @@
 
 ---
 
-## 1 · Reels — Tanıtım
+## 1 · Reels — Rüzgârı sen seçmezsin (18 sn)
 
-**Dosya:** `store-assets/teaser-tr-1080x1920.mp4` · kapak: `ilk-10/01-tanitim-kapak.jpg`
+**Dosya:** `filozof-videosu/ruzgar-tr-1080x1920.mp4` (İngilizcesi `ruzgar-en-1080x1920.mp4`)
 
-> Dün endişelendin. Bugün de endişeleniyorsun. Peki yarın?
+> Rüzgârı sen seçmezsin. Yolu da. Ama nasıl yürüdüğünü seçersin.
 >
-> İki bin yıl önce bir Roma imparatoru geceleri kendine notlar tutuyordu: nasıl daha sabırlı, daha az öfkeli olabileceğine dair. Stoikos o defteri cebine getiriyor.
+> Epiktetos'un el kitabı şu fikirle açılır: bazı şeyler bize bağlıdır, bazıları değil. Huzur, ikisini ayırabildiğin yerde başlar.
 >
-> 164 söz · 10 filozof · 12 kavram · nefes · seni dinleyen bir Stoacı koç.
-> Hesap yok, reklam yok. Bağlantı profilde.
+> Stoikos bu felsefeyi gününe getiriyor: sözler, nefes, günlük pratik ve seni dinleyen bir Stoacı koç. Bağlantı profilde.
 >
-> #stoacılık #marcusaurelius #felsefe #farkındalık #nefes #kişiselgelişim #stoicism
+> #stoacılık #epiktetos #felsefe #farkındalık #sakinlik #stoicism
 
-**Sabitle:** bu gönderiyi profilin en üstüne sabitle — profile gelen herkes önce bunu görsün.
+**Sabitle:** profilin en üstüne sabitle — profile gelen herkes önce bunu görsün.
+**Müzik:** video yalnız rüzgâr sesiyle; yüklerken kitaplıktan sakin bir piyano parçası ekle (rüzgâr sesi altta kalsın).
+**Yapay zekâ etiketi:** yükleme ekranında "Yapay zekâ ile oluşturuldu" seçeneğini işaretle (Meta gerçekçi yapay zekâ görüntülerinde istiyor).
 
 ## 2 · Tek görsel — Epiktetos
 
@@ -117,7 +119,22 @@
 
 **Saat:** sabah.
 
-## 6 · Kaydırmalı — Memento Mori (4 kart)
+## 6 · Reels — Tanıtım (20 sn)
+
+**Dosya:** `store-assets/teaser-tr-1080x1920.mp4` · kapak: `ilk-10/01-tanitim-kapak.jpg`
+
+> Dün endişelendin. Bugün de endişeleniyorsun. Peki yarın?
+>
+> İki bin yıl önce bir Roma imparatoru geceleri kendine notlar tutuyordu: nasıl daha sabırlı, daha az öfkeli olabileceğine dair. Stoikos o defteri cebine getiriyor.
+>
+> 164 söz · 10 filozof · 12 kavram · nefes · seni dinleyen bir Stoacı koç.
+> Hesap yok, reklam yok. Bağlantı profilde.
+>
+> #stoacılık #marcusaurelius #felsefe #farkındalık #nefes #kişiselgelişim #stoicism
+
+**Sabitle:** profilin ikinci sabit gönderisi yap (Instagram en fazla üç gönderi sabitlemeye izin veriyor; ilki filozof videosu).
+
+## 7 · Kaydırmalı — Memento Mori (4 kart)
 
 **Dosyalar:** `ilk-10/06-memento-mori-1.jpg` … `-4.jpg`
 
@@ -129,7 +146,7 @@
 >
 > #mementomori #stoacılık #seneca #zaman #felsefe #anınıyaşa #stoicism
 
-## 7 · Tek görsel — Seneca
+## 8 · Tek görsel — Seneca
 
 **Dosya:** `ilk-10/07-alinti-seneca.jpg`
 
@@ -139,7 +156,7 @@
 >
 > #seneca #stoacılık #zaman #ekransüresi #odak #felsefe #stoicism
 
-## 8 · Tek görsel — Akşam yansıma sorusu
+## 9 · Tek görsel — Akşam yansıma sorusu
 
 **Dosya:** `ilk-10/08-yansima-sorusu.jpg`
 
@@ -153,7 +170,7 @@
 
 **Saat:** akşam 21:00 sonrası. **Yorumlara cevap ver** — bu gönderi sohbet başlatmak için.
 
-## 9 · Kaydırmalı — Öfkeyle Çalışmak (4 kart)
+## 10 · Kaydırmalı — Öfkeyle Çalışmak (4 kart)
 
 **Dosyalar:** `ilk-10/09-ofke-programi-1.jpg` … `-4.jpg`
 
@@ -167,7 +184,7 @@
 
 **Not:** satış yapan tek gönderi bu. Mağazada Plus açılmadan (RevenueCat) paylaşacaksan son cümleyi "Uygulamada beş rehberli program var — bağlantı profilde." yap.
 
-## 10 · Kaydırmalı — Epiktetos kimdi? (3 kart)
+## 11 · Kaydırmalı — Epiktetos kimdi? (3 kart)
 
 **Dosyalar:** `ilk-10/10-epiktetos-1.jpg` … `-3.jpg`
 
@@ -184,7 +201,7 @@
 ## Hikâyeler (Stories) için kolay ekler
 
 - Her gönderiden sonra aynı görseli hikâyede paylaş, üstüne "Yeni gönderi 👆" etiketi koy.
-- #8'in sorusunu hikâyede **soru kutusu** ile sor; gelen cevapları (isimsiz) ertesi gün paylaş.
+- #9'un sorusunu hikâyede **soru kutusu** ile sor; gelen cevapları (isimsiz) ertesi gün paylaş.
 - #4 nefes videosunu hikâyede **anket** ile paylaş: "Şimdi nasılsın? Daha sakin / Aynı".
 
 ## Yeniden üretmek
