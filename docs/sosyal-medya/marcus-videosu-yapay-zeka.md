@@ -4,6 +4,16 @@
 > Fikir: savaş meydanında her şey kaos, Marcus sakin. Sonunda gece çadırında, bir kandilin ışığında not yazıyor. Bu, sitenin hikâyesiyle birebir aynı ("İki bin yıl önce bir Roma imparatoru geceleri kendine notlar tutuyordu").
 > Tarihî dayanak: *Meditationes*'in bir kısmı Tuna cephesinde, Markomanlarla savaş sırasında yazıldı (1. kitabın sonunda "Granua kıyısında, Quadiler arasında", 2. kitabın sonunda "Carnuntum'da" yazar).
 
+## Durum
+
+| Sahne | Durum |
+|---|---|
+| Karakter görseli | ✅ `marcus-videosu/00-karakter-gemini.png` (Gemini; Kling'inki sert/öfkeli ifadeli olduğu için elendi) |
+| 1 — Kaosun ortasında | ⏳ |
+| 2 — İçindeki kale (yüz) | ✅ `marcus-videosu/02-yuz-gemini-720p.mp4` (10 sn: kameraya bakar → gözlerini kapatır, sonuna kadar huzurlu; filigran yok) |
+| 3 — Ağır çekim | ⏳ |
+| 4 — Gece, çadır, kandil | ⏳ |
+
 ## Senaryo
 
 | Süre | Görüntü | Ekrandaki yazı |
