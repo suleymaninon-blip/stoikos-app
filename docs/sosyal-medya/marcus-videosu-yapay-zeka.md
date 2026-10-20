@@ -11,8 +11,10 @@
 | Karakter görseli | ✅ `marcus-videosu/00-karakter-gemini.png` (Gemini; Kling'inki sert/öfkeli ifadeli olduğu için elendi) |
 | 1 — Kaosun ortasında | ✅ `marcus-videosu/01-kaos-gemini-720p.mp4` (10 sn: geniş plandan yüze yaklaşan tek çekim — kamp, sancaklar, ateşler, at; sonu yakın plan, 2. sahneye doğal bağlanıyor) |
 | 2 — İçindeki kale (yüz) | ✅ `marcus-videosu/02-yuz-gemini-720p.mp4` (10 sn: kameraya bakar → gözlerini kapatır, sonuna kadar huzurlu; filigran yok) |
-| 3 — Ağır çekim | ⏳ |
-| 4 — Gece, çadır, kandil | ⏳ |
+| 3 — Yürüyüş | ✅ `marcus-videosu/03-yuruyus-gemini-720p.mp4` (kameraya doğru sakin yürüyüş; ağır çekim tam olmadı, yeterli) |
+| 4 — Gece, çadır, kandil | ✅ `marcus-videosu/04-cadir-gemini-720p.mp4` |
+
+**✅ Kurgu hazır (20 Ekim 2026):** `marcus-videosu/icindeki-kale-tr|en-1080x1920.mp4` — 21,7 sn, 1080×1920, sahnelerin kendi sesleri (kaos → nefes → adımlar → kandil), loudnorm −20 LUFS. Yeniden üretmek: `bash scripts/social/marcus/build.sh [müzik.mp3]` (yazı/kapanış katmanları `scripts/social/filozof/` ile ortak).
 
 ## Senaryo
 
