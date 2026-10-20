@@ -6,13 +6,13 @@
 
 ## Durum (19 Ekim 2026) — kısa sürüm: 20 sn, 2 sahne daha
 
-Kullanıcı Kling'in **ücretsiz** sürümüyle ilerliyor (kredi günlük geliyor), bu yüzden video **20 sn'ye** kısaltıldı:
+Kullanıcı Kling'in **ücretsiz** sürümüyle başladı, kredisi bitince **Gemini (Veo)** ile devam etti, bu yüzden video **20 sn'ye** kısaltıldı:
 
 | Süre | Sahne | Durum |
 |---|---|---|
 | 0–2 | Kararmış ekran, rüzgâr sesi | kurguda |
 | 2–7 | Patikada yürüyüş — *"Rüzgârı sen seçmezsin."* | ✅ `filozof-videosu/01-yuruyus-kling-720p.mp4` |
-| 7–11 | Başakların üstünde el — *"Yolu da."* | ⏳ önce görsel (Sahne 2), sonra Frames |
+| 7–11 | Başakların üstünde el — *"Yolu da."* | ✅ `filozof-videosu/02-el-gemini-720p.mp4` (Gemini/Veo, 10 sn, keten kol karakterle uyumlu; ilk kare Kling görselinden geldiği için "KlingAI" filigranı var, kırpılacak) |
 | 11–16 | Siluet: durur, gözlerini kapar — *"Ama nasıl yürüdüğünü seçersin."* | ⏳ Sahne 4 |
 | 16–20 | Marka işareti, STOIKOS | kurguda |
 
