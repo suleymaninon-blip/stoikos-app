@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Filozof videosu katmanları:
+     - mode=text  → saydam 1080×1920 PNG, alt üçte birde tek satır yazı
+     - mode=close → kapanış sahnesi (marka işareti çizilir, küre belirir, STOIKOS) */
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:300;
+    src:url('../../../node_modules/@expo-google-fonts/jost/Jost_300Light.ttf') format('truetype'); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:transparent; }
+
+  /* Yazının arkasında yumuşak bir karartma — açık renkli başakların üstünde de okunsun.
+     Yazıyla aynı PNG'de, dolayısıyla onunla birlikte belirip kaybolur. */
+  #shade { position:absolute; left:0; right:0; top:1080px; height:640px;
+    background:radial-gradient(ellipse 70% 50% at 50% 50%, rgba(10,8,6,.55) 0%, rgba(10,8,6,.30) 45%, rgba(10,8,6,0) 75%); }
+  #text { position:absolute; left:80px; right:80px; top:1300px; text-align:center;
+    font-family:'Cormorant'; font-style:italic; font-size:84px; line-height:1.25; color:#f6eedd;
+    text-shadow:0 2px 6px rgba(0,0,0,.55), 0 0 40px rgba(0,0,0,.45); }
+
+  #close { position:absolute; inset:0; display:none; place-items:center; background:#0f0d0a; }
+  #close::before { content:''; position:absolute; left:50%; top:46%; width:1500px; height:1500px; transform:translate(-50%,-50%);
+    border-radius:50%; background:radial-gradient(circle, rgba(194,168,120,.16) 0%, rgba(194,168,120,.05) 40%, rgba(194,168,120,0) 68%); }
+  .block { position:relative; text-align:center; }
+  #mk { width:230px; height:230px; display:block; margin:0 auto 44px; }
+  .word { font-family:'Cinzel'; font-weight:600; font-size:104px; color:#d8c49a; }
+  .tag { font-family:'Jost'; font-weight:300; font-size:36px; letter-spacing:2.4px; color:#a89c86; margin-top:36px; text-transform:uppercase; }
+  .url { font-family:'Jost'; font-weight:300; font-size:38px; letter-spacing:3px; color:#c2a878; margin-top:26px; }
+</style>
+</head>
+<body>
+<div id="shade"></div>
+<div id="text"></div>
+
+<div id="close"><div class="block">
+  <svg id="mk" viewBox="192 162 640 640" aria-hidden="true">
+    <defs>
+      <linearGradient id="mkG" x1="0" y1="250" x2="0" y2="760" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/>
+      </linearGradient>
+      <radialGradient id="mkO" cx="42%" cy="36%" r="70%">
+        <stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/>
+      </radialGradient>
+      <radialGradient id="mkW" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g id="mkOrb">
+      <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".13" stroke-width="4"/>
+      <circle cx="512" cy="477" r="200" fill="url(#mkW)"/>
+      <circle cx="512" cy="477" r="128" fill="url(#mkO)"/>
+    </g>
+    <path id="mkArc" d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkG)"
+      stroke-width="34" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1500" stroke-dashoffset="1500"/>
+  </svg>
+  <div class="word" id="word">STOIKOS</div>
+  <div class="tag" id="tag"></div>
+  <div class="url" id="url">stoikos.app</div>
+</div></div>
+
+<script>
+const TAG = { tr:'Stoacı bilgelik, günlük hayatta', en:'Stoic wisdom, in daily life' };
+const cl = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const pr = (t, t0, t1) => cl((t - t0) / (t1 - t0));
+const ease = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+
+// Kapanış, 4 sn: 0–0,6 kararmış zemin (önceki sahneden geçiş burada), sonra kavis çizilir.
+function renderFrame(t) {
+  const $ = (id) => document.getElementById(id);
+  $('mk').style.opacity = ease(pr(t, 500, 700));
+  $('mkArc').setAttribute('stroke-dashoffset', (1500 * (1 - ease(pr(t, 500, 1500)))).toFixed(1));
+  $('mkOrb').style.opacity = ease(pr(t, 1200, 1900));
+  $('word').style.opacity = ease(pr(t, 1100, 1900));
+  $('word').style.letterSpacing = `${(4 + 14 * ease(pr(t, 1100, 2400))).toFixed(2)}px`;
+  $('tag').style.opacity = ease(pr(t, 1900, 2500));
+  $('url').style.opacity = ease(pr(t, 2200, 2800));
+}
+function init(lang) {
+  document.body.style.background = '#000';
+  document.getElementById('close').style.display = 'grid';
+  document.getElementById('shade').style.display = 'none';
+  document.getElementById('tag').textContent = TAG[lang] || TAG.tr;
+  renderFrame(0);
+}
+window.init = init;
+window.renderFrame = renderFrame;
+window.showText = (s) => { document.getElementById('text').textContent = s; };
+</script>
+</body>
+</html>

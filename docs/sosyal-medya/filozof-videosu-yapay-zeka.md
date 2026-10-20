@@ -13,13 +13,15 @@ Kullanıcı Kling'in **ücretsiz** sürümüyle başladı, kredisi bitince **Gem
 | 0–2 | Kararmış ekran, rüzgâr sesi | kurguda |
 | 2–7 | Patikada yürüyüş — *"Rüzgârı sen seçmezsin."* | ✅ `filozof-videosu/01-yuruyus-kling-720p.mp4` |
 | 7–11 | Başakların üstünde el — *"Yolu da."* | ✅ `filozof-videosu/02-el-gemini-720p.mp4` (Gemini/Veo, 10 sn, keten kol karakterle uyumlu; ilk kare Kling görselinden geldiği için "KlingAI" filigranı var, kırpılacak) |
-| 11–16 | Siluet: durur, gözlerini kapar — *"Ama nasıl yürüdüğünü seçersin."* | ⏳ Sahne 4 |
+| 11–16 | Siluet: durur, rüzgâra karşı — *"Ama nasıl yürüdüğünü seçersin."* | ✅ `filozof-videosu/03-siluet-gemini-720p.mp4` (Gemini; kamera döndükçe yüz profilden görünüyor) |
 | 16–20 | Marka işareti, STOIKOS | kurguda |
 
 Notlar:
 - Karakter görseli Kling **AI Image (Image 3.0)** ile üretildi; videolar **AI Video → Frames** (görselden video), **Smart Multi-Shot KAPALI** (açıkken 5 sn'yi kesik sahnelere bölüyor).
 - Ücretsiz çıktı 720×1276, 24 fps, sağ altta **"KlingAI 3.0" filigranı**. Kurguda ~%7 yakınlaştırıp kırparak filigran atılacak, 1080×1920'ye büyütülecek.
 - 1080p 5 sn = 60 kredi; denemeler 720p.
+
+**✅ Kurgu hazır (20 Ekim 2026):** `filozof-videosu/ruzgar-tr-1080x1920.mp4` ve `ruzgar-en-1080x1920.mp4` — 18,3 sn, 1080×1920, yalnız rüzgâr sesi (müzik Instagram'da eklenecek ya da Musopen'dan gelince). Yeniden üretmek: `bash scripts/social/filozof/build.sh [müzik.mp3]` (kırpma/zamanlama/yazılar betikte; yazı ve kapanış katmanı `scripts/social/filozof/overlay.html`).
 
 ## Nasıl çalışacağız (4 adım)
 
