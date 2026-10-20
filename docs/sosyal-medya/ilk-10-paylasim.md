@@ -1,10 +1,10 @@
-# İlk paylaşımlar (11) — Instagram (TikTok ve Facebook'a da uyar)
+# İlk paylaşımlar (12) — Instagram (TikTok ve Facebook'a da uyar)
 
-> Hazırlandı: 18 Ekim 2026, takvim 20 Ekim 2026'da güncellendi (filozof videosu 1. sıraya, tanıtım ikinci haftaya). Görseller ve videolar `docs/sosyal-medya/ilk-10/` klasöründe.
+> Hazırlandı: 18 Ekim 2026, takvim 20 Ekim 2026'da güncellendi (filozof videosu 1. sıraya, Marcus videosu 6. sıraya, tanıtım üçüncü haftaya). Görseller ve videolar `docs/sosyal-medya/ilk-10/` klasöründe.
 > Kartlar 1080×1350 (Instagram dikey gönderi), videolar 1080×1920 (Reels/TikTok).
 > Metinler uygulamanın kendi içeriğinden alındı; alıntıların künyesinde "serbest uyarlama" var, uygulamadakiyle aynı.
 
-## Takvim (iki hafta, 11 paylaşım)
+## Takvim (üç hafta, 12 paylaşım)
 
 | # | Gün | Tür | Konu |
 |---|---|---|---|
@@ -13,16 +13,17 @@
 | 3 | 3. gün (Çar) | Kaydırmalı (5) | Kontrol Dairesi |
 | 4 | 4. gün (Per) | Reels | Benimle 5 nefes al |
 | 5 | 5. gün (Cum) | Tek görsel | Marcus Aurelius alıntısı |
-| 6 | 8. gün (Pzt) | Reels | 20 sn tanıtım |
+| 6 | 8. gün (Pzt) | Reels | **İçindeki kale** (Marcus Aurelius videosu) — sabitle |
 | 7 | 9. gün (Sal) | Kaydırmalı (4) | Memento Mori |
 | 8 | 10. gün (Çar) | Tek görsel | Seneca alıntısı |
 | 9 | 11. gün (Per) | Tek görsel | Akşam yansıma sorusu |
 | 10 | 12. gün (Cum) | Kaydırmalı (4) | Öfkeyle Çalışmak programı |
 | 11 | 13. gün (Cmt) | Kaydırmalı (3) | Epiktetos kimdi? |
+| 12 | 15. gün (Pzt) | Reels | 20 sn tanıtım |
 
 **Saat:** sabah 08:00–09:00 ya da akşam 21:00–22:00. Uygulamanın kendisi de sabah niyeti ve akşam yansıması üzerine kurulu; yansıma sorusu (#9) mutlaka **akşam** gitmeli.
 
-**Sıra mantığı:** önce akılda kalan bir duygu (#1, filozof videosu), sonra değer ver (#2–#5), ikinci haftanın başında ne olduğumuzu göster (#6 tanıtım), sonra yine değer (#7–#9), satış en sona (#10 Plus programı). Her hafta iki hareketli gönderi (Reels) var, çünkü keşfet ekranına en çok onlar düşüyor.
+**Sıra mantığı:** önce akılda kalan bir duygu (#1, filozof videosu), sonra değer ver (#2–#5), ikinci hafta yine güçlü bir videoyla açılır (#6 Marcus), sonra yine değer (#7–#9), satış (#10 Plus programı); üçüncü haftanın başında ne olduğumuzu gösteren tanıtım (#12). Her hafta iki hareketli gönderi (Reels) var, çünkü keşfet ekranına en çok onlar düşüyor.
 
 ## Genel kurallar
 
@@ -119,20 +120,21 @@
 
 **Saat:** sabah.
 
-## 6 · Reels — Tanıtım (20 sn)
+## 6 · Reels — İçindeki kale (22 sn)
 
-**Dosya:** `store-assets/teaser-tr-1080x1920.mp4` · kapak: `ilk-10/01-tanitim-kapak.jpg`
+**Dosya:** `marcus-videosu/icindeki-kale-tr-1080x1920.mp4` (İngilizcesi `icindeki-kale-en-1080x1920.mp4`)
 
-> Dün endişelendin. Bugün de endişeleniyorsun. Peki yarın?
+> Dışarıda her şey kaos olabilir. İçinde bir kale var.
 >
-> İki bin yıl önce bir Roma imparatoru geceleri kendine notlar tutuyordu: nasıl daha sabırlı, daha az öfkeli olabileceğine dair. Stoikos o defteri cebine getiriyor.
+> Marcus Aurelius dünyanın en güçlü insanıydı ve yıllarını soğuk bir cephede, savaşın ortasında geçirdi. Geceleri çadırında, kandil ışığında kendine notlar yazdı. O notlar bugün *Kendime Düşünceler* olarak okunuyor.
 >
-> 164 söz · 10 filozof · 12 kavram · nefes · seni dinleyen bir Stoacı koç.
-> Hesap yok, reklam yok. Bağlantı profilde.
+> Senin savaşın bir toplantı, bir trafik, bir mesaj olabilir. Kale aynı kale. Bağlantı profilde.
 >
-> #stoacılık #marcusaurelius #felsefe #farkındalık #nefes #kişiselgelişim #stoicism
+> #marcusaurelius #stoacılık #meditations #felsefe #sakinlik #stoicism
 
-**Sabitle:** profilin ikinci sabit gönderisi yap (Instagram en fazla üç gönderi sabitlemeye izin veriyor; ilki filozof videosu).
+**Sabitle:** ikinci sabit gönderi yap (ilki filozof videosu).
+**Ses:** videonun kendi sesi var (kaos → nefes → adımlar → kandil); müzik eklersen alçak tut, o geçiş duyulsun.
+**Yapay zekâ etiketi:** yükleme ekranında "Yapay zekâ ile oluşturuldu" seçeneğini işaretle.
 
 ## 7 · Kaydırmalı — Memento Mori (4 kart)
 
@@ -197,6 +199,21 @@
 > #epiktetos #stoacılık #felsefe #özgürlük #tarih #filozof #stoicism
 
 ---
+
+## 12 · Reels — Tanıtım (20 sn)
+
+**Dosya:** `store-assets/teaser-tr-1080x1920.mp4` · kapak: `ilk-10/01-tanitim-kapak.jpg`
+
+> Dün endişelendin. Bugün de endişeleniyorsun. Peki yarın?
+>
+> İki bin yıl önce bir Roma imparatoru geceleri kendine notlar tutuyordu: nasıl daha sabırlı, daha az öfkeli olabileceğine dair. Stoikos o defteri cebine getiriyor.
+>
+> 164 söz · 10 filozof · 12 kavram · nefes · seni dinleyen bir Stoacı koç.
+> Hesap yok, reklam yok. Bağlantı profilde.
+>
+> #stoacılık #marcusaurelius #felsefe #farkındalık #nefes #kişiselgelişim #stoicism
+
+**Sabitle:** üçüncü sabit gönderi yap (sabitler: filozof videosu, Marcus videosu, tanıtım).
 
 ## Hikâyeler (Stories) için kolay ekler
 
