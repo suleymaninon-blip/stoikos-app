@@ -9,7 +9,7 @@
 | Sahne | Durum |
 |---|---|
 | Karakter görseli | ✅ `marcus-videosu/00-karakter-gemini.png` (Gemini; Kling'inki sert/öfkeli ifadeli olduğu için elendi) |
-| 1 — Kaosun ortasında | ⏳ |
+| 1 — Kaosun ortasında | ✅ `marcus-videosu/01-kaos-gemini-720p.mp4` (10 sn: geniş plandan yüze yaklaşan tek çekim — kamp, sancaklar, ateşler, at; sonu yakın plan, 2. sahneye doğal bağlanıyor) |
 | 2 — İçindeki kale (yüz) | ✅ `marcus-videosu/02-yuz-gemini-720p.mp4` (10 sn: kameraya bakar → gözlerini kapatır, sonuna kadar huzurlu; filigran yok) |
 | 3 — Ağır çekim | ⏳ |
 | 4 — Gece, çadır, kandil | ⏳ |
