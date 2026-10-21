@@ -23,64 +23,97 @@ const COACH_CONSENT_KEY = 'stoikos_journal_coach_consent'; // açık rıza (KVKK
 // bu ayrımı yapıyor, ikonlar da ona uyuyor.
 const ICON_COLOR: Record<DayPart, string> = { morning: Colors.sand, evening: Colors.moon };
 
-// ─── Sade liste satırı (dokununca rehberli kart açılır) ────
+// ─── Liste satırı: daire işaretler, satır açar ───────────
+// Eskiden daire de satır da aynı pencereyi açıyordu; işaretlemek de işareti
+// kaldırmak da iki dokunuş + pencere istiyordu (Ekim 2026 akış revizyonu).
+// Artık daire gerçek bir onay kutusu: tek dokunuşla işaretler/kaldırır, yanlış
+// dokunuş alttaki "Geri al" şeridiyle düzeltilir. Satırın geri kalanı egzersizi açar.
 function ExerciseRow({
-  exercise, completed, icon, onOpen, tapHint,
+  exercise, completed, icon, onToggle, onOpen, markLabel, openLabel,
 }: {
   exercise: Exercise;
   completed: boolean;
   icon: DayPart;
+  onToggle: () => void;
   onOpen: () => void;
-  tapHint: string;
+  markLabel: string;
+  openLabel: string;
 }) {
   return (
-    <TouchableOpacity onPress={onOpen} activeOpacity={0.7} style={styles.row}>
-      <View style={[styles.rowCheck, completed && styles.rowCheckDone]}>
-        {completed && <Text style={styles.rowCheckMark}>✓</Text>}
-      </View>
-      <View style={styles.rowIcon}><DayPartIcon part={icon} size={16} color={ICON_COLOR[icon]} /></View>
-      <Text style={[styles.rowName, completed && styles.rowNameDone]} numberOfLines={1}>{exercise.name}</Text>
-      <Text style={styles.rowDuration}>{exercise.duration}</Text>
-      <Text style={styles.rowChevron}>›</Text>
-    </TouchableOpacity>
+    <View style={styles.row}>
+      <Pressable
+        onPress={onToggle}
+        style={styles.rowCheckHit}
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: completed }}
+        accessibilityLabel={markLabel}
+      >
+        <View style={[styles.rowCheck, completed && styles.rowCheckDone]}>
+          {completed && <Text style={styles.rowCheckMark}>✓</Text>}
+        </View>
+      </Pressable>
+      <TouchableOpacity
+        onPress={onOpen}
+        activeOpacity={0.7}
+        style={styles.rowBody}
+        accessibilityRole="button"
+        accessibilityLabel={openLabel}
+      >
+        <View style={styles.rowIcon}><DayPartIcon part={icon} size={16} color={ICON_COLOR[icon]} /></View>
+        <Text style={[styles.rowName, completed && styles.rowNameDone]} numberOfLines={1}>{exercise.name}</Text>
+        <Text style={styles.rowDuration}>{exercise.duration}</Text>
+        <Text style={styles.rowChevron}>›</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
-// ─── Rehberli kart (modal) ─────────────────────────────────
-function ExerciseModal({
-  exercise, icon, completed, onToggle, onClose, labels,
+// ─── Egzersiz sayfası (alttan açılır) ──────────────────────
+// Okumak için. Tamamlanmamışsa ana düğme "Tamamladım"; tamamlandıysa ana düğme
+// yerine durum ("Bugün tamamlandı") ve küçük bir "İşareti kaldır" bağlantısı.
+function ExerciseSheet({
+  exercise, icon, completed, onComplete, onUnmark, onClose, labels,
 }: {
   exercise: (Exercise & { icon: DayPart }) | null;
   icon: DayPart;
   completed: boolean;
-  onToggle: () => void;
+  onComplete: () => void;
+  onUnmark: () => void;
   onClose: () => void;
-  labels: { complete: string; undo: string; done: string };
+  labels: { complete: string; doneToday: string; unmark: string; close: string };
 }) {
   if (!exercise) return null;
   return (
-    <Modal transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={styles.modalCard} onPress={() => {}}>
-          <View style={styles.modalIcon}><DayPartIcon part={icon} size={44} color={ICON_COLOR[icon]} /></View>
+    <Modal transparent animationType="slide" onRequestClose={onClose}>
+      <View style={styles.sheetWrap}>
+        <Pressable style={styles.sheetBackdrop} onPress={onClose} accessibilityRole="button" accessibilityLabel={labels.close} />
+        <View style={styles.sheet}>
+          <View style={styles.sheetHandle} />
+          <TouchableOpacity onPress={onClose} style={styles.sheetClose} accessibilityRole="button" accessibilityLabel={labels.close} hitSlop={6}>
+            <Text style={styles.sheetCloseText}>✕</Text>
+          </TouchableOpacity>
+          <View style={styles.modalIcon}><DayPartIcon part={icon} size={40} color={ICON_COLOR[icon]} /></View>
           <Text style={styles.modalDuration}>{exercise.duration}</Text>
           <Text style={styles.modalName}>{exercise.name}</Text>
           <View style={styles.modalDivider} />
           <Text style={styles.modalDesc}>{exercise.desc}</Text>
 
-          <TouchableOpacity
-            style={[styles.modalBtn, completed && styles.modalBtnDone]}
-            onPress={onToggle}
-            activeOpacity={0.85}
-          >
-            <Text style={[styles.modalBtnText, completed && styles.modalBtnTextDone]}>
-              {completed ? labels.undo : labels.complete}
-            </Text>
-          </TouchableOpacity>
-
-          {completed && <Text style={styles.modalDoneNote}>✦ {labels.done}</Text>}
-        </Pressable>
-      </Pressable>
+          {completed ? (
+            <>
+              <View style={styles.sheetDoneBox} accessibilityRole="text">
+                <Text style={styles.sheetDoneText}>✓ {labels.doneToday}</Text>
+              </View>
+              <TouchableOpacity onPress={onUnmark} style={styles.sheetUnmark} accessibilityRole="button">
+                <Text style={styles.sheetUnmarkText}>{labels.unmark}</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity style={styles.modalBtn} onPress={onComplete} activeOpacity={0.85} accessibilityRole="button">
+              <Text style={styles.modalBtnText}>{labels.complete}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -94,7 +127,12 @@ export default function PracticeScreen() {
   const [journalSaved, setJournalSaved] = useState(false);
   const [coachConsent, setCoachConsent] = useState(false); // yansımayı koça iletme izni
   const [selected, setSelected] = useState<(Exercise & { icon: DayPart }) | null>(null);
+  // Alttaki "… tamamlandı · Geri al" şeridi; 4 sn sonra kaybolur.
+  const [toast, setToast] = useState<{ id: string; name: string; done: boolean } | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
 
   const { morning: MORNING_EXERCISES, evening: EVENING_EXERCISES } = getExercises(lang, t('unit.min'));
   const concept = getDailyConcept(lang);
@@ -121,12 +159,28 @@ export default function PracticeScreen() {
     await AsyncStorage.setItem(COACH_CONSENT_KEY, next ? '1' : '0');
   }
 
-  async function toggleExercise(id: string) {
+  async function setExerciseDone(id: string, done: boolean) {
     const next = new Set(completed);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
+    if (done) next.add(id);
+    else next.delete(id);
     setCompleted(next);
     await AsyncStorage.setItem(COMPLETED_KEY + today, JSON.stringify([...next]));
+  }
+
+  // İşaretle/kaldır + geri al şeridi. Onay sorulmuyor: yanlış dokunuş tek
+  // dokunuşla geri alınabildiği için pencere gereksiz sürtünme olurdu.
+  function markExercise(ex: Exercise, done: boolean) {
+    setExerciseDone(ex.id, done);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast({ id: ex.id, name: ex.name, done });
+    toastTimer.current = setTimeout(() => setToast(null), 4000);
+  }
+
+  function undoToast() {
+    if (!toast) return;
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setExerciseDone(toast.id, !toast.done);
+    setToast(null);
   }
 
   async function saveJournal() {
@@ -195,8 +249,10 @@ export default function PracticeScreen() {
                 exercise={ex}
                 icon="morning"
                 completed={completed.has(ex.id)}
+                onToggle={() => markExercise(ex, !completed.has(ex.id))}
                 onOpen={() => setSelected({ ...ex, icon: 'morning' })}
-                tapHint={t('practice.tapHint')}
+                markLabel={t('practice.markA11y', { name: ex.name })}
+                openLabel={t('practice.openA11y', { name: ex.name })}
               />
             ))}
           </View>
@@ -221,8 +277,10 @@ export default function PracticeScreen() {
                 exercise={ex}
                 icon="evening"
                 completed={completed.has(ex.id)}
+                onToggle={() => markExercise(ex, !completed.has(ex.id))}
                 onOpen={() => setSelected({ ...ex, icon: 'evening' })}
-                tapHint={t('practice.tapHint')}
+                markLabel={t('practice.markA11y', { name: ex.name })}
+                openLabel={t('practice.openA11y', { name: ex.name })}
               />
             ))}
           </View>
@@ -286,23 +344,27 @@ export default function PracticeScreen() {
         </KeyboardAvoidingView>
       </Animated.View>
 
-      {/* Seçili egzersiz yokken modal zaten null dönüyor; icon yedeği tip için. */}
-      <ExerciseModal
+      {/* Seçili egzersiz yokken sayfa zaten null dönüyor; icon yedeği tip için. */}
+      <ExerciseSheet
         exercise={selected}
         icon={selected?.icon ?? 'morning'}
         completed={selected ? completed.has(selected.id) : false}
-        onToggle={() => {
-          if (!selected) return;
-          const wasDone = completed.has(selected.id);
-          toggleExercise(selected.id);
-          // Tamamlayınca kısa "✦ Tamamlandı" onayı sonra kart kendiliğinden kapanır;
-          // geri alınca hemen kapanır.
-          if (wasDone) setSelected(null);
-          else setTimeout(() => setSelected(null), 320);
-        }}
+        onComplete={() => { if (selected) { markExercise(selected, true); setSelected(null); } }}
+        onUnmark={() => { if (selected) { markExercise(selected, false); setSelected(null); } }}
         onClose={() => setSelected(null)}
-        labels={{ complete: t('practice.complete'), undo: t('practice.undo'), done: t('practice.done') }}
+        labels={{ complete: t('practice.complete'), doneToday: t('practice.doneToday'), unmark: t('practice.unmark'), close: t('practice.close') }}
       />
+
+      {toast && (
+        <View style={styles.toast} accessibilityLiveRegion="polite" accessibilityRole="alert">
+          <Text style={styles.toastText} numberOfLines={2}>
+            {t(toast.done ? 'practice.toastDone' : 'practice.toastUndone', { name: toast.name })}
+          </Text>
+          <TouchableOpacity onPress={undoToast} style={styles.toastBtn} accessibilityRole="button">
+            <Text style={styles.toastBtnText}>{t('practice.undoShort')}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -357,11 +419,14 @@ const styles = StyleSheet.create({
 
   // Sade satır
   row: {
-    flexDirection: 'row', alignItems: 'center', gap: 11, paddingVertical: 13,
+    flexDirection: 'row', alignItems: 'center',
     borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.04)',
   },
+  // Dokunma alanı 44×48; görünen daire 26 px.
+  rowCheckHit: { width: 44, height: 48, marginLeft: -9, alignItems: 'center', justifyContent: 'center' },
+  rowBody: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 11, minHeight: 48, paddingLeft: 2 },
   rowCheck: {
-    width: 24, height: 24, borderRadius: 12,
+    width: 26, height: 26, borderRadius: 13,
     borderWidth: 1.5, borderColor: 'rgba(196,169,106,0.4)',
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
@@ -374,11 +439,35 @@ const styles = StyleSheet.create({
   rowChevron: { fontSize: 20, color: Colors.stone4, marginLeft: 2 },
 
   // Rehberli kart (modal)
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.78)', justifyContent: 'center', alignItems: 'center', padding: 28 },
-  modalCard: {
-    width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
+  sheetWrap: { flex: 1, justifyContent: 'flex-end' },
+  sheetBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.55)' },
+  sheet: {
+    backgroundColor: Colors.stone2, borderTopLeftRadius: 26, borderTopRightRadius: 26,
+    paddingHorizontal: 28, paddingTop: 12, paddingBottom: 36, alignItems: 'center',
+    borderWidth: 1, borderBottomWidth: 0, borderColor: 'rgba(196,169,106,0.25)',
   },
+  sheetHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.12)', marginBottom: 8 },
+  sheetClose: { position: 'absolute', top: 14, right: 16, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3 },
+  sheetCloseText: { fontSize: 16, color: Colors.text2 },
+  sheetDoneBox: {
+    width: '100%', borderRadius: 16, paddingVertical: 15, alignItems: 'center',
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.45)',
+  },
+  sheetDoneText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.sand2 },
+  sheetUnmark: { minHeight: 44, paddingHorizontal: 16, justifyContent: 'center', marginTop: 6 },
+  sheetUnmarkText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textDecorationLine: 'underline' },
+
+  // Geri al şeridi
+  toast: {
+    position: 'absolute', left: 16, right: 16, bottom: 16,
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: Colors.stone3, borderRadius: 16, paddingLeft: 16, paddingRight: 6, paddingVertical: 6,
+    borderWidth: 1, borderColor: 'rgba(196,169,106,0.35)',
+    shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
+  },
+  toastText: { flex: 1, fontFamily: Fonts.jost, fontSize: 14, color: Colors.text, lineHeight: 19 },
+  toastBtn: { minWidth: 88, minHeight: 44, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center' },
+  toastBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand2, letterSpacing: 0.3 },
   modalIcon: { marginBottom: 8 },
   modalDuration: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalName: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
@@ -387,10 +476,7 @@ const styles = StyleSheet.create({
   modalBtn: {
     width: '100%', backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 16, alignItems: 'center',
   },
-  modalBtnDone: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   modalBtnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.stone },
-  modalBtnTextDone: { color: Colors.muted },
-  modalDoneNote: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.sand, marginTop: 14 },
 
   // Journal
   journalCard: {
