@@ -368,6 +368,41 @@ export default function WisdomScreen() {
     if (!belongs) setFilter('all');
   };
 
+  // Katlanan başlık (21 Ekim 2026, kullanıcı isteği: "ekranın yarısını header kaplıyor").
+  // Başlık + sekmeler + mod anahtarı kaydırınca yukarı katlanır, yalnız tekerlek kalır;
+  // en başa dönünce açılır. Histerezis: 60'ta kapan, 8'in altında aç. Kapanmak için
+  // listenin, başlık yüksekliği kadar fazladan kaydırma payı olmalı — yoksa kapanınca
+  // görünüm büyür, konum başa sıkışır ve başlık açılıp kapanarak titrer.
+  const [collapsed, setCollapsed] = useState(false);
+  const collapsedRef = useRef(false);
+  const collapseAnim = useRef(new Animated.Value(0)).current;
+  const [headH, setHeadH] = useState(0);
+  const headHRef = useRef(0);
+  const setHeaderCollapsed = (c: boolean) => {
+    if (collapsedRef.current === c) return;
+    collapsedRef.current = c;
+    setCollapsed(c);
+    Animated.timing(collapseAnim, { toValue: c ? 1 : 0, duration: 280, useNativeDriver: false }).start();
+  };
+  const onListScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
+    const y = contentOffset.y;
+    if (!collapsedRef.current) {
+      const room = contentSize.height - layoutMeasurement.height;
+      if (y > 60 && room > headHRef.current + 80) setHeaderCollapsed(true);
+    } else if (y < 8) {
+      setHeaderCollapsed(false);
+    }
+  };
+  useEffect(() => { setHeaderCollapsed(false); }, [tab]);
+  // Filtre değişince yeni sonuçlar baştan gösterilir; kısa bir listede başlık
+  // kapalı kalırsa kaydırarak açılamazdı.
+  const listRef = useRef<FlatList<Quote>>(null);
+  useEffect(() => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: false });
+    setHeaderCollapsed(false);
+  }, [filter, mode]);
+
   const filteredQuotes =
     filter === 'all' ? quotes :
     filter === 'fav' ? quotes.filter((q) => favorites.includes(q.id)) :
@@ -383,10 +418,23 @@ export default function WisdomScreen() {
         end={{ x: 1, y: 0.4 }}
       />
 
-      {/* Header */}
+      {/* Katlanan bölüm: başlık + sekmeler + (Alıntılar'da) mod anahtarı */}
+      <Animated.View
+        style={[
+          { overflow: 'hidden' },
+          headH > 0 && {
+            height: collapseAnim.interpolate({ inputRange: [0, 1], outputRange: [headH, 0] }),
+            opacity: collapseAnim.interpolate({ inputRange: [0, 0.6, 1], outputRange: [1, 0, 0] }),
+          },
+        ]}
+        pointerEvents={collapsed ? 'none' : 'auto'}
+        accessibilityElementsHidden={collapsed}
+        importantForAccessibility={collapsed ? 'no-hide-descendants' : 'auto'}
+      >
+      <View onLayout={(e) => { const h = Math.round(e.nativeEvent.layout.height); headHRef.current = h; setHeadH(h); }}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t('wisdom.title')}</Text>
-        <Text style={styles.subtitle}>{t('wisdom.subtitle')}</Text>
+        <Text style={styles.title}>{t('tabs.wisdom')}</Text>
+        <Text style={styles.subtitle}>{t('wisdom.title')}</Text>
       </View>
 
       {/* Tab switcher */}
@@ -402,10 +450,8 @@ export default function WisdomScreen() {
         </TouchableOpacity>
       </View>
 
-      {tab === 'quotes' ? (
-        <>
-          {/* Filtre: mod anahtarı (Filozof | Ruh Hali) + ♥ favoriler */}
-          <Text style={styles.moodTitle}>{t('wisdom.filter')}</Text>
+      {tab === 'quotes' && (
+          /* Filtre: mod anahtarı (Filozof | Ruh Hali) + ♥ favoriler */
           <View style={styles.filterRow}>
             <View style={styles.segment}>
               <TouchableOpacity
@@ -431,7 +477,12 @@ export default function WisdomScreen() {
               <Text style={[styles.heartIcon, filter === 'fav' && styles.heartIconOn]}>♥</Text>
             </TouchableOpacity>
           </View>
+      )}
+      </View>
+      </Animated.View>
 
+      {tab === 'quotes' ? (
+        <>
           {/* Tek tekerlek — seçilen moda göre içerik (mod değişince remount) */}
           <WheelSelector
             key={mode}
@@ -441,12 +492,14 @@ export default function WisdomScreen() {
             itemW={mode === 'author' ? 144 : 124}
           />
 
-          {/* Seçili filtrede gösterilen alıntı sayısı */}
-          <Text style={styles.wheelCount}>{filteredQuotes.length} {t('wisdom.countLabel')}</Text>
-
           <FlatList
+            ref={listRef}
             data={filteredQuotes}
             keyExtractor={(q) => q.id}
+            onScroll={onListScroll}
+            scrollEventThrottle={16}
+            // Seçili filtrede gösterilen alıntı sayısı — listeyle birlikte kayar
+            ListHeaderComponent={<Text style={styles.wheelCount}>{filteredQuotes.length} {t('wisdom.countLabel')}</Text>}
             renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} onAuthor={PHILOSOPHER_IDS.has(item.authorId) ? openPhilosopher : undefined} />}
             contentContainerStyle={filteredQuotes.length ? styles.listContent : styles.listEmpty}
             showsVerticalScrollIndicator={false}
@@ -460,13 +513,13 @@ export default function WisdomScreen() {
           />
         </>
       ) : tab === 'concepts' ? (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid} onScroll={onListScroll} scrollEventThrottle={16}>
           {concepts.map((c) => (
             <ConceptCard key={c.latin} concept={c} onPress={() => setSelectedConcept(c)} moreLabel={t('wisdom.more')} />
           ))}
         </ScrollView>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid} onScroll={onListScroll} scrollEventThrottle={16}>
           {philosophers.map((p) => (
             <PhilosopherCard key={p.id} philo={p} onPress={() => setSelectedPhilo(p)} />
           ))}
@@ -509,12 +562,12 @@ export default function WisdomScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
-  header: { paddingHorizontal: 24, paddingTop: 10, paddingBottom: 18 },
-  title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
+  header: { paddingHorizontal: 24, paddingTop: 10, paddingBottom: 12 },
+  title: { fontFamily: Fonts.cormorant, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 34, marginBottom: 2 },
+  subtitle: { fontFamily: Fonts.cormorantItalic, fontSize: 17, color: Colors.muted, letterSpacing: 0.2, lineHeight: 22 },
 
   tabs: {
-    flexDirection: 'row', marginHorizontal: 24, marginBottom: 16,
+    flexDirection: 'row', marginHorizontal: 24, marginBottom: 12,
     backgroundColor: Colors.stone2, borderRadius: 12,
     padding: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
@@ -538,7 +591,7 @@ const styles = StyleSheet.create({
   // Ruh hali (mood) seçici barı
   moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
   // Mod anahtarı (Filozof | Ruh Hali) + favori
-  filterRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 24, marginBottom: 14 },
+  filterRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 24, marginBottom: 12 },
   segment: { flex: 1, flexDirection: 'row', backgroundColor: Colors.stone2, borderRadius: 13, padding: 4 },
   segBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 9, borderRadius: 10 },
   segBtnOn: { backgroundColor: 'rgba(196,169,106,0.16)' },
@@ -549,11 +602,11 @@ const styles = StyleSheet.create({
   heartIcon: { fontSize: 18, color: Colors.muted },
   heartIconOn: { color: Colors.accent },
   moodBar: {
-    alignSelf: 'center', marginBottom: 14,
-    backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
-    height: 52, overflow: 'hidden',
+    alignSelf: 'center', marginTop: 4, marginBottom: 10,
+    backgroundColor: Colors.stone2, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
+    height: 48, overflow: 'hidden',
   },
-  moodItem: { height: 52, alignItems: 'center', justifyContent: 'center' },
+  moodItem: { height: 48, alignItems: 'center', justifyContent: 'center' },
   moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 16, letterSpacing: 0.5, color: Colors.sand2 },
   wheelCount: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 2, marginBottom: 10 },
 
