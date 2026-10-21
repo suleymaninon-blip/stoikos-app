@@ -123,7 +123,7 @@ export default function ProgramsScreen() {
                       value={reflection}
                       onChangeText={setReflection}
                       placeholder={t('programs.reflectPlaceholder')}
-                      placeholderTextColor={Colors.faint}
+                      placeholderTextColor={Colors.muted}
                       multiline
                       textAlignVertical="top"
                     />
@@ -297,7 +297,7 @@ export default function ProgramsScreen() {
 
 const styles = StyleSheet.create({
   cardBadge: {
-    fontFamily: Fonts.jost, fontSize: 9, letterSpacing: 1.4, color: Colors.sand,
+    fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 1.4, color: Colors.sand,
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.4)', borderRadius: 4,
     paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden',
   },
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
 
   nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', gap: 4 },
-  nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 10.5, letterSpacing: 2, textTransform: 'uppercase', color: Colors.sand },
+  nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: Colors.sand },
   nextTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text },
 
   allDoneBox: { gap: 10 },
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   dayNumLocked: { borderColor: 'rgba(255,255,255,0.12)' },
   dayNumText: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2 },
   dayNumTextDone: { color: Colors.stone },
-  dayLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 1.5, color: Colors.muted, marginBottom: 2 },
+  dayLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: Colors.muted, marginBottom: 2 },
   dayTitle: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
   dayTitleLocked: { color: Colors.muted, fontFamily: Fonts.jost },
   dayChevron: { fontSize: 20, color: Colors.stone4 },
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   // Gün modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 28 },
   modalCard: { width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
-  modalDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
+  modalDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalTitle: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
   modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
   modalBody: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 26, textAlign: 'center', marginBottom: 26 },

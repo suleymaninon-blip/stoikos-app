@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   cardFooter: { marginTop: 26, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },
   cardBrandRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   cardBrand: { fontFamily: Fonts.cinzelBold, fontSize: 13, letterSpacing: 3, color: Colors.sand2 },
-  cardTagline: { fontFamily: Fonts.jostLight, fontSize: 9, letterSpacing: 1.5, color: Colors.muted, marginTop: 2 },
+  cardTagline: { fontFamily: Fonts.jostLight, fontSize: 11, letterSpacing: 1.5, color: Colors.muted, marginTop: 2 },
 
   actions: { flexDirection: 'row', gap: 12, marginTop: 22, width: 320 },
   shareBtn: { flex: 1, backgroundColor: Colors.accent, borderRadius: 14, paddingVertical: 14, alignItems: 'center' },

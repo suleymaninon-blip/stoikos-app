@@ -132,9 +132,9 @@ function WriteModal({ visible, onClose, onDone, lang, t }: any) {
         <Pressable style={styles.overlay} onPress={onClose}>
           <Pressable style={styles.writeCard} onPress={() => {}}>
             <Text style={styles.writeTitle}>{t('ch.writeTitle')}</Text>
-            <TextInput style={styles.writeInput} placeholder={t('ch.placeholder')} placeholderTextColor={Colors.stone4}
+            <TextInput style={styles.writeInput} placeholder={t('ch.placeholder')} placeholderTextColor={Colors.muted}
               value={text} onChangeText={(v) => { setText(v); setResult(null); }} multiline maxLength={220} textAlignVertical="top" />
-            <TextInput style={styles.authorInput} placeholder={t('ch.authorPlaceholder')} placeholderTextColor={Colors.stone4}
+            <TextInput style={styles.authorInput} placeholder={t('ch.authorPlaceholder')} placeholderTextColor={Colors.muted}
               value={author} onChangeText={setAuthor} maxLength={40} />
             {result && <Text style={[styles.result, result.ok ? styles.resultOk : styles.resultErr]}>{result.msg}</Text>}
             <TouchableOpacity style={[styles.submitBtn, (text.trim().length < 8 || busy) && styles.submitDim]} onPress={submit} disabled={text.trim().length < 8 || busy}>

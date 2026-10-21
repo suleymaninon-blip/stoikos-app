@@ -316,7 +316,7 @@ export default function PracticeScreen() {
             <TextInput
               style={styles.journalInput}
               placeholder={t('practice.journalPlaceholder')}
-              placeholderTextColor={Colors.stone4}
+              placeholderTextColor={Colors.muted}
               value={journal}
               onChangeText={(txt) => { setJournal(txt); setJournalSaved(false); }}
               multiline
@@ -332,7 +332,7 @@ export default function PracticeScreen() {
             </TouchableOpacity>
 
             {/* Açık rıza (KVKK) — varsayılan kapalı; yalnız açıkken yansıma koça iletilir */}
-            <TouchableOpacity style={styles.consentRow} onPress={toggleCoachConsent} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.consentRow} onPress={toggleCoachConsent} activeOpacity={0.7} accessibilityRole="checkbox" accessibilityState={{ checked: coachConsent }}>
               <View style={[styles.consentBox, coachConsent && styles.consentBoxOn]}>
                 {coachConsent && <Text style={styles.consentCheck}>✓</Text>}
               </View>
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   // Progress
   progressWrap: { marginBottom: 28 },
   progressHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  progressLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted },
+  progressLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted },
   progressCount: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand },
   progressTrack: { height: 3, backgroundColor: Colors.stone3, borderRadius: 2, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: Colors.accent, borderRadius: 2 },
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
   sectionIcon: { width: 22, height: 22 },
-  sectionTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.sand, marginBottom: 2 },
+  sectionTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 2 },
   sectionTitle: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.text, letterSpacing: 0.3 },
   sectionBadge: {
     marginLeft: 'auto', backgroundColor: 'rgba(196,169,106,0.1)',
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   toastBtn: { minWidth: 88, minHeight: 44, paddingHorizontal: 12, alignItems: 'center', justifyContent: 'center' },
   toastBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand2, letterSpacing: 0.3 },
   modalIcon: { marginBottom: 8 },
-  modalDuration: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
+  modalDuration: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalName: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
   modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
   modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 26, textAlign: 'center', marginBottom: 26 },
@@ -492,37 +492,37 @@ const styles = StyleSheet.create({
   // Journal
   journalCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, padding: 20,
-    marginBottom: 16, borderWidth: 1, borderColor: 'rgba(100,160,220,0.15)',
+    marginBottom: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.15)',
   },
   journalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: 'rgba(100,160,220,0.8)' },
-  journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(100,160,220,0.9)', letterSpacing: 0.3 },
+  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: 'rgba(159,176,196,0.8)' },
+  journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(159,176,196,0.9)', letterSpacing: 0.3 },
   journalHint: { fontFamily: Fonts.jost, fontSize: 13.5, color: Colors.text2, lineHeight: 21, marginBottom: 12 },
-  consentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 },
-  consentBox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1.5, borderColor: 'rgba(100,160,220,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
-  consentBoxOn: { backgroundColor: 'rgba(100,160,220,0.85)', borderColor: 'rgba(100,160,220,0.85)' },
+  consentRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, minHeight: 44 },
+  consentBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: 'rgba(159,176,196,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
+  consentBoxOn: { backgroundColor: 'rgba(159,176,196,0.85)', borderColor: 'rgba(159,176,196,0.85)' },
   consentCheck: { fontSize: 12, color: '#0c1116', fontFamily: Fonts.jostMedium, marginTop: -1 },
   consentLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 17 },
-  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.faint, lineHeight: 14, marginTop: 8 },
+  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, lineHeight: 14, marginTop: 8 },
   journalInput: {
     backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
     fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, lineHeight: 21,
     minHeight: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginBottom: 12,
   },
   journalSaveBtn: {
-    backgroundColor: 'rgba(100,160,220,0.15)', borderRadius: 10,
+    backgroundColor: 'rgba(159,176,196,0.15)', borderRadius: 10,
     paddingVertical: 10, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(100,160,220,0.25)',
+    borderWidth: 1, borderColor: 'rgba(159,176,196,0.25)',
   },
   journalSaveBtnDim: { opacity: 0.5 },
-  journalSaveBtnText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: 'rgba(140,190,240,0.9)', letterSpacing: 0.5 },
+  journalSaveBtnText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.moon, letterSpacing: 0.5 },
 
   // Concept
   conceptCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, padding: 22,
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)',
   },
-  conceptTag: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: Colors.sand, marginBottom: 10 },
+  conceptTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.sand, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.sand2, letterSpacing: 0.5, marginBottom: 2 },
   conceptTr: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.5, marginBottom: 14 },
   conceptDivider: { height: 1, backgroundColor: 'rgba(196,169,106,0.12)', marginBottom: 14 },

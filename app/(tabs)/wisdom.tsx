@@ -24,6 +24,8 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
   isFav: boolean; onFav: (id: string) => void;
   onAuthor?: (authorId: string) => void; // filozof kartı varsa dokunulabilir
 }) {
+  const { t } = useLang();
+  const favAddLabel = t('a11y.favAdd'), favRemoveLabel = t('a11y.favRemove'), shareLabel = t('a11y.share');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(10)).current;
   useEffect(() => {
@@ -50,10 +52,11 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
             ? <Text style={styles.quoteSource}>{quote.source}</Text>
             : null}
         </View>
-        <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]}>
+        <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]} hitSlop={4}
+          accessibilityRole="button" accessibilityState={{ selected: isFav }} accessibilityLabel={isFav ? favRemoveLabel : favAddLabel}>
           <Text style={[styles.glyphIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn}>
+        <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn} hitSlop={4} accessibilityRole="button" accessibilityLabel={shareLabel}>
           <Text style={styles.glyphIcon}>↗</Text>
         </TouchableOpacity>
       </View>
@@ -172,6 +175,9 @@ const MOOD_THEMES = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'ce
 
 // Yatay tekerlek (silindir) seçici — yalnız parmakla kaydırma; yanlar perspektifle bükülür.
 // Hem ruh hali hem filozof seçimi için ortak kullanılır. `opts` parent'ta memoize edilmeli.
+// Erişilebilirlik (UX denetimi K3): eskiden yalnız parmakla kaydırılarak seçiliyordu.
+// Artık görünen öğeye dokunmak da seçer ve bileşen ekran okuyucuya "ayarlanabilir"
+// olarak duyurulur (yukarı/aşağı kaydırma ile önceki/sonraki seçenek).
 function WheelSelector({ opts, value, onChange, itemW = 132 }: {
   opts: { id: string; label: string }[];
   value: string;
@@ -246,8 +252,18 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
     if (!programmatic.current) applyAt(e.nativeEvent.contentOffset.x);
   };
 
+  const { t } = useLang();
+  const step = (d: number) => onChange(opts[(idx + d + n) % n].id);
   return (
-    <View style={[styles.moodBar, { width: BAR_W }]}>
+    <View
+      style={[styles.moodBar, { width: BAR_W }]}
+      accessible
+      accessibilityRole="adjustable"
+      accessibilityLabel={t('a11y.wheel', { v: opts[idx]?.label ?? '' })}
+      accessibilityValue={{ text: opts[idx]?.label ?? '' }}
+      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+      onAccessibilityAction={(e) => step(e.nativeEvent.actionName === 'increment' ? 1 : -1)}
+    >
       <Animated.ScrollView
         ref={ref}
         horizontal
@@ -275,9 +291,9 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
             ],
           };
           return (
-            <View key={i} style={[styles.moodItem, { width: ITEM_W }]}>
+            <Pressable key={i} style={[styles.moodItem, { width: ITEM_W }]} onPress={() => { if (o.id !== valueRef.current) onChange(o.id); }}>
               <Animated.Text style={[styles.moodCurrent, animStyle]} numberOfLines={1}>{o.label}</Animated.Text>
-            </View>
+            </Pressable>
           );
         })}
       </Animated.ScrollView>
@@ -529,7 +545,7 @@ const styles = StyleSheet.create({
 
 
   // Ruh hali (mood) seçici barı
-  moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
+  moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
   // Mod anahtarı (Filozof | Ruh Hali) + favori
   filterRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 24, marginBottom: 14 },
   segment: { flex: 1, flexDirection: 'row', backgroundColor: Colors.stone2, borderRadius: 13, padding: 4 },
@@ -565,8 +581,8 @@ const styles = StyleSheet.create({
   quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
   quoteAuthorLink: { color: Colors.accent },
-  quoteSource: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted, fontStyle: 'italic' },
-  listenBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.38)' },
+  quoteSource: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, fontStyle: 'italic' },
+  listenBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.38)' },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
   // SVG sarmalayıcı (kavram hoparlörü, satır ~96) — View'e uygulanıyor, boyut doğru.
   listenIcon: { width: 14, height: 14 },
@@ -603,7 +619,7 @@ const styles = StyleSheet.create({
   },
   philoSymbol: { fontFamily: Fonts.cinzel, fontSize: 20, color: Colors.sand2 },
   philoName: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.sand2, marginBottom: 2 },
-  philoEra: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.muted, letterSpacing: 0.3, marginBottom: 8 },
+  philoEra: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, marginBottom: 8 },
   philoOneLiner: { fontFamily: Fonts.jost, fontSize: 12.5, color: Colors.text2, lineHeight: 19 },
 
   // Filozof modal
@@ -632,13 +648,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
-  modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
+  modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalExample: { fontFamily: Fonts.cormorantItalic, fontSize: 13, color: Colors.sand3, lineHeight: 20 },
   modalPracticeBox: {
     backgroundColor: 'rgba(159,176,196,0.08)', borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
-  modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
+  modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
   modalPractice: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.text, lineHeight: 21 },
   modalClose: {
     backgroundColor: Colors.stone3, borderRadius: 12,

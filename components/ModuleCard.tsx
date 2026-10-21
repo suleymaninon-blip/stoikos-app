@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   desc: {
     fontFamily: Fonts.jost,
-    fontSize: 10,
+    fontSize: 12,
     color: Colors.muted,
     lineHeight: 15,
   },

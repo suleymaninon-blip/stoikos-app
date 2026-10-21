@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: Fonts.jostMedium,
-    fontSize: 9,
+    fontSize: 11,
     letterSpacing: 1.5,
     color: Colors.muted,
     marginBottom: 2,

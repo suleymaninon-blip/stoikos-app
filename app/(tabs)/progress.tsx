@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },
   title: { flex: 1, fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
-  gearBtn: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 2 },
+  gearBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 2 },
   gearIcon: { fontSize: 17, color: Colors.sand },
 
   // Stats
@@ -264,20 +264,20 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   statValue: { fontFamily: Fonts.cinzel, fontSize: 28, color: Colors.sand2, marginBottom: 6 },
-  statLabel: { fontFamily: Fonts.jostMedium, fontSize: 8.5, letterSpacing: 1.2, color: Colors.muted, textAlign: 'center', lineHeight: 12 },
-  statSub: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.stone4, marginTop: 2 },
+  statLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.2, color: Colors.muted, textAlign: 'center', lineHeight: 12 },
+  statSub: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 2 },
 
   // Chart
   chartWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
-  sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16 },
+  sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16 },
   bars: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 100 },
   barCol: { alignItems: 'center', flex: 1 },
   barTrack: { width: 18, height: 80, backgroundColor: Colors.stone3, borderRadius: 9, overflow: 'hidden', justifyContent: 'flex-end' },
   barFill: { width: '100%', backgroundColor: 'rgba(194,168,120,0.45)', borderRadius: 9 },
   barToday: { backgroundColor: Colors.sand2 },
-  barLabel: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 6 },
+  barLabel: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 6 },
   barLabelToday: { color: Colors.sand },
-  barCount: { fontFamily: Fonts.cinzel, fontSize: 10, color: Colors.text2, marginTop: 2 },
+  barCount: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.text2, marginTop: 2 },
 
   // Exercise breakdown
   breakdownWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
