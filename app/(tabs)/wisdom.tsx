@@ -190,14 +190,11 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
   const BAR_W = width - 48;          // marginHorizontal 24 + 24
   const SIDE = Math.max(0, (BAR_W - ITEM_W) / 2);
 
-  // Sonsuz döngü: listeyi çoğalt; her oturmada ortadaki kopyaya dikişsiz geri merkezle.
-  const REPEATS = 9;
-  const MID = 4;
-  const data = useMemo(() => {
-    const a: { id: string; label: string }[] = [];
-    for (let c = 0; c < REPEATS; c++) for (let i = 0; i < n; i++) a.push(opts[i]);
-    return a;
-  }, [opts, n]);
+  // Sonlu liste (21 Ekim 2026, kullanıcı isteği): eskiden liste 9 kez çoğaltılıp
+  // sonsuz döndürülüyordu. Artık "Tümü" en başta, son seçenekte duruyor; görünüm
+  // (ortadaki seçili, yanlar perspektifle silik) aynı.
+  const MID = 0;
+  const data = opts;
 
   const idx = Math.max(0, opts.findIndex((o) => o.id === value));
   const valueRef = useRef(value); valueRef.current = value;
@@ -224,15 +221,9 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
 
   const applyAt = (x: number) => {
     const N = nRef.current;
-    const i = Math.round(x / ITEM_W);
-    const moodIdx = ((i % N) + N) % N;
-    const id = optsRef.current[moodIdx].id;
-    if (id !== valueRef.current) {
-      onChange(id); // useEffect orta kopyaya geri merkezler
-    } else {
-      const target = MID * N + moodIdx; // aynı mod ama kenara kaymış → dikişsiz geri al
-      if (i !== target) jump(target);
-    }
+    const i = Math.min(N - 1, Math.max(0, Math.round(x / ITEM_W)));
+    const id = optsRef.current[i].id;
+    if (id !== valueRef.current) onChange(id);
   };
 
   // Kaydırma durduğunda (her platform için güvenilir): son frame'den ~150ms sonra uygula
@@ -253,7 +244,7 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
   };
 
   const { t } = useLang();
-  const step = (d: number) => onChange(opts[(idx + d + n) % n].id);
+  const step = (d: number) => onChange(opts[Math.min(n - 1, Math.max(0, idx + d))].id);
   return (
     <View
       style={[styles.moodBar, { width: BAR_W }]}
