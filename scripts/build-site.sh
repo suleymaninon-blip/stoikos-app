@@ -14,7 +14,7 @@ set -euo pipefail
 BASE=/app
 
 rm -rf dist site
-EXPO_BASE_URL=$BASE npx expo export --platform web
+EXPO_BASE_URL=$BASE npx expo export --platform web --clear
 
 # Expo bazı HTML referanslarını kök yoldan yazabiliyor; hepsini BASE altına al.
 find dist -name "*.html" -exec sed -i \
