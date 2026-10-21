@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   planLabel: { fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 1, color: Colors.muted },
   planLabelOn: { color: Colors.sand2 },
   planSave: {
-    fontFamily: Fonts.jost, fontSize: 9, letterSpacing: 0.6, color: Colors.stone,
+    fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 0.6, color: Colors.stone,
     backgroundColor: Colors.sand, borderRadius: 4, paddingHorizontal: 5, paddingVertical: 1.5, overflow: 'hidden',
   },
   planPrice: { fontFamily: Fonts.cinzel, fontSize: 17, color: Colors.text2, letterSpacing: 0.3 },
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
 
   features: { gap: 11, marginBottom: 18 },
   featureRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
-  featureMark: { fontSize: 10, color: Colors.sand, marginTop: 4 },
+  featureMark: { fontSize: 12, color: Colors.sand, marginTop: 4 },
   featureText: { flex: 1, fontFamily: Fonts.jost, fontSize: 13, lineHeight: 20, color: Colors.text },
 
   freeNote: {

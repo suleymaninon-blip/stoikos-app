@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: Fonts.jostMedium,
-    fontSize: 10,
+    fontSize: 12,
     letterSpacing: 2.5,
     color: Colors.sand,
     marginBottom: 14,

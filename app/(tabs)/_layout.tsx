@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontFamily: Fonts.jostMedium,
-    fontSize: 9.5,
+    fontSize: 11,
     letterSpacing: 0.5,
     color: Colors.muted,
     textTransform: 'uppercase',

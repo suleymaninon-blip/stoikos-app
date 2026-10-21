@@ -93,6 +93,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 18, marginBottom: 12,
     borderWidth: 1, borderColor: 'rgba(100,160,220,0.12)',
   },
-  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 1, color: 'rgba(100,160,220,0.8)', marginBottom: 8, textTransform: 'capitalize' },
+  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: 'rgba(100,160,220,0.8)', marginBottom: 8, textTransform: 'capitalize' },
   entryText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 22 },
 });

@@ -269,12 +269,12 @@ export default function CoachScreen() {
                   {exhausted ? t('coach.quotaEnded') : t('coach.remaining', { n: quota.remaining ?? 0 })}
                 </Text>
               </TouchableOpacity>
-            ) : (
+            ) : quota?.subscribed ? (
               <View style={styles.statusBadge}>
                 <PulseDot />
                 <Text style={styles.statusText}>{t('coach.active')}</Text>
               </View>
-            )}
+            ) : null /* kota bilinmiyorsa (ağ hatası) yeşil "Yanında" gösterme: yanıltıcıydı */}
             <TouchableOpacity onPress={clearChat} style={styles.clearBtn}>
               <Text style={styles.clearBtnText}>{t('coach.reset')}</Text>
             </TouchableOpacity>
@@ -325,7 +325,7 @@ export default function CoachScreen() {
             <TextInput
               style={styles.input}
               placeholder={t('coach.placeholder')}
-              placeholderTextColor={Colors.stone4}
+              placeholderTextColor={Colors.muted}
               value={input}
               onChangeText={setInput}
               multiline
@@ -360,13 +360,13 @@ const styles = StyleSheet.create({
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
   statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: 'rgba(76,175,110,0.1)', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3, borderWidth: 1, borderColor: 'rgba(76,175,110,0.2)' },
   statusDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.success },
-  statusText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 0.4, color: Colors.success },
+  statusText: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 0.4, color: Colors.success },
   quotaBadge: {
     backgroundColor: 'rgba(196,169,106,0.1)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4,
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
   },
   quotaBadgeEnded: { backgroundColor: 'rgba(196,169,106,0.2)', borderColor: 'rgba(196,169,106,0.45)' },
-  quotaText: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 0.4, color: Colors.sand2 },
+  quotaText: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 0.4, color: Colors.sand2 },
   quotaTextEnded: { color: Colors.sand3 },
   unlockBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
@@ -374,31 +374,31 @@ const styles = StyleSheet.create({
   },
   unlockText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.stone, letterSpacing: 1 },
   clearBtn: { backgroundColor: Colors.stone3, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  clearBtnText: { fontFamily: Fonts.jost, fontSize: 10, color: Colors.muted },
+  clearBtnText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
   messages: { flex: 1 },
   messagesContent: { padding: 20, gap: 16, paddingBottom: 8 },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
   dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(196,169,106,0.12)' },
-  dividerSymbol: { fontSize: 10, color: Colors.sand, opacity: 0.5 },
+  dividerSymbol: { fontSize: 12, color: Colors.sand, opacity: 0.5 },
   userBubbleWrap: { alignItems: 'flex-end' },
   userBubble: { backgroundColor: Colors.stone3, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
   userText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 22, color: Colors.text },
   aiBubbleWrap: { alignItems: 'flex-start' },
   aiLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 6, opacity: 0.8 },
-  aiLabel: { fontFamily: Fonts.cinzel, fontSize: 9, letterSpacing: 1.5, color: Colors.sand },
+  aiLabel: { fontFamily: Fonts.cinzel, fontSize: 11, letterSpacing: 1.5, color: Colors.sand },
   aiBubble: { backgroundColor: 'rgba(194,168,120,0.09)', borderRadius: 18, borderBottomLeftRadius: 5, padding: 16, maxWidth: '90%', borderWidth: 1, borderColor: 'rgba(194,168,120,0.18)' },
   aiText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 24, color: Colors.text },
   quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },
   quoteInlineText: { fontFamily: Fonts.cormorantItalic, fontSize: 12, lineHeight: 18, color: Colors.sand2 },
-  timeMeta: { fontFamily: Fonts.jost, fontSize: 9, color: Colors.muted, marginTop: 4, letterSpacing: 0.3 },
+  timeMeta: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 4, letterSpacing: 0.3 },
   suggestions: { marginTop: 16 },
   disclaimer: { fontFamily: Fonts.jost, fontSize: 11, lineHeight: 16, color: Colors.muted, marginTop: 18 },
-  suggestionsLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
+  suggestionsLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)' },
   chipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2 },
   inputArea: { padding: 16, paddingBottom: 8, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
-  inputLabel: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 8, paddingLeft: 4 },
+  inputLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 8, paddingLeft: 4 },
   inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
   input: { flex: 1, backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12, fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', maxHeight: 100, lineHeight: 20 },
   sendBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.accent, alignItems: 'center', justifyContent: 'center' },

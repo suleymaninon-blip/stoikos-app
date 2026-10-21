@@ -190,7 +190,7 @@ export default function SettingsScreen() {
               <TextInput
                 style={styles.adminInput}
                 placeholder={t('admin.placeholder')}
-                placeholderTextColor={Colors.stone4}
+                placeholderTextColor={Colors.muted}
                 value={adminKey}
                 onChangeText={setAdminKey}
                 secureTextEntry
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
 
   // Dil seçici
   langWrap: { marginBottom: 20 },
-  langTitle: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
+  langTitle: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
   langRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   langChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   resetText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted, letterSpacing: 0.3 },
 
   // Destek & Hakkında
-  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 9, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
+  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
   aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', overflow: 'hidden' },
   aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   // Yönetici
   adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   adminTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.text2, marginBottom: 4 },
-  adminHint: { fontFamily: Fonts.jost, fontSize: 10.5, color: Colors.muted, lineHeight: 15, marginBottom: 10 },
+  adminHint: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, lineHeight: 15, marginBottom: 10 },
   adminRow: { flexDirection: 'row', gap: 8 },
   adminInput: { flex: 1, backgroundColor: Colors.stone3, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   adminBtn: { backgroundColor: Colors.stone4, borderRadius: 10, paddingHorizontal: 12, justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },

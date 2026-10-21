@@ -132,7 +132,7 @@ const logoSt = StyleSheet.create({
   scene: { alignItems: 'center', justifyContent: 'center' },
   omegaText: { fontFamily: Fonts.cinzel, color: Colors.sand2, lineHeight: 110 },
   brand: {
-    fontFamily: Fonts.jost, fontSize: 10, letterSpacing: 5,
+    fontFamily: Fonts.jost, fontSize: 12, letterSpacing: 5,
     color: Colors.faint, marginTop: 24, textTransform: 'uppercase',
   },
 });
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   tagline: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, textTransform: 'uppercase', marginBottom: 18 },
   intro: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.text2, textAlign: 'center', lineHeight: 30, marginBottom: 36 },
 
-  langPrompt: { fontFamily: Fonts.jostMedium, fontSize: 10, letterSpacing: 2, color: Colors.muted, textTransform: 'uppercase', marginBottom: 14 },
+  langPrompt: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, textTransform: 'uppercase', marginBottom: 14 },
   langGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
   langChip: {
     flexDirection: 'row', alignItems: 'center', gap: 7,

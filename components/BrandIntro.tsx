@@ -115,6 +115,6 @@ const styles = StyleSheet.create({
   name: { fontFamily: Fonts.cinzelBold, fontSize: 34, letterSpacing: 8, color: Colors.sand3, marginTop: -4 },
   lineRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18, marginBottom: 14 },
   line: { height: 1, backgroundColor: 'rgba(196,169,106,0.4)' },
-  star: { fontSize: 10, color: Colors.sand },
+  star: { fontSize: 12, color: Colors.sand },
   tagline: { fontFamily: Fonts.jostLight, fontSize: 12, letterSpacing: 3, color: Colors.muted },
 });

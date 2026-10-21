@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   durRow: { flexDirection: 'row', gap: 8, marginTop: 16 },
   durRowHidden: { opacity: 0 },
   durChip: {
-    minWidth: 46, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, alignItems: 'center',
+    minWidth: 52, minHeight: 34, justifyContent: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, alignItems: 'center',
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.16)',
   },
   durChipOn: { backgroundColor: 'rgba(194,168,120,0.14)', borderColor: 'rgba(216,196,154,0.42)' },
