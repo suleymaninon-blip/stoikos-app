@@ -26,33 +26,39 @@
 Her komutun başı aynı karakter tarifi (referans görselle birlikte yükle):
 `an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak`
 
+## Durum ve ders (21 Ekim 2026)
+- ✅ Kimlik görseli: `stoaci-modern-hayatta/00-filozof-yuz-referans.png` — **her sahnede bunu yükle**.
+- ✅ Sahne 1: `01-trafik-gemini-720p.mp4` + ek açılar `01b-trafik-arabadan…` (2,1. sn'de atlama, sonrası kullanılır) ve `01c-trafik-tepeden…`.
+- **Ders:** Gemini tek komutta birden çok olayı sırayla yapınca bazen çekimin ortasında kendi kendine kesiyor. Komutları **tek eyleme** indir. Farklı açılar kurguda kırpılarak (geniş/orta/yakın) çıkarılıyor; ek açı çekimi şart değil.
+- Aşağıdaki 2–5. sahne komutları bu derse göre sadeleştirildi.
+
 ## Sahne 1 — Trafik (kanca)
 ```
 Using this man as the character: an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak, stands calmly in the middle of a modern city traffic jam on a grey Monday morning. Cars all around him are stuck bumper to bumper, drivers inside look stressed and frustrated, horns blaring, exhaust in the cold air. He is completely relaxed, slowly eating a single olive from his hand, looking around with mild curiosity and a faint smile. Funny, gentle contrast between ancient calm and modern chaos. Medium shot, slow push-in. Realistic, cinematic, 35mm film look, muted cool city palette with warm light on him, vertical 9:16, single continuous shot, no cuts. No logos, no brand names, no readable text.
 Audio: car horns and city noise, no music, no dialogue.
 ```
 
-## Sahne 2 — Telefon
+## Sahne 2 — Telefon (tek eylem: telefonu ters çevirir)
 ```
-Using this man as the character: an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak, sits at a small café table. A modern smartphone in front of him buzzes nonstop, the screen flooding with glowing notification bubbles, vibrating across the table. He watches it calmly for a moment, then gently turns the phone face down, takes a slow sip from a clay cup and looks peacefully out of the window at the morning light. Close-up on the phone, then on his calm face. Realistic, cinematic, 35mm film look, warm soft light, vertical 9:16, single continuous shot, no cuts. No logos, no brand names, no readable text on the screen.
-Audio: rapid phone vibration and notification chimes that stop when he turns it over, then quiet café ambience, no music, no dialogue.
-```
-
-## Sahne 3 — Toplantı
-```
-Using this man as the character: an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak, sits at a modern glass office meeting table among people in business suits. Everyone around him is talking over each other, waving papers and pointing at charts on a screen, the room is tense and loud. He calmly writes a short note with a stylus on a small wooden wax tablet, then nods slowly, perfectly serene. Gently funny contrast. Medium shot. Realistic, cinematic, 35mm film look, cool office light with warm light on him, vertical 9:16, single continuous shot, no cuts. No logos, no brand names, no readable text.
-Audio: overlapping voices and office noise, no music, no clear dialogue.
+Using this man as the character. Close medium shot at a small café table. A modern smartphone lies on the table in front of him, buzzing and lighting up with notifications. He calmly reaches out and turns the phone face down, then rests his hand on it and smiles slightly. Static camera, single continuous shot, no cuts. Realistic, cinematic, 35mm film look, warm soft morning light, vertical 9:16. No logos, no brand names, no readable text on the screen.
+Audio: phone vibration that stops when he turns it over, quiet café ambience, no music, no dialogue.
 ```
 
-## Sahne 4 — Otobüs ve yağmur (amor fati)
+## Sahne 3 — Toplantı (tek eylem: sakin not alır)
 ```
-Using this man as the character: an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak, stands at a rainy city bus stop. A city bus pulls away just as he arrives and splashes a wave of puddle water onto him. He looks down at his wet cloak, then slowly smiles, tilts his head back and opens his arms to the rain, laughing softly, completely at peace. Slow motion on the splash. Realistic, cinematic, 35mm film look, grey rainy palette with warm glow on his face, vertical 9:16, single continuous shot, no cuts. No logos, no brand names, no readable text on the bus.
-Audio: rain, bus engine, splash, his soft laugh, no music, no dialogue.
+Using this man as the character. Medium shot at a modern glass office meeting table. Around him, blurred people in business suits argue and wave papers. He sits completely still and calm, slowly writing with a stylus on a small wooden wax tablet. Static camera, single continuous shot, no cuts. Realistic, cinematic, 35mm film look, cool office light with warm light on him, vertical 9:16. No logos, no brand names, no readable text.
+Audio: overlapping tense voices and office noise, no music, no clear dialogue.
 ```
 
-## Sahne 5 — Gece, balkon
+## Sahne 4 — Otobüs ve yağmur (tek eylem: ıslanınca gülümser)
 ```
-Using this man as the character: an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak, sits on a small apartment balcony at night above a glowing modern city. A single small oil lamp beside him gives warm light. He writes slowly in a small leather notebook, pauses, looks out at the city lights with a calm, content expression. Slow gentle push-in. Realistic, intimate, cinematic, 35mm film look, deep blue night with warm lamp light, vertical 9:16, single continuous shot, no cuts. No logos, no brand names, no readable text.
+Using this man as the character. Medium shot at a rainy city bus stop. A passing bus splashes a wave of puddle water onto him in slow motion. Soaked, he looks down at his wet cloak, then slowly smiles and opens his arms to the rain. Static camera, single continuous shot, no cuts. Realistic, cinematic, 35mm film look, grey rainy palette with warm glow on his face, vertical 9:16. No logos, no brand names, no readable text on the bus.
+Audio: rain, bus engine, splash, then only rain, no music, no dialogue.
+```
+
+## Sahne 5 — Gece, balkon (tek eylem: deftere yazar)
+```
+Using this man as the character. Medium close-up on a small apartment balcony at night, glowing city lights blurred behind him. A small oil lamp beside him gives warm light. He writes slowly in a small leather notebook, then pauses and looks out at the city with a calm, content expression. Very slow push-in, single continuous shot, no cuts. Realistic, intimate, cinematic, 35mm film look, deep blue night with warm lamp light, vertical 9:16. No logos, no brand names, no readable text.
 Audio: distant city hum, soft wind, the scratch of the pen, no music, no dialogue.
 ```
 
