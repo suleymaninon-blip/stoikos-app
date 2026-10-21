@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView, Platform, Modal, Pressable,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
@@ -26,8 +27,11 @@ const ICON_COLOR: Record<DayPart, string> = { morning: Colors.sand, evening: Col
 // ─── Liste satırı: daire işaretler, satır açar ───────────
 // Eskiden daire de satır da aynı pencereyi açıyordu; işaretlemek de işareti
 // kaldırmak da iki dokunuş + pencere istiyordu (Ekim 2026 akış revizyonu).
-// Artık daire gerçek bir onay kutusu: tek dokunuşla işaretler/kaldırır, yanlış
+// Artık gerçek bir onay kutusu: tek dokunuşla işaretler/kaldırır, yanlış
 // dokunuş alttaki "Geri al" şeridiyle düzeltilir. Satırın geri kalanı egzersizi açar.
+// Çizim de kare (köşeleri yuvarlatılmış): yuvarlak daire radyo düğmesi gibi
+// okunuyor, "birini seçince öbürü kalkar" beklentisi doğuruyordu; oysa egzersizler
+// birbirinden bağımsız işaretleniyor. Tasarım: https://claude.ai/artifact/9MjkgTit1x6nSu6VBRPgWU
 function ExerciseRow({
   exercise, completed, icon, onToggle, onOpen, markLabel, openLabel,
 }: {
@@ -48,9 +52,15 @@ function ExerciseRow({
         accessibilityState={{ checked: completed }}
         accessibilityLabel={markLabel}
       >
-        <View style={[styles.rowCheck, completed && styles.rowCheckDone]}>
-          {completed && <Text style={styles.rowCheckMark}>✓</Text>}
-        </View>
+        {({ pressed }) => (
+          <View style={[styles.rowCheck, completed && styles.rowCheckDone, pressed && styles.rowCheckPressed]}>
+            {completed && (
+              <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
+                <Path d="M5 12.5l4.5 4.5L19 7.5" stroke={Colors.stone} strokeWidth={2.8} strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
+            )}
+          </View>
+        )}
       </Pressable>
       <TouchableOpacity
         onPress={onOpen}
@@ -425,13 +435,14 @@ const styles = StyleSheet.create({
   // Dokunma alanı 44×48; görünen daire 26 px.
   rowCheckHit: { width: 44, height: 48, marginLeft: -9, alignItems: 'center', justifyContent: 'center' },
   rowBody: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 11, minHeight: 48, paddingLeft: 2 },
+  // Onay kutusu: kare, 7 px köşe. Boş kenar 3:1'in üstünde kalsın diye %70.
   rowCheck: {
-    width: 26, height: 26, borderRadius: 13,
-    borderWidth: 1.5, borderColor: 'rgba(196,169,106,0.4)',
+    width: 26, height: 26, borderRadius: 7,
+    borderWidth: 1.5, borderColor: 'rgba(201,168,118,0.7)',
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
   rowCheckDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
-  rowCheckMark: { fontSize: 12, color: Colors.stone, fontWeight: '700' },
+  rowCheckPressed: { transform: [{ scale: 0.92 }], backgroundColor: 'rgba(201,168,118,0.18)', borderColor: Colors.accent },
   rowIcon: { width: 16, height: 16 },
   rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
   rowNameDone: { color: Colors.muted },
