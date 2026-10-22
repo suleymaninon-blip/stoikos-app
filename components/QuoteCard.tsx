@@ -12,8 +12,11 @@ export function QuoteCard({ quote }: Props) {
   const { t } = useLang();
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>{t('home.quoteLabel')}</Text>
-      <Text style={styles.bigQuote}>"</Text>
+      {/* Tırnak başlığın yanında: eskiden mutlak konumluydu ve başlığın altına giriyordu. */}
+      <View style={styles.labelRow}>
+        <Text style={styles.bigQuote} aria-hidden>“</Text>
+        <Text style={styles.label}>{t('home.quoteLabel')}</Text>
+      </View>
       <Text style={styles.quoteText}>{quote.text}</Text>
       <Text style={styles.author}>
         — {quote.author}
@@ -29,41 +32,39 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.stone2,
     borderRadius: 20,
-    padding: 24,
+    padding: 20,
     borderWidth: 1,
     borderColor: 'rgba(196,169,106,0.2)',
-    marginBottom: 20,
+    marginBottom: 16,
     overflow: 'hidden',
   },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   label: {
     fontFamily: Fonts.jostMedium,
     fontSize: 12,
     letterSpacing: 2.5,
     color: Colors.sand,
-    marginBottom: 14,
   },
   bigQuote: {
     fontFamily: Fonts.cormorant,
-    fontSize: 80,
-    lineHeight: 60,
-    color: 'rgba(196,169,106,0.1)',
-    position: 'absolute',
-    top: 28,
-    left: 14,
+    fontSize: 40,
+    lineHeight: 40,
+    height: 24,
+    color: 'rgba(196,169,106,0.45)',
   },
   quoteText: {
     fontFamily: Fonts.cormorantItalic,
-    fontSize: 17,
-    lineHeight: 28,
+    fontSize: 20,
+    lineHeight: 29,
     color: Colors.sand3,
     marginBottom: 14,
     zIndex: 1,
   },
   author: {
     fontFamily: Fonts.jost,
-    fontSize: 11,
+    fontSize: 13,
     color: Colors.muted,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   source: {
     fontStyle: 'italic',

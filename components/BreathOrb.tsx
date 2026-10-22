@@ -332,22 +332,22 @@ export default function BreathOrb({
 }
 
 const styles = StyleSheet.create({
-  wrap: { marginBottom: 32, position: 'relative' },
+  wrap: { marginBottom: 16, position: 'relative' },
   card: {
     backgroundColor: 'rgba(194,168,120,0.07)',
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.14)',
-    borderRadius: 32, paddingVertical: 30, paddingHorizontal: 24,
+    borderRadius: 28, paddingTop: 16, paddingBottom: 20, paddingHorizontal: 20,
     alignItems: 'center',
   },
   cardActive: { backgroundColor: 'rgba(194,168,120,0.10)', borderColor: 'rgba(194,168,120,0.24)' },
   soundBtn: {
     position: 'absolute', top: 14, right: 16, zIndex: 5,
-    width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center',
+    width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
     backgroundColor: 'rgba(194,168,120,0.08)',
   },
   soundIcon: { opacity: 0.55 },
   soundIconOn: { opacity: 1 },
-  flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
+  flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   halo: {
     position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2,
     backgroundColor: 'rgba(240,196,120,0.22)',
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   petalFill: { flex: 1 },
   ring: { position: 'absolute', top: 0, left: 0 },
-  durRow: { flexDirection: 'row', gap: 8, marginTop: 16 },
+  durRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
   durRowHidden: { opacity: 0 },
   durChip: {
     minWidth: 52, minHeight: 34, justifyContent: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, alignItems: 'center',
@@ -369,5 +369,5 @@ const styles = StyleSheet.create({
   durText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
   durTextOn: { color: Colors.sand2 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 23, color: Colors.sand2, marginBottom: 6, minHeight: 30 },
-  sub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, minHeight: 16 },
+  sub: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, letterSpacing: 0.3, minHeight: 19 },
 });

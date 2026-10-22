@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Modal, Pressable, TextInput,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
@@ -30,6 +30,19 @@ export default function ProgramsScreen() {
   const [reflected, setReflected] = useState<Record<string, boolean>>({});
   const [reflection, setReflection] = useState('');
   const [restartArmed, setRestartArmed] = useState(false);
+
+  // Ana ekrandaki "Kaldığın yer" kartı programı doğrudan açar (?open=<id>).
+  // `day` verilirse o günün penceresi de açılır ("Bugünkü adımı aç").
+  const params = useLocalSearchParams<{ open?: string; day?: string }>();
+  useEffect(() => {
+    const id = Array.isArray(params.open) ? params.open[0] : params.open;
+    const day = Number(Array.isArray(params.day) ? params.day[0] : params.day);
+    if (id && programs.some((p) => p.id === id)) {
+      if (!plusOk) { setPaywallOpen(true); return; }
+      setOpenId(id);
+      if (Number.isInteger(day) && day >= 0) setDayIdx(day);
+    }
+  }, [params.open, params.day, plusOk]);
 
   const loadAll = useCallback(async () => {
     const entries = await Promise.all(programs.map(async (p) => [p.id, await getProgress(p.id)] as const));

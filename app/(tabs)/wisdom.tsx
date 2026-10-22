@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
-import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
+import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD_THEMES, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
@@ -175,7 +175,6 @@ function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
 }
 
 // ─── Ruh hali temaları ────────────────────────────────────
-const MOOD_THEMES = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
 
 // Yatay tekerlek (silindir) seçici — yalnız parmakla kaydırma; yanlar perspektifle bükülür.
 // Hem ruh hali hem filozof seçimi için ortak kullanılır. `opts` parent'ta memoize edilmeli.
