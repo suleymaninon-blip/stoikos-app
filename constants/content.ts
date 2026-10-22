@@ -1050,12 +1050,12 @@ export const COACH_SUGGESTIONS: Record<Lang, string[]> = {
 };
 
 export const COACH_INITIAL: Record<Lang, string> = {
-  tr: 'Merhaba. Bugün sana nasıl yardımcı olabilirim? Yaşadığın zorluğu veya hissettiğin duyguyu bana anlat — birlikte Stoacı bir bakış açısı geliştirelim.\n\n[ALINTI: "Kendine dönük yolculuk, tüm yolculukların en uzunudur." — Seneca, Epistulae]',
-  en: 'Hello. How can I help you today? Tell me about the difficulty you face or the emotion you feel — together we will develop a Stoic perspective.\n\n[ALINTI: "The journey toward oneself is the longest of all journeys." — Seneca, Moral Letters]',
-  de: 'Hallo. Wie kann ich dir heute helfen? Erzähl mir von der Schwierigkeit, der du begegnest, oder dem Gefühl, das dich bewegt — gemeinsam entwickeln wir eine stoische Sicht.\n\n[ALINTI: "Die Reise zu sich selbst ist die längste aller Reisen." — Seneca, Briefe an Lucilius]',
-  ru: 'Здравствуй. Чем я могу помочь тебе сегодня? Расскажи о трудности, с которой ты столкнулся, или о чувстве, что тебя тревожит, — вместе мы выработаем стоический взгляд.\n\n[ALINTI: "Путь к самому себе — самый длинный из всех путей." — Сенека, Нравственные письма]',
-  fr: "Bonjour. Comment puis-je t'aider aujourd'hui ? Parle-moi de la difficulté que tu rencontres ou de l'émotion que tu ressens — ensemble, développons une perspective stoïcienne.\n\n[ALINTI: \"La route vers soi-même est la plus longue de toutes.\" — Sénèque, Lettres à Lucilius]",
-  es: 'Hola. ¿Cómo puedo ayudarte hoy? Cuéntame la dificultad que enfrentas o la emoción que sientes — juntos desarrollaremos una perspectiva estoica.\n\n[ALINTI: "El viaje hacia uno mismo es el más largo de todos." — Séneca, Cartas a Lucilio]',
+  tr: 'Merhaba. Bugün sana nasıl yardımcı olabilirim? Yaşadığın zorluğu veya hissettiğin duyguyu bana anlat — birlikte Stoacı bir bakış açısı geliştirelim.\n\n[ALINTI: "Kendine dönük yolculuk, tüm yolculukların en uzunudur." — Seneca, Epistulae · serbest uyarlama]',
+  en: 'Hello. How can I help you today? Tell me about the difficulty you face or the emotion you feel — together we will develop a Stoic perspective.\n\n[ALINTI: "The journey toward oneself is the longest of all journeys." — Seneca, Moral Letters · freely adapted]',
+  de: 'Hallo. Wie kann ich dir heute helfen? Erzähl mir von der Schwierigkeit, der du begegnest, oder dem Gefühl, das dich bewegt — gemeinsam entwickeln wir eine stoische Sicht.\n\n[ALINTI: "Die Reise zu sich selbst ist die längste aller Reisen." — Seneca, Briefe an Lucilius · frei bearbeitet]',
+  ru: 'Здравствуй. Чем я могу помочь тебе сегодня? Расскажи о трудности, с которой ты столкнулся, или о чувстве, что тебя тревожит, — вместе мы выработаем стоический взгляд.\n\n[ALINTI: "Путь к самому себе — самый длинный из всех путей." — Сенека, Нравственные письма · вольное переложение]',
+  fr: "Bonjour. Comment puis-je t'aider aujourd'hui ? Parle-moi de la difficulté que tu rencontres ou de l'émotion que tu ressens — ensemble, développons une perspective stoïcienne.\n\n[ALINTI: \"La route vers soi-même est la plus longue de toutes.\" — Sénèque, Lettres à Lucilius · adaptation libre]",
+  es: 'Hola. ¿Cómo puedo ayudarte hoy? Cuéntame la dificultad que enfrentas o la emoción que sientes — juntos desarrollaremos una perspectiva estoica.\n\n[ALINTI: "El viaje hacia uno mismo es el más largo de todos." — Séneca, Cartas a Lucilio · adaptación libre]',
 };
 
 const LANG_NAME: Record<Lang, string> = { tr: 'Türkçe', en: 'English', de: 'Deutsch', ru: 'русском языке', fr: 'français', es: 'español' };

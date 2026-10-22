@@ -44,8 +44,8 @@ export default function JournalScreen() {
       <LinearGradient
         colors={['rgba(100,160,220,0.05)', 'transparent']}
         style={styles.grad}
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
       />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -77,7 +77,7 @@ export default function JournalScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
-  grad: { position: 'absolute', top: 0, right: 0, width: '70%', height: 250 },
+  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
   backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 4, marginBottom: 12 },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },

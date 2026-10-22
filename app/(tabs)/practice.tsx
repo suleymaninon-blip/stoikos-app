@@ -15,6 +15,7 @@ import { useLang } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
 import { getTodaysReflectionPrompt } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
+import { ConceptModal } from '../../components/ConceptModal';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 // JOURNAL_KEY artık constants/journal.ts'te (program kapanışı da yazıyor).
@@ -137,6 +138,7 @@ export default function PracticeScreen() {
   const [journalSaved, setJournalSaved] = useState(false);
   const [coachConsent, setCoachConsent] = useState(false); // yansımayı koça iletme izni
   const [selected, setSelected] = useState<(Exercise & { icon: DayPart }) | null>(null);
+  const [conceptOpen, setConceptOpen] = useState(false);
   // Alttaki "… tamamlandı · Geri al" şeridi; 4 sn sonra kaybolur.
   const [toast, setToast] = useState<{ id: string; name: string; done: boolean } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -212,8 +214,8 @@ export default function PracticeScreen() {
       <LinearGradient
         colors={['rgba(196,169,106,0.06)', 'transparent']}
         style={styles.grad}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
       />
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -295,11 +297,6 @@ export default function PracticeScreen() {
             ))}
           </View>
 
-          {/* Nazik kapanış */}
-          <View style={styles.closeCard}>
-            <Text style={styles.closeQuote}>“{t('practice.closeQuote')}”</Text>
-            <Text style={styles.closeSub}>{t('practice.closeSub')}</Text>
-          </View>
 
           {/* Daily journal */}
           <View style={styles.journalCard}>
@@ -347,12 +344,19 @@ export default function PracticeScreen() {
             <Text style={styles.conceptLatin}>{concept.latin}</Text>
             <Text style={styles.conceptTr}>{concept.name}</Text>
             <View style={styles.conceptDivider} />
-            <Text style={styles.conceptDesc}>{concept.desc}</Text>
+            {/* Yalnız ilk paragraf; tam metin Bilgelik'teki kavram penceresinde (22 Ekim 2026:
+                tam metin sayfayı ~4 ekran boyuna uzatıyordu). */}
+            <Text style={styles.conceptDesc}>{concept.desc.split('\n\n')[0]}</Text>
+            <TouchableOpacity onPress={() => setConceptOpen(true)} style={styles.conceptMoreBtn} hitSlop={8} accessibilityRole="button">
+              <Text style={styles.conceptMore}>{t('practice.readMore')}</Text>
+            </TouchableOpacity>
           </View>
 
         </ScrollView>
         </KeyboardAvoidingView>
       </Animated.View>
+
+      <ConceptModal concept={conceptOpen ? concept : null} onClose={() => setConceptOpen(false)} />
 
       {/* Seçili egzersiz yokken sayfa zaten null dönüyor; icon yedeği tip için. */}
       <ExerciseSheet
@@ -396,7 +400,7 @@ const styles = StyleSheet.create({
   progressCount: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand },
   progressTrack: { height: 3, backgroundColor: Colors.stone3, borderRadius: 2, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: Colors.accent, borderRadius: 2 },
-  allDoneText: { fontFamily: Fonts.cormorantItalic, fontSize: 12, color: Colors.sand, marginTop: 8, textAlign: 'center' },
+  allDoneText: { fontFamily: Fonts.cormorantItalic, fontSize: 16, color: Colors.sand, marginTop: 8, textAlign: 'center' },
 
   // Section
   section: {
@@ -420,12 +424,6 @@ const styles = StyleSheet.create({
   moonBadgeText: { color: Colors.moon },
 
   // Nazik kapanış kartı
-  closeCard: {
-    backgroundColor: 'rgba(194,168,120,0.06)', borderRadius: 20, padding: 22, marginBottom: 16,
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.12)', alignItems: 'center',
-  },
-  closeQuote: { fontFamily: Fonts.cormorantItalic, fontSize: 19, color: Colors.sand2, textAlign: 'center', lineHeight: 26, marginBottom: 8 },
-  closeSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center' },
 
   // Sade satır
   row: {
@@ -444,9 +442,9 @@ const styles = StyleSheet.create({
   rowCheckDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   rowCheckPressed: { transform: [{ scale: 0.92 }], backgroundColor: 'rgba(201,168,118,0.18)', borderColor: Colors.accent },
   rowIcon: { width: 16, height: 16 },
-  rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
+  rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.text },
   rowNameDone: { color: Colors.muted },
-  rowDuration: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
+  rowDuration: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.3 },
   rowChevron: { fontSize: 20, color: Colors.stone4, marginLeft: 2 },
 
   // Rehberli kart (modal)
@@ -522,11 +520,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 20, padding: 22,
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)',
   },
-  conceptTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.sand, marginBottom: 10 },
+  conceptTag: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.sand2, letterSpacing: 0.5, marginBottom: 2 },
   conceptTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.5, marginBottom: 14 },
   conceptDivider: { height: 1, backgroundColor: 'rgba(196,169,106,0.12)', marginBottom: 14 },
   conceptDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26 },
+  conceptMoreBtn: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center', marginTop: 4 },
+  conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.sand2 },
 
   // Shared
   cormorantItalic: { fontFamily: Fonts.cormorantItalic },

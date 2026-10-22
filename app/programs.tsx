@@ -44,6 +44,11 @@ export default function ProgramsScreen() {
     }
   }, [params.open, params.day, plusOk]);
 
+  const rank = (p: { id: string; dayCount: number }) => {
+    const n = (progress[p.id] || []).length;
+    return n > 0 && n < p.dayCount ? 0 : n === 0 ? 1 : 2;
+  };
+
   const loadAll = useCallback(async () => {
     const entries = await Promise.all(programs.map(async (p) => [p.id, await getProgress(p.id)] as const));
     setProgress(Object.fromEntries(entries));
@@ -110,7 +115,7 @@ export default function ProgramsScreen() {
     const done = progress[open.id] || [];
     return (
       <SafeAreaView style={styles.container}>
-        <LinearGradient colors={[open.color, 'transparent']} style={styles.grad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.5 }} />
+        <LinearGradient colors={[open.color, 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
         <View style={styles.topBar}>
           <TouchableOpacity onPress={() => setOpenId(null)} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
         </View>
@@ -265,7 +270,7 @@ export default function ProgramsScreen() {
   // ─── LİSTE ───
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['rgba(196,169,106,0.06)', 'transparent']} style={styles.grad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.4 }} />
+      <LinearGradient colors={['rgba(196,169,106,0.06)', 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
       </View>
@@ -274,7 +279,8 @@ export default function ProgramsScreen() {
         <Text style={styles.subtitle}>{t('programs.subtitle')}</Text>
 
         <View style={{ marginTop: 20, gap: 14 }}>
-          {programs.map((p) => {
+          {/* Devam eden program en üstte, sonra başlanmamışlar, bitenler en altta (22 Ekim 2026). */}
+          {[...programs].sort((a, b) => rank(a) - rank(b)).map((p) => {
             const done = (progress[p.id] || []).length;
             const pct = done / p.dayCount;
             const label = done === 0 ? t('programs.start') : done === p.dayCount ? t('programs.review') : t('programs.continue');
@@ -321,25 +327,25 @@ const styles = StyleSheet.create({
   backIcon: { fontSize: 26, color: Colors.sand2, marginTop: -3 },
   scroll: { padding: 24, paddingTop: 8, paddingBottom: 40 },
   title: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, letterSpacing: 0.3 },
 
   // Liste kartı
   card: { borderRadius: 20, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
   cardIcon: { fontSize: 30, color: Colors.sand2 },
   cardTitle: { fontFamily: Fonts.cinzel, fontSize: 17, color: Colors.text, letterSpacing: 0.3, marginBottom: 2 },
-  cardSub: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.text2 },
+  cardSub: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
   cardTrack: { height: 4, backgroundColor: 'rgba(0,0,0,0.25)', borderRadius: 2, overflow: 'hidden', marginBottom: 10 },
   cardFill: { height: '100%', backgroundColor: Colors.sand, borderRadius: 2 },
   cardFoot: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardProgress: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
-  cardCta: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.sand2, letterSpacing: 0.5 },
+  cardProgress: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
+  cardCta: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2, letterSpacing: 0.5 },
 
   // Detay
   detailIcon: { fontSize: 44, color: Colors.sand2, textAlign: 'center' },
   detailTitle: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.text, textAlign: 'center', letterSpacing: 0.4, marginTop: 8 },
-  detailSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 4 },
-  detailProgress: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, textAlign: 'center', letterSpacing: 1, marginTop: 12 },
+  detailSub: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', marginTop: 4 },
+  detailProgress: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, textAlign: 'center', letterSpacing: 1, marginTop: 12 },
   finished: { fontFamily: Fonts.cormorantItalic, fontSize: 15, color: Colors.sand, textAlign: 'center', marginTop: 8 },
 
   // ─── Bitiş akışı ───
@@ -353,7 +359,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.jost, fontSize: 16, color: Colors.text,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
   },
-  reflectNote: { fontFamily: Fonts.jostLight, fontSize: 11.5, color: Colors.faint, textAlign: 'center' },
+  reflectNote: { fontFamily: Fonts.jostLight, fontSize: 13, color: Colors.muted, textAlign: 'center' },
   reflectRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
   reflectSkip: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted },
   reflectBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 11, paddingHorizontal: 20 },
@@ -381,8 +387,8 @@ const styles = StyleSheet.create({
   dayNumLocked: { borderColor: 'rgba(255,255,255,0.12)' },
   dayNumText: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2 },
   dayNumTextDone: { color: Colors.stone },
-  dayLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: Colors.muted, marginBottom: 2 },
-  dayTitle: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text },
+  dayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.5, color: Colors.muted, marginBottom: 2 },
+  dayTitle: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.text },
   dayTitleLocked: { color: Colors.muted, fontFamily: Fonts.jost },
   dayChevron: { fontSize: 20, color: Colors.stone4 },
 

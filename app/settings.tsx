@@ -14,6 +14,7 @@ import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
 import { notify, confirmAction } from '../constants/dialog';
+import { LockIcon } from '../components/Icons';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -96,8 +97,8 @@ export default function SettingsScreen() {
       <LinearGradient
         colors={['rgba(196,169,106,0.05)', 'transparent']}
         style={styles.grad}
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
       />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -152,10 +153,6 @@ export default function SettingsScreen() {
           <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
         </TouchableOpacity>
 
-        {/* Koç hafızası sıfırla */}
-        <TouchableOpacity style={[styles.resetBtn, { marginTop: 10 }]} onPress={resetCoachMemory} activeOpacity={0.8}>
-          <Text style={styles.resetText}>{t('memory.resetBtn')}</Text>
-        </TouchableOpacity>
 
         {/* Destek & Hakkında */}
         <Text style={styles.aboutSection}>{t('about.section')}</Text>
@@ -164,7 +161,7 @@ export default function SettingsScreen() {
             { icon: '↗', label: t('about.share'), onPress: shareApp },
             ...(storeUrl ? [{ icon: '★', label: t('about.rate'), onPress: rateApp }] : []),
             { icon: '✉', label: t('about.support'), onPress: contactSupport },
-            { icon: '🔒', label: t('about.privacy'), onPress: openPrivacy },
+            { icon: 'lock', label: t('about.privacy'), onPress: openPrivacy },
             { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
           ].map((r, i, arr) => (
             <TouchableOpacity
@@ -173,12 +170,22 @@ export default function SettingsScreen() {
               onPress={r.onPress}
               activeOpacity={0.7}
             >
-              <Text style={styles.aboutIcon}>{r.icon}</Text>
+              {r.icon === 'lock'
+                ? <View style={styles.aboutIconBox}><LockIcon size={18} color={Colors.sand} /></View>
+                : <Text style={styles.aboutIcon}>{r.icon}</Text>}
               <Text style={styles.aboutLabel}>{r.label}</Text>
               <Text style={styles.aboutArrow}>›</Text>
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* Verilerin — geri alınamayan işlem ayrı bölümde ve uyarı renginde
+            (22 Ekim 2026'ya kadar "Tanıtımı tekrar göster" ile aynı görünüyordu). */}
+        <Text style={styles.aboutSection}>{t('settings.dataSection')}</Text>
+        <TouchableOpacity style={styles.dangerBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
+          <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
+        </TouchableOpacity>
+
         <Text style={styles.versionText}>{t('about.version')} {APP_VERSION}</Text>
 
         {/* Yönetici — onay kuyruğu (yalnızca sahibi). Meydan Okuma gizliyken gösterilmez. */}
@@ -210,22 +217,22 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
-  grad: { position: 'absolute', top: 0, right: 0, width: '70%', height: 250 },
+  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
   backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 4, marginBottom: 12 },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
   header: { marginBottom: 26 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted, letterSpacing: 0.2, lineHeight: 21 },
 
   // Dil seçici
   langWrap: { marginBottom: 20 },
-  langTitle: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
+  langTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
   langRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   langChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
-  langFlag: { fontSize: 14 },
-  langLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.muted },
+  langFlag: { fontSize: 16 },
+  langLabel: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text2 },
   langLabelActive: { color: Colors.accent },
 
   // Bildirim kartı
@@ -236,7 +243,7 @@ const styles = StyleSheet.create({
   },
   notifyCardOff: { opacity: 0.7 },
   notifyTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3, marginBottom: 4 },
-  notifyHint: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, lineHeight: 16 },
+  notifyHint: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19 },
   toggle: { width: 46, height: 27, borderRadius: 14, backgroundColor: Colors.stone4, padding: 3, justifyContent: 'center' },
   toggleOn: { backgroundColor: Colors.accent },
   toggleKnob: { width: 21, height: 21, borderRadius: 11, backgroundColor: '#f0e8d5' },
@@ -248,17 +255,23 @@ const styles = StyleSheet.create({
     paddingVertical: 14, alignItems: 'center',
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
-  resetText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted, letterSpacing: 0.3 },
+  resetText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text2, letterSpacing: 0.3 },
+  dangerBtn: {
+    minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: 'rgba(214,120,100,0.35)', backgroundColor: 'rgba(214,120,100,0.06)',
+  },
+  dangerText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: '#e3a08f', letterSpacing: 0.3 },
 
   // Destek & Hakkında
-  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
+  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
   aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', overflow: 'hidden' },
   aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
   aboutIcon: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand, width: 22, textAlign: 'center' },
-  aboutLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
-  aboutArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.stone4 },
-  versionText: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 12 },
+  aboutIconBox: { width: 22, alignItems: 'center' },
+  aboutLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2 },
+  aboutArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.muted },
+  versionText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 12 },
 
   // Yönetici
   adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },

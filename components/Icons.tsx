@@ -96,6 +96,16 @@ export function StopIcon({ size = 24, color = Colors.sand }: IconProps) {
   );
 }
 
+/** Gizlilik — asma kilit (Ayarlar'daki 🔒 emojisinin yerine). */
+export function LockIcon({ size = 24, color = Colors.sand }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M 6 11 H 18 V 20 H 6 Z" {...base(color)} />
+      <Path d="M 8.5 11 V 8 A 3.5 3.5 0 0 1 15.5 8 V 11" {...base(color)} />
+    </Svg>
+  );
+}
+
 /** Pratik ekranında sabah/akşam ayrımı tek yerden gelsin diye. */
 export type DayPart = 'morning' | 'evening';
 

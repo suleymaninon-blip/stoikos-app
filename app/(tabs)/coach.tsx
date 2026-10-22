@@ -373,8 +373,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 15,
   },
   unlockText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.stone, letterSpacing: 1 },
-  clearBtn: { backgroundColor: Colors.stone3, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  clearBtnText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
+  // 44 px dokunma alanı (eskiden ~30 px'ti).
+  clearBtn: { backgroundColor: Colors.stone3, borderRadius: 12, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  clearBtnText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
   messages: { flex: 1 },
   messagesContent: { padding: 20, gap: 16, paddingBottom: 8 },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
