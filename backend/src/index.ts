@@ -35,8 +35,18 @@ const API = 'https://api.anthropic.com/v1/messages';
 // düz bir "5 ömür boyu" DEĞİL, yenilenen bir hak. Koçun satış gerekçesi
 // hafıza, ama hafızanın değeri ancak farklı günlerde dönüp koçun seni
 // hatırladığını görünce anlaşılıyor — tek oturumda biten 5 mesaj bunu
-// yapısal olarak engelliyor. Önerilen: ilk 3 hafta haftada 3, sonra ayda 1.
+// yapısal olarak engelliyor.
 const FREE_COACH_MESSAGES = 50;
+
+// Yenilenen ücretsiz hak (karar 22 Ekim 2026, kullanıcı: "haftada 3 soru olsun").
+// İlk hafta 5 soru (tanışma), sonra haftada 3. Pencere İLK SORUDAN itibaren 7 gün;
+// kullanılmayan hak birikmez. Tasarım: https://claude.ai/artifact/7FUoJUFfykpFDjmQGEK2fZ
+// ⚠️ RevenueCat bağlandığı gün `true` yapılacak — o güne kadar satın alınabilecek
+// bir şey yok, test grubu duvara çarpmasın diye eski ömür boyu sayaç (50) geçerli.
+const WEEKLY_FREE_QUOTA = false;
+const FREE_FIRST_WEEK = 5;
+const FREE_PER_WEEK = 3;
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Claude'a gönderilen sohbet geçmişi bu kadar mesajla sınırlı.
 //
@@ -130,6 +140,54 @@ function buildMemoryBlock(memory: string): string {
 // Kullanılan ücretsiz koç mesajı sayısı (ömür boyu, TTL yok).
 async function getCoachUsed(env: Env, userId: string): Promise<number> {
   return parseInt((await env.MEMORY.get(`used:${userId}`)) || '0', 10) || 0;
+}
+
+interface FreeQuota {
+  period: 'week' | 'lifetime';
+  limit: number;
+  used: number;
+  remaining: number;
+  /** Haftalık modda pencere başladıysa bitiş anı (ISO); başlamadıysa null. */
+  resetsAt: string | null;
+}
+
+// Haftalık pencere `wq:<userId>` = { start, used, first }. `first`: ilk hafta (5 hak).
+interface WeekState { start: number; used: number; first: boolean }
+
+async function readWeek(env: Env, userId: string): Promise<WeekState | null> {
+  try { return JSON.parse((await env.MEMORY.get(`wq:${userId}`)) || 'null'); } catch { return null; }
+}
+
+/** O anki ücretsiz hak (abone olmayanlar için). */
+async function getFreeQuota(env: Env, userId: string, now = Date.now()): Promise<FreeQuota> {
+  if (!WEEKLY_FREE_QUOTA) {
+    const used = await getCoachUsed(env, userId);
+    return { period: 'lifetime', limit: FREE_COACH_MESSAGES, used, remaining: Math.max(0, FREE_COACH_MESSAGES - used), resetsAt: null };
+  }
+  const st = await readWeek(env, userId);
+  // Hiç pencere yoksa ilk hafta; pencere süresi dolduysa yeni (henüz başlamamış) hafta.
+  if (!st) return { period: 'week', limit: FREE_FIRST_WEEK, used: 0, remaining: FREE_FIRST_WEEK, resetsAt: null };
+  if (now >= st.start + WEEK_MS) return { period: 'week', limit: FREE_PER_WEEK, used: 0, remaining: FREE_PER_WEEK, resetsAt: null };
+  const limit = st.first ? FREE_FIRST_WEEK : FREE_PER_WEEK;
+  return { period: 'week', limit, used: st.used, remaining: Math.max(0, limit - st.used), resetsAt: new Date(st.start + WEEK_MS).toISOString() };
+}
+
+/** Başarılı bir yanıttan sonra bir hak düşer; pencere ilk soruyla başlar. */
+async function consumeFreeQuota(env: Env, userId: string, now = Date.now()): Promise<FreeQuota> {
+  if (!WEEKLY_FREE_QUOTA) {
+    const used = (await getCoachUsed(env, userId)) + 1;
+    await env.MEMORY.put(`used:${userId}`, String(used));
+    return { period: 'lifetime', limit: FREE_COACH_MESSAGES, used, remaining: Math.max(0, FREE_COACH_MESSAGES - used), resetsAt: null };
+  }
+  const st = await readWeek(env, userId);
+  let next: WeekState;
+  if (!st) next = { start: now, used: 1, first: true };
+  else if (now >= st.start + WEEK_MS) next = { start: now, used: 1, first: false };
+  else next = { ...st, used: st.used + 1 };
+  // Pencere bitince anahtar zaten gereksiz; iki hafta sonra kendiliğinden silinsin.
+  await env.MEMORY.put(`wq:${userId}`, JSON.stringify(next), { expirationTtl: 2 * 7 * 24 * 60 * 60 });
+  const limit = next.first ? FREE_FIRST_WEEK : FREE_PER_WEEK;
+  return { period: 'week', limit, used: next.used, remaining: Math.max(0, limit - next.used), resetsAt: new Date(next.start + WEEK_MS).toISOString() };
 }
 
 /**
@@ -391,12 +449,14 @@ export default {
       const userId = url.searchParams.get('userId') || '';
       if (!userId) return json({ error: 'bad_request' }, 400);
       const subscribed = await hasActiveSubscription(env, userId);
-      const used = await getCoachUsed(env, userId);
+      const q = await getFreeQuota(env, userId);
       return json({
         subscribed,
-        used,
-        limit: FREE_COACH_MESSAGES,
-        remaining: subscribed ? null : Math.max(0, FREE_COACH_MESSAGES - used),
+        used: q.used,
+        limit: q.limit,
+        remaining: subscribed ? null : q.remaining,
+        period: q.period,
+        resetsAt: subscribed ? null : q.resetsAt,
       });
     }
 
@@ -416,15 +476,16 @@ export default {
 
       // Ücretsiz kota — abonelere uygulanmaz
       const subscribed = await hasActiveSubscription(env, userId);
-      let used = 0;
       if (!subscribed) {
-        used = await getCoachUsed(env, userId);
-        if (used >= FREE_COACH_MESSAGES) {
+        const q = await getFreeQuota(env, userId);
+        if (q.remaining <= 0) {
           return json({
             error: 'quota_exceeded',
             reason: 'Ücretsiz koç hakkın doldu. Sınırsız sohbet için aboneliğe geçebilirsin.',
-            used,
-            limit: FREE_COACH_MESSAGES,
+            used: q.used,
+            limit: q.limit,
+            period: q.period,
+            resetsAt: q.resetsAt,
           }, 402);
         }
       }
@@ -448,10 +509,7 @@ export default {
       }
 
       // Hak YALNIZCA başarılı yanıttan sonra düşer — hata kullanıcının hakkını yakmasın.
-      if (!subscribed) {
-        used += 1;
-        await env.MEMORY.put(`used:${userId}`, String(used));
-      }
+      const after = subscribed ? null : await consumeFreeQuota(env, userId);
 
       // Hafızayı arka planda güncelle (yanıtı bekletmeden)
       const lastUser = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
@@ -460,7 +518,9 @@ export default {
       return json({
         reply,
         subscribed,
-        remaining: subscribed ? null : Math.max(0, FREE_COACH_MESSAGES - used),
+        remaining: after ? after.remaining : null,
+        period: after?.period,
+        resetsAt: after?.resetsAt ?? null,
       });
     }
 

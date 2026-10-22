@@ -23,6 +23,8 @@ export interface CoachReply {
   /** Kalan ücretsiz hak; abone ise null (sınırsız). */
   remaining: number | null;
   subscribed: boolean;
+  period?: 'week' | 'lifetime';
+  resetsAt?: string | null;
 }
 
 export interface CoachQuota {
@@ -31,6 +33,10 @@ export interface CoachQuota {
   limit: number;
   /** Abone ise null (sınırsız). */
   remaining: number | null;
+  /** 'week': haftalık yenilenen hak; 'lifetime': eski ömür boyu sayaç. Eski sunucu göndermez. */
+  period?: 'week' | 'lifetime';
+  /** Haftalık pencerenin bitişi (ISO); pencere başlamadıysa null. */
+  resetsAt?: string | null;
 }
 
 /**
@@ -69,7 +75,7 @@ export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<Coach
       if (err.reason) e.userMessage = err.reason;
     }
     // Ücretsiz hak bitti → arayüz ödeme duvarını açar (metin duvarda, balon yok)
-    if (res.status === 402) e.quotaExceeded = true;
+    if (res.status === 402) { e.quotaExceeded = true; e.period = err.period; e.resetsAt = err.resetsAt ?? null; }
     throw e;
   }
   const data = await res.json();
@@ -77,6 +83,8 @@ export async function sendCoach(lang: Lang, messages: CoachMsg[]): Promise<Coach
     reply: data.reply as string,
     remaining: data.remaining ?? null,
     subscribed: !!data.subscribed,
+    period: data.period,
+    resetsAt: data.resetsAt ?? null,
   };
 }
 
