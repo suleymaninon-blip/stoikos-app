@@ -15,19 +15,50 @@
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.stoikos.app"
+      "bundleIdentifier": "com.stoikos.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1a1814"
       },
-      "package": "com.stoikos.app"
+      "package": "com.stoikos.app",
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-av",
+        {
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#c9a876"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#1a1814"
+        }
+      ]
     ],
     "web": {
       "bundler": "metro",

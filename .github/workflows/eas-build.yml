@@ -1,0 +1,67 @@
+# Telefon uygulaması derlemesi (EAS Build) — elle başlatılır.
+# GitHub → Actions → "EAS Build" → Run workflow → platform ve profil seç.
+# Derleme Expo'nun sunucularında yapılır; bu iş yalnızca başlatıp çıkar (--no-wait).
+# Sonuç ve indirme bağlantısı: https://expo.dev → stoikos → Builds.
+#
+# Gerekenler (bir kez): depo sırrı EXPO_TOKEN (expo.dev → Access tokens).
+# iOS için ayrıca App Store Connect API anahtarı EAS'a tanıtılmış olmalı
+# (docs/eas-build.md → "iOS imzalama"); yoksa iOS derlemesi başlamadan durur.
+name: EAS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'android'
+        type: choice
+        options: [android, ios, all]
+      profile:
+        description: 'Profil (preview = denemelik APK, production = mağaza)'
+        required: true
+        default: 'preview'
+        type: choice
+        options: [preview, production]
+      submit:
+        description: 'production derlemesini bitince mağazaya gönder (TestFlight / Play iç test)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: EXPO_TOKEN kontrolü
+        run: |
+          if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+            echo "::error::EXPO_TOKEN depo sırrı yok. docs/eas-build.md → 'Bir kez yapılacaklar' adımına bak."
+            exit 1
+          fi
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Bağımlılıklar
+        run: npm ci
+
+      - name: Tip denetimi
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Derlemeyi başlat
+        run: |
+          EXTRA=""
+          if [ "${{ inputs.submit }}" = "true" ] && [ "${{ inputs.profile }}" = "production" ]; then
+            EXTRA="--auto-submit"
+          fi
+          eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }} --non-interactive --no-wait $EXTRA
