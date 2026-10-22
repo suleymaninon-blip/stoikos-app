@@ -181,8 +181,8 @@ export default function ProgressScreen() {
       <LinearGradient
         colors={['rgba(196,169,106,0.05)', 'transparent']}
         style={styles.grad}
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 0.5 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
       />
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
@@ -248,7 +248,7 @@ export default function ProgressScreen() {
 // ─── Styles ───────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
-  grad: { position: 'absolute', top: 0, right: 0, width: '70%', height: 250 },
+  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
   header: { marginBottom: 26, marginTop: 8 },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },

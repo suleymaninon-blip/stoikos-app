@@ -9,18 +9,11 @@ import { Colors, Fonts } from '../../constants/theme';
 import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
 import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD_THEMES, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
-import { hasAudio, playAudio, stopAudio } from '../../constants/audio';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
-import { usePlus } from '../../constants/entitlement';
-import { Paywall } from '../../components/Paywall';
-import { ENFORCE_PLUS_GATE } from '../../constants/config';
-import { SoundIcon, StopIcon } from '../../components/Icons';
+import { ConceptModal, TEXT_GLYPH } from '../../components/ConceptModal';
 
-// Kavram simgeleri (☉ ◉ ⚖ …) renk verilmezse siyah çiziliyor, iOS ⚖'yi renkli emojiye
-// çeviriyor. U+FE0E metin biçimini zorlar → paletin rengini alır.
-const TEXT_GLYPH = '\uFE0E';
 
 // ─── QuoteCard ─────────────────────────────────────────────
 function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
@@ -78,54 +71,6 @@ function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPres
       <Text style={styles.conceptPreview} numberOfLines={2}>{concept.desc}</Text>
       <Text style={styles.conceptMore}>{moreLabel}</Text>
     </TouchableOpacity>
-  );
-}
-
-// ─── Concept Modal ─────────────────────────────────────────
-function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabel, lang, playingKey, onToggle }: {
-  concept: Concept | null; onClose: () => void; exampleLabel: string; practiceLabel: string; closeLabel: string;
-  lang: Lang; playingKey: string | null; onToggle: (key: string) => void;
-}) {
-  if (!concept) return null;
-  const key = conceptAudioKey(concept.latin, lang);
-  const audio = hasAudio(key);
-  const playing = playingKey === key;
-  return (
-    <Modal transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable style={styles.modalCard} onPress={() => {}}>
-          <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-            <Text style={styles.modalIcon}>{concept.icon + TEXT_GLYPH}</Text>
-            <Text style={styles.modalLatin}>{concept.latin}</Text>
-            <Text style={styles.modalTr}>{concept.name}</Text>
-            {audio && (
-              <TouchableOpacity onPress={() => onToggle(key)} style={[styles.modalListenBtn, playing && styles.listenBtnActive]}>
-                <View style={styles.listenIcon}>
-                  {playing ? <StopIcon size={14} color={Colors.sand} /> : <SoundIcon size={14} color={Colors.sand} />}
-                </View>
-              </TouchableOpacity>
-            )}
-            <View style={styles.modalDivider} />
-            <Text style={styles.modalDesc}>{concept.desc}</Text>
-            {concept.example ? (
-              <View style={styles.modalExampleBox}>
-                <Text style={styles.modalExampleLabel}>{exampleLabel}</Text>
-                <Text style={styles.modalExample}>{concept.example}</Text>
-              </View>
-            ) : null}
-            {concept.practice ? (
-              <View style={styles.modalPracticeBox}>
-                <Text style={styles.modalPracticeLabel}>{practiceLabel}</Text>
-                <Text style={styles.modalPractice}>{concept.practice}</Text>
-              </View>
-            ) : null}
-            <TouchableOpacity style={styles.modalClose} onPress={onClose}>
-              <Text style={styles.modalCloseText}>{closeLabel}</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </Pressable>
-      </Pressable>
-    </Modal>
   );
 }
 
@@ -303,11 +248,6 @@ export default function WisdomScreen() {
   const [mode, setMode] = useState<'author' | 'mood'>('author'); // tekerleğin gösterdiği boyut
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [selectedPhilo, setSelectedPhilo] = useState<Philosopher | null>(null);
-  const [playingKey, setPlayingKey] = useState<string | null>(null);
-  const { plus } = usePlus();
-  // ⚠️ ENFORCE_PLUS_GATE geçici olarak false (bkz. constants/config.ts).
-  const plusOk = plus || !ENFORCE_PLUS_GATE;
-  const [paywallOpen, setPaywallOpen] = useState(false);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
 
@@ -332,23 +272,6 @@ export default function WisdomScreen() {
 
   async function onFav(id: string) {
     setFavorites(await toggleFavorite(id));
-  }
-
-  // Ekrandan çıkınca / dil değişince sesi durdur
-  useEffect(() => { return () => { stopAudio(); }; }, []);
-  useEffect(() => { stopAudio(); setPlayingKey(null); }, [lang]);
-
-  // Kavramların sesli anlatımı (216 dosya, ElevenLabs'ta üretildi) Plus'a dahil.
-  // Kavram metninin kendisi ücretsiz — kilitlenen yalnızca dinleme.
-  function togglePlay(key: string) {
-    if (!plusOk) { setPaywallOpen(true); return; }
-    if (playingKey === key) {
-      stopAudio();
-      setPlayingKey(null);
-    } else {
-      setPlayingKey(key);
-      playAudio(key, () => setPlayingKey(null));
-    }
   }
 
   // Tekerlek seçenekleri (referans kararlılığı için memoize) — WheelSelector bunu bekler.
@@ -417,8 +340,8 @@ export default function WisdomScreen() {
       <LinearGradient
         colors={['rgba(196,169,106,0.05)', 'transparent']}
         style={styles.grad}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0.4 }}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
       />
 
       {/* Katlanan bölüm: başlık + sekmeler + (Alıntılar'da) mod anahtarı */}
@@ -537,16 +460,7 @@ export default function WisdomScreen() {
         closeLabel={t('wisdom.close')}
       />
 
-      <ConceptModal
-        concept={selectedConcept}
-        onClose={() => { stopAudio(); setPlayingKey(null); setSelectedConcept(null); }}
-        exampleLabel={t('wisdom.exampleLabel')}
-        practiceLabel={t('wisdom.practiceLabel')}
-        closeLabel={t('wisdom.close')}
-        lang={lang}
-        playingKey={playingKey}
-        onToggle={togglePlay}
-      />
+      <ConceptModal concept={selectedConcept} onClose={() => setSelectedConcept(null)} />
 
       <QuoteShareModal
         quote={shareQuote}
@@ -556,7 +470,6 @@ export default function WisdomScreen() {
         onClose={() => setShareQuote(null)}
       />
 
-      <Paywall visible={paywallOpen} onClose={() => setPaywallOpen(false)} />
     </SafeAreaView>
   );
 }
@@ -576,7 +489,7 @@ const styles = StyleSheet.create({
   },
   tabBtn: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 10 },
   tabBtnActive: { backgroundColor: Colors.stone3 },
-  tabBtnText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.muted, letterSpacing: 0.5 },
+  tabBtnText: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.muted, letterSpacing: 0.5 },
   tabBtnTextActive: { color: Colors.sand2 },
 
   filterScroll: { maxHeight: 44, marginBottom: 12 },
@@ -618,7 +531,7 @@ const styles = StyleSheet.create({
   emptyWrap: { alignItems: 'center', justifyContent: 'center', paddingTop: 60, paddingHorizontal: 30, gap: 14 },
   emptyIcon: { fontFamily: Fonts.jost, fontSize: 40, color: Colors.muted, opacity: 0.5 },
   emptyText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.muted, textAlign: 'center', lineHeight: 26 },
-  attribution: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.faint, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
+  attribution: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
   quoteCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 18,
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.10)', overflow: 'hidden',
@@ -626,9 +539,9 @@ const styles = StyleSheet.create({
   quoteMark: { fontFamily: Fonts.cormorant, fontSize: 64, color: Colors.sand, opacity: 0.25, height: 48, marginBottom: -4 },
   quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 16 },
   quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
-  quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand, letterSpacing: 0.3 },
+  quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, letterSpacing: 0.3 },
   quoteAuthorLink: { color: Colors.accent },
-  quoteSource: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, fontStyle: 'italic' },
+  quoteSource: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, fontStyle: 'italic' },
   listenBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.38)' },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
   // SVG sarmalayıcı (kavram hoparlörü, satır ~96) — View'e uygulanıyor, boyut doğru.
@@ -649,9 +562,9 @@ const styles = StyleSheet.create({
   },
   conceptIcon: { fontSize: 22, color: Colors.sand2, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 24, color: Colors.sand2, marginBottom: 2 },
-  conceptTr: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5, marginBottom: 10 },
+  conceptTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.5, marginBottom: 10 },
   conceptPreview: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21, marginBottom: 10 },
-  conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.accent, letterSpacing: 0.3 },
+  conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.accent, letterSpacing: 0.3 },
 
   // Filozof kartı
   philoCard: {
@@ -676,7 +589,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(216,196,154,0.10)', borderWidth: 1, borderColor: 'rgba(216,196,154,0.28)',
   },
   philoModalSymbol: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.sand2 },
-  philoModalEra: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, textAlign: 'center', letterSpacing: 0.3, marginTop: -10, marginBottom: 16 },
+  philoModalEra: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, textAlign: 'center', letterSpacing: 0.3, marginTop: -10, marginBottom: 16 },
 
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.75)',
@@ -701,7 +614,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(159,176,196,0.08)', borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
-  modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
+  modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
   modalPractice: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.text, lineHeight: 26 },
   modalClose: {
     backgroundColor: Colors.stone3, borderRadius: 12,

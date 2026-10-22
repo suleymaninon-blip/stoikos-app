@@ -66,7 +66,7 @@ export default function ChallengeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['rgba(212,146,74,0.07)', 'transparent']} style={styles.grad} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.4 }} />
+      <LinearGradient colors={['rgba(212,146,74,0.07)', 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => setWriting(true)} style={styles.writeBtn}><Text style={styles.writeTxt}>{t('ch.write')}</Text></TouchableOpacity>
