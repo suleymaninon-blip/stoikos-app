@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   header: { marginBottom: 26, marginTop: 8 },
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 },
   title: { flex: 1, fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted, letterSpacing: 0.2, lineHeight: 21 },
   gearBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 2 },
   gearIcon: { fontSize: 17, color: Colors.sand },
 
@@ -264,27 +264,28 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   statValue: { fontFamily: Fonts.cinzel, fontSize: 28, color: Colors.sand2, marginBottom: 6 },
-  statLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.2, color: Colors.muted, textAlign: 'center', lineHeight: 12 },
-  statSub: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 2 },
+  statLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.2, color: Colors.muted, textAlign: 'center', lineHeight: 16 },
+  statSub: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 2 },
 
   // Chart
   chartWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
-  sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16 },
-  bars: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 100 },
+  sectionLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.muted, marginBottom: 16 },
+  // Sabit yükseklik yok: çubuk 80 + gün + sayı ~130 px; height: 100 iken sütunlar yukarı taşıp "SON 7 GÜN" başlığını örtüyordu.
+  bars: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   barCol: { alignItems: 'center', flex: 1 },
   barTrack: { width: 18, height: 80, backgroundColor: Colors.stone3, borderRadius: 9, overflow: 'hidden', justifyContent: 'flex-end' },
   barFill: { width: '100%', backgroundColor: 'rgba(194,168,120,0.45)', borderRadius: 9 },
   barToday: { backgroundColor: Colors.sand2 },
-  barLabel: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 6 },
+  barLabel: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 6 },
   barLabelToday: { color: Colors.sand },
-  barCount: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.text2, marginTop: 2 },
+  barCount: { fontFamily: Fonts.cinzel, fontSize: 15, color: Colors.text2, marginTop: 2 },
 
   // Exercise breakdown
   breakdownWrap: { backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   exRow: { marginBottom: 14 },
   exRowHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
-  exRowName: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2 },
-  exRowCount: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.sand },
+  exRowName: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2 },
+  exRowCount: { fontFamily: Fonts.cinzel, fontSize: 15, color: Colors.sand },
   exTrack: { height: 4, backgroundColor: Colors.stone3, borderRadius: 2, overflow: 'hidden' },
   exFill: { height: '100%', backgroundColor: Colors.accent, borderRadius: 2 },
   exFillEvening: { backgroundColor: 'rgba(100,160,220,0.7)' },
@@ -297,16 +298,16 @@ const styles = StyleSheet.create({
   emptyTitle: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.text, textAlign: 'center', marginTop: 16, marginBottom: 10 },
   emptyBody: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, textAlign: 'center', lineHeight: 23, marginBottom: 22 },
   emptyBtn: { backgroundColor: Colors.sand, borderRadius: 24, paddingVertical: 12, paddingHorizontal: 26 },
-  emptyBtnText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.bg, letterSpacing: 0.4 },
+  emptyBtnText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.bg, letterSpacing: 0.4 },
   emptyLink: { marginTop: 16 },
-  emptyLinkText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.sand },
+  emptyLinkText: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.sand },
 
   // Quote
   quoteBox: {
     backgroundColor: 'rgba(196,169,106,0.06)', borderRadius: 16, padding: 18,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
-  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand2, lineHeight: 27, marginBottom: 8 },
-  quoteAuthor: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginBottom: 12 },
-  reflectionSub: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 19 },
+  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.sand2, lineHeight: 30, marginBottom: 8 },
+  quoteAuthor: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, marginBottom: 12 },
+  reflectionSub: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 24 },
 });
