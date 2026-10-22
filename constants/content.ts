@@ -506,6 +506,18 @@ export function getQuotes(lang: Lang): Quote[] {
   }));
 }
 
+// Ruh hali temaları (Bilgelik filtresi ve Ana ekrandaki "Nasıl hissediyorsun?").
+// Yalnız 128 yeni alıntıda tema var; eski 36'da yok.
+export const MOOD_THEMES = ['kaygi', 'ofke', 'yas', 'kabul', 'kontrol', 'ic-huzur', 'cesaret', 'sukran', 'sadelik'];
+
+/** Bir temadan bugünün sözü — gün değişince başka söz, gün içinde sabit. */
+export function getMoodQuote(theme: string, lang: Lang): { quote: Quote; count: number } | null {
+  const all = getQuotes(lang).filter((q) => q.theme === theme);
+  if (!all.length) return null;
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
+  return { quote: all[dayOfYear % all.length], count: all.length };
+}
+
 export function getTodaysQuote(lang: Lang): Quote {
   const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
   const q = QUOTES_RAW[dayOfYear % QUOTES_RAW.length];
