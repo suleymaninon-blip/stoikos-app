@@ -15,7 +15,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useLang } from '../../constants/i18n';
+import { useLang, localeOf } from '../../constants/i18n';
+import { router } from 'expo-router';
 import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
 import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
 import { Paywall } from '../../components/Paywall';
@@ -159,6 +160,15 @@ export default function CoachScreen() {
   const scrollRef = useRef<ScrollView>(null);
 
   const exhausted = quota != null && !quota.subscribed && (quota.remaining ?? 1) <= 0;
+  // Haftalık yenilenen hak (sunucuda WEEKLY_FREE_QUOTA açıkken). Yenilenme günü
+  // tarih değil gün adıyla söylenir: "Salı yenilenir".
+  const weekly = quota?.period === 'week';
+  const resetDay = quota?.resetsAt
+    ? new Date(quota.resetsAt).toLocaleDateString(localeOf(lang), { weekday: 'long' })
+    : '';
+  const badgeText = !quota ? '' : weekly
+    ? (exhausted ? t('coach.resetsOn', { day: resetDay }) : quota.remaining === 1 ? t('coach.weekLast') : t('coach.weekLeft', { n: quota.remaining ?? 0 }))
+    : (exhausted ? t('coach.quotaEnded') : t('coach.remaining', { n: quota.remaining ?? 0 }));
 
   useEffect(() => {
     getCoachQuota().then(setQuota);
@@ -206,8 +216,8 @@ export default function CoachScreen() {
         .filter((m) => m.id !== '0')
         .slice(-24)
         .map((m) => ({ role: m.role, content: m.content }));
-      const { reply, remaining, subscribed } = await sendCoach(lang, payload);
-      setQuota((q) => (q ? { ...q, remaining, subscribed } : q));
+      const { reply, remaining, subscribed, ...rest } = await sendCoach(lang, payload);
+      setQuota((q) => (q ? { ...q, remaining, subscribed, period: rest.period ?? q.period, resetsAt: rest.resetsAt ?? q.resetsAt } : q));
       const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: reply, timestamp: new Date() };
       const final = [...withUser, aiMsg];
       setMessages(final);
@@ -216,8 +226,9 @@ export default function CoachScreen() {
       // Hak bitti → sayacı sıfırla, duvarı aç. Sohbete balon EKLEME: açıklama
       // zaten duvarda ve orası 6 dilde; backend'in gerekçesi yalnız Türkçe.
       if (e?.quotaExceeded) {
-        setQuota((q) => (q ? { ...q, remaining: 0 } : { subscribed: false, used: 0, limit: 0, remaining: 0 }));
-        setPaywallOpen(true);
+        setQuota((q) => ({ ...(q ?? { subscribed: false, used: 0, limit: 0 }), remaining: 0, period: e.period ?? q?.period, resetsAt: e.resetsAt ?? q?.resetsAt }));
+        // Haftalık hakta duvar açılmaz: yazma alanının yerindeki kart ne zaman açılacağını söyler.
+        if (e.period !== 'week') setPaywallOpen(true);
         return;
       }
       const content =
@@ -266,7 +277,7 @@ export default function CoachScreen() {
                 activeOpacity={0.7}
               >
                 <Text style={[styles.quotaText, exhausted && styles.quotaTextEnded]}>
-                  {exhausted ? t('coach.quotaEnded') : t('coach.remaining', { n: quota.remaining ?? 0 })}
+                  {badgeText}
                 </Text>
               </TouchableOpacity>
             ) : quota?.subscribed ? (
@@ -310,7 +321,25 @@ export default function CoachScreen() {
           )}
         </ScrollView>
 
-        {exhausted ? (
+        {exhausted && weekly ? (
+          // Haftalık hak bitti: duvar değil, ne zaman açılacağını söyleyen sakin bir kart
+          <View style={styles.weekCard}>
+            <Text style={styles.weekTitle}>{t('coach.weekEndedTitle', { n: quota?.limit ?? 3 })}</Text>
+            <Text style={styles.weekBody}>{t('coach.weekEndedBody', { day: resetDay })}</Text>
+            <TouchableOpacity style={styles.weekPlus} onPress={() => setPaywallOpen(true)} activeOpacity={0.85}>
+              <Text style={styles.weekPlusText}>{t('coach.plusCta')}</Text>
+            </TouchableOpacity>
+            <Text style={styles.weekWaitLabel}>{t('coach.whileWaiting')}</Text>
+            <View style={styles.weekRow}>
+              <TouchableOpacity style={[styles.weekAlt, styles.weekAltMoon]} onPress={() => router.push('/practice')} activeOpacity={0.8}>
+                <Text style={[styles.weekAltText, { color: Colors.moon }]}>{t('coach.writeReflection')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.weekAlt} onPress={() => router.push('/programs')} activeOpacity={0.8}>
+                <Text style={styles.weekAltText}>{t('coach.continueProgram')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : exhausted ? (
           // Hak bitti: yazma alanı yerine ödeme duvarına götüren tek bir eylem
           <View style={styles.inputArea}>
             <TouchableOpacity style={styles.unlockBtn} onPress={() => setPaywallOpen(true)} activeOpacity={0.85}>
@@ -320,6 +349,9 @@ export default function CoachScreen() {
           </View>
         ) : (
         <View style={styles.inputArea}>
+          {weekly && quota?.remaining === 1 && !quota.subscribed && quota.resetsAt ? (
+            <Text style={styles.lastWarning}>{t('coach.lastWarning', { day: resetDay })}</Text>
+          ) : null}
           <Text style={styles.inputLabel}>{t('coach.inputLabel')}</Text>
           <View style={styles.inputRow}>
             <TextInput
@@ -398,6 +430,20 @@ const styles = StyleSheet.create({
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)' },
   chipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2 },
+  lastWarning: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.sand2, marginBottom: 8 },
+  weekCard: {
+    margin: 16, marginTop: 8, padding: 18, gap: 12, borderRadius: 22,
+    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(201,168,118,0.3)',
+  },
+  weekTitle: { fontFamily: Fonts.cormorant, fontSize: 22, color: Colors.text },
+  weekBody: { fontFamily: Fonts.jost, fontSize: 15, lineHeight: 22, color: Colors.text2, marginTop: -6 },
+  weekPlus: { minHeight: 50, borderRadius: 14, backgroundColor: Colors.sand, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+  weekPlusText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.bg, textAlign: 'center' },
+  weekWaitLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginTop: 2 },
+  weekRow: { flexDirection: 'row', gap: 8 },
+  weekAlt: { flex: 1, minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(194,168,120,0.3)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
+  weekAltMoon: { borderColor: 'rgba(159,176,196,0.3)' },
+  weekAltText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
   inputArea: { padding: 16, paddingBottom: 8, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
   inputLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 8, paddingLeft: 4 },
   inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
