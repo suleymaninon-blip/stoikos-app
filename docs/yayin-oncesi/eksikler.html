@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Stoikos — Yayın Öncesi Eksikler</title>
+<style>
+  @font-face { font-family:'Jost'; font-weight:400; src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf'); }
+  @font-face { font-family:'Jost'; font-weight:500; src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf'); }
+  @font-face { font-family:'Cormorant'; font-weight:500; src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_500Medium.ttf'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:500; src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_500Medium_Italic.ttf'); }
+
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'Jost',sans-serif; font-size:10.5pt; line-height:1.45; color:#2a241b; background:#fff; }
+  h1 { font-family:'Cormorant',serif; font-weight:500; font-size:28pt; line-height:1.05; margin:0 0 4pt; color:#1f1a12; }
+  .sub { color:#7a6d55; font-size:10pt; margin-bottom:12pt; }
+  .legend { display:flex; gap:14pt; font-size:9pt; color:#5c513d; border:1px solid #e4dccb; border-radius:6pt; padding:7pt 10pt; margin-bottom:14pt; }
+  .legend span { display:flex; align-items:center; gap:5pt; }
+  h2 { font-family:'Cormorant',serif; font-weight:500; font-size:16pt; margin:16pt 0 2pt; color:#1f1a12; break-after:avoid; }
+  .h2note { font-size:9pt; color:#7a6d55; margin:0 0 6pt; }
+  .item { display:grid; grid-template-columns:16pt 1fr 54pt; gap:8pt; padding:7pt 0; border-bottom:1px solid #ece5d6; break-inside:avoid; }
+  .box { width:12pt; height:12pt; border:1.2pt solid #8a7a58; border-radius:2.5pt; margin-top:2pt; }
+  .t { font-weight:500; color:#1f1a12; }
+  .d { color:#4c4334; font-size:9.5pt; margin-top:1pt; }
+  .d ul { margin:3pt 0 0; padding-left:13pt; }
+  .d li { margin:1pt 0; }
+  .who { font-size:8pt; font-weight:500; letter-spacing:.6pt; text-transform:uppercase; text-align:center; border-radius:10pt; padding:2pt 0; height:fit-content; margin-top:1pt; }
+  .sen { background:#f3e6c8; color:#6b4f12; }
+  .claude { background:#e3ebf3; color:#2f4a66; }
+  .birlikte { background:#e4efe6; color:#2f5a3c; }
+  .dis { background:#efe4ea; color:#6a3553; }
+  .ref { font-size:8.5pt; color:#7a6d55; margin-top:3pt; }
+  .notes { margin-top:18pt; break-inside:avoid; }
+  .line { border-bottom:1px solid #d9d0bd; height:20pt; }
+  .warn { background:#fbf3e2; border:1px solid #ecd9ad; border-radius:6pt; padding:8pt 10pt; font-size:9.5pt; color:#5a4416; margin:6pt 0 4pt; }
+</style>
+</head>
+<body>
+
+<h1>Yayın öncesi eksikler</h1>
+<div class="sub">Stoikos · 22 Ekim 2026 itibarıyla · Uygulama, site, mağaza görselleri ve tanıtım videosu hazır; kalanlar aşağıda.</div>
+
+<div class="legend">
+  <span><b class="who sen" style="padding:2pt 7pt">Sen</b> senin yapman gereken</span>
+  <span><b class="who claude" style="padding:2pt 7pt">Claude</b> kodu ben yazarım</span>
+  <span><b class="who birlikte" style="padding:2pt 7pt">Birlikte</b> karar / bilgi senden, uygulama benden</span>
+  <span><b class="who dis" style="padding:2pt 7pt">Dışarıda</b> avukat, Apple, Google</span>
+</div>
+
+<h2>1 · Yayından önce şart olanlar</h2>
+<p class="h2note">Bunlar bitmeden uygulama mağazaya çıkamaz.</p>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Apple Developer onayını bekle</div>
+  <div class="d">Ödendi (15 Ekim 2026), hesap Bilge İnön adına. Onay e-postası gelince sırayla:
+    <ul><li>App Store Connect'te uygulama kaydı</li>
+    <li>Abonelik ürünleri: $6,99/ay ve $49,99/yıl, 14 gün ücretsiz deneme</li>
+    <li>RevenueCat hesabı ve bağlantı</li>
+    <li>TestFlight ile ilk deneme sürümü</li></ul></div>
+  <div class="ref">Kayıt kimliği V5P979DNU2 · Sipariş W1468151326 · Destek vakası 102985513125</div>
+</div><div class="who dis">Apple</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Google Play doğrulamalarını tamamla</div>
+  <div class="d">Kimlik, telefon ve <b>Android cihaz</b> doğrulaması bekliyor. Android telefon olmadan Play'de uygulama açılamıyor — bir arkadaşın telefonu da olur.</div>
+</div><div class="who sen">Sen</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Ödeme bağlantısı (RevenueCat)</div>
+  <div class="d">Hesaplar açılınca: satın alma düğmesi (şu an "YAKINDA"), ülkeye göre fiyat, Kullanım Koşulları'na tıklanabilir bağlantı, sunucuda abonelik doğrulaması.</div>
+</div><div class="who claude">Claude</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Plus kilidini aç (tek satır)</div>
+  <div class="d">Test için programlar ve sesli anlatım şu an herkese açık. Yayından hemen önce <i>ENFORCE_PLUS_GATE = true</i>.</div>
+</div><div class="who claude">Claude</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Gizlilik politikasındaki boşlukları doldur</div>
+  <div class="d">Metindeki 〔…〕 alanları: veri sorumlusunun adı, adres, iletişim bilgileri. Bilgileri sen ver, yerleştirmeyi ben yaparım.</div>
+</div><div class="who birlikte">Birlikte</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Avukat kontrolü</div>
+  <div class="d">Gizlilik Politikası (TR + EN) ve Kullanım Koşulları (TR + EN). Apple abonelik satan uygulamada ikisini de istiyor. Adresler: stoikos.app/gizlilik.html · /privacy.html · /terms.html · /terms-en.html</div>
+</div><div class="who dis">Avukat</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Gerçek telefonda deneme</div>
+  <div class="d">Uygulama şimdiye kadar yalnız web'de test edildi. İlk TestFlight sürümünde özellikle bak:
+    <ul><li>Sabah 09:00 / akşam 21:00 hatırlatıcıları (web'de hiç çalışmıyor)</li>
+    <li>Nefes çiçeğinin sesi</li>
+    <li>Yeni ikon ve açılış ekranı</li></ul></div>
+</div><div class="who birlikte">Birlikte</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Mağaza formları</div>
+  <div class="d">Yaş sınırı anketi, kategori seçimi (Sağlık ve Fitness ya da Yaşam Tarzı). Yayından sonra mağaza bağlantısı uygulamaya eklenecek.</div>
+</div><div class="who birlikte">Birlikte</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Marka tescili başvurusu</div>
+  <div class="d">Sınıf 9 + 41 + 42, şekil + kelime, siyah-beyaz örnek. 2026 tarifesiyle başvuru 8.790 TL, onaylanırsa ayrıca 7.010 TL tescil ücreti. <b>Yayından ve reklamdan önce</b> yapılmalı.</div>
+  <div class="ref">Rehber ve marka örnekleri: docs/marka/basvuru-rehberi.md</div>
+</div><div class="who sen">Sen</div></div>
+
+<h2>2 · Karar bekleyen</h2>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Koçun ücretsiz hakkı</div>
+  <div class="d">Şu an tek seferlik hak var. Öneri: yenilenen bir hak (örneğin her hafta 3 mesaj) — böylece koçun seni hatırlaması denenebilir. RevenueCat'le birlikte yapılmalı.</div>
+  <div class="ref">Kararın: ………………………………………………………………</div>
+</div><div class="who sen">Sen</div></div>
+
+<h2>3 · Pazarlama (yayını beklemez)</h2>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Sosyal medya hesaplarını aç</div>
+  <div class="d">Instagram, TikTok, reklam için Facebook sayfası; X yalnız adı almak için. support@stoikos.app ile, iki adımlı doğrulama açık. Açılınca bağlantıları siteye ve Ayarlar'a ben eklerim.</div>
+</div><div class="who sen">Sen</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">Videolara müzik ve seslendirme</div>
+  <div class="d">Tanıtım videosu sessiz; filozof, Marcus ve "Pazartesi" videoları yalnız ortam sesli. Müzik: Satie (Musopen, ücretsiz). Seslendirme metinleri storyboard'da hazır. Müzik dosyasını gönderirsen ben eklerim.</div>
+</div><div class="who birlikte">Birlikte</div></div>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">"Pazartesi" videosunu paylaşım takvimine ekle</div>
+  <div class="d">Önce İngilizce sürüm; Reels, TikTok ve Shorts aynı gün.</div>
+</div><div class="who claude">Claude</div></div>
+
+<h2>4 · Güvenlik</h2>
+
+<div class="item"><div class="box"></div><div>
+  <div class="t">ElevenLabs anahtarını yenile</div>
+  <div class="d">Anahtarı herhangi bir yerde paylaştıysan ElevenLabs panelinden iptal edip yenisini al.</div>
+</div><div class="who sen">Sen</div></div>
+
+<div class="warn"><b>Hatırlatma:</b> "Plus kilidini aç" maddesi yayından hemen önce yapılmalı — daha erken yapılırsa test eden arkadaşlar programlara giremez.</div>
+
+<div class="notes">
+  <h2>Notlar</h2>
+  <div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>
+</div>
+
+</body>
+</html>
