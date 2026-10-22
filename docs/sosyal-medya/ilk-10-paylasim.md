@@ -1,10 +1,10 @@
-# İlk paylaşımlar (12) — Instagram (TikTok ve Facebook'a da uyar)
+# İlk paylaşımlar (13) — Instagram (TikTok ve Facebook'a da uyar)
 
-> Hazırlandı: 18 Ekim 2026, takvim 20 Ekim 2026'da güncellendi (filozof videosu 1. sıraya, Marcus videosu 6. sıraya, tanıtım üçüncü haftaya). Görseller ve videolar `docs/sosyal-medya/ilk-10/` klasöründe.
+> Hazırlandı: 18 Ekim 2026, takvim 20 Ekim 2026'da güncellendi (filozof videosu 1. sıraya, Marcus videosu 6. sıraya, tanıtım üçüncü haftaya); 22 Ekim 2026'da "Bir Stoacı modern hayatta — Pazartesi" videosu 12. sıraya (üçüncü haftanın pazartesisi) eklendi, tanıtım 13.'ye kaydı. Görseller ve videolar `docs/sosyal-medya/ilk-10/` klasöründe.
 > Kartlar 1080×1350 (Instagram dikey gönderi), videolar 1080×1920 (Reels/TikTok).
 > Metinler uygulamanın kendi içeriğinden alındı; alıntıların künyesinde "serbest uyarlama" var, uygulamadakiyle aynı.
 
-## Takvim (üç hafta, 12 paylaşım)
+## Takvim (üç hafta, 13 paylaşım)
 
 | # | Gün | Tür | Konu |
 |---|---|---|---|
@@ -19,11 +19,12 @@
 | 9 | 11. gün (Per) | Tek görsel | Akşam yansıma sorusu |
 | 10 | 12. gün (Cum) | Kaydırmalı (4) | Öfkeyle Çalışmak programı |
 | 11 | 13. gün (Cmt) | Kaydırmalı (3) | Epiktetos kimdi? |
-| 12 | 15. gün (Pzt) | Reels | 20 sn tanıtım |
+| 12 | 15. gün (Pzt) | Reels | **Bir Stoacı modern hayatta — Pazartesi** (önce İngilizce) |
+| 13 | 17. gün (Çar) | Reels | 20 sn tanıtım |
 
 **Saat:** sabah 08:00–09:00 ya da akşam 21:00–22:00. Uygulamanın kendisi de sabah niyeti ve akşam yansıması üzerine kurulu; yansıma sorusu (#9) mutlaka **akşam** gitmeli.
 
-**Sıra mantığı:** önce akılda kalan bir duygu (#1, filozof videosu), sonra değer ver (#2–#5), ikinci hafta yine güçlü bir videoyla açılır (#6 Marcus), sonra yine değer (#7–#9), satış (#10 Plus programı); üçüncü haftanın başında ne olduğumuzu gösteren tanıtım (#12). Her hafta iki hareketli gönderi (Reels) var, çünkü keşfet ekranına en çok onlar düşüyor.
+**Sıra mantığı:** önce akılda kalan bir duygu (#1, filozof videosu), sonra değer ver (#2–#5), ikinci hafta yine güçlü bir videoyla açılır (#6 Marcus), sonra yine değer (#7–#9), satış (#10 Plus programı); üçüncü hafta bir pazartesi sabahı "Bir Stoacı modern hayatta" serisinin ilk bölümüyle açılır (#12 — dizi tutarsa her hafta yeni bölüm), iki gün sonra ne olduğumuzu gösteren tanıtım (#13). Her hafta iki hareketli gönderi (Reels) var, çünkü keşfet ekranına en çok onlar düşüyor.
 
 ## Genel kurallar
 
@@ -200,7 +201,37 @@
 
 ---
 
-## 12 · Reels — Tanıtım (20 sn)
+## 12 · Reels — Bir Stoacı modern hayatta: Pazartesi (27 sn)
+
+**Dosya:** `stoaci-modern-hayatta/pazartesi-stoaci-en-1080x1920.mp4` (Türkçesi `pazartesi-stoaci-tr-1080x1920.mp4`)
+**Gün ve saat:** pazartesi **sabah 08:00–09:00** — video "Pazartesi sabahı" diye açılıyor, izleyen kendi pazartesisinin içinde görsün.
+**Önce İngilizce:** Reels, TikTok ve YouTube Shorts'a **aynı gün** İngilizce sürüm; dil gerektirmeyen bir video, yurt dışında yayılma şansı daha yüksek. Türkçe sürümü aynı akşam ya da ertesi gün TikTok'a ve hikâyeye koy.
+
+İngilizce açıklama (ilk satır soru — yorumu açar):
+
+> What would a Stoic do on a Monday? 😌
+>
+> Traffic, notifications, meetings, a missed bus. Two thousand years ago Epictetus said it: it's not events that disturb us, but our judgments about them.
+>
+> Stoikos — Stoic wisdom for everyday life. Link in bio.
+>
+> #stoicism #stoic #marcusaurelius #mindset #mondaymotivation #philosophy
+
+Türkçe açıklama:
+
+> Sen bu durumda ne yapardın? 😌
+>
+> Trafik, bildirimler, toplantı, kaçan otobüs. Epiktetos iki bin yıl önce söyledi: bizi rahatsız eden olaylar değil, onlar hakkındaki yargılarımız.
+>
+> Stoikos — Stoacı bilgelik, günlük hayatta. Bağlantı profilde.
+>
+> #stoacılık #pazartesi #felsefe #sakinlik #stoicism
+
+**Ses:** videonun kendi sesi var (korna, telefon titreşimi, ofis uğultusu, yağmur, gece). Müzik eklersen alçak tut; "kaos → sakinlik" geçişi sesten de duyulmalı.
+**Yapay zekâ etiketi:** yükleme ekranında "Yapay zekâ ile oluşturuldu" seçeneğini işaretle.
+**Seri:** tutarsa her pazartesi yeni bölüm ("Bir Stoacı düğünde / tatilde / kayınvalidesiyle…"). İlk 48 saatteki izlenme ve kaydetme sayısına bak; ortalamanın belirgin üstündeyse ikinci bölümü üret.
+
+## 13 · Reels — Tanıtım (20 sn)
 
 **Dosya:** `store-assets/teaser-tr-1080x1920.mp4` · kapak: `ilk-10/01-tanitim-kapak.jpg`
 
