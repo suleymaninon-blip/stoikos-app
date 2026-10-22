@@ -15,7 +15,7 @@ const CHAT = [
   { id: '0', role: 'assistant', content: 'Buradayım. Bugün seni ne meşgul ediyor?', timestamp: '2026-09-05T09:12:00.000Z' },
   { id: '1', role: 'user', content: 'Yarın sunum var ve gece boyunca uyuyamadım. Sürekli ters gidebilecek şeyleri düşünüyorum.', timestamp: '2026-09-05T09:12:30.000Z' },
   { id: '2', role: 'assistant',
-    content: 'Zihnin yarını bu gece yaşamaya çalışıyor — ve o savaşı hep kaybediyor, çünkü yarın henüz yok.\n\nSunumun nasıl geçeceği tümüyle senin elinde değil. Ama hazırlığın, sesinin tonu, bir soruya "bilmiyorum, bakıp döneyim" diyebilme dürüstlüğün — bunlar senin. Stoacılar buna kontrol ikilemi diyor: enerjiyi elinde olana ver, olmayanı bırak.\n\n> "İnsanları rahatsız eden şeyler değil, şeyler hakkındaki düşünceleridir." — Epiktetos, Encheiridion\n\nBu gece için tek bir iş kaldı: uyumak. Sunum yarının işi.',
+    content: 'Zihnin yarını bu gece yaşamaya çalışıyor — ve o savaşı hep kaybediyor, çünkü yarın henüz yok.\n\nSunumun nasıl geçeceği tümüyle senin elinde değil. Ama hazırlığın, sesinin tonu, bir soruya "bilmiyorum, bakıp döneyim" diyebilme dürüstlüğün — bunlar senin. Stoacılar buna kontrol ikilemi diyor: enerjiyi elinde olana ver, olmayanı bırak.\n\n> "İnsanları rahatsız eden şeyler değil, şeyler hakkındaki düşünceleridir." — Epiktetos, Encheiridion · serbest uyarlama\n\nBu gece için tek bir iş kaldı: uyumak. Sunum yarının işi.',
     timestamp: '2026-09-05T09:13:10.000Z' },
 ];
 
