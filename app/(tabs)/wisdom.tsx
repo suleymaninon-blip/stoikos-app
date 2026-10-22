@@ -18,6 +18,10 @@ import { Paywall } from '../../components/Paywall';
 import { ENFORCE_PLUS_GATE } from '../../constants/config';
 import { SoundIcon, StopIcon } from '../../components/Icons';
 
+// Kavram simgeleri (☉ ◉ ⚖ …) renk verilmezse siyah çiziliyor, iOS ⚖'yi renkli emojiye
+// çeviriyor. U+FE0E metin biçimini zorlar → paletin rengini alır.
+const TEXT_GLYPH = '\uFE0E';
+
 // ─── QuoteCard ─────────────────────────────────────────────
 function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
   quote: Quote; onShare: (q: Quote) => void;
@@ -68,7 +72,7 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
 function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPress: () => void; moreLabel: string }) {
   return (
     <TouchableOpacity style={[styles.conceptCard, { backgroundColor: concept.color }]} onPress={onPress} activeOpacity={0.8}>
-      <Text style={styles.conceptIcon}>{concept.icon}</Text>
+      <Text style={styles.conceptIcon}>{concept.icon + TEXT_GLYPH}</Text>
       <Text style={styles.conceptLatin}>{concept.latin}</Text>
       <Text style={styles.conceptTr}>{concept.name}</Text>
       <Text style={styles.conceptPreview} numberOfLines={2}>{concept.desc}</Text>
@@ -91,7 +95,7 @@ function ConceptModal({ concept, onClose, exampleLabel, practiceLabel, closeLabe
       <Pressable style={styles.modalOverlay} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-            <Text style={styles.modalIcon}>{concept.icon}</Text>
+            <Text style={styles.modalIcon}>{concept.icon + TEXT_GLYPH}</Text>
             <Text style={styles.modalLatin}>{concept.latin}</Text>
             <Text style={styles.modalTr}>{concept.name}</Text>
             {audio && (
@@ -644,10 +648,10 @@ const styles = StyleSheet.create({
     borderRadius: 18, padding: 20,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
-  conceptIcon: { fontSize: 22, marginBottom: 10 },
+  conceptIcon: { fontSize: 22, color: Colors.sand2, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 24, color: Colors.sand2, marginBottom: 2 },
   conceptTr: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.5, marginBottom: 10 },
-  conceptPreview: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 18, marginBottom: 10 },
+  conceptPreview: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21, marginBottom: 10 },
   conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.accent, letterSpacing: 0.3 },
 
   // Filozof kartı
@@ -664,7 +668,7 @@ const styles = StyleSheet.create({
   philoSymbol: { fontFamily: Fonts.cinzel, fontSize: 20, color: Colors.sand2 },
   philoName: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.sand2, marginBottom: 2 },
   philoEra: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, marginBottom: 8 },
-  philoOneLiner: { fontFamily: Fonts.jost, fontSize: 12.5, color: Colors.text2, lineHeight: 19 },
+  philoOneLiner: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21 },
 
   // Filozof modal
   philoModalSymbolBox: {
@@ -683,23 +687,23 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 24, padding: 28, width: '100%', maxHeight: '85%',
     borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)',
   },
-  modalIcon: { fontSize: 32, marginBottom: 12, textAlign: 'center' },
+  modalIcon: { fontSize: 32, color: Colors.sand2, marginBottom: 12, textAlign: 'center' },
   modalLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.sand2, textAlign: 'center', marginBottom: 4 },
-  modalTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, textAlign: 'center', letterSpacing: 0.5, marginBottom: 16 },
+  modalTr: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', letterSpacing: 0.5, marginBottom: 16 },
   modalDivider: { height: 1, backgroundColor: 'rgba(196,169,106,0.15)', marginBottom: 16 },
-  modalDesc: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 21, marginBottom: 16 },
+  modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 16 },
   modalExampleBox: {
     backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
   modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
-  modalExample: { fontFamily: Fonts.cormorantItalic, fontSize: 13, color: Colors.sand3, lineHeight: 20 },
+  modalExample: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand3, lineHeight: 26 },
   modalPracticeBox: {
     backgroundColor: 'rgba(159,176,196,0.08)', borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
   modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
-  modalPractice: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.text, lineHeight: 21 },
+  modalPractice: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.text, lineHeight: 26 },
   modalClose: {
     backgroundColor: Colors.stone3, borderRadius: 12,
     paddingVertical: 12, alignItems: 'center',

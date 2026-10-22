@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   header: { marginBottom: 24, marginTop: 8 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.text, letterSpacing: 0.3, marginBottom: 8, lineHeight: 34 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
-  intro: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 20 },
+  intro: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, lineHeight: 23 },
 
   // Progress
   progressWrap: { marginBottom: 28 },
@@ -497,16 +497,16 @@ const styles = StyleSheet.create({
   journalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   journalTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: 'rgba(159,176,196,0.8)' },
   journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(159,176,196,0.9)', letterSpacing: 0.3 },
-  journalHint: { fontFamily: Fonts.jost, fontSize: 13.5, color: Colors.text2, lineHeight: 21, marginBottom: 12 },
+  journalHint: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 24, marginBottom: 12 },
   consentRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, minHeight: 44 },
   consentBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: 'rgba(159,176,196,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
   consentBoxOn: { backgroundColor: 'rgba(159,176,196,0.85)', borderColor: 'rgba(159,176,196,0.85)' },
   consentCheck: { fontSize: 12, color: '#0c1116', fontFamily: Fonts.jostMedium, marginTop: -1 },
-  consentLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 17 },
-  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, lineHeight: 14, marginTop: 8 },
+  consentLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19 },
+  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, lineHeight: 17, marginTop: 8 },
   journalInput: {
     backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
-    fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, lineHeight: 21,
+    fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 24,
     minHeight: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginBottom: 12,
   },
   journalSaveBtn: {
@@ -524,9 +524,9 @@ const styles = StyleSheet.create({
   },
   conceptTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.sand, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.sand2, letterSpacing: 0.5, marginBottom: 2 },
-  conceptTr: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.5, marginBottom: 14 },
+  conceptTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.5, marginBottom: 14 },
   conceptDivider: { height: 1, backgroundColor: 'rgba(196,169,106,0.12)', marginBottom: 14 },
-  conceptDesc: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 19 },
+  conceptDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26 },
 
   // Shared
   cormorantItalic: { fontFamily: Fonts.cormorantItalic },

@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
   },
   emptyTitle: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.text, textAlign: 'center', marginTop: 16, marginBottom: 10 },
-  emptyBody: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, textAlign: 'center', lineHeight: 20, marginBottom: 22 },
+  emptyBody: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, textAlign: 'center', lineHeight: 23, marginBottom: 22 },
   emptyBtn: { backgroundColor: Colors.sand, borderRadius: 24, paddingVertical: 12, paddingHorizontal: 26 },
   emptyBtnText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.bg, letterSpacing: 0.4 },
   emptyLink: { marginTop: 16 },

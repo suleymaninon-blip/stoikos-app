@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   },
   rowIcon: { fontSize: 20, color: Colors.sand2 },
   rowName: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2, letterSpacing: 0.4, marginBottom: 3 },
-  rowDesc: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2, lineHeight: 17 },
+  rowDesc: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19 },
   rowArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.sand },
 
   continuity: { alignItems: 'center', paddingVertical: 8 },
