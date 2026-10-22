@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Stoikos — Apple Kurulumu</title>
+<style>
+  @font-face { font-family:'Jost'; font-weight:400; src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf'); }
+  @font-face { font-family:'Jost'; font-weight:500; src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf'); }
+  @font-face { font-family:'Cormorant'; font-weight:500; src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_500Medium.ttf'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:500; src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_500Medium_Italic.ttf'); }
+
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'Jost',sans-serif; font-size:10.5pt; line-height:1.45; color:#2a241b; background:#fff; }
+  h1 { font-family:'Cormorant',serif; font-weight:500; font-size:28pt; line-height:1.05; margin:0 0 4pt; color:#1f1a12; }
+  .sub { color:#7a6d55; font-size:10pt; margin-bottom:12pt; }
+  .legend { display:flex; gap:14pt; font-size:9pt; color:#5c513d; border:1px solid #e4dccb; border-radius:6pt; padding:7pt 10pt; margin-bottom:14pt; }
+  .legend span { display:flex; align-items:center; gap:5pt; }
+  h2 { font-family:'Cormorant',serif; font-weight:500; font-size:16pt; margin:16pt 0 2pt; color:#1f1a12; break-after:avoid; }
+  .h2note { font-size:9pt; color:#7a6d55; margin:0 0 6pt; }
+  .item { display:grid; grid-template-columns:16pt 1fr 54pt; gap:8pt; padding:7pt 0; border-bottom:1px solid #ece5d6; break-inside:avoid; }
+  .box { width:12pt; height:12pt; border:1.2pt solid #8a7a58; border-radius:2.5pt; margin-top:2pt; }
+  .t { font-weight:500; color:#1f1a12; }
+  .d { color:#4c4334; font-size:9.5pt; margin-top:1pt; }
+  .d ul { margin:3pt 0 0; padding-left:13pt; }
+  .d li { margin:1pt 0; }
+  .who { font-size:8pt; font-weight:500; letter-spacing:.6pt; text-transform:uppercase; text-align:center; border-radius:10pt; padding:2pt 0; height:fit-content; margin-top:1pt; }
+  .sen { background:#f3e6c8; color:#6b4f12; }
+  .claude { background:#e3ebf3; color:#2f4a66; }
+  .birlikte { background:#e4efe6; color:#2f5a3c; }
+  .dis { background:#efe4ea; color:#6a3553; }
+  .ref { font-size:8.5pt; color:#7a6d55; margin-top:3pt; }
+  .notes { margin-top:18pt; break-inside:avoid; }
+  .line { border-bottom:1px solid #d9d0bd; height:20pt; }
+  .warn { background:#fbf3e2; border:1px solid #ecd9ad; border-radius:6pt; padding:8pt 10pt; font-size:9.5pt; color:#5a4416; margin:6pt 0 4pt; }
+
+  table { break-inside:avoid; width:100%; border-collapse:collapse; font-size:9.5pt; margin:4pt 0 2pt; }
+  th, td { text-align:left; padding:4pt 6pt; border-bottom:1px solid #ece5d6; vertical-align:top; }
+  th { font-weight:500; color:#5c513d; background:#f7f2e8; }
+  code { font-family:'Jost',sans-serif; font-weight:500; background:#f3ecdc; color:#3d3222; padding:0 3pt; border-radius:3pt; }
+  .step { font-family:'Cormorant',serif; font-size:20pt; color:#b08d4f; margin-right:4pt; }
+  .fill { display:inline-block; min-width:120pt; border-bottom:1px solid #b9ad94; height:12pt; vertical-align:bottom; }
+</style>
+</head>
+<body>
+
+<h1>Apple kurulumu</h1>
+<div class="sub">Stoikos · Apple Developer onayı: 22 Ekim 2026 (hesap Bilge İnön adına) · Değerleri <b>harfi harfine</b> gir; değiştirmen gerekirse önce Claude'a sor.</div>
+
+<div class="warn"><b>Sıra önemli:</b> Önce 1. adım (sözleşme, banka, vergi). Apple'ın onayı birkaç gün sürebilir; onay gelmeden abonelikler test bile edilemez.</div>
+
+<h2><span class="step">1</span>Sözleşme, banka, vergi</h2>
+<p class="h2note">App Store Connect → İş (Business) · yalnız hesap sahibi (Bilge Hanım) yapabilir</p>
+<div class="item"><div class="box"></div><div><div class="t">Ücretli Uygulamalar Sözleşmesi (Paid Apps Agreement)</div><div class="d">Kabul et.</div></div><div class="who sen">Bilge H.</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Banka hesabı</div><div class="d">Bilge İnön adına, Türk lirası IBAN.</div></div><div class="who sen">Bilge H.</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Vergi formu W-8BEN</div><div class="d">Bireysel, ABD dışı; vergi anlaşması ülkesi: <b>Turkey</b>.</div></div><div class="who sen">Bilge H.</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Durum "Etkin (Active)" oldu</div><div class="d">Birkaç saat – birkaç gün.</div></div><div class="who dis">Apple</div></div>
+<h2><span class="step">2</span>Süleyman'ı ekibe ekle (önerilir)</h2><p class="h2note">Kullanıcılar ve Erişim → +</p><div class="item"><div class="box"></div><div><div class="t">Süleyman'ın Apple kimliği → rol <b>Yönetici (Admin)</b></div><div class="d">Sonraki adımlar kendi hesabınla yapılabilir.</div></div><div class="who sen">Bilge H.</div></div>
+<h2><span class="step">3</span>Paket kimliği (Bundle ID)</h2><p class="h2note">developer.apple.com → Certificates, Identifiers &amp; Profiles → Identifiers → + → App IDs → App</p><div class="item"><div class="box"></div><div><div class="t">Description: <code>Stoikos</code> · Bundle ID (Explicit): <code>com.stoikos.app</code></div><div class="d">Capabilities varsayılan kalsın. Push Notifications gerekmez (hatırlatıcılar cihazda).</div></div><div class="who sen">Sen</div></div>
+<div style="break-inside:avoid"><h2><span class="step">4</span>Uygulama kaydı</h2><p class="h2note">App Store Connect → Uygulamalar → + → Yeni Uygulama</p>
+<table>
+<tr><th>Alan</th><th>Değer</th></tr>
+<tr><td>Platform</td><td>iOS</td></tr>
+<tr><td>Ad</td><td><code>Stoikos</code> — alınmışsa <code>Stoikos: Stoacı Bilgelik</code></td></tr>
+<tr><td>Birincil dil</td><td>Türkçe</td></tr>
+<tr><td>Paket kimliği</td><td><code>com.stoikos.app</code></td></tr>
+<tr><td>SKU</td><td><code>stoikos-ios</code></td></tr>
+<tr><td>Kullanıcı erişimi</td><td>Tam erişim</td></tr>
+</table>
+</div>
+<div class="item"><div class="box"></div><div><div class="t">Uygulama kaydı oluşturuldu</div><div class="d">Kullanılan ad: <span class="fill"></span></div></div><div class="who sen">Sen</div></div>
+<h2><span class="step">5</span>Abonelikler</h2><p class="h2note">Uygulama → Para Kazanma → Abonelikler → Abonelik Grubu: <b>Stoikos Plus</b> (görünen ad TR/EN: Stoikos Plus)</p>
+<table>
+<tr><th></th><th>Yıllık</th><th>Aylık</th></tr>
+<tr><td>Referans adı</td><td>Stoikos Plus Yıllık</td><td>Stoikos Plus Aylık</td></tr>
+<tr><td><b>Ürün kimliği</b></td><td><code>com.stoikos.app.plus.annual</code></td><td><code>com.stoikos.app.plus.monthly</code></td></tr>
+<tr><td>Süre</td><td>1 yıl</td><td>1 ay</td></tr>
+<tr><td>Fiyat</td><td><b>49,99 USD</b></td><td><b>6,99 USD</b></td></tr>
+<tr><td>Grup içi sıra</td><td>1</td><td>2</td></tr>
+<tr><td>Görünen ad TR / EN</td><td>Yıllık · Annual</td><td>Aylık · Monthly</td></tr>
+<tr><td>Açıklama TR</td><td>Koç, tüm programlar ve sesli anlatım — yıllık</td><td>… — aylık</td></tr>
+<tr><td>Açıklama EN</td><td>Coach, all programs and audio — yearly</td><td>… — monthly</td></tr>
+<tr><td>Giriş teklifi</td><td colspan="2">Ücretsiz deneme · <b>2 hafta</b> · tüm ülkeler (iki üründe de)</td></tr>
+<tr><td>İnceleme bilgisi</td><td colspan="2">Ekran görüntüsü: <code>store-assets/iphone-7-plus.png</code> · Not: "Stoikos Plus unlocks the AI coach, all guided programs and concept audio."</td></tr>
+</table>
+<div class="warn">⚠️ Ürün kimlikleri kaydedilince <b>değiştirilemez</b>, silinse bile yeniden kullanılamaz.</div>
+<div class="item"><div class="box"></div><div><div class="t">Abonelik grubu "Stoikos Plus" oluşturuldu</div><div class="d"></div></div><div class="who sen">Sen</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Yıllık ürün + 2 hafta deneme</div><div class="d"><code>com.stoikos.app.plus.annual</code> · 49,99 USD</div></div><div class="who sen">Sen</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Aylık ürün + 2 hafta deneme</div><div class="d"><code>com.stoikos.app.plus.monthly</code> · 6,99 USD</div></div><div class="who sen">Sen</div></div>
+<h2><span class="step">6</span>İki anahtar</h2><p class="h2note">Kullanıcılar ve Erişim → Entegrasyonlar · .p8 dosyaları yalnız bir kez indirilebilir; sohbete yapıştırma, panellere kendin yükle</p><div class="item"><div class="box"></div><div><div class="t">a) EAS için: App Store Connect API anahtarı</div><div class="d">Ad <code>EAS</code>, erişim <b>App Manager</b> → .p8 indir, Key ID ve Issuer ID'yi not al → expo.dev → stoikos → Credentials → iOS → App Store Connect API Key → ekle.<br>Key ID: <span class="fill"></span> &nbsp; Issuer ID: <span class="fill"></span></div></div><div class="who sen">Sen</div></div>
+<div class="item"><div class="box"></div><div><div class="t">b) RevenueCat için: Uygulama İçi Satın Alma anahtarı</div><div class="d">Entegrasyonlar → Uygulama İçi Satın Alma → + → ad <code>RevenueCat</code> → .p8 indir, Key ID'yi not al (Issuer ID a ile aynı).<br>Key ID: <span class="fill"></span></div></div><div class="who sen">Sen</div></div>
+<div class="item"><div class="box"></div><div><div class="t">RevenueCat hesabı aç</div><div class="d">revenuecat.com (ücretsiz başlangıç) — Claude'a "açtım" de; kurulumu birlikte yaparız.</div></div><div class="who sen">Sen</div></div>
+<h2><span class="step">7</span>Sonra Claude</h2><div class="item"><div class="box"></div><div><div class="t">RevenueCat bağlantısı</div><div class="d">iOS uygulaması, entitlement <code>plus</code>, offering <code>default</code> (yıllık + aylık).</div></div><div class="who claude">Claude</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Uygulamada satın alma</div><div class="d">Ülkeye göre gerçek fiyatlar, satın al / geri yükle, Kullanım Koşulları bağlantısı.</div></div><div class="who claude">Claude</div></div>
+<div class="item"><div class="box"></div><div><div class="t">Sunucuda abonelik doğrulama + haftalık koç hakkını aç</div><div class="d"><code>WEEKLY_FREE_QUOTA = true</code></div></div><div class="who claude">Claude</div></div>
+<div class="item"><div class="box"></div><div><div class="t">İlk TestFlight derlemesi → iPhone'da test</div><div class="d">Sandbox satın alma, bildirimler, nefes sesi, ikon.</div></div><div class="who birlikte">Birlikte</div></div>
+<div class="item"><div class="box"></div><div><div class="t">En son: Plus kilidini aç → incelemeye gönder</div><div class="d"><code>ENFORCE_PLUS_GATE = true</code></div></div><div class="who claude">Claude</div></div>
+<h2>App Gizliliği anketi (yayın sayfasında)</h2>
+<table>
+<tr><th>Soru</th><th>Cevap</th></tr>
+<tr><td>Takip (Tracking)</td><td><b>Hayır</b></td></tr>
+<tr><td>Kullanıcı İçeriği → Diğer kullanıcı içeriği</td><td>Koç mesajları, rızayla yansımalar · Uygulama işlevi · kimlikle ilişkilendirilmez</td></tr>
+<tr><td>Tanımlayıcılar → Kullanıcı Kimliği</td><td>Cihazda üretilen rastgele kimlik · Uygulama işlevi · ilişkilendirilmez</td></tr>
+<tr><td>Satın Almalar → Satın alma geçmişi</td><td>Abonelik durumu (RevenueCat) · Uygulama işlevi · ilişkilendirilmez</td></tr>
+<tr><td>Diğer her şey</td><td>Konum, kişiler, sağlık, finans, tarama geçmişi, reklam verisi: <b>toplanmıyor</b></td></tr>
+<tr><td>Gizlilik politikası adresi</td><td><code>https://stoikos.app/privacy.html</code> (TR: /gizlilik.html)</td></tr>
+</table>
+
+<div class="notes"><h2>Notlar</h2><div class="line"></div><div class="line"></div><div class="line"></div></div>
+</body>
+</html>

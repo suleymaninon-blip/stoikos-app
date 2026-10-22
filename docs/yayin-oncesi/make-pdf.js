@@ -4,8 +4,12 @@ const { chromium } = require('/opt/node22/lib/node_modules/playwright');
 const path = require('path');
 const fs = require('fs');
 
-const SRC = 'file://' + path.resolve(__dirname, 'eksikler.html');
-const OUT = path.resolve(__dirname, 'stoikos-yayin-oncesi-eksikler.pdf');
+// Kullanım: node make-pdf.js [kaynak.html çıktı.pdf "altbilgi"] — varsayılan eksikler listesi.
+// Apple kurulumu: node make-pdf.js apple-kurulum.html stoikos-apple-kurulum.pdf "Stoikos — Apple kurulumu"
+const [, , srcArg, outArg, footArg] = process.argv;
+const SRC = 'file://' + path.resolve(__dirname, srcArg || 'eksikler.html');
+const OUT = path.resolve(__dirname, outArg || 'stoikos-yayin-oncesi-eksikler.pdf');
+const FOOT = footArg || 'Stoikos — Yayın öncesi eksikler';
 
 (async () => {
   const browser = await chromium.launch({
@@ -19,7 +23,7 @@ const OUT = path.resolve(__dirname, 'stoikos-yayin-oncesi-eksikler.pdf');
     path: OUT, format: 'A4', printBackground: true,
     margin: { top: '16mm', bottom: '15mm', left: '16mm', right: '16mm' },
     displayHeaderFooter: true, headerTemplate: '<div></div>',
-    footerTemplate: '<div style="width:100%;font-family:sans-serif;font-size:7pt;color:#a09884;padding:0 16mm;display:flex;justify-content:space-between;"><span>Stoikos — Yayın öncesi eksikler · 22 Ekim 2026</span><span><span class="pageNumber"></span>/<span class="totalPages"></span></span></div>',
+    footerTemplate: '<div style="width:100%;font-family:sans-serif;font-size:7pt;color:#a09884;padding:0 16mm;display:flex;justify-content:space-between;"><span>' + FOOT + '</span><span><span class="pageNumber"></span>/<span class="totalPages"></span></span></div>',
   });
   await browser.close();
   console.log(`✓ ${path.basename(OUT)}  ${(fs.statSync(OUT).size / 1024).toFixed(0)} KB`);
