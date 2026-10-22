@@ -32,6 +32,12 @@ Her komutun başı aynı karakter tarifi (referans görselle birlikte yükle):
 - **Ders:** Gemini tek komutta birden çok olayı sırayla yapınca bazen çekimin ortasında kendi kendine kesiyor. Komutları **tek eyleme** indir. Farklı açılar kurguda kırpılarak (geniş/orta/yakın) çıkarılıyor; ek açı çekimi şart değil.
 - Aşağıdaki 2–5. sahne komutları bu derse göre sadeleştirildi.
 
+## ✅ Kurgulandı (22 Ekim 2026)
+- Çıktı: `stoaci-modern-hayatta/pazartesi-stoaci-tr-1080x1920.mp4` ve `…-en-…` — **22,7 sn**, 1080×1920, Gemini'nin kendi sesleri (korna, titreşim, ofis, yağmur).
+- Kurgu: `bash scripts/social/stoaci/build.sh [müzik.mp3]`. Sıra: arabadan bakış (kanca + "Pazartesi sabahı. Bir Stoacı:") → trafikte zeytin → telefonu ters çevirir → toplantıda not → otobüs suyu sıçratır, kollarını yağmura açar (Epiktetos cümlesi bunun üstünde) → marka kapanışı.
+- Sahne klipleri: `02-telefon…`, `03-toplanti…`, `04-otobus-yagmur…`. `01c-trafik-tepeden` kullanılmadı (1–4. sn'de otobüsler biçim değiştiriyor).
+- **Balkon sahnesi (5) çekilmedi**; alıntı yağmur sahnesine taşındı, akış onsuz da tamam. Çekilirse otobüsten sonra eklenip alıntı onun üstüne alınabilir.
+
 ## Sahne 1 — Trafik (kanca)
 ```
 Using this man as the character: an ancient philosopher with short grey hair and beard, wearing a simple undyed linen tunic and a long sand-coloured wool cloak, stands calmly in the middle of a modern city traffic jam on a grey Monday morning. Cars all around him are stuck bumper to bumper, drivers inside look stressed and frustrated, horns blaring, exhaust in the cold air. He is completely relaxed, slowly eating a single olive from his hand, looking around with mild curiosity and a faint smile. Funny, gentle contrast between ancient calm and modern chaos. Medium shot, slow push-in. Realistic, cinematic, 35mm film look, muted cool city palette with warm light on him, vertical 9:16, single continuous shot, no cuts. No logos, no brand names, no readable text.
