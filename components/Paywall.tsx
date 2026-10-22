@@ -158,12 +158,12 @@ const styles = StyleSheet.create({
 
   frequency: { fontFamily: Fonts.jost, fontSize: 11.5, color: Colors.muted, textAlign: 'center', marginTop: 12, letterSpacing: 0.2 },
   divider: { height: 1, backgroundColor: 'rgba(196,169,106,0.15)', marginVertical: 18 },
-  body: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 21, color: Colors.text2, marginBottom: 18 },
+  body: { fontFamily: Fonts.jost, fontSize: 15, lineHeight: 23, color: Colors.text2, marginBottom: 18 },
 
   features: { gap: 11, marginBottom: 18 },
   featureRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   featureMark: { fontSize: 12, color: Colors.sand, marginTop: 4 },
-  featureText: { flex: 1, fontFamily: Fonts.jost, fontSize: 13, lineHeight: 20, color: Colors.text },
+  featureText: { flex: 1, fontFamily: Fonts.jost, fontSize: 15, lineHeight: 22, color: Colors.text },
 
   freeNote: {
     backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 12, padding: 13,

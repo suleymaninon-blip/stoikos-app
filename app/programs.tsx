@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   reflectHint: { fontFamily: Fonts.jostLight, fontSize: 13, color: Colors.muted, textAlign: 'center' },
   reflectInput: {
     marginTop: 4, minHeight: 92, backgroundColor: Colors.stone, borderRadius: 12, padding: 12,
-    fontFamily: Fonts.jost, fontSize: 15, color: Colors.text,
+    fontFamily: Fonts.jost, fontSize: 16, color: Colors.text,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
   },
   reflectNote: { fontFamily: Fonts.jostLight, fontSize: 11.5, color: Colors.faint, textAlign: 'center' },

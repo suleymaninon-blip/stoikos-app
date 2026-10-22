@@ -94,5 +94,5 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(100,160,220,0.12)',
   },
   entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: 'rgba(100,160,220,0.8)', marginBottom: 8, textTransform: 'capitalize' },
-  entryText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 22 },
+  entryText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 25 },
 });

@@ -24,6 +24,19 @@ find dist -name "*.html" -exec sed -i \
   -e "s|href=\"/assets/|href=\"$BASE/assets/|g" \
   {} \;
 
+# ⚠️ Cloudflare Pages `node_modules` adlı klasörleri YAYINLAMIYOR. Expo yazı tiplerini
+# (Jost, Cinzel, Cormorant) ve gezinme simgelerini dist/assets/node_modules/ altına koyuyor;
+# canlıda hepsi 404 oluyor ve uygulama sistem serif yazı tipine düşüyordu (22 Ekim 2026).
+# Klasörü yeniden adlandır, paketteki yolları da buna göre değiştir.
+if [ -d dist/assets/node_modules ]; then
+  mv dist/assets/node_modules dist/assets/vendor
+  grep -rl "assets/node_modules/" dist --include=*.js --include=*.html --include=*.css --include=*.json \
+    | xargs -r sed -i "s|assets/node_modules/|assets/vendor/|g"
+fi
+if find dist -type d -name node_modules | grep -q .; then
+  echo "HATA: dist içinde hâlâ node_modules klasörü var (Cloudflare yayınlamaz)"; exit 1
+fi
+
 mkdir site
 mv dist "site$BASE"
 cp -r website/. site/   # açılış sayfası, 404, img/, media/
