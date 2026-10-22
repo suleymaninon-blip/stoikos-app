@@ -47,7 +47,7 @@
   <header>
     <div class="omega">Ω</div>
     <h1>Stoikos — Gizlilik Politikası ve Aydınlatma Metni</h1>
-    <div class="meta">Son güncelleme: 12.06.2026 · Sürüm 1.0</div>
+    <div class="meta">Son güncelleme: 22.10.2026 · Sürüm 1.1</div>
   </header>
 
   <div class="note">Bu metin hem 6698 sayılı <strong>KVKK</strong> kapsamında aydınlatma metni hem de genel bir gizlilik politikası olarak hazırlanmıştır. Yayın öncesi bir hukuk danışmanına son kontrol ettirilmesi önerilir.</div>
@@ -68,6 +68,7 @@
       <ul>
         <li><strong>Koç (sohbet)</strong> özelliğini kullandığında — mesajların yanıt üretmek için yapay zekâ hizmetine iletilir.</li>
         <li><strong>Günlük yansımalarını koça iletmeye açık rıza verdiğinde</strong> — yalnızca onay kutusunu işaretlersen.</li>
+        <li><strong>Stoikos Plus aboneliği aldığında</strong> — aboneliğin geçerli mi diye doğrulamak için (ödeme bilgin bize gelmez).</li>
       </ul>
     </li>
     <li><strong>Reklam yok, üçüncü taraf takip/analitik yok, veri satışı yok.</strong></li>
@@ -87,6 +88,9 @@
   <ul>
     <li><strong>Koç sohbeti:</strong> Mesaj yazdığında; rastgele kullanıcı kimliği, dil bilgin ve mesaj içeriğin sunucumuza (Cloudflare Worker), oradan yapay zekâ sağlayıcısına (Anthropic) iletilir. Koçun seni hatırlayabilmesi için konuşmadan kısa bir <strong>özet ("hafıza")</strong> çıkarılır ve sunucumuzda (Cloudflare KV) saklanır.</li>
     <li><strong>Günlük yansımanın koça iletilmesi (yalnızca açık rıza ile):</strong> Onay kutusunu işaretlersen, kaydettiğin yansıma metni kullanıcı kimliği ve dil bilgisiyle sunucumuza, oradan Anthropic'e iletilir ve koç hafızana işlenir. <strong>Onay kutusu kapalıyken bu aktarım yapılmaz.</strong></li>
+    <li><strong>Ücretsiz hak sayacı:</strong> Koçu ücretsiz kullanırken kaç soru sorduğun (ve haftalık hakta haftanın başladığı an) rastgele kullanıcı kimliğine bağlı bir sayı olarak sunucumuzda tutulur. Mesaj içeriği içermez.</li>
+    <li><strong>IP adresi (kötüye kullanım koruması):</strong> Koça mesaj gönderdiğinde, aşırı ve otomatik kullanımı engellemek için IP adresin bir sayaçla birlikte sunucumuzda <strong>en fazla 24 saat</strong> tutulur, sonra kendiliğinden silinir. Başka bir amaçla kullanılmaz, profil çıkarılmaz.</li>
+    <li><strong>Stoikos Plus aboneliği:</strong> Ödeme tamamen Apple (App Store) ya da Google (Play) üzerinden yapılır; kart veya ödeme bilgilerin bize ulaşmaz. Aboneliğinin geçerli olup olmadığını doğrulamak için rastgele kullanıcı kimliğin ve satın alma bilgisi (ürün, tarih, durum) abonelik altyapısı sağlayıcımız RevenueCat'e iletilir.</li>
   </ul>
   <h3>3.3. Otomatik toplanmayan veriler</h3>
   <ul>
@@ -100,6 +104,9 @@
     <tr><td>Cihazdaki tüm yerel veriler</td><td>Uygulamanın temel işlevi (ilerleme, günlük, tercihler)</td><td>Hizmetin ifası; meşru menfaat</td></tr>
     <tr><td>Koç sohbeti (mesaj → Anthropic)</td><td>Talep ettiğin yapay zekâ koç yanıtını üretmek</td><td>Hizmetin ifası — işlemi sen başlatırsın</td></tr>
     <tr><td>Koç hafızası (özet, KV)</td><td>Koçun seni hatırlaması, kişiselleştirme</td><td>Hizmetin ifası</td></tr>
+    <tr><td>Ücretsiz hak sayacı</td><td>Ücretsiz koç hakkını uygulamak</td><td>Hizmetin ifası</td></tr>
+    <tr><td>IP adresi (en fazla 24 saat)</td><td>Kötüye kullanımı ve aşırı maliyeti önlemek, güvenlik</td><td>Meşru menfaat</td></tr>
+    <tr><td>Abonelik doğrulama (RevenueCat)</td><td>Satın aldığın Plus aboneliğini tanımak</td><td>Sözleşmenin kurulması ve ifası</td></tr>
     <tr><td><strong>Günlük yansımanın koça iletilmesi</strong></td><td>Koçun seni daha iyi tanıması</td><td><strong>Açık rıza</strong> — kutu kapalıyken işlenmez</td></tr>
   </table>
   <p>Günlük yansımalar ruh hali, ilişkiler veya sağlık gibi <strong>özel nitelikli kişisel veri</strong> içerebileceğinden, bunların koça iletilmesi yalnızca <strong>açık rızana</strong> dayanır ve varsayılan olarak <strong>kapalıdır</strong>. Rızanı istediğin an geri çekebilirsin.</p>
@@ -108,7 +115,10 @@
   <ul>
     <li><strong>Anthropic, PBC (ABD)</strong> — Yapay zekâ koç yanıtlarını ve hafıza özetini üretir. Koç mesajların ve (rıza verirsen) yansımaların bu hizmete ABD'ye aktarılır.</li>
     <li><strong>Cloudflare, Inc. (ABD/küresel)</strong> — Sunucu barındırma ve koç hafızasının saklandığı depolama.</li>
-    <li><strong>GitHub Pages</strong> (web) ve <strong>Apple App Store / Google Play</strong> (mobil) — uygulamanın dağıtımı/barındırılması.</li>
+    <li><strong>RevenueCat, Inc. (ABD)</strong> — Plus aboneliğinin doğrulanması (rastgele kullanıcı kimliği ve satın alma bilgisi).</li>
+    <li><strong>Apple (App Store) / Google (Play)</strong> — uygulamanın dağıtımı ve abonelik ödemesi; ödemeler onların kendi koşullarına tabidir.</li>
+    <li><strong>Cloudflare Pages</strong> — stoikos.app web sitesinin ve web sürümünün barındırılması.</li>
+    <li><strong>Google Fonts</strong> — stoikos.app web sayfaları (bu sayfa dahil) yazı tiplerini Google'dan yükler; bu sırada tarayıcın IP adresini Google'a iletir. Mobil uygulama yazı tiplerini kendi içinde taşır, Google'a bağlanmaz.</li>
   </ul>
   <p>Bu sağlayıcılar yurt dışında bulunduğundan, koç özelliğini kullanman ve/veya yansıma rızası vermen halinde kişisel verilerin <strong>yurt dışına aktarılır.</strong> Koç sohbetini kullanman bu aktarımı zorunlu kılar; yansıma aktarımı yalnızca açık rızanla yapılır. Anthropic'in API üzerinden gönderilen verileri model eğitimi için kullanmadığını beyan ettiğini not ederiz; güncel koşullar için sağlayıcının kendi politikaları geçerlidir.</p>
 
@@ -116,6 +126,9 @@
   <ul>
     <li><strong>Cihazdaki veriler:</strong> Sen silene kadar (uygulamayı kaldırma veya "sıfırla") cihazında kalır.</li>
     <li><strong>Koç hafızası (sunucu/KV):</strong> Ayarlar → "Koç hafızasını sıfırla" ile silinene kadar saklanır.</li>
+    <li><strong>IP adresi sayaçları:</strong> En fazla 24 saat; süre dolunca kendiliğinden silinir.</li>
+    <li><strong>Ücretsiz hak sayacı:</strong> Haftalık hak sayacı en geç iki hafta sonra kendiliğinden silinir. Mesaj içeriği içermez.</li>
+    <li><strong>Abonelik kayıtları:</strong> Aboneliğin sürdüğü sürece ve yasal saklama yükümlülükleri boyunca Apple/Google ve RevenueCat'te tutulur.</li>
     <li><strong>Koç mesajlarının iletimi:</strong> Yanıt üretimi için anlık işlenir; kalıcı sohbet kaydı sunucumuzda tutulmaz (sohbet geçmişi yalnızca cihazındadır). Sağlayıcıların geçici log süreleri kendi politikalarına tabidir.</li>
   </ul>
 

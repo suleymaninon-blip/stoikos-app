@@ -3,6 +3,8 @@
 **Son güncelleme:** 12.06.2026
 **Sürüm:** 1.0
 
+> ⚠️ **Bu dosya ilk taslak (1.0).** Yayındaki güncel metin `public/gizlilik.html` (TR) ve `public/privacy.html` (EN), sürüm 1.1 (22.10.2026): ücretsiz hak sayacı, 24 saatlik IP kaydı, Plus aboneliği / RevenueCat, Cloudflare Pages ve Google Fonts eklendi; GitHub Pages çıkarıldı. Değişiklikleri HTML'de yap.
+
 > Bu metin hem 6698 sayılı **KVKK** kapsamında aydınlatma metni hem de genel bir gizlilik politikası olarak hazırlanmıştır. Yayın öncesi bir hukuk danışmanına son kontrol ettirilmesi önerilir.
 
 ---
