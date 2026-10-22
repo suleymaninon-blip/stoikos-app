@@ -30,7 +30,8 @@
       rgba(194,168,120,.16) 0%, rgba(194,168,120,.07) 38%, rgba(194,168,120,0) 68%);
   }
 
-  /* Nefes orbu — uygulamanın imza görseli */
+  /* Nefes çiçeği — uygulamanın imza görseli (Ekim 2026'da orbun yerini aldı).
+     Altı saydam altın taç yaprağı; üst üste binen saydamlıklar merkezi parlatır. */
   .orb-wrap {
     position:absolute; right:96px; top:50%; transform:translateY(-50%);
     width:300px; height:300px; display:grid; place-items:center;
@@ -40,11 +41,12 @@
   }
   .ring.r1 { width:300px; height:300px; }
   .ring.r2 { width:246px; height:246px; border-color:rgba(194,168,120,.3); }
-  .orb {
-    width:186px; height:186px; border-radius:50%;
-    background:radial-gradient(circle at 38% 32%,
-      #d8c49a 0%, #bda476 34%, #8a7550 66%, #4a4030 100%);
-    box-shadow:0 0 68px rgba(194,168,120,.28);
+  .flower { position:absolute; width:300px; height:300px; }
+  .petal {
+    position:absolute; left:50%; top:50%; width:132px; height:132px; margin:-66px 0 0 -66px;
+    border-radius:50%; border:1px solid rgba(250,228,180,.28);
+    background:linear-gradient(150deg, rgba(232,206,150,.55) 0%, rgba(196,160,96,.32) 55%, rgba(150,118,66,.22) 100%);
+    box-shadow:0 0 30px rgba(194,168,120,.10);
   }
 
   .text {
@@ -65,7 +67,7 @@
   }
   .rule { width:64px; height:1px; background:rgba(194,168,120,.4); margin-bottom:20px; }
   .features {
-    font-family:'Jost',sans-serif; font-weight:300; font-size:15px; letter-spacing:1.1px;
+    font-family:'Jost',sans-serif; font-weight:300; font-size:17px; letter-spacing:1px;
     color:var(--dim); line-height:1.5;
   }
 </style>
@@ -76,7 +78,14 @@
     <div class="orb-wrap">
       <div class="ring r1"></div>
       <div class="ring r2"></div>
-      <div class="orb"></div>
+      <div class="flower">
+        <div class="petal" style="transform:rotate(30deg) translateY(-50px)"></div>
+        <div class="petal" style="transform:rotate(90deg) translateY(-50px)"></div>
+        <div class="petal" style="transform:rotate(150deg) translateY(-50px)"></div>
+        <div class="petal" style="transform:rotate(210deg) translateY(-50px)"></div>
+        <div class="petal" style="transform:rotate(270deg) translateY(-50px)"></div>
+        <div class="petal" style="transform:rotate(330deg) translateY(-50px)"></div>
+      </div>
     </div>
     <div class="text">
       <div class="omega"><svg width="64" height="64" viewBox="192 162 640 640" aria-hidden="true">

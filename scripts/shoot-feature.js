@@ -10,17 +10,17 @@ const OUT = process.argv[2] || path.resolve(__dirname, '..', 'store-assets');
 // Mağaza metinleriyle aynı cümleler — vitrin ile açıklama birbirini tekrarlasın.
 const COPY = {
   tr: { tagline: 'Sakinlik bir yetenek değil,\nbir pratiktir.',
-        features: '164 söz · 10 filozof · 12 kavram · Stoacı koç' },
+        features: '164 söz · 12 kavram · 5 program · Stoacı koç' },
   en: { tagline: 'Calm is not a talent.\nIt is a practice.',
-        features: '164 quotes · 10 philosophers · 12 concepts · Stoic coach' },
+        features: '164 quotes · 12 concepts · 5 programs · Stoic coach' },
   de: { tagline: 'Ruhe ist kein Talent.\nSie ist eine Übung.',
-        features: '164 Zitate · 10 Philosophen · 12 Konzepte · Stoischer Coach' },
+        features: '164 Zitate · 12 Konzepte · 5 Programme · Stoischer Coach' },
   ru: { tagline: 'Спокойствие — не талант.\nЭто практика.',
-        features: '164 цитаты · 10 философов · 12 понятий · стоический коуч' },
+        features: '164 цитаты · 12 понятий · 5 программ · стоический коуч' },
   fr: { tagline: 'Le calme n\'est pas un talent.\nC\'est une pratique.',
-        features: '164 citations · 10 philosophes · 12 concepts · coach stoïcien' },
+        features: '164 citations · 12 concepts · 5 parcours · coach stoïcien' },
   es: { tagline: 'La calma no es un talento.\nEs una práctica.',
-        features: '164 citas · 10 filósofos · 12 conceptos · coach estoico' },
+        features: '164 citas · 12 conceptos · 5 programas · coach estoico' },
 };
 
 (async () => {
