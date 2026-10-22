@@ -33,10 +33,9 @@ Her komutun başı aynı karakter tarifi (referans görselle birlikte yükle):
 - Aşağıdaki 2–5. sahne komutları bu derse göre sadeleştirildi.
 
 ## ✅ Kurgulandı (22 Ekim 2026)
-- Çıktı: `stoaci-modern-hayatta/pazartesi-stoaci-tr-1080x1920.mp4` ve `…-en-…` — **22,7 sn**, 1080×1920, Gemini'nin kendi sesleri (korna, titreşim, ofis, yağmur).
-- Kurgu: `bash scripts/social/stoaci/build.sh [müzik.mp3]`. Sıra: arabadan bakış (kanca + "Pazartesi sabahı. Bir Stoacı:") → trafikte zeytin → telefonu ters çevirir → toplantıda not → otobüs suyu sıçratır, kollarını yağmura açar (Epiktetos cümlesi bunun üstünde) → marka kapanışı.
-- Sahne klipleri: `02-telefon…`, `03-toplanti…`, `04-otobus-yagmur…`. `01c-trafik-tepeden` kullanılmadı (1–4. sn'de otobüsler biçim değiştiriyor).
-- **Balkon sahnesi (5) çekilmedi**; alıntı yağmur sahnesine taşındı, akış onsuz da tamam. Çekilirse otobüsten sonra eklenip alıntı onun üstüne alınabilir.
+- Çıktı: `stoaci-modern-hayatta/pazartesi-stoaci-tr-1080x1920.mp4` ve `…-en-…` — **27,3 sn**, 1080×1920, Gemini'nin kendi sesleri (korna, titreşim, ofis, yağmur).
+- Kurgu: `bash scripts/social/stoaci/build.sh [müzik.mp3]`. Sıra: arabadan bakış (kanca + "Pazartesi sabahı. Bir Stoacı:") → trafikte zeytin → telefonu ters çevirir → toplantıda not → otobüs suyu sıçratır, kollarını yağmura açar → gece balkonda yazar, başını kaldırıp şehre bakar (Epiktetos cümlesi bunun üstünde) → marka kapanışı.
+- Sahne klipleri: `02-telefon…`, `03-toplanti…`, `04-otobus-yagmur…`, `05-balkon…` (22 Ekim 2026'da eklendi). `01c-trafik-tepeden` kullanılmadı (1–4. sn'de otobüsler biçim değiştiriyor).
 
 ## Sahne 1 — Trafik (kanca)
 ```
