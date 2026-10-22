@@ -7,7 +7,8 @@
 - Proje kökü: `~/stoikos` (iCloud/TCC sorunları için Desktop'tan taşındı).
 - Web önizleme: `EXPO_BASE_URL= npx expo start --web --port 8081`
 - Telefonda (Expo Go, native): `npx expo start --tunnel --port 8082` → QR okut.
-- tsc: `node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json` (backend/ hataları Cloudflare tipleri, alakasız).
+- tsc: `node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json` (backend/ artık hariç, temiz çıkmalı; backend'i ayrıca `cd backend && npx tsc --noEmit`).
+- **Telefon derlemesi (EAS):** rehber `docs/eas-build.md`. GitHub → Actions → **EAS Build** (elle: platform, profil `preview`/`production`, isteğe bağlı mağazaya gönderme; `.github/workflows/eas-build.yml`, depo sırrı `EXPO_TOKEN` şart). `eas.json`: `preview` (Android APK / iOS ad hoc), `production` (AAB / App Store, `autoIncrement`, `appVersionSource: remote`). `app.json`: `ITSAppUsesNonExemptEncryption:false`, Android'de mikrofon/depolama/ekran üstü izinleri `blockedPermissions` ile kapalı, bildirim simgesi `assets/notification-icon.png` (beyaz saydam), `expo-splash-screen` + `expo-system-ui` eklentileri. Prebuild ile doğrulandı (uyarısız, 22 Ekim 2026).
 - Web yayını (site): `bash scripts/build-site.sh` → `site/` (Cloudflare Pages aynı betiği çalıştırır)
 
 ## Yayın / Deploy
