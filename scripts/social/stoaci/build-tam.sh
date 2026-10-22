@@ -29,3 +29,14 @@ for LANG in tr en; do
   echo "✓ $SRC/pazartesi-tam-$LANG-1080x1920.mp4"
 done
 rm -rf "$TMP"
+
+# Müzikli sürüm: Bach, Viyolonsel Süiti No.1 Prelüd (Lud and Schlatt's Musical Emporium, Wikimedia Commons).
+# Ortam sesi %45'e iner, müzik 0,7 sn'den başlar (baştaki sessizlik atlanır), logoda kısılır; Reels için -16 LUFS.
+MUSIC=docs/sosyal-medya/muzik/bach-cello-suite-1-prelude-lud-schlatt.ogg
+for LANG in tr en; do
+  ffmpeg -v error -y -i $SRC/pazartesi-tam-$LANG-1080x1920.mp4 -i $MUSIC -filter_complex \
+    "[0:a]volume=0.45[amb];[1:a]atrim=0.7:50.7,asetpts=N/SR/TB,afade=t=in:d=1,afade=t=out:st=46.5:d=3.5[m];[amb][m]amix=inputs=2:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11[a]" \
+    -map 0:v -map "[a]" -c:v copy -c:a aac -b:a 192k -ar 48000 -t 50 -movflags +faststart \
+    $SRC/pazartesi-tam-muzikli-$LANG-1080x1920.mp4
+  echo "✓ $SRC/pazartesi-tam-muzikli-$LANG-1080x1920.mp4"
+done
