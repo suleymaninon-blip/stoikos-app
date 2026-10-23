@@ -1,17 +1,26 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stoikos — Stoacı Bilgelik</title>
-<meta name="description" content="Sakinlik bir yetenek değil, bir pratiktir. 164 söz, 10 filozof, 12 kavram, nefes ve seni dinleyen bir Stoacı koç.">
+<!-- Önizleme ve arama bilgileri İngilizce (23 Ekim 2026: hesap dünyaya hitap ediyor). Sayfa metni
+     ziyaretçinin diline göre JS ile TR/EN olur; Türkçe cihazda başlık yine Türkçeye döner. -->
+<title>Stoikos — Stoic Wisdom for Everyday Life</title>
+<meta name="description" content="Calm isn't a talent. It's a practice. 164 quotes, 10 philosophers, 12 concepts, guided breathing and a Stoic coach who listens.">
 <meta name="theme-color" content="#14120e">
 <link rel="icon" type="image/png" href="/img/favicon.png">
 <link rel="apple-touch-icon" href="/img/icon-180.png">
-<meta property="og:title" content="Stoikos — Stoacı Bilgelik">
-<meta property="og:description" content="Sakinlik bir yetenek değil, bir pratiktir.">
-<meta property="og:image" content="https://stoikos.app/img/screen-1-home.webp">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stoikos">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:title" content="Stoikos — Stoic Wisdom for Everyday Life">
+<meta property="og:description" content="Calm isn't a talent. It's a practice.">
+<meta property="og:image" content="https://stoikos.app/img/og-en.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:url" content="https://stoikos.app/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 :root{
@@ -612,7 +621,7 @@ function setLang(l) {
     if (el.hasAttribute('data-html')) el.innerHTML = v; else el.textContent = v;
   });
   document.documentElement.lang = l;
-  document.title = l === 'en' ? 'Stoikos — Stoic Wisdom' : 'Stoikos — Stoacı Bilgelik';
+  document.title = l === 'en' ? 'Stoikos — Stoic Wisdom for Everyday Life' : 'Stoikos — Stoacı Bilgelik';
   document.getElementById('lnkPrivacy').href = l === 'en' ? '/privacy.html' : '/gizlilik.html';
   document.getElementById('lnkTerms').href = l === 'en' ? '/terms-en.html' : '/terms.html';
   var v = document.getElementById('filmVideo');
