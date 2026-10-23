@@ -6,6 +6,7 @@
 #   cekim-2-merdiven:  0,2–10 merdiveni çıkar (ilk karedeki atlama kesilir)
 #   cekim-3-stoa:      0,45–10 sütunlar arasında yürür, denize bakıp oturur (baştaki referans karesi kesilir);
 #                      oturduktan sonraki 7,5–10 yarı hızda (2,5 → 5 sn) ki söz okunacak kadar kalsın
+# Metro sesinde 3,8. sn'den sonra Yunanca anons var: yalnız 0,3–3,6 arası kalabalık sesi döngüyle kullanılır.
 # Çekimler düz kesmeyle bağlanır (erime farklı kadrajları üst üste bindiriyor).
 # Müzik merdivene adım atınca (7,8 sn) girer: Bach, Viyolonsel Süiti No.1 Prelüd.
 # Oturunca gökyüzünde Marcus Aurelius sözü (Düşünceler 4.3, serbest uyarlama).
@@ -35,7 +36,7 @@ for LANG in tr en; do
 [a][b][c][d]concat=n=4:v=1:a=0,settb=1/30[abcd];\
 [5:v]format=rgba,fade=in:st=24.7:d=0.7:alpha=1,fade=out:st=28.4:d=0.5:alpha=1[q];[abcd][q]overlay=0:-850,settb=1/30[vq];\
 [vq][k]xfade=transition=fadeblack:duration=0.6:offset=$X2[v];\
-[0:a]atrim=0:7.8,asetpts=PTS-STARTPTS,aresample=48000,afade=t=out:st=7.3:d=0.5[aa];\
+[0:a]atrim=0.3:3.6,asetpts=PTS-STARTPTS,aresample=48000,asplit=3[m1][m2][m3];[m1][m2]acrossfade=d=0.4[m12];[m12][m3]acrossfade=d=0.4,atrim=0:7.8,afade=t=in:d=0.3,afade=t=out:st=7.3:d=0.5[aa];\
 [1:a]atrim=0.2:10,asetpts=PTS-STARTPTS,aresample=48000,volume=4[ba];\
 [2:a]atrim=0.45:7.5,asetpts=PTS-STARTPTS,aresample=48000,volume=4[ca];[2:a]atrim=7.5:10,asetpts=PTS-STARTPTS,aresample=48000,atempo=0.5,volume=4[da];\
 [aa][ba][ca][da]concat=n=4:v=0:a=1,volume=0.6[amb];\
