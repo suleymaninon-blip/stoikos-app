@@ -161,6 +161,7 @@ export default function SettingsScreen() {
             { icon: '↗', label: t('about.share'), onPress: shareApp },
             ...(storeUrl ? [{ icon: '★', label: t('about.rate'), onPress: rateApp }] : []),
             { icon: '✉', label: t('about.support'), onPress: contactSupport },
+            { icon: '◎', label: t('about.instagram'), onPress: () => Linking.openURL(APP_INFO.instagramUrl).catch(() => {}) },
             { icon: 'lock', label: t('about.privacy'), onPress: openPrivacy },
             { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
           ].map((r, i, arr) => (

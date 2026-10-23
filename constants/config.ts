@@ -7,6 +7,7 @@ export const APP_INFO = {
   storeUrl: { ios: '', android: '' },                                  // App Store / Play Store linkleri (yayında doldur)
   privacyUrl: 'https://stoikos.app/gizlilik.html',
   privacyUrlEn: 'https://stoikos.app/privacy.html',
+  instagramUrl: 'https://instagram.com/stoikos.app',
 };
 
 export const FEATURES = {
