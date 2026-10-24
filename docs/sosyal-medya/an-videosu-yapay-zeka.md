@@ -13,7 +13,38 @@
 - Ses: **"no spoken words in any language"**.
 - Donma efekti beğenilmezse aynı komutla bir kez daha üret; Gemini her seferinde farklı çıkarır.
 
-## Çekim 1: Kavşakta donma (8 sn)
+## Deneme 1'den dersler (24 Ekim 2026)
+- Başa yine referans portresi eklendi (0–1 sn) → kurguda kesilir.
+- **Donma olmadı:** yağmur parıltıya döndü ama insanlar ve bisiklet yürümeye devam etti. Video modelleri "her şey dursun" komutunda zorlanıyor.
+- **Gerçek marka tabelaları çıktı** (CROCS benzeri beyaz yazı, kırmızı neon mağaza adı) → kullanılamaz.
+- Düzeltme: mağazasız sokak (yalnız tabelasız ofis/apartman camları), donma "duraklatılmış film / fotoğraf" diye tarif edilir, insanların donduğu ayrıca ve sayıyla yazılır. Yine olmazsa donma kurguda yapılır (kare dondurma + yavaş yakınlaşma + ses kesilir).
+
+## Çekim 1: Kavşakta donma (8 sn) — düzeltilmiş komut aşağıda, eski komut onun altında
+
+**Düzeltilmiş (Deneme 2). Yükle:** yalnız `bahce-videosu/00-kadin-referans.png`, yeni sohbet
+
+```
+Use this image ONLY as the reference for the woman's appearance. Do NOT show this image or any studio portrait in the video. The video starts directly on the rainy street.
+
+CHARACTER (keep exactly the same): a calm woman about 40 years old with long dark brown hair with a few silver strands, loosely braided over one shoulder, olive-toned skin, dark brown eyes. She wears a simple ankle-length undyed off-white linen tunic tied with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders. Her hands are empty.
+
+SETTING: a wide city crosswalk at night in heavy rain, between tall dark office buildings with plain lit windows. There are NO shops, NO shop signs, NO billboards, NO screens, NO neon letters and NO brand names anywhere in the frame. Light comes only from street lamps, traffic lights and car headlights reflecting on the wet black asphalt. About twenty people in dark coats cross the street in both directions under black umbrellas, looking at their phones. A cyclist rides through a puddle. Heavy rain falls.
+
+CAMERA: static, medium-wide shot from her side, slightly behind her (three-quarter back view), at shoulder height. The camera does not move at all.
+
+TIMELINE:
+0–3 s: she stands still in the middle of the crosswalk while everyone rushes around her in the rain. She closes her eyes.
+3–4 s: she takes one slow, deep breath.
+4–8 s: TIME STOPS. From exactly 4 seconds until the end, the whole world becomes a paused film, like a still photograph: every raindrop hangs motionless in the air like a tiny glass bead; all twenty people stop mid-step and stay completely frozen like statues; every umbrella stops; the cyclist and the water splash from his wheel freeze in the air; cars stop. NOTHING in the background moves at all. Only the woman is alive: she slowly opens her eyes and looks calmly at the frozen raindrops in front of her, and her braid and the edge of her cloak move very gently.
+
+STYLE: photorealistic, cinematic, shot on 35mm film with a 50mm lens, natural film grain, shallow depth of field. Cold blue night palette with red traffic-light reflections and warm light on her face. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+
+DO NOT SHOW: a studio portrait or grey background at the start; any shop, sign, billboard, screen, logo, brand name or readable text; any person, umbrella, bicycle or car moving after 4 seconds; raindrops falling after 4 seconds; sparkles or magic particles; a stone arch, mountains or sunrise.
+
+AUDIO: heavy rain, car horns, splashing footsteps, a dull crowd murmur with no spoken words in any language; at 4 seconds every sound cuts to total silence except one slow breath and a soft, high crystalline ringing. No music.
+```
+
+**Eski komut (Deneme 1):**
 
 **Yükle:** yalnız `bahce-videosu/00-kadin-referans.png`
 
