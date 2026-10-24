@@ -10,6 +10,12 @@ const [, , , OUT, ...TEXTS] = process.argv;
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   await page.goto('file://' + path.resolve(__dirname, 'overlay.html'));
   await page.evaluate(() => document.fonts.ready);
+  // NOSHADE=1: yazının arkasındaki koyu halkayı kaldırır (açık gökyüzünde leke gibi duruyor; karartma kurguda yapılır).
+  // \n ile satır kırılır (white-space: pre-line).
+  await page.evaluate((noShade) => {
+    if (noShade) document.getElementById('shade').style.display = 'none';
+    document.getElementById('text').style.whiteSpace = 'pre-line';
+  }, process.env.NOSHADE === '1');
   for (let i = 0; i < TEXTS.length; i++) {
     await page.evaluate((s) => window.showText(s), TEXTS[i]);
     await page.evaluate(() => document.fonts.ready);
