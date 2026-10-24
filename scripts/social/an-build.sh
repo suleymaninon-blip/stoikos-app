@@ -5,7 +5,9 @@
 #   cekim-1-kavsak: 0–4,3 canlı; 4,3'ten sonra DONMA KURGUDA: arka plan 4,3. sn karesinde sabit,
 #                   kadın cekim-1-kadin-maske.png ile canlı videodan bindirilir (Gemini insanları dondurmadı).
 #                   Donmuş bölüm 4,5 sn, yavaş yakınlaşma; ses kesilir, ince çınlama.
-#   cekim-2-kemer:  0–9,6 Çekim 1'in son karesinden devam: önündeki damlaya dokunur, döner, "STOIKOS" kemerine yürür
+#   cekim-2b-damla: 0–5 önden: küçük bir damlaya parmağıyla dokunur, damla halka halka dalgalanır, döner
+#                   (kullanıcı 25 Ekim 2026: cekim-2'deki damla çok büyüktü → montajın 8–13. sn'si bununla değişti)
+#   cekim-2-kemer:  4,2–9,6 (yalnız kemere yürüyüş kısmı) — eskiden 0–9,6 Çekim 1'in son karesinden devam: önündeki damlaya dokunur, döner, "STOIKOS" kemerine yürür
 #                   (25 Ekim 2026'da yeniden üretildi; eskisinde el omzun arkasından çıkıyordu → deneme-cekim-2-kemer-eski)
 #   cekim-3-zirve:  1,9–7,4 kemer ışığından terasa (baştaki portre ve kameraya dönük kemer anı kesilir);
 #                   7,4–10 yarı hızda (gözleri kapalı, gülümser)
@@ -18,9 +20,9 @@ SRC=docs/sosyal-medya/an-videosu
 MUSIC=docs/sosyal-medya/muzik/bach-cello-suite-1-prelude-lud-schlatt.ogg
 TMP=$(mktemp -d)
 P="scale=1080:1920:flags=lanczos,fps=30,setsar=1,format=yuv420p,settb=1/30"
-F=4.5        # donmuş bölüm süresi
-# A = 4,3 + 4,5 = 8,8 · B = 9,6 · C = 5,5 + 5,2 = 10,7 · logo 4
-X1=17.8      # B → C ışık geçişi (0,6 sn): 8,8 + 9,6 − 0,6
+F=3.7        # donmuş bölüm süresi (damla sahnesi montajın 8. sn'sinde başlasın)
+# A = 4,3 + 3,7 = 8,0 · B = 5,0 + 5,4 = 10,4 · C = 5,5 + 5,2 = 10,7 · logo 4
+X1=17.8      # B → C ışık geçişi (0,6 sn): 8,0 + 10,4 − 0,6
 X2=27.8      # C → logo (0,6 sn kararma): 17,8 + 10,7 − 0,7
 TOTAL=31.8
 
@@ -43,17 +45,18 @@ for LANG in tr en; do
   NOSHADE=1 node scripts/social/filozof/render-layers.js "$LANG" "$TMP" "$Q"
   ffmpeg -v error -y -i $SRC/cekim-1-kavsak-gemini-720p.mp4 -i $TMP/frozen.mp4 -i $SRC/cekim-2-kemer-gemini-720p.mp4 \
     -i $SRC/cekim-3-zirve-gemini-720p.mp4 -i $TMP/kapanis-$LANG-1080x1920.mp4 -i $MUSIC \
-    -loop 1 -t $TOTAL -i $TMP/t1.png -loop 1 -t $TOTAL -i $TMP/topshade.png -f lavfi -t $F -i "sine=f=2093:sample_rate=48000" -filter_complex "\
+    -loop 1 -t $TOTAL -i $TMP/t1.png -loop 1 -t $TOTAL -i $TMP/topshade.png -f lavfi -t $F -i "sine=f=2093:sample_rate=48000" \
+    -i $SRC/cekim-2b-damla-gemini-720p.mp4 -filter_complex "\
 [0:v]trim=0:4.3,setpts=PTS-STARTPTS,$P[a];[1:v]$P[fz];[a][fz]concat=n=2:v=1:a=0,settb=1/30[A];\
-[2:v]trim=0:9.6,setpts=PTS-STARTPTS,$P[B];\
+[9:v]trim=0:5.0,setpts=PTS-STARTPTS,$P[b0];[2:v]trim=4.2:9.6,setpts=PTS-STARTPTS,$P[b1];[b0][b1]concat=n=2:v=1:a=0,settb=1/30[B];\
 [3:v]trim=1.9:7.4,setpts=PTS-STARTPTS,$P[c1];[3:v]trim=7.4:10,setpts=2*(PTS-STARTPTS),$P[c2];[c1][c2]concat=n=2:v=1:a=0,settb=1/30[C];\
 [A][B]concat=n=2:v=1:a=0,settb=1/30[AB];[AB][C]xfade=transition=fadewhite:duration=0.6:offset=$X1[ABC];\
 [7:v]format=rgba,fade=in:st=22.4:d=1.0:alpha=1,fade=out:st=27.2:d=0.5:alpha=1[sh];[ABC][sh]overlay=0:0[abs];\
 [6:v]format=rgba,fade=in:st=22.6:d=0.8:alpha=1,fade=out:st=27.2:d=0.5:alpha=1[q];[abs][q]overlay=0:-1130,settb=1/30[vq];\
 [4:v]$P[k];[vq][k]xfade=transition=fadeblack:duration=0.6:offset=$X2[v];\
 [0:a]atrim=0:4.3,asetpts=PTS-STARTPTS,aresample=48000,afade=t=out:st=4.0:d=0.3[a1];\
-[8:a]volume=0.012,afade=t=in:d=0.4,afade=t=out:st=2.5:d=2.0[ring];\
-[2:a]atrim=0:9.6,asetpts=PTS-STARTPTS,aresample=48000,volume=3[b1];\
+[8:a]volume=0.012,afade=t=in:d=0.4,afade=t=out:st=1.8:d=1.9[ring];\
+[9:a]atrim=0:5.0,asetpts=PTS-STARTPTS,aresample=48000,volume=3[b0a];[2:a]atrim=4.2:9.6,asetpts=PTS-STARTPTS,aresample=48000,volume=3[b1a];[b0a][b1a]concat=n=2:v=0:a=1[b1];\
 [3:a]atrim=1.9:7.4,asetpts=PTS-STARTPTS,aresample=48000,volume=2[c1a];[3:a]atrim=7.4:10,asetpts=PTS-STARTPTS,aresample=48000,atempo=0.5,volume=2[c2a];\
 [a1][ring][b1][c1a][c2a]concat=n=5:v=0:a=1,volume=0.7[amb];\
 [5:a]atrim=0.7:35,asetpts=N/SR/TB,adelay=17800|17800,afade=t=in:st=17.8:d=1.0,afade=t=out:st=28.6:d=3.2[m];\
