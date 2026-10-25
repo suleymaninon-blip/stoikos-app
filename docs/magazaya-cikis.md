@@ -315,7 +315,7 @@ https://claude.ai/code/artifact/b2c0a5f3-d1f8-4c67-a1e4-0f59335e2a8f
 ## Bağlantılar
 
 - **Mağaza metinleri** (6 dil, karakter sınırları doğrulanmış, kopyala düğmeli):
-  https://claude.ai/code/artifact/f17fb2ac-76fe-4c7f-a16b-8381f772d3fb
+  https://claude.ai/artifact/WpdsExdnJM3USVpMx7vyjG (25 Ekim 2026: çevrimdışı çalışma, Apple Sağlık/Health Connect, dokunmatik nefes çiçeği eklendi)
 - **Mağaza görselleri**: `store-assets/` (README'sinde üretim komutları var)
 - Canlı web sürümü: https://suleymaninon-blip.github.io/stoikos-app
 - Backend: https://stoikos-backend.stoikos-app.workers.dev

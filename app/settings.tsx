@@ -14,6 +14,7 @@ import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
 import { notify, confirmAction } from '../constants/dialog';
+import { HEALTH_SUPPORTED, isHealthSyncOn, setHealthSync, healthAppName } from '../constants/healthPrefs';
 import { LockIcon } from '../components/Icons';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
@@ -21,9 +22,18 @@ const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 export default function SettingsScreen() {
   const { t, lang, setLang } = useLang();
   const [notifyOn, setNotifyOn] = useState(false);
+  const [healthOn, setHealthOn] = useState(false);
   const [adminKey, setAdminKey] = useState('');
 
   useEffect(() => { isNotifyEnabled().then(setNotifyOn); }, []);
+  useEffect(() => { isHealthSyncOn().then(setHealthOn); }, []);
+
+  async function toggleHealth() {
+    const ok = await setHealthSync(!healthOn);
+    if (healthOn) { setHealthOn(false); return; }
+    setHealthOn(ok);
+    if (!ok) notify('Stoikos', t('health.denied').replace('{app}', healthAppName(lang)));
+  }
   useEffect(() => { AsyncStorage.getItem(ADMIN_KEY_STORAGE).then((k) => k && setAdminKey(k)); }, []);
 
   async function toggleNotify() {
@@ -147,6 +157,19 @@ export default function SettingsScreen() {
             </View>
           )}
         </TouchableOpacity>
+
+        {/* Sağlık uygulamasına farkındalık dakikası yazma — yalnız iPhone/Android'de */}
+        {HEALTH_SUPPORTED && (
+          <TouchableOpacity style={styles.notifyCard} onPress={toggleHealth} activeOpacity={0.85} accessibilityRole="switch" accessibilityState={{ checked: healthOn }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.notifyTitle}>{t('health.title').replace('{app}', healthAppName(lang))}</Text>
+              <Text style={styles.notifyHint}>{t('health.hint').replace('{app}', healthAppName(lang))}</Text>
+            </View>
+            <View style={[styles.toggle, healthOn && styles.toggleOn]}>
+              <View style={[styles.toggleKnob, healthOn && styles.toggleKnobOn]} />
+            </View>
+          </TouchableOpacity>
+        )}
 
         {/* Tanıtımı tekrar göster */}
         <TouchableOpacity style={styles.resetBtn} onPress={showOnboardingAgain} activeOpacity={0.8}>

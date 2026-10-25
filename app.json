@@ -34,6 +34,9 @@
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.SYSTEM_ALERT_WINDOW"
+      ],
+      "permissions": [
+        "android.permission.health.WRITE_MINDFULNESS"
       ]
     },
     "plugins": [
@@ -60,6 +63,23 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#1a1814"
+        }
+      ],
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthUpdateUsageDescription": "Stoikos adds your completed breathing sessions to Mindful Minutes in the Health app. It never reads your health data.",
+          "NSHealthShareUsageDescription": "Stoikos does not read your health data. It only writes your completed breathing sessions as Mindful Minutes.",
+          "background": false
+        }
+      ],
+      "react-native-health-connect",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
         }
       ]
     ],

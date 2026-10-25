@@ -13,6 +13,11 @@ import {
   BREATH_DURATIONS, BreathDuration, MIN_LOGGED_SECONDS,
   getBreathDuration, setBreathDuration, logBreathSession,
 } from '../constants/breathLog';
+import {
+  isHealthSyncOn, shouldAskHealth, markHealthAsked, setHealthSync,
+  writeMindfulSession, healthAppName,
+} from '../constants/healthPrefs';
+import { useLang } from '../constants/i18n';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -73,6 +78,10 @@ export default function BreathOrb({
   const [count, setCount] = useState(0);
   const countRef = useRef(0);
   const [summary, setSummary] = useState<string | null>(null);
+  // Sağlık uygulamasına yazma izni: ilk ≥1 dk'lık seanstan sonra bir kez, tek dokunuşla sorulur.
+  const { t, lang } = useLang();
+  const [healthAsk, setHealthAsk] = useState(false);
+  const pendingSession = useRef<{ start: Date; end: Date } | null>(null);
 
   // Seans süresi (Ekim 2026): 1 / 3 / 5 dk ya da süresiz. Süre bitince çiçek kendiliğinden kapanır.
   const [duration, setDuration] = useState<BreathDuration>(60);
@@ -179,7 +188,14 @@ export default function BreathOrb({
 
     const elapsed = (Date.now() - startedAt.current) / 1000;
     // En az 1 dakikalık seans İlerleme'ye ve sürekliliğe sayılır (süre dolsa da, elle bitse de).
-    if (elapsed >= MIN_LOGGED_SECONDS) logBreathSession().then(() => onComplete?.());
+    if (elapsed >= MIN_LOGGED_SECONDS) {
+      logBreathSession().then(() => onComplete?.());
+      const session = { start: new Date(startedAt.current), end: new Date() };
+      (async () => {
+        if (await isHealthSyncOn()) writeMindfulSession(session.start, session.end);
+        else if (await shouldAskHealth()) { pendingSession.current = session; setHealthAsk(true); }
+      })();
+    }
 
     if (showSummary) {
       const parts: string[] = [];
@@ -321,6 +337,35 @@ export default function BreathOrb({
         )}
       </Pressable>
 
+      {healthAsk && (
+        <View style={styles.healthCard}>
+          <Text style={styles.healthText}>{t('health.askBody').replace('{app}', healthAppName(lang))}</Text>
+          <View style={styles.healthRow}>
+            <TouchableOpacity
+              style={styles.healthBtn}
+              activeOpacity={0.8}
+              onPress={async () => {
+                setHealthAsk(false);
+                const ok = await setHealthSync(true);
+                const p = pendingSession.current;
+                if (ok && p) writeMindfulSession(p.start, p.end);
+                pendingSession.current = null;
+              }}
+            >
+              <Text style={styles.healthBtnText}>{t('health.allow')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.healthLater}
+              activeOpacity={0.7}
+              hitSlop={8}
+              onPress={() => { setHealthAsk(false); markHealthAsked(); pendingSession.current = null; }}
+            >
+              <Text style={styles.healthLaterText}>{t('health.notNow')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       {soundSupported && (
         <TouchableOpacity
           style={styles.soundBtn}
@@ -340,6 +385,16 @@ export default function BreathOrb({
 }
 
 const styles = StyleSheet.create({
+  healthCard: {
+    marginTop: 10, backgroundColor: 'rgba(194,168,120,0.07)', borderRadius: 16, padding: 14,
+    borderWidth: 1, borderColor: 'rgba(194,168,120,0.18)',
+  },
+  healthText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21 },
+  healthRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 12 },
+  healthBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 11, paddingHorizontal: 18, minHeight: 44, justifyContent: 'center' },
+  healthBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: '#1a1814' },
+  healthLater: { minHeight: 44, justifyContent: 'center' },
+  healthLaterText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted },
   wrap: { marginBottom: 16, position: 'relative' },
   card: {
     backgroundColor: 'rgba(194,168,120,0.07)',
