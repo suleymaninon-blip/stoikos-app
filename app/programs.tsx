@@ -215,7 +215,7 @@ export default function ProgramsScreen() {
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.dayLabel}>{t('programs.day')} {i + 1}</Text>
-                    <Text style={[styles.dayTitle, !unlocked && styles.dayTitleLocked]}>{unlocked ? d.title : t('programs.locked')}</Text>
+                    <Text style={[styles.dayTitle, !unlocked && styles.dayTitleLocked]}>{d.title}</Text>
                   </View>
                   {unlocked && <Text style={styles.dayChevron}>›</Text>}
                 </TouchableOpacity>

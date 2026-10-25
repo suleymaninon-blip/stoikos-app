@@ -7,6 +7,10 @@ export const APP_INFO = {
   storeUrl: { ios: '', android: '' },                                  // App Store / Play Store linkleri (yayında doldur)
   privacyUrl: 'https://stoikos.app/gizlilik.html',
   privacyUrlEn: 'https://stoikos.app/privacy.html',
+  termsUrl: 'https://stoikos.app/terms.html',
+  termsUrlEn: 'https://stoikos.app/terms-en.html',
+  // Apple/Google abonelik yönetimi sayfaları (iptal, plan değişikliği) — App Store incelemesi bunu arıyor
+  manageSubUrl: { ios: 'https://apps.apple.com/account/subscriptions', android: 'https://play.google.com/store/account/subscriptions' },
   instagramUrl: 'https://instagram.com/stoikos.app',
 };
 
