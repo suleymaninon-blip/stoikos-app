@@ -92,6 +92,39 @@ export default function SettingsScreen() {
   function showAbout() {
     notify('Stoikos', `${t('about.desc')}\n\n${t('about.version')} ${APP_VERSION}`);
   }
+  function openTerms() {
+    Linking.openURL(lang === 'tr' ? APP_INFO.termsUrl : APP_INFO.termsUrlEn).catch(() => {});
+  }
+  // İptal ve plan değişikliği mağazanın kendi sayfasında; web'de abonelik yok, satır gizli.
+  const manageSubUrl = Platform.OS === 'ios' ? APP_INFO.manageSubUrl.ios
+    : Platform.OS === 'android' ? APP_INFO.manageSubUrl.android : '';
+
+  // Tüm verileri sil: önce sunucudaki koç hafızası (ağ gerekir), o onaylanınca cihazdaki
+  // bütün stoikos_* kayıtları ve kurulu hatırlatıcılar. Sunucu silinmezse hiçbir şeye
+  // dokunulmaz — "silindi" ancak gerçekten silinince söylenir. Abonelik mağazada, etkilenmez.
+  async function deleteAllData() {
+    const ok = await confirmAction({
+      title: t('data.deleteAll'),
+      message: t('data.deleteAllMsg'),
+      confirmText: t('progress.reset'),
+      cancelText: t('progress.cancel'),
+      destructive: true,
+    });
+    if (!ok) return;
+    try {
+      await resetMemory();
+    } catch {
+      notify(t('data.deleteAll'), t('data.deleteAllFailed'));
+      return;
+    }
+    if (REMINDERS_SUPPORTED) await disableReminders().catch(() => {});
+    const keys = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith('stoikos'));
+    await AsyncStorage.multiRemove(keys);
+    notify(t('data.deleteAll'), t('data.deleteAllDone'));
+    await replayOnboarding();
+    router.replace('/');
+  }
+
   function openPrivacy() {
     const url = lang === 'tr' ? APP_INFO.privacyUrl : APP_INFO.privacyUrlEn;
     Linking.openURL(url).catch(() => {});
@@ -186,6 +219,8 @@ export default function SettingsScreen() {
             { icon: '✉', label: t('about.support'), onPress: contactSupport },
             { icon: '◎', label: t('about.instagram'), onPress: () => Linking.openURL(APP_INFO.instagramUrl).catch(() => {}) },
             { icon: 'lock', label: t('about.privacy'), onPress: openPrivacy },
+            { icon: '§', label: t('about.terms'), onPress: openTerms },
+            ...(manageSubUrl ? [{ icon: '↻', label: t('about.manageSub'), onPress: () => Linking.openURL(manageSubUrl).catch(() => {}) }] : []),
             { icon: 'ⓘ', label: t('about.about'), onPress: showAbout },
           ].map((r, i, arr) => (
             <TouchableOpacity
@@ -208,6 +243,9 @@ export default function SettingsScreen() {
         <Text style={styles.aboutSection}>{t('settings.dataSection')}</Text>
         <TouchableOpacity style={styles.dangerBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
           <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.dangerBtn, { marginTop: 10 }]} onPress={deleteAllData} activeOpacity={0.8}>
+          <Text style={styles.dangerText}>{t('data.deleteAll')}</Text>
         </TouchableOpacity>
 
         <Text style={styles.versionText}>{t('about.version')} {APP_VERSION}</Text>
