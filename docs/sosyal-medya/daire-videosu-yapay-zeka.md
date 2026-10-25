@@ -60,39 +60,50 @@ STRICTLY FORBIDDEN (do NOT show any of this):
 AUDIO: heavy rain drumming on stone and on hundreds of umbrellas, the fast footsteps and low murmur of a big hurried crowd, splashes in puddles, a distant city hum. No spoken words in any language, no voices that form words, no music.
 ```
 
-## Çekim 2: Düşen yaşlı adam, daireden çıkış (8 sn)
+## Çekim 2: Düşen yaşlı adam, daireden çıkış (8 sn) — Çekim 1'in son karesine göre (25 Ekim 2026)
 
-**Yeni sohbet. Yükle:** yalnız Çekim 1'in son karesi (Claude çıkarıp gönderir).
+Çekim 1 ilk denemede tuttu (`daire-videosu/cekim-1-meydan-gemini-720p.mp4`): portre yok, "STOIKOS" doğru, adam halkanın ortasında. Farklar: kamera tam 90° değil ~70° yukarıdan (adam önden görünüyor), harfler hafif kavisli, kalabalık seyrek. Bu komut son kareyi (`cekim-1-son-kare.png`) olduğu gibi tarif ediyor; kamera tepeye değil, halka arkada görünsün diye baş hizasına iniyor.
 
-> Not: Claude, Çekim 1 gelince bu komuttaki "İLK KARE" bölümünü son karede gerçekten görünenlere göre (halka, harflerin yeri, adamın duruşu, kalabalık) madde madde yeniden yazacak. Aşağıdaki taslak beklenen kareye göre.
+**Yeni sohbet. Yükle:** yalnız `daire-videosu/cekim-1-son-kare.png`
 
 ```
-Use this image as the EXACT first frame of the video and continue directly from it. Do not redraw, reinterpret or re-imagine the image. Do not show any studio portrait or grey background.
+Use this image as the EXACT first frame of the video and continue directly from it. Do not redraw, reinterpret, re-imagine, restyle or re-light it. This is the same place in the same moment; the video only continues it. There is no studio portrait, no plain or grey background and no cut to another place at any moment.
 
-THE FIRST FRAME, EXACTLY AS IT IS (keep every detail identical for the first 2 seconds):
-- a top-down view looking straight down at wet pale grey stone slabs in the rain;
-- a perfect circle outlined by a thin polished bronze ring, filling most of the frame;
-- along the upper edge inside the ring, large bronze classical Roman capital letters "STOIKOS", correctly spelled S-T-O-I-K-O-S;
-- the man standing still in the centre of the circle, seen from above, in his long sand-coloured wool cloak, no umbrella;
-- black umbrellas of the hurrying crowd passing all around the outside of the ring.
+THE FIRST FRAME, EXACTLY AS IT IS (all of this must stay identical; nothing is added, removed, moved or redesigned):
+1. Camera: high above the square, looking steeply down at about 70 degrees, so we see the man from the front and from above.
+2. The ground: a wet city square paved with large pale grey stone slabs of slightly different sizes, shiny with rain, with darker wet patches.
+3. The bronze circle: a thin polished bronze ring set flush into the stone, almost as wide as the whole image, its top at about one quarter of the image height and its bottom at about three quarters. Inside it the same pale grey stone.
+4. The word: inside the ring, in its upper part above the man's head, large polished bronze classical Roman capital letters read exactly "STOIKOS" (S-T-O-I-K-O-S), in a gentle arc rising from left to right. They stay exactly in this place, size, shape and spelling in every frame in which they are visible.
+5. The man: standing in the centre of the ring, facing the camera, his face turned up, calm. Short wavy grey hair, short grey beard, an ankle-length off-white linen tunic with a brown rope belt tied at the waist with hanging ends, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders, open at the front, falling to his calves. His hands hang at his sides. No umbrella.
+6. The crowd outside the ring: people in dark coats walking fast across the top of the image, some with plain black umbrellas; large plain black umbrellas passing across the bottom of the image and on the right edge. Nobody is inside the ring.
 
-CHARACTER (keep exactly the same): an ancient Greek philosopher, about 60 years old, short wavy grey hair and a short neat grey beard, an off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders, soaked by the rain.
+CHARACTER (identical from the first frame to the last): the same man, about 60 years old, the same face, grey hair, grey beard, tunic, rope belt, sandals and sand-coloured cloak as in the first frame.
 
-SECOND CHARACTER (appears in this shot): a frail elderly man of about 80 in a plain dark grey raincoat, with white hair and a wooden walking cane, walking slowly in the crowd just outside the bronze ring.
+SECOND CHARACTER (enters in this shot): a frail elderly man of about 80 with thin white hair, a plain dark grey raincoat, dark trousers and black shoes, walking slowly with a simple wooden cane, without an umbrella.
 
-CAMERA: for the first 2 seconds the camera stays perfectly still, top-down, exactly as in the first frame. Then the camera smoothly swings down from the sky to eye level at the edge of the circle, so we see the philosopher from the side, standing inside the ring, and the crowd rushing past just outside it.
+CAMERA: for the first 2 seconds the camera stays perfectly still, exactly as in the first frame. Then it slowly and smoothly comes down and moves a little closer, ending lower, at about head height of a standing person, still facing the philosopher from the front, so that the bronze ring and "STOIKOS" stay visible on the ground behind and around the two men. No rotation, no cut.
 
 TIMELINE:
-0–2 s: unchanged top-down frame; the umbrellas flow around the ring.
-2–4 s: the camera swings down to eye level. Just outside the bronze ring, the elderly man with the cane is bumped by a hurrying person with a black umbrella, loses his balance and falls gently onto his knees and one hand on the wet stone. His cane slides away. The crowd keeps rushing past; nobody stops, nobody looks.
-4–6 s: the philosopher turns his head, sees him, and without hesitation STEPS OUT OF THE BRONZE CIRCLE over the ring, the first time anyone crosses it. He kneels in the rain beside the old man and picks up the cane.
-6–8 s: he helps the old man slowly to his feet with both hands, then takes off his own sand-coloured wool cloak and lays it over the old man's shoulders. The old man looks at him; the philosopher gives a small, calm, kind nod. The empty bronze circle with "STOIKOS" is visible behind them on the ground. End on this moment.
+0–2 s: unchanged first frame; the philosopher stands still in the ring; the crowd hurries past outside it. The elderly man with the cane walks slowly into the image from the lower right, just outside the ring.
+2–4 s: a hurrying person under a black umbrella brushes past the elderly man and knocks his shoulder. He loses his balance and sinks down gently onto his knees and one hand on the wet stone, just outside the bronze ring, at the lower right. His cane slides away on the wet stone. The crowd keeps rushing past; nobody stops, nobody looks at him.
+4–6 s: the philosopher lowers his gaze, sees him, and without any hesitation STEPS OUT OF THE CIRCLE: one sandal crosses over the bronze ring, then the other. He is the first and only person to cross the ring. He kneels in the rain beside the old man and picks up the cane.
+6–8 s: he gently helps the old man up to his feet with both hands and gives him the cane. Then he takes the sand-coloured wool cloak off his own shoulders and lays it around the old man's shoulders. The old man looks at him; the philosopher gives one small, calm, kind nod. Behind them, the bronze circle with "STOIKOS" is now EMPTY. End on this moment.
 
-STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, shallow depth of field. The same cold blue-grey rainy evening; warm light only on the two men's faces and the sand-coloured cloak. Smooth camera, real-time speed. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, shallow depth of field, real-time speed. The same cold blue-grey rainy evening light as the first frame; the only warm colours are the sand-coloured cloak, the bronze ring and the letters. Smooth, slow camera. Single continuous shot, no cuts, no transitions, no fades. Vertical 9:16.
 
-STRICTLY FORBIDDEN (do NOT show): a different square or a different circle; the word "STOIKOS" changing, misspelled or missing; any other text, sign, logo or brand; coloured umbrellas; the old man getting hurt, blood or a violent fall; anyone else helping; anyone filming with a phone; the philosopher holding an umbrella; a different philosopher (different face, hair, beard or clothes); a studio portrait; cuts.
+STRICTLY FORBIDDEN (do NOT show any of this):
+- a studio portrait, a plain or grey background, a cut to another place or another angle;
+- a different square, a different paving, a different ring, a second ring, or the ring changing size, colour or position;
+- "STOIKOS" changing, moving, misspelled (e.g. "STOIIKOS", "STOKOS"), blurred, covered or missing; any other text, letters, numbers, signs, logos or brands;
+- a different philosopher: a different face, younger or older, different hair or beard, a hood, modern clothes, an umbrella;
+- a hard or violent fall, the old man lying flat, injury, blood, pain, crying;
+- anyone else helping, anyone stopping to watch, anyone filming with a phone, police or paramedics;
+- the philosopher talking, shouting or looking at the camera;
+- anyone else stepping into the ring;
+- coloured, patterned or branded umbrellas; cars, bicycles, buildings, sky;
+- sunshine, snow, a rainbow; slow motion, time-lapse, fast motion, zoom jumps, cuts.
 
-AUDIO: heavy rain and the hurried crowd; at the fall, a soft thud and the clatter of the cane on stone; then the crowd noise seems to fade into the distance, leaving the rain and the two men's quiet breathing. No spoken words in any language, no music.
+AUDIO: heavy rain on stone and umbrellas, fast footsteps and the low murmur of the hurried crowd; at the fall a soft thud and the clatter of the wooden cane on wet stone; then the crowd noise seems to drift far away, leaving only the rain and the two men's quiet breathing. No spoken words in any language, no voices that form words, no music.
 ```
 
 ## Çekim 3: Yağmur diner, daire boş kalır (10 sn)
