@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import * as Localization from 'expo-localization';
 
 export type Lang = 'tr' | 'en' | 'de' | 'ru' | 'fr' | 'es';
@@ -17,6 +18,12 @@ export const LANGUAGES: { code: Lang; label: string; flag: string; locale: strin
 
 export function localeOf(lang: Lang): string {
   return LANGUAGES.find((l) => l.code === lang)?.locale || 'en-US';
+}
+
+/** Dile göre büyük harf. `textTransform: 'uppercase'` Türkçe i'yi "I" yapıyor ("PRATIK");
+ *  iOS yerel kuralı uygulamıyor, web de yalnız <html lang> doğruysa uyguluyor. */
+export function upper(s: string, lang: Lang): string {
+  return (lang === 'tr' ? s.replace(/i/g, 'İ') : s).toUpperCase();
 }
 
 // Pazar=0 ... Cumartesi=6
@@ -42,7 +49,7 @@ const UI: Record<Lang, Dict> = {
     'setup.startTitle': 'Başlamak için',
     'setup.startInfo': 'Stoikos, kişisel AI koçun için Anthropic API key kullanır. Key telefonda güvenli şekilde saklanır, hiçbir sunucuya gönderilmez.',
     'setup.getKey': "→ console.anthropic.com'dan al",
-    'setup.keyLabel': 'ANTHROPİC API KEY',
+    'setup.keyLabel': 'ANTHROPIC API KEY',
     'setup.errFormat': 'Geçersiz format. Key "sk-ant-" ile başlamalı.',
     'setup.errInvalid': "API key doğrulanamadı. Key'i kontrol et.",
     'setup.verify': 'Doğrula & Başla',
@@ -1256,6 +1263,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       setReady(true);
     })();
   }, []);
+
+  // Web: tarayıcı yerel kuralları (büyük harf, tireleme, ekran okuyucu) sayfa diline bakar.
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') document.documentElement.lang = lang;
+  }, [lang]);
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);

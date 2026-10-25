@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import { Colors, Fonts } from '../../constants/theme';
-import { useLang } from '../../constants/i18n';
+import { useLang, upper } from '../../constants/i18n';
 
 function TabIcon({ label, icon, focused, width }: { label: string; icon: string; focused: boolean; width: number }) {
   return (
@@ -14,7 +14,7 @@ function TabIcon({ label, icon, focused, width }: { label: string; icon: string;
 }
 
 export default function TabLayout() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { width: screenW } = useWindowDimensions();
   const itemW = Math.floor(screenW / 5); // her sekme = ekranın 1/5'i → etiket tek satıra sığar
   return (
@@ -28,31 +28,31 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon icon="⌂" label={t('tabs.home')} focused={focused} width={itemW} />,
+          tabBarIcon: ({ focused }) => <TabIcon icon="⌂" label={upper(t('tabs.home'), lang)} focused={focused} width={itemW} />,
         }}
       />
       <Tabs.Screen
         name="practice"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon icon="☀" label={t('tabs.practice')} focused={focused} width={itemW} />,
+          tabBarIcon: ({ focused }) => <TabIcon icon="☀" label={upper(t('tabs.practice'), lang)} focused={focused} width={itemW} />,
         }}
       />
       <Tabs.Screen
         name="coach"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon icon="◎" label={t('tabs.coach')} focused={focused} width={itemW} />,
+          tabBarIcon: ({ focused }) => <TabIcon icon="◎" label={upper(t('tabs.coach'), lang)} focused={focused} width={itemW} />,
         }}
       />
       <Tabs.Screen
         name="wisdom"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon icon="◈" label={t('tabs.wisdom')} focused={focused} width={itemW} />,
+          tabBarIcon: ({ focused }) => <TabIcon icon="◈" label={upper(t('tabs.wisdom'), lang)} focused={focused} width={itemW} />,
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
-          tabBarIcon: ({ focused }) => <TabIcon icon="◷" label={t('tabs.progress')} focused={focused} width={itemW} />,
+          tabBarIcon: ({ focused }) => <TabIcon icon="◷" label={upper(t('tabs.progress'), lang)} focused={focused} width={itemW} />,
         }}
       />
     </Tabs>
@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 0.5,
     color: Colors.muted,
-    textTransform: 'uppercase',
     textAlign: 'center',
   },
   tabLabelActive: {

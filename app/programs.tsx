@@ -5,7 +5,7 @@ import {
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../constants/theme';
-import { useLang } from '../constants/i18n';
+import { useLang, upper } from '../constants/i18n';
 import { getPrograms, getProgress, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
 import { appendToJournalToday } from '../constants/journal';
 import { usePlus } from '../constants/entitlement';
@@ -170,7 +170,7 @@ export default function ProgramsScreen() {
                     onPress={() => { setOpenId(next.id); setRestartArmed(false); }}
                     activeOpacity={0.85}
                   >
-                    <Text style={styles.nextLabel}>{t('programs.nextUp')}</Text>
+                    <Text style={styles.nextLabel}>{upper(t('programs.nextUp'), lang)}</Text>
                     <Text style={styles.nextTitle}>{next.icon}  {next.title}</Text>
                   </TouchableOpacity>
                 ) : (
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
 
   nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', gap: 4 },
-  nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: Colors.sand },
+  nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
   nextTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text },
 
   allDoneBox: { gap: 10 },

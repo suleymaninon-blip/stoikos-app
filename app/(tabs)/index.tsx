@@ -16,7 +16,7 @@ import { Colors, Fonts } from '../../constants/theme';
 import { MoonIcon } from '../../components/Icons';
 import { getTodaysQuote, getMoodQuote, MOOD_THEMES } from '../../constants/content';
 import { getPrograms, getProgress, Program } from '../../constants/programs';
-import { useLang, localeOf } from '../../constants/i18n';
+import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
@@ -165,7 +165,7 @@ export default function HomeScreen() {
           {/* Selamlama + Ayarlar */}
           <View style={styles.headerRow}>
             <View style={styles.greetingBlock}>
-              <Text style={styles.dateText}>{dateStr.toUpperCase()}</Text>
+              <Text style={styles.dateText}>{upper(dateStr, lang)}</Text>
               <Text style={styles.greetingText}>{greeting}</Text>
             </View>
             <TouchableOpacity
@@ -204,17 +204,17 @@ export default function HomeScreen() {
           {/* Kısayollar — Günlük Pratik / Koç / Bilgelik kartları alt menünün kopyasıydı */}
           <View style={styles.shortcuts}>
             <TouchableOpacity style={styles.shortcut} onPress={() => router.push('/practice')} activeOpacity={0.8}>
-              <Text style={styles.shortcutLabel}>{t('tabs.practice')}</Text>
+              <Text style={styles.shortcutLabel}>{upper(t('tabs.practice'), lang)}</Text>
               <Text style={styles.shortcutText}>{t('home.practiceShort', { done: practiceDone, total: ALL_EXERCISE_IDS.length })}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.shortcut} onPress={() => router.push('/coach')} activeOpacity={0.8}>
-              <Text style={styles.shortcutLabel}>{t('tabs.coach')}</Text>
+              <Text style={styles.shortcutLabel}>{upper(t('tabs.coach'), lang)}</Text>
               <Text style={styles.shortcutText}>{t('home.coachShort')}</Text>
             </TouchableOpacity>
           </View>
           {FEATURES.meydanOkuma && (
             <TouchableOpacity style={[styles.shortcut, { marginBottom: 24 }]} onPress={() => router.push('/challenge')} activeOpacity={0.8}>
-              <Text style={styles.shortcutLabel}>{t('ch.cardName')}</Text>
+              <Text style={styles.shortcutLabel}>{upper(t('ch.cardName'), lang)}</Text>
               <Text style={styles.shortcutText}>{t('ch.cardDesc')}</Text>
             </TouchableOpacity>
           )}
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: Colors.stone2, borderRadius: 18, padding: 14, gap: 4,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
-  shortcutLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, textTransform: 'uppercase' },
+  shortcutLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
   shortcutText: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text },
 
   continuity: { alignItems: 'center', paddingVertical: 8 },
