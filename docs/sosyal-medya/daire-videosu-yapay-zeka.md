@@ -15,30 +15,49 @@
 - Ses: **"no spoken words in any language"**.
 - Gerçek kişi adı yok (Marcus Aurelius adı komutlarda geçmiyor).
 
-## Çekim 1: Şemsiye nehri ve bronz daire (8 sn)
+## Çekim 1: Şemsiye nehri ve bronz daire (8 sn) — gözden geçirilmiş, hata payısız (25 Ekim 2026)
 
 **Yeni sohbet. Yükle:** yalnız `stoaci-modern-hayatta/00-filozof-yuz-referans.png`
 
+Gözden geçirmede kapatılan açıklar: tepeden çekimde kameranın eğilip bina/gök göstermesi; "STOIKOS"un halka boyunca kavisli yazılınca bozulma riski (artık **tek düz satır, karede dik**); harf boyutu ve konumu; adamın yüzü (yukarı bakıyor, gözleri kapalı; Çekim 2'de yüz tutarlı kalsın); kalabalığın halkaya basmaması; zeminde başka desen, rögar, çizgi olmaması; zaman atlamalı ve yavaş çekim yasağı.
+
 ```
-Use this image ONLY as the reference for the man's appearance. Do NOT show this image or any studio portrait in the video. The video starts directly with the overhead shot of the rainy square.
+The attached image is ONLY a reference for the man's face, hair, beard and clothes. It must NEVER appear in the video: do not show it, do not start with it, do not cut to it. There is no studio portrait, no plain or grey background and no close-up portrait at any moment. The very first frame (0.0 s) is already the overhead drone shot of the rainy square described below.
 
-CHARACTER (keep exactly the same): an ancient Greek philosopher, about 60 years old, with short wavy grey hair and a short neat grey beard. He wears a simple undyed off-white linen tunic tied with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders. He has no umbrella and no hat; his hands are empty.
+CHARACTER (exactly as in the reference, unchanged for the whole video): an ancient Greek philosopher, about 60 years old, short wavy grey hair, a short neat grey beard. He wears a simple ankle-length undyed off-white linen tunic tied with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders and falls to his calves. No umbrella, no hat, no hood, no bag; his hands are empty and his arms hang calmly at his sides. He is the only person in the video without an umbrella.
 
-SETTING: a large, wide public square paved with big pale grey stone slabs, in a modern European city, at rush hour on a dark, heavy, rainy evening. The wet stone shines and reflects the cold light. In the exact centre of the square, set flush into the pavement, is a perfect circle about four metres wide, outlined by a thin ring of polished bronze. Inside the bronze ring, along its upper edge, large bronze classical Roman capital letters set into the stone read exactly "STOIKOS", clearly readable from above and correctly spelled: S-T-O-I-K-O-S. The inside of the circle is the same pale stone as the rest of the square.
-CROWD: hundreds of people with plain BLACK umbrellas hurry across the square in every direction. Seen from above, the black umbrellas flow like a dark river around the circle. Nobody steps inside the circle; the crowd parts around it.
-THE MAN: he stands perfectly still in the centre of the circle, in the rain, without an umbrella, his face turned slightly upward, calm. Rain soaks his grey hair and his cloak.
+CAMERA (the most important rule): a drone looking STRAIGHT DOWN at the ground, exactly 90 degrees, like a map. The camera never tilts, never turns, never rotates, never shows the horizon, the sky or any building. The frame is filled edge to edge with the stone pavement of the square and the crowd. The bronze circle is always in the exact centre of the frame.
 
-CAMERA: a drone looking STRAIGHT DOWN from high above (top-down, 90 degrees), the circle exactly in the centre of the frame.
+THE SQUARE (seen from above): a large open city square paved with big rectangular pale grey stone slabs laid in a simple straight grid. The stone is soaking wet and shiny, with small puddles that reflect cold blue-grey city light. Nothing else is on the ground: no painted lines, no markings, no manhole covers, no drains, no benches, no trees, no fountains, no statues, no lamp posts, no cars, no bicycles.
+
+THE BRONZE CIRCLE: in the exact centre of the square, set perfectly flush into the stone, a perfect circle about four metres wide, outlined by a thin ring of polished bronze about a hand wide. The inside of the circle is the same pale grey stone as the rest of the square. It is the only circle and the only bronze object in the whole square.
+
+THE WORD: inside the circle, in its upper part (between the top of the ring and the man), set flush into the stone in polished bronze, ONE straight horizontal line of large classical Roman capital letters reads exactly "STOIKOS": seven letters, S-T-O-I-K-O-S, left to right, upright in the frame (the tops of the letters point to the top of the image), evenly spaced, each letter about as tall as the man's shoulders are wide, the word spanning about two thirds of the circle's width. The letters are sharp, clean and correctly spelled in every frame. There is no other text anywhere.
+
+THE MAN (seen from above): he stands perfectly still in the exact centre of the circle, below the word. His face is turned up towards the sky and the camera, his eyes are closed, rain falls on his face; his expression is completely calm. We see his grey hair, his grey beard, the wet sand-coloured cloak spread over his shoulders and his sandals on the wet stone. He does not move, except the cloak moving slightly in the wind.
+
+THE CROWD (seen from above): hundreds of people, all holding identical plain matte BLACK umbrellas, hurry across the square in every direction at a fast, stressed walking pace, so densely that from above the umbrellas form a dark, flowing river. Under the umbrellas we only glimpse shoulders and shoes. The crowd parts around the circle like water around a rock: every umbrella stays OUTSIDE the bronze ring, with a gap of about half a metre; nobody steps on the ring or into the circle, and no umbrella covers the ring or the letters.
 
 TIMELINE:
-0–3 s: perfectly still top-down shot: the river of black umbrellas flowing around the bronze circle with "STOIKOS", the tiny still figure of the man in the centre.
-3–8 s: the drone slowly descends straight down towards him, still looking straight down, until the circle fills most of the frame and the word "STOIKOS" is large and sharp at the top of the circle. The man stays still, looking up into the rain. End on this top-down frame.
+0–3 s: completely still top-down shot from high above. The circle with "STOIKOS" is in the centre, about one third of the frame wide; the tiny still man in the middle; the black river of umbrellas flowing around it in every direction.
+3–8 s: the drone slowly and smoothly descends straight down, still looking exactly 90 degrees down, without any rotation, until the bronze circle fills about 80 percent of the frame width. At the end, "STOIKOS" is big, sharp and clearly readable in the upper part of the circle, the man stands in the centre with his face turned up and eyes closed, and black umbrellas pass just outside the ring. End on this frame.
 
-STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain. Cold blue-grey evening palette, wet shining stone, rain streaks catching the light; the only warm colours are his sand-coloured cloak and the bronze ring and letters. Smooth, steady drone movement. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, real-time speed. Dark, cold blue-grey rainy evening; visible rain streaks falling towards the ground and splashing on the stone and in the puddles. The only warm colours in the whole frame are the man's sand-coloured cloak and the polished bronze ring and letters, which glow softly. Smooth, steady drone. Single continuous shot, no cuts, no transitions, no fades. Vertical 9:16.
 
-STRICTLY FORBIDDEN (do NOT show): a studio portrait or grey background; any text, sign, shop name, logo or brand except "STOIKOS"; coloured or patterned umbrellas; cars or traffic; anyone else inside the circle; the man holding an umbrella; the word "STOIKOS" misspelled, small, curved into unreadable letters or missing; sunshine; a tilted or sideways camera; cuts.
+STRICTLY FORBIDDEN (do NOT show any of this):
+- the reference image, a studio portrait, a plain or grey background, a close-up of his face;
+- a tilted, angled, rotating or sideways camera; the horizon, the sky, buildings, roofs, windows, streets, cars or traffic;
+- any text, letters or numbers other than "STOIKOS"; signs, shop names, logos, brands, graffiti, markings on the ground;
+- "STOIKOS" misspelled (e.g. "STOIIKOS", "STOKOS", "STOIKOSS"), curved, upside down, mirrored, sideways, small, blurred, cut off, partly covered or missing; extra letters or symbols around it;
+- the letters on the outside of the ring, on the ring itself, or arranged in a curve;
+- coloured, patterned, transparent or branded umbrellas; umbrellas inside the circle;
+- anyone else inside the circle, anyone stepping on the ring, a second man without an umbrella;
+- the man walking, raising his arms, holding an umbrella, wearing a hood or modern clothes;
+- a second circle, a fountain, a statue, a mosaic or any other pattern in the pavement;
+- sunshine, daylight, snow, a rainbow;
+- slow motion, time-lapse, fast motion, zoom jumps, cuts.
 
-AUDIO: heavy rain on stone and on hundreds of umbrellas, the hurried footsteps and murmur of a big crowd, distant city traffic hum. No spoken words in any language, no music.
+AUDIO: heavy rain drumming on stone and on hundreds of umbrellas, the fast footsteps and low murmur of a big hurried crowd, splashes in puddles, a distant city hum. No spoken words in any language, no voices that form words, no music.
 ```
 
 ## Çekim 2: Düşen yaşlı adam, daireden çıkış (8 sn)
