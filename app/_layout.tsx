@@ -11,6 +11,7 @@ import { LanguageProvider } from '../constants/i18n';
 import { EntitlementProvider } from '../constants/entitlement';
 import { BrandIntro } from '../components/BrandIntro';
 import { Onboarding } from '../components/Onboarding';
+import { ReminderSync } from '../components/ReminderSync';
 import { registerServiceWorker } from '../constants/registerSW';
 import { ONBOARDED_KEY, onReplayOnboarding } from '../constants/onboarding';
 
@@ -53,6 +54,7 @@ export default function RootLayout() {
     <LanguageProvider>
       <EntitlementProvider>
         <StatusBar style="light" />
+        <ReminderSync />
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
