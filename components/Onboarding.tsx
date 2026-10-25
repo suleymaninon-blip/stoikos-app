@@ -157,32 +157,41 @@ function PulseGlow({ size }: { size: number }) {
   );
 }
 
-// Canlı mini nefes orbu (son slayt)
+// Canlı mini nefes çiçeği (Bilgelik & Nefes slaytı) — ana ekrandaki BreathOrb'un küçüğü.
+// Eskiden tek soluk bir daireydi; incelemede "boş daire" gibi okundu (25 Ekim 2026).
+const MINI_PETAL = 50;
+const MINI_SPREAD = 20;
 function MiniOrb() {
-  const s = useRef(new Animated.Value(0.82)).current;
-  const o = useRef(new Animated.Value(0.6)).current;
+  const b = useRef(new Animated.Value(0.35)).current;
   useEffect(() => {
     const loop = Animated.loop(Animated.sequence([
-      Animated.parallel([
-        Animated.timing(s, { toValue: 1.12, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(o, { toValue: 1, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ]),
-      Animated.parallel([
-        Animated.timing(s, { toValue: 0.82, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-        Animated.timing(o, { toValue: 0.6, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
-      ]),
+      Animated.timing(b, { toValue: 1, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      Animated.timing(b, { toValue: 0.35, duration: 4500, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
     ]));
     loop.start();
     return () => loop.stop();
-  }, [s, o]);
+  }, [b]);
+  const rotate = b.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '60deg'] });
+  const petalScale = b.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] });
   return (
     <View style={styles.iconWrap}>
-      <Animated.View style={[styles.miniOrb, { transform: [{ scale: s }], opacity: o }]}>
-        <LinearGradient
-          colors={['rgba(232,213,163,0.34)', 'rgba(194,168,120,0.12)', 'rgba(194,168,120,0.04)']}
-          start={{ x: 0.3, y: 0.2 }} end={{ x: 0.8, y: 1 }}
-          style={{ flex: 1 }}
-        />
+      <Animated.View style={[styles.miniFlower, { transform: [{ rotate }] }]}>
+        {Array.from({ length: 6 }, (_, i) => {
+          const ang = (i / 6) * Math.PI * 2 - Math.PI / 2;
+          const tx = b.interpolate({ inputRange: [0, 1], outputRange: [0, Math.cos(ang) * MINI_SPREAD] });
+          const ty = b.interpolate({ inputRange: [0, 1], outputRange: [0, Math.sin(ang) * MINI_SPREAD] });
+          return (
+            <Animated.View key={i} style={[styles.miniPetal, { transform: [{ translateX: tx }, { translateY: ty }, { scale: petalScale }] }]}>
+              <LinearGradient
+                colors={i % 2 === 0
+                  ? ['rgba(255,236,196,0.62)', 'rgba(224,184,112,0.38)', 'rgba(160,120,60,0.20)']
+                  : ['rgba(248,210,150,0.56)', 'rgba(212,160,92,0.34)', 'rgba(140,100,48,0.18)']}
+                start={{ x: 0.2, y: 0.1 }} end={{ x: 0.85, y: 0.95 }}
+                style={{ flex: 1 }}
+              />
+            </Animated.View>
+          );
+        })}
       </Animated.View>
     </View>
   );
@@ -371,9 +380,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(194,168,120,0.10)', borderWidth: 1, borderColor: 'rgba(194,168,120,0.2)',
   },
   icon: { fontSize: 38, color: Colors.sand2 },
-  miniOrb: {
-    width: 96, height: 96, borderRadius: 48, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(216,196,154,0.28)',
+  miniFlower: { width: 110, height: 110, alignItems: 'center', justifyContent: 'center' },
+  miniPetal: {
+    position: 'absolute', width: MINI_PETAL, height: MINI_PETAL, borderRadius: MINI_PETAL / 2, overflow: 'hidden',
+    borderWidth: 1, borderColor: 'rgba(250,228,180,0.22)',
   },
   title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 14, textAlign: 'center' },
   desc: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, textAlign: 'center', lineHeight: 24 },
