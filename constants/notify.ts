@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Lang } from './i18n';
+import { getMorningNudge, getReflectionPromptFor } from './content';
 
 export const NOTIFY_STORAGE = 'stoikos_notify_enabled';
 
@@ -92,20 +93,53 @@ export async function enableReminders(lang: Lang): Promise<boolean> {
     });
   }
 
-  await Notifications.cancelAllScheduledNotificationsAsync();
-  const tx = TEXTS[lang];
-
-  await Notifications.scheduleNotificationAsync({
-    content: { title: tx.morningT, body: tx.morningB },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: 9, minute: 0 },
-  });
-  await Notifications.scheduleNotificationAsync({
-    content: { title: tx.eveningT, body: tx.eveningB },
-    trigger: { type: Notifications.SchedulableTriggerInputTypes.DAILY, hour: 21, minute: 0 },
-  });
-
+  await scheduleDays(lang);
   await AsyncStorage.setItem(NOTIFY_STORAGE, '1');
   return true;
+}
+
+/**
+ * Her gün DEĞİŞEN bildirimler (25 Ekim 2026). Eskiden iki DAILY tetikleyici her gün aynı cümleyi
+ * gönderiyordu; birkaç günde okunmaz olur. Artık önümüzdeki SCHEDULE_DAYS gün için tek tek tarihli
+ * bildirim kuruluyor: sabah o günün kavramı/pratiği ya da kısa bir söz, akşam o günün yansıma sorusu
+ * (Pratik'teki soruyla aynı). Akşam bildirimine dokununca Pratik → günlük açılır (_layout → ReminderSync).
+ * iOS en çok 64 bekleyen bildirime izin veriyor: 14 gün × 2 = 28. Uygulama her öne geldiğinde
+ * `topUpReminders` takvimi yeniden kurar; kullanıcı iki hafta açmasa son gün yine eski sabit metne düşmez,
+ * yalnız bildirimler biter (bu da "uygulamayı açmayan" kullanıcıyı bombardımana tutmamak demek).
+ */
+const SCHEDULE_DAYS = 14;
+export const EVENING_URL = '/practice?focus=journal';
+
+async function scheduleDays(lang: Lang): Promise<void> {
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  const tx = TEXTS[lang] ?? TEXTS.en;
+  const now = new Date();
+  for (let i = 0; i < SCHEDULE_DAYS; i++) {
+    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    const morning = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9, 0);
+    const evening = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 21, 0);
+    if (morning > now) {
+      await Notifications.scheduleNotificationAsync({
+        content: { title: tx.morningT, body: getMorningNudge(lang, day) },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: morning },
+      });
+    }
+    if (evening > now) {
+      await Notifications.scheduleNotificationAsync({
+        content: { title: tx.eveningT, body: getReflectionPromptFor(lang, day), data: { url: EVENING_URL } },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: evening },
+      });
+    }
+  }
+}
+
+/** Açıksa takvimi bugünden itibaren yeniden kurar (uygulama öne gelince ve dil değişince). İzin istemez. */
+export async function topUpReminders(lang: Lang): Promise<void> {
+  if (!REMINDERS_SUPPORTED || !(await isNotifyEnabled())) return;
+  try {
+    const perm = await Notifications.getPermissionsAsync();
+    if (perm.granted) await scheduleDays(lang);
+  } catch {}
 }
 
 export async function disableReminders(): Promise<void> {
@@ -115,7 +149,5 @@ export async function disableReminders(): Promise<void> {
 
 // Dil değişince, açıksa hatırlatıcıları yeni dille yeniden kur
 export async function refreshRemindersLanguage(lang: Lang): Promise<void> {
-  if (REMINDERS_SUPPORTED && await isNotifyEnabled()) {
-    await enableReminders(lang);
-  }
+  await topUpReminders(lang);
 }

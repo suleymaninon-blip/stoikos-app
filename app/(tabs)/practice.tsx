@@ -7,7 +7,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
 import { JOURNAL_KEY, journalKeyFor } from '../../constants/journal';
 import { DayPartIcon, DayPart } from '../../components/Icons';
@@ -150,6 +150,14 @@ export default function PracticeScreen() {
   // arka plana geçerken cihaza yazılır. "Kaydet" düğmesi kalır: koça iletim (rıza varsa)
   // yalnız ona basınca yapılır, her tuşta değil.
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Akşam bildirimine dokununca `/practice?focus=journal` açılır → günlük kartına kaydır.
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const scrollRef = useRef<ScrollView>(null);
+  const journalY = useRef<number | null>(null);
+  const scrollToJournal = () => {
+    if (journalY.current != null) scrollRef.current?.scrollTo({ y: Math.max(0, journalY.current - 16), animated: true });
+  };
+  useEffect(() => { if (focus === 'journal') setTimeout(scrollToJournal, 450); }, [focus]);
   const draftRef = useRef<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -256,7 +264,7 @@ export default function PracticeScreen() {
       />
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
           {/* Header */}
           <View style={styles.header}>
@@ -336,7 +344,7 @@ export default function PracticeScreen() {
 
 
           {/* Daily journal */}
-          <View style={styles.journalCard}>
+          <View style={styles.journalCard} onLayout={(e) => { journalY.current = e.nativeEvent.layout.y; if (focus === 'journal') scrollToJournal(); }}>
             <View style={styles.journalHeader}>
               <Text style={styles.journalTag}>{t('practice.journalTag')}</Text>
               <TouchableOpacity onPress={() => router.push('/journal')} hitSlop={8} activeOpacity={0.7}>

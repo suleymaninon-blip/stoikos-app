@@ -563,9 +563,17 @@ const REFLECTION_PROMPTS: L[] = [
 ];
 
 /** Günün yansıma sorusu — gün numarasına göre döner. */
+/** Yılın kaçıncı günü (1–366). Günlük döngülerin hepsi bunu kullanır; bildirim zamanlaması ileri tarihler için de çağırır. */
+export function dayOfYearOf(d: Date = new Date()): number {
+  return Math.floor((d.getTime() - new Date(d.getFullYear(), 0, 0).getTime()) / 86400000);
+}
+
+export function getReflectionPromptFor(lang: Lang, d: Date): string {
+  return pick(REFLECTION_PROMPTS[dayOfYearOf(d) % REFLECTION_PROMPTS.length], lang);
+}
+
 export function getTodaysReflectionPrompt(lang: Lang): string {
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  return pick(REFLECTION_PROMPTS[dayOfYear % REFLECTION_PROMPTS.length], lang);
+  return getReflectionPromptFor(lang, new Date());
 }
 
 // ─── Kavramlar ────────────────────────────────────────────
@@ -863,9 +871,28 @@ export function getConcepts(lang: Lang): Concept[] {
   return CONCEPTS_RAW.map((c) => ({ latin: c.latin, icon: c.icon, color: c.color, name: pick(c.name, lang), desc: pick(c.desc, lang), example: pick(c.example, lang), practice: c.practice ? pick(c.practice, lang) : '' }));
 }
 
+export function getConceptFor(lang: Lang, d: Date): Concept {
+  return getConcepts(lang)[dayOfYearOf(d) % CONCEPTS_RAW.length];
+}
+
 export function getDailyConcept(lang: Lang): Concept {
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  return getConcepts(lang)[dayOfYear % CONCEPTS_RAW.length];
+  return getConceptFor(lang, new Date());
+}
+
+/**
+ * Sabah bildiriminin metni (25 Ekim 2026). Eskiden her gün aynı cümle gidiyordu; artık
+ * çift günlerde o günün kavramı + gündüz uygulanacak pratiği (Pratik → Günün Kavramı ile aynı),
+ * tek günlerde kısa bir söz. Böylece bildirim, uygulamayı açmadan da her gün yeni bir şey getirir.
+ */
+export function getMorningNudge(lang: Lang, d: Date): string {
+  const day = dayOfYearOf(d);
+  if (day % 2 === 0) {
+    const c = getConceptFor(lang, d);
+    if (c.practice) return `${c.name}: ${c.practice}`;
+  }
+  const short = getQuotes(lang).filter((q) => q.text.length <= 120);
+  const q = short[Math.floor(day / 2) % short.length];
+  return `“${q.text}” — ${q.author}`;
 }
 
 // ─── Filozoflar (Bilgelik > "Filozoflar" sekmesi) ─────────
