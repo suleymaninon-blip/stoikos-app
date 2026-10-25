@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
   consentBoxOn: { backgroundColor: 'rgba(159,176,196,0.85)', borderColor: 'rgba(159,176,196,0.85)' },
   consentCheck: { fontSize: 12, color: '#0c1116', fontFamily: Fonts.jostMedium, marginTop: -1 },
   consentLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19 },
-  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, lineHeight: 17, marginTop: 8 },
+  journalCoachNote: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19, marginTop: 8 },
   journalInput: {
     backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
     fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 24,
