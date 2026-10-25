@@ -173,6 +173,12 @@ STRICTLY FORBIDDEN (do NOT show any of this):
 AUDIO: near silence; four soft footsteps on old wooden floorboards, a book sliding off a shelf, the gentle sound of a page turning, a slow clock ticking far away, faint birdsong outside the window, one soft breath. No spoken words in any language, no whispering, no music.
 ```
 
+**Yüz tutmazsa ikinci deneme:** ilk denemede yalnız son kare yüklenir (yüz yazıyla tarif edildi). Profildeki yüz farklı çıkarsa yeni sohbette **iki görsel** yüklenir: önce `cekim-2-son-kare.png`, sonra `bahce-videosu/00-kadin-referans.png`; komutun en başına şu eklenir:
+
+```
+There are TWO images. IMAGE 1 (the library) is the exact first frame of the video. IMAGE 2 (the woman on a plain background) is ONLY a reference for her face and must NEVER appear in the video: do not show it, do not start with it, do not cut to it, no plain or grey background at any moment. Her face in profile at the end must match IMAGE 2 exactly.
+```
+
 ## (Eski) Çekim 3: Pencere kenarı (10 sn)
 
 **Yeni sohbet. Yükle:** yalnız Çekim 2'nin son karesi
