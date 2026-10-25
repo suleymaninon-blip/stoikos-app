@@ -9,7 +9,7 @@ import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
-import { JOURNAL_KEY } from '../../constants/journal';
+import { JOURNAL_KEY, journalKeyFor } from '../../constants/journal';
 import { DayPartIcon, DayPart } from '../../components/Icons';
 import { useLang } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
@@ -136,6 +136,9 @@ export default function PracticeScreen() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
+  // "Dünkü yansımana dönüş" (25 Ekim 2026, rekabet analizi: rakip kullanıcıları dünkü günlüğe
+  // dönük bir takip istiyor). Dün yazılan not kartın başında kısaca gösterilir; yalnız cihazdan okunur.
+  const [yesterdayNote, setYesterdayNote] = useState<string | null>(null);
   const [coachConsent, setCoachConsent] = useState(false); // yansımayı koça iletme izni
   const [selected, setSelected] = useState<(Exercise & { icon: DayPart }) | null>(null);
   const [conceptOpen, setConceptOpen] = useState(false);
@@ -166,6 +169,10 @@ export default function PracticeScreen() {
 
     const journalRaw = await AsyncStorage.getItem(JOURNAL_KEY + today);
     if (journalRaw) { setJournal(journalRaw); setJournalSaved(true); }
+
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const yRaw = (await AsyncStorage.getItem(journalKeyFor(y)))?.trim();
+    setYesterdayNote(yRaw ? yRaw.replace(/\s+/g, ' ') : null);
 
     const consent = await AsyncStorage.getItem(COACH_CONSENT_KEY);
     setCoachConsent(consent === '1');
@@ -339,6 +346,19 @@ export default function PracticeScreen() {
             {/* Günün yansıma sorusu — 28'lik setten döner (content.ts).
                 Eskiden burada her gün aynı sabit cümle vardı; günlük katmanın
                 hiç değişmemesi 36. günde uygulamayı 6. günle aynı yapıyordu. */}
+            {yesterdayNote && (
+              <TouchableOpacity
+                style={styles.yesterdayBox}
+                onPress={() => router.push('/journal')}
+                activeOpacity={0.75}
+                accessibilityRole="button"
+                accessibilityLabel={`${t('practice.yesterdayTag')}: ${yesterdayNote}`}
+              >
+                <Text style={styles.yesterdayTag}>{t('practice.yesterdayTag')}</Text>
+                <Text style={styles.yesterdayText} numberOfLines={3}>“{yesterdayNote}”</Text>
+                <Text style={styles.yesterdayAsk}>{t('practice.yesterdayAsk')}</Text>
+              </TouchableOpacity>
+            )}
             <Text style={styles.journalHint}>{getTodaysReflectionPrompt(lang)}</Text>
             <TextInput
               style={styles.journalInput}
@@ -526,6 +546,13 @@ const styles = StyleSheet.create({
   journalTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: 'rgba(159,176,196,0.8)' },
   journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(159,176,196,0.9)', letterSpacing: 0.3 },
   journalHint: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 24, marginBottom: 12 },
+  yesterdayBox: {
+    borderLeftWidth: 2, borderLeftColor: 'rgba(159,176,196,0.45)', paddingLeft: 12, paddingVertical: 4,
+    marginTop: 6, marginBottom: 14,
+  },
+  yesterdayTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: 'rgba(159,176,196,0.75)', marginBottom: 4 },
+  yesterdayText: { fontFamily: Fonts.cormorantItalic, fontSize: 17, color: Colors.text2, lineHeight: 24 },
+  yesterdayAsk: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 6 },
   consentRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, minHeight: 44 },
   consentBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: 'rgba(159,176,196,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
   consentBoxOn: { backgroundColor: 'rgba(159,176,196,0.85)', borderColor: 'rgba(159,176,196,0.85)' },
