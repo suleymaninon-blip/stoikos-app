@@ -69,7 +69,7 @@ DO NOT SHOW: a studio portrait or grey background; airline logos, brand names, s
 AUDIO: busy terminal echo, rolling suitcase wheels, footsteps, beeping, a dull crowd murmur, distant muffled announcement chimes with no spoken words in any language. No music.
 ```
 
-## Çekim 2: Kapı açılır, kütüphane (8 sn) — ayrıntılı sürüm (25 Ekim 2026)
+## Çekim 2: Kapı açılır, kütüphane (8 sn) — ayrıntılı sürüm (25 Ekim 2026) ✅ tuttu: `cekim-2-kutuphane-gemini-720p.mp4`
 
 **Yeni sohbet. Yükle:** yalnız `kutuphane-videosu/cekim-1b-son-kare.png`
 
@@ -126,7 +126,39 @@ DO NOT SHOW: a different door or a different corridor at the start; other people
 AUDIO: airport noise, the creak of the heavy door, then sudden deep silence: soft footsteps on old wooden floorboards, the faint whisper of fingertips on book spines, a clock ticking far away. No spoken words in any language, no music.
 ```
 
-## Çekim 3: Pencere kenarı (10 sn)
+## Çekim 3: Pencere kenarı (10 sn) — ayrıntılı sürüm (25 Ekim 2026)
+
+**Yeni sohbet. Yükle:** yalnız `kutuphane-videosu/cekim-2-son-kare.png`
+
+Çekim 2'nin ayrıntılı sürümü ilk denemede tuttu (kapı, mermer çerçeve ve "STOIKOS" birebir kaldı). Aynı yöntem: son karedeki her şey tek tek tarif edildi.
+
+```
+Use this image as the EXACT first frame of the video and continue directly from it. Do not redraw, reinterpret or re-imagine the image. Do not show any studio portrait or grey background.
+
+THE FIRST FRAME, EXACTLY AS IT IS (keep every detail for the first 3 seconds):
+- Framing: we stand in a light wooden-floored aisle of a round, two-storey old library, looking forward; the woman is in the centre, seen from behind, walking away from us.
+- Upper level: a curved gallery with a carved light-wood balustrade (turned wooden balusters) running around the room, tall bookshelves behind it, and two tall arched windows with small panes, glowing with bright golden sunlight.
+- Lower level: tall dark-honey wooden bookshelves full of old leather-bound books on both sides; a tall wooden rolling ladder leaning on the shelves on the right; two more tall arched windows with small panes on the left and right of the back wall; a long wooden reading table with wooden chairs on the left, with brass lamps with green glass shades.
+- Light: warm golden sunbeams with soft haze and drifting dust; long soft shadows on the pale wooden floorboards.
+- The woman: seen from behind, centred, her dark brown hair loosely gathered at the back of her head, a long heavy sand-coloured wool cloak covering her whole back and both shoulders down to her calves, brown leather sandals. Her right arm is stretched out to the side, the fingertips just leaving the books on the right.
+
+CHARACTER (keep exactly the same): a calm woman about 40 years old, dark brown hair loosely gathered at the back, olive-toned skin, dark brown eyes, an ankle-length undyed off-white linen tunic with a thin brown leather belt under the long heavy sand-coloured wool cloak that covers BOTH shoulders, brown leather sandals.
+
+CAMERA: for the first 3 seconds the camera stays in exactly the same position and framing as the first frame and only follows her slowly from behind; there is no cut and no jump to a new place. The same room, the same gallery, the same windows, the same table and lamps.
+
+TIMELINE:
+0–3 s: from behind, she walks a few more slow steps along the same aisle toward the back of the same room and takes one old leather-bound book from a shelf.
+3–6 s: she sits down on a cushioned window seat in the deep recess of one of the same tall arched windows on the lower level, warm sunlight falling across her, and opens the book on her lap. The pages are old and pale, with no readable text.
+6–10 s: the camera slowly moves around to her side so we see her face in soft profile in the golden window light. She looks up from the book, closes her eyes, takes one slow breath, and a quiet, peaceful smile appears. Dust drifts slowly through the sunbeams around her. End on this calm, intimate moment.
+
+STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. Warm amber, honey and gold palette, deeply calm atmosphere. Very slow, smooth camera movement. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+
+DO NOT SHOW: a different library, a different room or a different woman at the start; a braid over her shoulder; the cloak changing colour; other people; readable text on the book pages, covers or shelves; logos; the airport or the door; a studio portrait; fast camera moves.
+
+AUDIO: near silence; soft footsteps on wood, the gentle sound of pages turning, a distant clock, faint birdsong outside the window. No spoken words in any language, no music.
+```
+
+## (Eski) Çekim 3: Pencere kenarı (10 sn)
 
 **Yeni sohbet. Yükle:** yalnız Çekim 2'nin son karesi
 
