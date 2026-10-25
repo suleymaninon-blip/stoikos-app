@@ -39,24 +39,35 @@ DO NOT SHOW: a studio portrait or grey background; any boats, people, buildings 
 AUDIO: roaring wind, crashing waves, heavy rain, distant thunder. No spoken words in any language, no music.
 ```
 
-## Çekim 2: Fenerin içi, sessiz merdiven (8 sn)
+## Çekim 2: Fenerin içi, sessiz merdiven (8 sn) — kapı birebir aynı kalsın diye güçlendirildi
 
-**Yeni sohbet. Yükle:** yalnız Çekim 1'in son karesi
+**Yeni sohbet. Yükle:** yalnız Çekim 1'in son karesi. (Kullanıcı notu, 25 Ekim 2026: Gemini önceki videolarda 2. çekimde kapıyı farklı çiziyordu. Bu yüzden kapı ve fener aşağıda Çekim 1'deki hâliyle tek tek tarif edildi ve ilk 2 saniye kamera kilitli.)
 
 ```
 Use this image as the exact first frame of the video and continue directly from it. Do not show any studio portrait or grey background.
 
+KEEP THE LIGHTHOUSE AND DOOR IDENTICAL TO THE IMAGE (very important). Do not redesign, replace, resize or restyle anything. The door must stay exactly as it is in the first frame:
+- an arched door made of dark, weathered vertical wooden planks with a few black iron studs,
+- set into a deep, pale grey stone frame with a rounded arch,
+- above it, the same pale stone lintel with the carved classical Roman capital letters "STOIKOS", unchanged,
+- the same small narrow window with warm orange light to the right of the door,
+- the same mottled grey-and-white lighthouse stone walls, the same stone path, the same stormy sea behind.
+The door, the frame, the letters and the window keep the same shape, size, colour and position. Only the door moves when it opens.
+
 CHARACTER (keep exactly the same as in the image): an ancient Greek philosopher, about 60 years old, short wavy grey hair, short grey beard, off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders, wet from the rain.
 
+CAMERA: for the first 2 seconds the camera stays perfectly still in exactly the same position and framing as the first frame. Only after he has stepped through the doorway does the camera move forward and follow him inside, behind and slightly below him.
+
 TIMELINE:
-0–2 s: he pushes the heavy wooden door open with one hand and steps inside, his back to the camera; the door swings shut behind him and the storm is instantly gone.
-2–8 s: inside the lighthouse: a quiet, warm stone interior with a spiral stone staircase winding upward around the walls, lit by small oil lamps in niches. Dust drifts in the warm light. He climbs the spiral stairs slowly and calmly, one hand sliding along the smooth stone wall, rain water dripping from the edge of his cloak. The camera follows behind and slightly below him as he climbs.
+0–2 s: with the hand that is already on the door, he slowly pushes the same wooden door inward. It swings open on its hinges, revealing warm golden lamplight inside. He steps through the doorway, his back to the camera.
+2–3 s: the camera glides through the doorway after him; the storm sound is suddenly gone.
+3–8 s: inside the lighthouse: a quiet, warm stone interior with a spiral stone staircase winding upward around the walls, lit by small oil lamps in niches. Dust drifts in the warm light. He climbs the spiral stairs slowly and calmly, one hand sliding along the smooth stone wall, rain water dripping from the edge of his cloak.
 
-STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. The palette changes from cold blue at the door to warm amber and gold inside. Smooth, steady camera. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. The palette changes from cold blue outside to warm amber and gold inside. Smooth, steady camera. Single continuous shot, no cuts, no transitions. Vertical 9:16.
 
-DO NOT SHOW: other people; windows showing the storm; any text, sign or logo; his face; a studio portrait.
+DO NOT SHOW: a different door, a different arch or a different lighthouse; a door that changes colour, shape or material; the letters changing; any new text, sign or logo; a cut to another angle of the door; other people; windows showing the storm inside; his face; a studio portrait.
 
-AUDIO: the storm roaring, then the heavy door closing with a deep thud and sudden near-silence; soft footsteps on stone, a dripping cloak, the faint crackle of oil lamps, the storm only as a distant muffled hum. No spoken words in any language, no music.
+AUDIO: the storm roaring, the creak of the heavy door opening, then sudden near-silence inside; soft footsteps on stone, a dripping cloak, the faint crackle of oil lamps, the storm only as a distant muffled hum. No spoken words in any language, no music.
 ```
 
 ## Çekim 3: Tepede şafak (10 sn)
