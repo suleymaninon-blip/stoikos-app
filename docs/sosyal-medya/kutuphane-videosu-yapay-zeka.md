@@ -126,36 +126,51 @@ DO NOT SHOW: a different door or a different corridor at the start; other people
 AUDIO: airport noise, the creak of the heavy door, then sudden deep silence: soft footsteps on old wooden floorboards, the faint whisper of fingertips on book spines, a clock ticking far away. No spoken words in any language, no music.
 ```
 
-## Çekim 3: Pencere kenarı (10 sn) — ayrıntılı sürüm (25 Ekim 2026)
+## Çekim 3: Pencere kenarı (10 sn) — çok ayrıntılı sürüm (25 Ekim 2026)
 
 **Yeni sohbet. Yükle:** yalnız `kutuphane-videosu/cekim-2-son-kare.png`
 
-Çekim 2'nin ayrıntılı sürümü ilk denemede tuttu (kapı, mermer çerçeve ve "STOIKOS" birebir kaldı). Aynı yöntem: son karedeki her şey tek tek tarif edildi.
+Çekim 2'nin ayrıntılı sürümü ilk denemede tuttu. Kullanıcı isteğiyle (25 Ekim 2026) Çekim 3 daha da ayrıntılandırıldı: ilk karedeki her nesnenin ekrandaki yeri, gideceği pencere ve oturacağı yer önceden belirlendi, tek yeni nesne (pencere minderi) adıyla verildi ve uzun bir yasak listesi eklendi.
 
 ```
-Use this image as the EXACT first frame of the video and continue directly from it. Do not redraw, reinterpret or re-imagine the image. Do not show any studio portrait or grey background.
+Use this image as the EXACT first frame of the video and continue directly from it. Do not redraw, reinterpret, re-imagine, restyle or re-light the image. This is the same room in the same moment; the video only continues it. Do not show any studio portrait or grey background.
 
-THE FIRST FRAME, EXACTLY AS IT IS (keep every detail for the first 3 seconds):
-- Framing: we stand in a light wooden-floored aisle of a round, two-storey old library, looking forward; the woman is in the centre, seen from behind, walking away from us.
-- Upper level: a curved gallery with a carved light-wood balustrade (turned wooden balusters) running around the room, tall bookshelves behind it, and two tall arched windows with small panes, glowing with bright golden sunlight.
-- Lower level: tall dark-honey wooden bookshelves full of old leather-bound books on both sides; a tall wooden rolling ladder leaning on the shelves on the right; two more tall arched windows with small panes on the left and right of the back wall; a long wooden reading table with wooden chairs on the left, with brass lamps with green glass shades.
-- Light: warm golden sunbeams with soft haze and drifting dust; long soft shadows on the pale wooden floorboards.
-- The woman: seen from behind, centred, her dark brown hair loosely gathered at the back of her head, a long heavy sand-coloured wool cloak covering her whole back and both shoulders down to her calves, brown leather sandals. Her right arm is stretched out to the side, the fingertips just leaving the books on the right.
+THE FIRST FRAME, EXACTLY AS IT IS (all of this must stay identical; nothing is added, removed, moved or redesigned):
+1. Framing: vertical image. The camera is at chest height in a straight aisle of pale, warm-blond wooden floorboards that run from the bottom of the image towards the back of the room. The woman is in the exact centre of the image, seen from behind, her feet in the lower fifth of the image.
+2. The room: a ROUND (circular) two-storey old library. We look towards the curved back wall.
+3. Upper storey (top third of the image): a curved gallery running around the room with a light honey-coloured wooden balustrade made of turned wooden balusters. Behind the balustrade: tall bookshelves full of old books. Two tall round-topped windows with many small panes, one at the top left and one at the top right, filled with bright golden sunlight.
+4. Lower storey, back wall (middle of the image): in the centre, directly behind the woman's head, a tall bookcase full of old leather-bound books. To the left of it, a tall round-topped window with small panes and a deep pale stone recess. To the right of it, another tall round-topped window with small panes and a deep pale stone recess.
+5. Left side: the edge of a tall dark-honey wooden bookcase at the far left; in front of it, a long dark wooden reading table with plain wooden chairs, and on the table two brass reading lamps with green glass shades, plus a third green-shaded lamp further back on the right.
+6. Right side: a tall dark-honey wooden bookcase full of books running down the whole right edge of the image, with a tall wooden rolling ladder leaning against the shelves just right of the centre-right window. In the lower right corner, the end of a low bookshelf with leather books.
+7. Light: warm golden late-afternoon sunbeams coming from the windows, a soft golden haze with drifting dust, long soft shadows on the floor pointing towards the camera.
+8. The woman: seen from behind, centred. Dark brown hair loosely gathered into a low knot at the back of her head, no braid visible. A long heavy sand-coloured, slightly textured wool cloak covers her whole back and both shoulders and falls to her calves. Below it, a little of an off-white linen tunic and bare ankles. Brown leather sandals. Her right arm is stretched out to the right, palm open, the fingertips just leaving the books of the right-hand bookcase; a white linen sleeve shows on that arm.
 
-CHARACTER (keep exactly the same): a calm woman about 40 years old, dark brown hair loosely gathered at the back, olive-toned skin, dark brown eyes, an ankle-length undyed off-white linen tunic with a thin brown leather belt under the long heavy sand-coloured wool cloak that covers BOTH shoulders, brown leather sandals.
+CHARACTER (identical from the first frame to the last): a calm woman about 40 years old; dark brown hair with a few silver strands, gathered in a low loose knot; olive-toned skin; an oval face, dark straight eyebrows, dark brown eyes, a straight nose, no make-up, no jewellery. She wears an ankle-length undyed off-white linen tunic with a thin brown leather belt, the long heavy sand-coloured wool cloak over BOTH shoulders, and brown leather sandals. Nothing about her face, age, hair or clothes changes.
 
-CAMERA: for the first 3 seconds the camera stays in exactly the same position and framing as the first frame and only follows her slowly from behind; there is no cut and no jump to a new place. The same room, the same gallery, the same windows, the same table and lamps.
+CAMERA: for the first 3 seconds the camera stays in the same position and framing and only drifts gently forward behind her. No cut, no jump, no zoom, no new angle. After that, only very slow, smooth movement as described below.
 
 TIMELINE:
-0–3 s: from behind, she walks a few more slow steps along the same aisle toward the back of the same room and takes one old leather-bound book from a shelf.
-3–6 s: she sits down on a cushioned window seat in the deep recess of one of the same tall arched windows on the lower level, warm sunlight falling across her, and opens the book on her lap. The pages are old and pale, with no readable text.
-6–10 s: the camera slowly moves around to her side so we see her face in soft profile in the golden window light. She looks up from the book, closes her eyes, takes one slow breath, and a quiet, peaceful smile appears. Dust drifts slowly through the sunbeams around her. End on this calm, intimate moment.
+0–3 s: from behind, she walks four slow steps forward along the same aisle. She lowers her right arm, reaches to the right-hand bookcase and slides out ONE old brown leather-bound book from a shelf at shoulder height, holding it in both hands against her chest.
+3–6 s: she walks slowly to the tall round-topped window on the RIGHT of the back wall (the one just left of the rolling ladder). Inside its deep pale stone recess there is a low stone window seat with a single plain cream linen cushion: this cushion is the only new object allowed in the whole video. She sits down sideways on it, her back against the side of the recess, facing left, warm sunlight falling across her, and opens the book on her lap. The pages are old, pale and blank-looking, with no readable text.
+6–10 s: the camera slowly moves around to her left side and stops so we see her face in soft profile, lit by the golden window light, the small window panes glowing behind her. She looks up from the book, closes her eyes, takes one slow, deep breath, and a quiet, peaceful smile appears. Dust drifts slowly through the sunbeams. She stays still. End on this calm, intimate moment.
 
-STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. Warm amber, honey and gold palette, deeply calm atmosphere. Very slow, smooth camera movement. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, shallow depth of field. Exactly the same warm amber, honey and gold colours as the first frame for the whole video. Real-time speed, very slow and smooth camera. Single continuous shot, no cuts, no transitions, no fades. Vertical 9:16.
 
-DO NOT SHOW: a different library, a different room or a different woman at the start; a braid over her shoulder; the cloak changing colour; other people; readable text on the book pages, covers or shelves; logos; the airport or the door; a studio portrait; fast camera moves.
+STRICTLY FORBIDDEN (do NOT show any of this):
+- a different room, a rectangular room, a modern library, a church, a museum, a staircase, a fireplace, a door or an archway that is not in the first frame;
+- moving, removing, adding or redesigning windows, bookshelves, the gallery, the balustrade, the ladder, the table, the chairs or the lamps;
+- any new objects apart from the one cream cushion: no candles, plants, flowers, vases, globes, statues, paintings, rugs, curtains, teacups, glasses, pens, papers, bags, animals;
+- any modern objects: phones, laptops, screens, signs, exit signs, cables, electric lights other than the green lamps;
+- other people, silhouettes, reflections of people, or a second woman;
+- a different woman, a younger or older woman, a change of face, hair colour or hairstyle, a braid over her shoulder, the hood up, the cloak changing colour or length, jewellery, make-up, glasses;
+- her looking at or talking to the camera, her reading aloud, tears, laughing;
+- readable text, letters or numbers on book pages, covers, spines or anywhere; logos; the word "STOIKOS";
+- the airport, the white corridor or the oak door;
+- night, rain, clouds, blue or cold light, flickering light, a change in time of day;
+- books falling, pages flying, magic effects, glowing particles other than dust in sunlight;
+- slow motion, fast motion, zooms, whip pans, shaky camera, cuts, a studio portrait or a grey background.
 
-AUDIO: near silence; soft footsteps on wood, the gentle sound of pages turning, a distant clock, faint birdsong outside the window. No spoken words in any language, no music.
+AUDIO: near silence; four soft footsteps on old wooden floorboards, a book sliding off a shelf, the gentle sound of a page turning, a slow clock ticking far away, faint birdsong outside the window, one soft breath. No spoken words in any language, no whispering, no music.
 ```
 
 ## (Eski) Çekim 3: Pencere kenarı (10 sn)
