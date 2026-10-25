@@ -112,7 +112,50 @@ STRICTLY FORBIDDEN (do NOT show any of this):
 AUDIO: heavy rain on stone and umbrellas, fast footsteps and the low murmur of the hurried crowd; at the fall a soft thud and the clatter of the wooden cane on wet stone; then the crowd noise seems to drift far away, leaving only the rain and the two men's quiet breathing. No spoken words in any language, no voices that form words, no music.
 ```
 
-## Çekim 3: Yağmur diner, daire boş kalır (10 sn)
+## Çekim 3: Daireden birlikte çıkış, yağmur diner (10 sn) — Çekim 2'nin son karesine göre (25 Ekim 2026)
+
+Çekim 2 (`daire-videosu/cekim-1-2-meydan-yardim-gemini-720p.mp4`, **20 sn**: Gemini Çekim 1'i uzatmış; 0–10 Çekim 1, 10–20 devamı, dikişsiz) iyi çıktı ama filozof halkadan çıkmadı: yaşlı adam halkanın kenarına düştü, ikisi sonunda halkanın içinde. Yaşlı adamın kısa beyaz sakalı var, pelerin ikisinin omzunda. **Ters köşe bu çekime taşındı:** ikisi birlikte halkadan çıkıyor, kamera yükselirken yağmur diniyor ve daire boş kalıyor.
+
+**Yeni sohbet. Yükle:** yalnız `daire-videosu/cekim-2-son-kare.png`
+
+```
+Use this image as the EXACT first frame of the video and continue directly from it. Do not redraw, reinterpret, re-imagine, restyle or re-light it. This is the same place in the same moment; the video only continues it. The very first frame (0.0 s) is this image. There is no studio portrait, no plain or grey background, no close-up and no cut to another place or angle at any moment.
+
+THE FIRST FRAME, EXACTLY AS IT IS (all of this must stay identical; nothing is added, removed, moved or redesigned):
+1. Camera: high above the square, looking steeply down at about 60 degrees.
+2. The ground: a wet city square paved with large pale grey stone slabs of slightly different sizes, shiny with rain, with darker wet patches.
+3. The bronze circle: a thin polished bronze ring set flush into the stone, very large, its top at about one quarter of the image height and its bottom near the bottom of the image, its sides touching the left and right edges of the image. It is the only ring.
+4. The word: inside the ring, in its upper left part, large polished bronze classical Roman capital letters read exactly "STOIKOS" (S-T-O-I-K-O-S), in a gentle arc rising from left to right. They stay exactly in this shape and spelling in every frame and are never covered by anyone.
+5. The two men, standing together inside the ring in its lower right part, seen from above and from the front:
+   - on the left, the philosopher: about 60, short wavy grey hair, short grey beard, a short-sleeved off-white linen tunic to below the knees with a brown rope belt, brown leather sandals; his right arm is around the old man's shoulders;
+   - on the right, the old man: about 80, thin white hair, a short white beard, a long plain dark grey coat, black shoes, holding a simple wooden cane in his right hand;
+   - the long heavy sand-coloured wool cloak is laid over the old man's shoulders and back and also hangs from the philosopher's shoulder, so that it covers them both a little.
+6. In the upper part of the image, a few people in plain dark coats walk past fast; one plain black umbrella at the top left. Rain is falling.
+
+CAMERA: for the first 3 seconds the camera stays perfectly still, exactly as in the first frame. Then it slowly rises straight up, higher and higher, and slowly tilts down until, at the end, it looks STRAIGHT DOWN at the square from high above, like a map, with the bronze ring in the exact centre of the image. The camera never rotates, never tilts up, never shows the sky, the horizon or buildings, never cuts.
+
+TIMELINE (10 seconds):
+0–3 s: the two men turn slowly together and walk, side by side, the philosopher's arm around the old man, the old man leaning on his cane, towards the lower right. Together they step over the bronze ring and OUT OF THE CIRCLE.
+3–7 s: the camera rises. The two men walk slowly away across the square. The rain becomes lighter and lighter and stops. One by one, the people in the square lower and close their black umbrellas. Soft warm golden evening sunlight falls across the square from one side, and the wet stone and the puddles begin to shine gold.
+7–10 s: top-down view from high above: the bronze ring with "STOIKOS" is EMPTY in the exact centre of the image, shining gold in the evening light on the wet stone. The two small figures, one in a sand-coloured cloak, walk slowly away together near the lower right edge of the image. People cross the square calmly, umbrellas closed. End on this wide, quiet top-down frame.
+
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, real-time speed. The palette moves slowly from the cold blue-grey rain to warm golden evening light; the bronze ring and letters glow. Very slow, smooth camera. Single continuous shot, no cuts, no transitions, no fades. Vertical 9:16.
+
+STRICTLY FORBIDDEN (do NOT show any of this):
+- a studio portrait, a plain or grey background, a close-up, a cut, a new angle, an eye-level shot;
+- the sky, the sun, clouds, the horizon, buildings, roofs, streets, cars;
+- a different square, different paving, a different ring, a second ring, or the ring changing colour or shape;
+- "STOIKOS" moving, changing, misspelled (e.g. "STOIIKOS", "STOKOS", "STOIKOSS"), blurred, covered or missing; any other text, letters, numbers, signs, logos or brands;
+- anyone standing in the ring at the end; anyone else stepping into the ring;
+- the two men separating, turning to the camera, talking or waving; a third man in a cloak; the philosopher's or the old man's face or clothes changing; two cloaks;
+- coloured, patterned or branded umbrellas;
+- a rainbow, snow, lightning, magic light, glowing effects on the ring other than reflected sunlight;
+- slow motion, time-lapse, fast motion, zoom jumps.
+
+AUDIO: the rain fading into slow dripping water, the crowd's murmur growing calmer, two pairs of slow footsteps and the soft tap of a wooden cane on wet stone, a few distant birds as the light turns golden. No spoken words in any language, no voices that form words, no music.
+```
+
+## (Eski taslak) Çekim 3: Yağmur diner, daire boş kalır (10 sn)
 
 **Yeni sohbet. Yükle:** yalnız Çekim 2'nin son karesi (Claude çıkarıp gönderir; komutun "İLK KARE" bölümünü o kareye göre güncelleyecek).
 
