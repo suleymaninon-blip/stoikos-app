@@ -69,7 +69,39 @@ DO NOT SHOW: a studio portrait or grey background; airline logos, brand names, s
 AUDIO: busy terminal echo, rolling suitcase wheels, footsteps, beeping, a dull crowd murmur, distant muffled announcement chimes with no spoken words in any language. No music.
 ```
 
-## Çekim 2: Kapı açılır, kütüphane (8 sn)
+## Çekim 2: Kapı açılır, kütüphane (8 sn) — ayrıntılı sürüm (25 Ekim 2026)
+
+**Yeni sohbet. Yükle:** yalnız `kutuphane-videosu/cekim-1b-son-kare.png`
+
+İlk denemede (`kutuphane-videosu/cekim-2-deneme1-kapi-farkli.mp4`) Gemini görseli ilk kare olarak kullanmadı: kapıyı yeniden çizdi (dikdörtgen kapı, ince çerçeve, minicik ve yanlış yazılmış "STOIIKOS"), kadını da pelerini açık, örgüsü görünür hâlde çizdi. Kütüphane içi ise çok güzeldi (3,5–10 sn yedek olarak duruyor). Bu sürümde ilk karedeki her nesne yeri, boyutu ve rengiyle tek tek tarif ediliyor (Fener'de işe yarayan yöntem).
+
+```
+Use this image as the EXACT first frame of the video and continue directly from it, pixel for pixel. Do not redraw, reinterpret or re-imagine the image. Do not show any studio portrait or grey background.
+
+THE FIRST FRAME, EXACTLY AS IT IS (keep every detail for the first 3 seconds):
+- Framing: we look straight at a door from behind a woman, centred, the camera at chest height. The door frame fills almost the whole width of the image.
+- The door frame: a wide, flat, square-topped surround of pale cream marble with light grey veins, with a thin moulded edge. Its top band is tall and wide.
+- The letters: in the top band of the marble frame, large carved classical Roman capital letters read exactly "STOIKOS", seven letters, S-T-O-I-K-O-S, in warm bronze-gold, spanning about two thirds of the frame's width. They are big and clearly readable. They stay in exactly this place, size and spelling for the whole time they are visible. Never "STOIIKOS", never smaller, never missing.
+- Inside the marble frame: a rounded arch, and inside the arch a tall dark brown oak door made of vertical planks with a carved pointed-arch panel at the top, two large black wrought-iron scroll hinges across the upper part of the door at the height of the woman's head, a black iron lever handle with a keyhole on the left side at waist height. A thin line of warm golden light glows around the edge of the closed door.
+- The wall: plain smooth white wall on both sides, a dark grey skirting strip at the bottom, a small white plaque on the wall to the right of the frame.
+- The floor: light grey speckled terrazzo tiles.
+- The woman: standing right in front of the door in the centre, seen completely from behind. Her dark hair is gathered at the back of her head; her braid is hidden. The long heavy sand-coloured wool cloak covers her whole back and both shoulders and falls almost to her ankles, so her tunic is NOT visible from behind except a little white hem at the bottom. Brown leather sandals. Her right hand is raised and resting flat on the left half of the door at shoulder height; a little white linen sleeve shows at her wrist.
+
+CAMERA: for the first 3 seconds the camera stays perfectly still, in exactly the same position and framing as the first frame, so the marble frame and the word "STOIKOS" stay fully visible and sharp. Only after she has stepped through the doorway does the camera glide forward through the same arch after her.
+
+TIMELINE:
+0–3 s: with the hand that is already on the door, she slowly pushes the SAME oak door inward on its iron hinges. It swings open into the arch and warm golden light and floating dust pour out around her. She steps forward through the arch, her back to the camera. The marble frame and "STOIKOS" above it stay exactly where they are.
+3–4 s: the camera passes under the same marble arch after her; the airport noise is suddenly gone.
+4–8 s: inside: a vast, silent old library with two-storey walls of dark wooden bookshelves full of old leather-bound books, wooden rolling ladders, a gallery with a carved wooden railing, long reading tables with small green-shaded lamps, tall arched windows letting in soft golden late-afternoon sunbeams full of drifting dust. She walks slowly down the central aisle between the shelves, the fingertips of one hand lightly brushing the spines of the books. The library is completely empty except for her.
+
+STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. The palette changes from cold white at the door to warm amber, honey and gold inside. Smooth, steady camera. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+
+DO NOT SHOW: a different door, a rectangular door, a thinner or different frame, a different wall or floor at the start; the word "STOIKOS" small, misspelled, moved or missing; her braid or her white tunic visible from behind at the start; other people; readable titles or text on books, shelves or anywhere; logos; her face; a studio portrait.
+
+AUDIO: muffled airport noise, the deep creak of the heavy door, then sudden deep silence: soft footsteps on old wooden floorboards, the faint whisper of fingertips on book spines, a clock ticking far away. No spoken words in any language, no music.
+```
+
+## (Eski) Çekim 2: Kapı açılır, kütüphane (8 sn)
 
 **Yeni sohbet. Yükle:** yalnız `kutuphane-videosu/cekim-1b-son-kare.png`
 
