@@ -88,7 +88,8 @@ export async function startBreathSound(): Promise<void> {
   try {
     if (!audioModeSet) {
       try {
-        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true, shouldDuckAndroid: true });
+        // staysActiveInBackground: telefon kilitlenince nefes sesi kesilmesin (app.json → UIBackgroundModes: audio).
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true, shouldDuckAndroid: true, staysActiveInBackground: true });
       } catch (e) {
         // Web'de bu çağrı desteklenmeyebilir; ses üretimini engellememeli.
         note('setAudioMode', e);

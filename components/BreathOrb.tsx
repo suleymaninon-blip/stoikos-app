@@ -208,12 +208,20 @@ export default function BreathOrb({
     else if (activeRef.current) startBreathSound();
   }, []);
 
-  // Ekrandan çıkınca / arka planda: egzersiz sessizce biter.
+  // Ekrandan (sekmeden) çıkınca egzersiz sessizce biter.
   useFocusEffect(useCallback(() => () => stop(false), [stop]));
+  // Telefon kilitlenince / arka planda egzersiz SÜRER (25 Ekim 2026, rekabet analizi: rakibin
+  // "ekran kilitlenince ses duruyor" şikâyeti). Ses arka planda çalar (breathSound.ts:
+  // staysActiveInBackground, app.json: UIBackgroundModes audio). Süreli seansın bitiş zamanlayıcısı
+  // arka planda gecikirse, öne dönünce süre dolmuşsa seans burada kapanır.
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (s) => { if (s !== 'active') stop(false); });
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s !== 'active' || !activeRef.current) return;
+      const dur = durationRef.current;
+      if (dur > 0 && (Date.now() - startedAt.current) / 1000 >= dur) stopRef.current(true);
+    });
     return () => sub.remove();
-  }, [stop]);
+  }, []);
 
   // ── Çiçek ──
   const rotate = breath.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '60deg'] });

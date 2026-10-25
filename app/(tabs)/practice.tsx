@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView,
   StyleSheet, SafeAreaView, Animated, TextInput,
-  KeyboardAvoidingView, Platform, Modal, Pressable,
+  KeyboardAvoidingView, Platform, Modal, Pressable, AppState,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
@@ -142,6 +142,12 @@ export default function PracticeScreen() {
   // Alttaki "… tamamlandı · Geri al" şeridi; 4 sn sonra kaybolur.
   const [toast, setToast] = useState<{ id: string; name: string; done: boolean } | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Otomatik kayıt (25 Ekim 2026, rekabet analizi: rakibin en acı 1★ şikâyeti "yazarken
+  // uygulama kapandı, günlüğüm gitti"). Yazılan metin 0,8 sn duraksamada ve uygulama
+  // arka plana geçerken cihaza yazılır. "Kaydet" düğmesi kalır: koça iletim (rıza varsa)
+  // yalnız ona basınca yapılır, her tuşta değil.
+  const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const draftRef = useRef<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
@@ -195,7 +201,31 @@ export default function PracticeScreen() {
     setToast(null);
   }
 
+  async function persistDraft() {
+    if (draftTimer.current) { clearTimeout(draftTimer.current); draftTimer.current = null; }
+    const txt = draftRef.current;
+    if (txt == null) return;
+    draftRef.current = null;
+    if (txt.trim()) await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
+    else await AsyncStorage.removeItem(JOURNAL_KEY + today);
+  }
+
+  function onJournalChange(txt: string) {
+    setJournal(txt);
+    setJournalSaved(false);
+    draftRef.current = txt;
+    if (draftTimer.current) clearTimeout(draftTimer.current);
+    draftTimer.current = setTimeout(() => { persistDraft(); }, 800);
+  }
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (s) => { if (s !== 'active') persistDraft(); });
+    return () => { sub.remove(); persistDraft(); };
+  }, []);
+
   async function saveJournal() {
+    if (draftTimer.current) { clearTimeout(draftTimer.current); draftTimer.current = null; }
+    draftRef.current = null;
     const txt = journal.trim();
     if (!txt) return;
     await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
@@ -315,7 +345,7 @@ export default function PracticeScreen() {
               placeholder={t('practice.journalPlaceholder')}
               placeholderTextColor={Colors.muted}
               value={journal}
-              onChangeText={(txt) => { setJournal(txt); setJournalSaved(false); }}
+              onChangeText={onJournalChange}
               multiline
               textAlignVertical="top"
             />
