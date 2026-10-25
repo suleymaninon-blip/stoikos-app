@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
 import StoikosMark, { MARK_CENTER, MARK_PATH, MARK_PATH_LEN, MARK_VIEWBOX } from './StoikosMark';
 import { Colors, Fonts } from '../constants/theme';
-import { useLang, LANGUAGES } from '../constants/i18n';
+import { useLang, LANGUAGES, upper } from '../constants/i18n';
 import { enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -264,9 +264,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                   <>
                     <View style={styles.omega}><StoikosMark size={84} /></View>
                     <Text style={styles.brand}>STOIKOS</Text>
-                    <Text style={styles.tagline}>{t('setup.tagline')}</Text>
+                    <Text style={styles.tagline}>{upper(t('setup.tagline'), lang)}</Text>
                     <Text style={styles.intro}>{t('onb.intro')}</Text>
-                    <Text style={styles.langPrompt}>{t('onb.langPrompt')}</Text>
+                    <Text style={styles.langPrompt}>{upper(t('onb.langPrompt'), lang)}</Text>
                     <View style={styles.langGrid}>
                       {LANGUAGES.map((l) => {
                         const active = lang === l.code;
@@ -350,10 +350,10 @@ const styles = StyleSheet.create({
 
   omega: { marginBottom: 4 },
   brand: { fontFamily: Fonts.cinzelBold, fontSize: 26, letterSpacing: 6, color: Colors.text, marginBottom: 12 },
-  tagline: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, textTransform: 'uppercase', marginBottom: 18 },
+  tagline: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 18 },
   intro: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.text2, textAlign: 'center', lineHeight: 30, marginBottom: 36 },
 
-  langPrompt: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, textTransform: 'uppercase', marginBottom: 14 },
+  langPrompt: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginBottom: 14 },
   langGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
   langChip: {
     flexDirection: 'row', alignItems: 'center', gap: 7,
