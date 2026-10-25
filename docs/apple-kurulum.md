@@ -31,7 +31,7 @@ Böylece her işlem için Bilge Hanım'ın hesabına girmek gerekmez. (Sözleşm
 **developer.apple.com → Certificates, Identifiers & Profiles → Identifiers → +** → **App IDs** → **App**
 - Description: `Stoikos`
 - Bundle ID: **Explicit** → `com.stoikos.app`
-- Capabilities: varsayılanlar yeterli (Uygulama İçi Satın Alma zaten açık). Push Notifications **gerekmez** — hatırlatıcılar cihazda yerel.
+- Capabilities: Uygulama İçi Satın Alma (zaten açık) + **HealthKit** (25 Ekim 2026'dan beri; nefes seansları "Farkındalık dakikaları"na yazılıyor). EAS derleme sırasında yetenekleri kendisi eşitler; elle açmak gerekirse Identifiers → com.stoikos.app → HealthKit ✓. Push Notifications **gerekmez** — hatırlatıcılar cihazda yerel.
 
 ## 4. Uygulama kaydı
 **App Store Connect → Uygulamalar → + → Yeni Uygulama**
@@ -93,4 +93,5 @@ Gizlilik politikası 1.1 ile uyumlu cevaplar:
   - *Tanımlayıcılar → Kullanıcı Kimliği* (cihazda üretilen rastgele kimlik): Uygulama işlevi · ilişkilendirilmez.
   - *Satın Almalar → Satın alma geçmişi* (abonelik durumu, RevenueCat): Uygulama işlevi · ilişkilendirilmez.
 - Konum, kişiler, sağlık, finans, tarama geçmişi, reklam verisi: **toplanmıyor**.
+  - Sağlık: Uygulama Apple Sağlık'a yalnız *yazıyor* (farkındalık dakikaları), hiçbir sağlık verisi okumuyor ve yazdığı veri cihazdan çıkmıyor → "Sağlık ve Fitness" verisi **toplanmıyor** olarak işaretlenir. Mağaza açıklamasında ve gizlilik politikası 1.2'de HealthKit kullanımı belirtildi (Apple şartı).
 - Gizlilik politikası adresi: `https://stoikos.app/privacy.html` (TR sayfa: `/gizlilik.html`).
