@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# "An" — ~32 sn dikey (TR + EN). Kadın kahraman; yağmurlu gece kavşağında zaman durur →
+# "An" — ~31 sn dikey (TR + EN). Kadın kahraman; yağmurlu gece kavşağında zaman durur →
 # donmuş yağmurun içinden "STOIKOS" kemerine → bulutların üstünde dağ terası.
 # Kaynaklar (Gemini, 720p, 24 fps) docs/sosyal-medya/an-videosu/:
 #   cekim-1-kavsak: 0–4,3 canlı; 4,3'ten sonra DONMA KURGUDA: arka plan 4,3. sn karesinde sabit,
 #                   kadın cekim-1-kadin-maske.png ile canlı videodan bindirilir (Gemini insanları dondurmadı).
 #                   Donmuş bölüm 4,5 sn, yavaş yakınlaşma; ses kesilir, ince çınlama.
-#   cekim-2b-damla: 0–5 önden: küçük bir damlaya parmağıyla dokunur, damla halka halka dalgalanır, döner
+#   cekim-2b-damla: 0–10 önden: küçük bir damlaya dokunur, döner, donmuş meydanda kemere yürür, gündüz kemerine geçer
 #                   (kullanıcı 25 Ekim 2026: cekim-2'deki damla çok büyüktü → montajın 8–13. sn'si bununla değişti)
-#   cekim-2-kemer:  4,2–9,6 (yalnız kemere yürüyüş kısmı) — eskiden 0–9,6 Çekim 1'in son karesinden devam: önündeki damlaya dokunur, döner, "STOIKOS" kemerine yürür
+#   cekim-2-kemer:  artık kullanılmıyor (25 Ekim 2026: iki çekim arası kesme tutarsızdı; cekim-2b tek başına kemere kadar gidiyor) Çekim 1'in son karesinden devam: önündeki damlaya dokunur, döner, "STOIKOS" kemerine yürür
 #                   (25 Ekim 2026'da yeniden üretildi; eskisinde el omzun arkasından çıkıyordu → deneme-cekim-2-kemer-eski)
 #   cekim-3-zirve:  1,9–7,4 kemer ışığından terasa (baştaki portre ve kameraya dönük kemer anı kesilir);
 #                   7,4–10 yarı hızda (gözleri kapalı, gülümser)
@@ -21,10 +21,28 @@ MUSIC=docs/sosyal-medya/muzik/bach-cello-suite-1-prelude-lud-schlatt.ogg
 TMP=$(mktemp -d)
 P="scale=1080:1920:flags=lanczos,fps=30,setsar=1,format=yuv420p,settb=1/30"
 F=3.7        # donmuş bölüm süresi (damla sahnesi montajın 8. sn'sinde başlasın)
-# A = 4,3 + 3,7 = 8,0 · B = 5,0 + 5,4 = 10,4 · C = 5,5 + 5,2 = 10,7 · logo 4
-X1=17.8      # B → C ışık geçişi (0,6 sn): 8,0 + 10,4 − 0,6
-X2=27.8      # C → logo (0,6 sn kararma): 17,8 + 10,7 − 0,7
-TOTAL=31.8
+# A = 4,3 + 3,7 = 8,0 · B = cekim-2b-damla 0–10 (tek parça; damla → dönüş → donmuş meydan → gündüz "STOIKOS" kemeri)
+# A → B: 0,5 sn yumuşak odak geçişi (A'nın son 0,7 sn'si bulanıklaşır, B'nin ilk 0,7 sn'si netleşir; açı farkı gizlenir)
+# C = 5,5 + 5,2 = 10,7 · logo 4
+XA=7.5       # A → B (0,5 sn)
+X1=16.9      # B → C ışık geçişi (0,6 sn): 8,0 + 10,0 − 0,5 − 0,6
+X2=26.9      # C → logo (0,6 sn kararma): 16,9 + 10,7 − 0,7
+TOTAL=30.9
+
+# Odak geçişi için kare kare bulanıklık komutları (gblur sigma)
+python3 - "$TMP" <<'PY'
+import sys
+d=sys.argv[1]
+def ease(x): return x*x*(3-2*x)
+with open(d+'/blurA.txt','w') as f:
+    for i in range(0,241):
+        t=i/30; v=0 if t<7.3 else 14*ease(min(1,(t-7.3)/0.7))
+        f.write(f'{t:.4f} gblur sigma {max(v,0.01):.3f};\n')
+with open(d+'/blurB.txt','w') as f:
+    for i in range(0,31):
+        t=i/30; v=14*ease(max(0,1-t/0.7))
+        f.write(f'{t:.4f} gblur sigma {max(v,0.01):.3f};\n')
+PY
 
 # Söz için üstte yumuşak karartma (gökyüzü açık; yazı okunsun)
 convert -size 1080x900 gradient:"rgba(8,6,4,0.62)"-"rgba(8,6,4,0)" $TMP/topshade.png
@@ -47,19 +65,19 @@ for LANG in tr en; do
     -i $SRC/cekim-3-zirve-gemini-720p.mp4 -i $TMP/kapanis-$LANG-1080x1920.mp4 -i $MUSIC \
     -loop 1 -t $TOTAL -i $TMP/t1.png -loop 1 -t $TOTAL -i $TMP/topshade.png -f lavfi -t $F -i "sine=f=2093:sample_rate=48000" \
     -i $SRC/cekim-2b-damla-gemini-720p.mp4 -filter_complex "\
-[0:v]trim=0:4.3,setpts=PTS-STARTPTS,$P[a];[1:v]$P[fz];[a][fz]concat=n=2:v=1:a=0,settb=1/30[A];\
-[9:v]trim=0:5.0,setpts=PTS-STARTPTS,$P[b0];[2:v]trim=4.2:9.6,setpts=PTS-STARTPTS,$P[b1];[b0][b1]concat=n=2:v=1:a=0,settb=1/30[B];\
+[0:v]trim=0:4.3,setpts=PTS-STARTPTS,$P[a];[1:v]$P[fz];[a][fz]concat=n=2:v=1:a=0,settb=1/30,sendcmd=f=$TMP/blurA.txt,gblur=sigma=0.01,settb=1/30[A];\
+[9:v]trim=0:10.0,setpts=PTS-STARTPTS,$P,sendcmd=f=$TMP/blurB.txt,gblur=sigma=0.01,settb=1/30[B];\
 [3:v]trim=1.9:7.4,setpts=PTS-STARTPTS,$P[c1];[3:v]trim=7.4:10,setpts=2*(PTS-STARTPTS),$P[c2];[c1][c2]concat=n=2:v=1:a=0,settb=1/30[C];\
-[A][B]concat=n=2:v=1:a=0,settb=1/30[AB];[AB][C]xfade=transition=fadewhite:duration=0.6:offset=$X1[ABC];\
-[7:v]format=rgba,fade=in:st=22.4:d=1.0:alpha=1,fade=out:st=27.2:d=0.5:alpha=1[sh];[ABC][sh]overlay=0:0[abs];\
-[6:v]format=rgba,fade=in:st=22.6:d=0.8:alpha=1,fade=out:st=27.2:d=0.5:alpha=1[q];[abs][q]overlay=0:-1130,settb=1/30[vq];\
+[A][B]xfade=transition=fade:duration=0.5:offset=$XA,settb=1/30[AB];[AB][C]xfade=transition=fadewhite:duration=0.6:offset=$X1[ABC];\
+[7:v]format=rgba,fade=in:st=21.5:d=1.0:alpha=1,fade=out:st=26.3:d=0.5:alpha=1[sh];[ABC][sh]overlay=0:0[abs];\
+[6:v]format=rgba,fade=in:st=21.7:d=0.8:alpha=1,fade=out:st=26.3:d=0.5:alpha=1[q];[abs][q]overlay=0:-1130,settb=1/30[vq];\
 [4:v]$P[k];[vq][k]xfade=transition=fadeblack:duration=0.6:offset=$X2[v];\
 [0:a]atrim=0:4.3,asetpts=PTS-STARTPTS,aresample=48000,afade=t=out:st=4.0:d=0.3[a1];\
 [8:a]volume=0.012,afade=t=in:d=0.4,afade=t=out:st=1.8:d=1.9[ring];\
-[9:a]atrim=0:5.0,asetpts=PTS-STARTPTS,aresample=48000,volume=3[b0a];[2:a]atrim=4.2:9.6,asetpts=PTS-STARTPTS,aresample=48000,volume=3[b1a];[b0a][b1a]concat=n=2:v=0:a=1[b1];\
+[9:a]atrim=0:10.0,asetpts=PTS-STARTPTS,aresample=48000,volume=3[b1];\
 [3:a]atrim=1.9:7.4,asetpts=PTS-STARTPTS,aresample=48000,volume=2[c1a];[3:a]atrim=7.4:10,asetpts=PTS-STARTPTS,aresample=48000,atempo=0.5,volume=2[c2a];\
-[a1][ring][b1][c1a][c2a]concat=n=5:v=0:a=1,volume=0.7[amb];\
-[5:a]atrim=0.7:35,asetpts=N/SR/TB,adelay=17800|17800,afade=t=in:st=17.8:d=1.0,afade=t=out:st=28.6:d=3.2[m];\
+[a1][ring]concat=n=2:v=0:a=1[ar];[ar][b1]acrossfade=d=0.5[arb];[arb][c1a][c2a]concat=n=3:v=0:a=1,volume=0.7[amb];\
+[5:a]atrim=0.7:35,asetpts=N/SR/TB,adelay=16900|16900,afade=t=in:st=16.9:d=1.0,afade=t=out:st=27.7:d=3.2[m];\
 [amb][m]amix=inputs=2:normalize=0:duration=longest,apad=whole_dur=$TOTAL,loudnorm=I=-16:TP=-1.5:LRA=11[au]" \
     -map "[v]" -map "[au]" -t $TOTAL -c:v libx264 -preset slow -crf 19 -pix_fmt yuv420p \
     -c:a aac -b:a 192k -ar 48000 -movflags +faststart $SRC/an-$LANG-1080x1920.mp4
