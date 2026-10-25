@@ -173,10 +173,14 @@ STRICTLY FORBIDDEN (do NOT show any of this):
 AUDIO: near silence; four soft footsteps on old wooden floorboards, a book sliding off a shelf, the gentle sound of a page turning, a slow clock ticking far away, faint birdsong outside the window, one soft breath. No spoken words in any language, no whispering, no music.
 ```
 
-**Yüz tutmazsa ikinci deneme:** ilk denemede yalnız son kare yüklenir (yüz yazıyla tarif edildi). Profildeki yüz farklı çıkarsa yeni sohbette **iki görsel** yüklenir: önce `cekim-2-son-kare.png`, sonra `bahce-videosu/00-kadin-referans.png`; komutun en başına şu eklenir:
+**Deneme 1 (`cekim-3-deneme1-yuz-farkli.mp4`):** ilk 5 saniye kusursuz (aynı oda, kitabı alıp pencereye oturuyor) ama sondaki yüz başka biri: daha genç, açık tenli, kızıl-kahve saçlı; ayrıca pencere düz camlı dikdörtgene dönüştü. **İkinci deneme:** yeni sohbette **iki görsel** — önce `cekim-2-son-kare.png`, sonra `bahce-videosu/00-kadin-referans.png` — ve aşağıdaki blok yukarıdaki komutun **en başına** eklenir:
 
 ```
-There are TWO images. IMAGE 1 (the library) is the exact first frame of the video. IMAGE 2 (the woman on a plain background) is ONLY a reference for her face and must NEVER appear in the video: do not show it, do not start with it, do not cut to it, no plain or grey background at any moment. Her face in profile at the end must match IMAGE 2 exactly.
+There are TWO images. IMAGE 1 (the library) is the exact first frame of the video. IMAGE 2 (the woman on a plain background) is ONLY a reference for her face and must NEVER appear in the video: do not show it, do not start with it, do not cut to it, no plain or grey background at any moment.
+
+HER FACE (most important part of this video): when her face becomes visible at the end, it must be EXACTLY the woman in IMAGE 2: the same person, about 40 years old (not younger), olive-toned Mediterranean skin (not pale), very dark brown, almost black hair (not red, not auburn, not light brown), a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, thin lips, a few fine lines, no make-up, no jewellery, no brooch. Her dark hair stays the same colour in every frame, also in the bright sunlight.
+
+THE WINDOW she sits in is one of the round-topped windows with many small panes from IMAGE 1, in a deep pale stone recess; not a rectangular window, not large clear panes.
 ```
 
 ## (Eski) Çekim 3: Pencere kenarı (10 sn)
