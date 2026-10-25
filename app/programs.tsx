@@ -236,7 +236,24 @@ export default function ProgramsScreen() {
                     <Text style={styles.modalDayLabel}>{t('programs.dayOf', { n: dayIdx + 1, total: open.dayCount })}</Text>
                     <Text style={styles.modalTitle}>{d.title}</Text>
                     <View style={styles.modalDivider} />
-                    <Text style={styles.modalBody}>{d.body}</Text>
+                    {d.read ? (
+                      // Zenginleştirilmiş gün: kısa okuma → bugünün pratiği → akşam sorusu
+                      <ScrollView style={styles.modalScroll} contentContainerStyle={{ paddingBottom: 4 }} showsVerticalScrollIndicator={false}>
+                        <Text style={styles.modalRead}>{d.read}</Text>
+                        <View style={styles.modalBox}>
+                          <Text style={styles.modalBoxLabel}>{upper(t('programs.todayPractice'), lang)}</Text>
+                          <Text style={styles.modalBoxText}>{d.body}</Text>
+                        </View>
+                        {d.ask && (
+                          <View style={styles.modalAsk}>
+                            <Text style={styles.modalBoxLabel}>{upper(t('programs.eveningAsk'), lang)}</Text>
+                            <Text style={styles.modalAskText}>{d.ask}</Text>
+                          </View>
+                        )}
+                      </ScrollView>
+                    ) : (
+                      <Text style={styles.modalBody}>{d.body}</Text>
+                    )}
                     <TouchableOpacity
                       style={[styles.modalBtn, completed && styles.modalBtnDone]}
                       onPress={() => {
@@ -398,6 +415,13 @@ const styles = StyleSheet.create({
   modalDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalTitle: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
   modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
+  modalScroll: { alignSelf: 'stretch', maxHeight: 460, marginBottom: 20 },
+  modalRead: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 18 },
+  modalBox: { backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', padding: 16, marginBottom: 14 },
+  modalBoxLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
+  modalBoxText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
+  modalAsk: { paddingHorizontal: 4 },
+  modalAskText: { fontFamily: Fonts.cormorantItalic, fontSize: 19, color: Colors.sand3, lineHeight: 27 },
   modalBody: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 26, textAlign: 'center', marginBottom: 26 },
   modalBtn: { width: '100%', backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 16, alignItems: 'center' },
   modalBtnDone: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
