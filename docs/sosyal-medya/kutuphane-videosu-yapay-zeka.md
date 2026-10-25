@@ -13,7 +13,37 @@
 - Kitap sayfalarında da **okunabilir yazı olmasın**.
 - Ses: **"no spoken words in any language"**. Havalimanı anonsları konuşmaya dönüşebilir.
 
-## Çekim 1: Havalimanı ve kapı (8 sn)
+## Çekim 1a: Havalimanında 10 saniyelik yürüyüş (yeni, 25 Ekim 2026)
+
+İlk denemede (`kutuphane-videosu/cekim-1b-kapi-gemini-720p.mp4`) havalimanı yalnızca 3 saniye sürdü, kalabalık ve uğultu zayıftı, uçuş panosunda "Departures" yazısı okunuyordu. Kapı kısmı (3,5–10 sn) ise iyi çıktı ve **Çekim 1b** olarak kullanılıyor. Havalimanı yürüyüşü ayrı ve tam 10 saniyelik bir çekim olarak yeniden üretiliyor. Son 2 saniyede kadın beyaz yan koridora girer; Çekim 1b'nin ilk karesi de koridorda arkadan çekilmiş kadını gösterdiği için iki çekim birbirine bağlanır.
+
+**Yeni sohbet. Yükle:** yalnız `bahce-videosu/00-kadin-referans.png`
+
+```
+Use this image ONLY as the reference for the woman's appearance. Do NOT show this image or any studio portrait in the video. The video starts directly in the middle of the airport crowd.
+
+CHARACTER (keep exactly the same): a calm woman about 40 years old with long dark brown hair with a few silver strands, loosely braided over one shoulder, olive-toned skin, dark brown eyes. She wears a simple ankle-length undyed off-white linen tunic tied with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders. Her hands are empty.
+
+SETTING: an enormous, overcrowded, chaotic international airport terminal at night during mass flight delays. The hall is PACKED: hundreds of stressed travellers fill every part of the frame, shoulder to shoulder. People run past dragging suitcases, a family argues, a man shouts silently into his phone, a child cries, people sleep on the floor between bags, long tangled queues snake through barriers, a luggage trolley train and an electric cart push through the crowd, a cleaning machine hums. Everyone is rushing, bumping, checking phones and watches. Harsh flickering white ceiling lights, glass walls with aircraft lights outside in the dark.
+There are NO departure boards, NO screens with text, NO signs, NO airline logos, NO brand names and NO readable text anywhere in the frame; any screens in the distance are only blurred coloured light.
+
+CAMERA AND TIMELINE (one continuous 10-second walk):
+0–6 s: the camera moves backwards in front of her at chest height while she walks slowly and calmly straight through the middle of the packed crowd toward the camera. Her face is serene and unhurried; around her the crowd is a blur of rushing people, suitcases and carts crossing in front of and behind her, some bumping her shoulder. She never speeds up.
+6–8 s: she walks past the camera; the camera turns and now follows her from behind at shoulder height as she continues through the crowd.
+8–10 s: from behind, she turns off the main hall into a quiet, narrow, plain white side corridor with a light grey stone floor; the crowd stays behind her in the hall. End with her walking away from the camera into the empty white corridor, seen from behind.
+
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, shallow depth of field. Cold, harsh white-blue airport light, slight motion blur on the rushing crowd; the only warm tones are her cloak and skin. Handheld camera with a slight nervous shake. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+
+DO NOT SHOW: a studio portrait or grey background; departure boards, signs, logos, brand names or any readable text; a door; the woman running or looking stressed; an empty or quiet main hall.
+
+AUDIO: loud, dense airport chaos: echoing crowd roar, hundreds of overlapping footsteps, rolling suitcase wheels, beeping carts, a crying child, phone ringtones, repeated airport announcement chimes, a cleaning machine humming; all voices are an unintelligible murmur with no spoken words in any language. In the last 2 seconds, inside the white corridor, the noise becomes muffled behind her. No music.
+```
+
+## Çekim 1b: Koridor ve kapı (hazır)
+
+`cekim-1b-kapi-gemini-720p.mp4` dosyasının 3,5–10. saniyeleri kullanılıyor: koridorda arkadan yürür, eski meşe kapı ve "STOIKOS" yazısı, elini kapıya koyar. **Çekim 2, bu çekimin son karesiyle (`cekim-1b-son-kare.png`) başlar.**
+
+## (Eski) Çekim 1: Havalimanı ve kapı (8 sn)
 
 **Yeni sohbet. Yükle:** yalnız `bahce-videosu/00-kadin-referans.png`
 
@@ -41,7 +71,7 @@ AUDIO: busy terminal echo, rolling suitcase wheels, footsteps, beeping, a dull c
 
 ## Çekim 2: Kapı açılır, kütüphane (8 sn)
 
-**Yeni sohbet. Yükle:** yalnız Çekim 1'in son karesi
+**Yeni sohbet. Yükle:** yalnız `kutuphane-videosu/cekim-1b-son-kare.png`
 
 ```
 Use this image as the exact first frame of the video and continue directly from it. Do not show any studio portrait or grey background.
