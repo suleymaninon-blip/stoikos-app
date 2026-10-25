@@ -70,23 +70,31 @@ DO NOT SHOW: a different door, a different arch or a different lighthouse; a doo
 AUDIO: the storm roaring, the creak of the heavy door opening, then sudden near-silence inside; soft footsteps on stone, a dripping cloak, the faint crackle of oil lamps, the storm only as a distant muffled hum. No spoken words in any language, no music.
 ```
 
-## Çekim 3: Tepede şafak (10 sn)
+## Çekim 3: Tepede şafak (10 sn) — son kareye bağlı kalsın diye güçlendirildi
 
-**Yeni sohbet. Yükle:** yalnız Çekim 2'nin son karesi
+**Yeni sohbet. Yükle:** yalnız Çekim 2'nin son karesi. (Çekim 2'de kapı tarifi + ilk saniyelerde kilitli kamera işe yaradı; aynı yöntem burada merdiven ve kahraman için uygulandı.)
 
 ```
 Use this image as the exact first frame of the video and continue directly from it. Do not show any studio portrait or grey background.
 
-CHARACTER (keep exactly the same): an ancient Greek philosopher, about 60 years old, short wavy grey hair, short grey beard, off-white linen tunic with a thin brown leather belt, and a long heavy sand-coloured wool cloak that covers BOTH shoulders.
+KEEP EVERYTHING IDENTICAL TO THE IMAGE AT THE START (very important). Do not redesign, replace or restyle anything. For the first 2 seconds the scene must stay exactly as in the first frame:
+- the same narrow stone staircase with worn, light-brown stone steps,
+- the same rough sandy-beige stone block walls with small square niches holding glowing oil lamps,
+- the same curved dark handrail on the right,
+- the same warm amber lamplight,
+- the man seen from behind on the stairs, in exactly the same position, size and clothing.
+The camera starts in exactly the same position and framing as the first frame and follows him smoothly from behind; there is no cut and no jump to a new place.
+
+CHARACTER (keep exactly the same as in the image): an ancient Greek philosopher, about 60 years old, short wavy grey hair, short grey beard, off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak that covers BOTH shoulders.
 
 TIMELINE:
-0–3 s: he climbs the last steps and pushes open a small door onto the open gallery at the top of the lighthouse; bright soft dawn light floods in.
-3–6 s: he walks slowly to the iron railing of the gallery. The storm has completely passed: below, the sea is calm and silver-gold, perfectly smooth like a mirror, with a few last clouds glowing pink and gold in the rising sun. Gulls glide far away. Behind him the great lighthouse lamp slowly goes dark as the day begins.
-6–10 s: he rests both hands on the railing. The camera slowly moves around to his side so we see his face in soft profile: calm, eyes half closed, a quiet smile, the wind gently moving his grey hair and cloak. End on this wide, serene moment.
+0–3 s: from behind, he climbs the last few steps of the same staircase. At the top of the stairs there is a small, simple wooden door in the same stone wall; he pushes it open and soft, bright dawn light floods in over him.
+3–6 s: he steps out onto the open gallery at the top of the lighthouse and walks slowly to the iron railing. The storm has completely passed: far below, the sea is calm and silver-gold, smooth like a mirror, with a few last clouds glowing pink and gold in the rising sun. Gulls glide far away. Behind him, the large lighthouse lamp slowly goes dark as the day begins.
+6–10 s: he rests both hands on the railing. The camera slowly moves around to his side so we see his face in soft profile: calm, eyes half closed, a quiet smile, the wind gently moving his grey hair and his cloak. End on this wide, serene moment.
 
-STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. Warm gold, soft pink and pale blue palette, deeply calm and luminous atmosphere. Very slow, smooth camera movement. Single continuous shot, no cuts, no transitions. Vertical 9:16.
+STYLE: photorealistic, cinematic, 35mm film, natural film grain, shallow depth of field. The palette moves from the warm amber of the stairwell to soft gold, pink and pale blue dawn light outside. Very slow, smooth camera movement. Single continuous shot, no cuts, no transitions. Vertical 9:16.
 
-DO NOT SHOW: storm, rain or night; boats or other people; any text or logos; a studio portrait at the start; fast camera moves.
+DO NOT SHOW: a different staircase or a different man at the start; a cut or jump to the gallery before he opens the door; storm, rain or night outside; boats or other people; any text, sign or logo; a studio portrait; fast camera moves.
 
-AUDIO: soft sea wind, gentle waves far below, distant gulls. No spoken words in any language, no music.
+AUDIO: quiet footsteps on stone, the creak of the small door, then soft sea wind, gentle waves far below and distant gulls. No spoken words in any language, no music.
 ```
