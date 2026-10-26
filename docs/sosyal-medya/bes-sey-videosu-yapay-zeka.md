@@ -30,7 +30,7 @@ Söz yok; listenin kendisi söz. Kapanışa istenirse küçük harfle: *Memento 
 - Ses: **"no spoken words in any language"**.
 - Kadın kameraya **yalnız 0. çekimde** bakar.
 
-## Her çekimde aynen kullanılacak karakter bloğu
+## Karakter bloğu (aşağıdaki komutların hepsine zaten yerleştirildi)
 
 ```
 CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
@@ -43,7 +43,7 @@ CHARACTER (exactly as in the reference image, identical in every frame): a calm 
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the street scene below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK]
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
 
 SETTING: a huge, busy pedestrian crossing in a modern city at golden hour, hundreds of people in dark modern clothes crossing from both sides at a fast, stressed pace, looking at their phones, bumping shoulders. Warm low sunlight from behind her, long shadows, slight haze.
 
@@ -65,7 +65,8 @@ AUDIO: dense city crowd murmur, footsteps, distant traffic, a pedestrian-crossin
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the bedroom scene below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK] (In this shot she wears the same off-white linen tunic; the sand-coloured cloak hangs on a wooden chair next to the bed.)
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
+(In this shot she wears the same off-white linen tunic; the sand-coloured cloak hangs on a wooden chair next to the bed.)
 
 SETTING: a simple, calm bedroom with white walls and linen sheets at dawn. On the wooden bedside table, a smartphone lies FACE DOWN, vibrating again and again; its light glows from under the edges. A tall window with linen curtains, pale blue-gold dawn light behind them.
 
@@ -88,7 +89,7 @@ AUDIO: repeated phone vibration buzzing on wood, then curtains sliding, the wind
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the street scene below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK]
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
 
 SETTING: a city street on a windy, rainy grey afternoon. People in dark modern raincoats struggle with their umbrellas in strong gusts of wind; some umbrellas blow inside out; people look annoyed and hurry, shoulders hunched.
 
@@ -111,7 +112,7 @@ AUDIO: strong wind, heavy rain, the snap of an umbrella flipping, a soft laugh, 
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the café scene below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK]
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
 
 SETTING: a bright, trendy modern café with big windows and plants. At every table, young people in modern clothes hold up their phones: taking selfies, filming their coffee, posing, checking their screens again and again. Phone screens show only a soft blurred glow, never readable content.
 
@@ -133,7 +134,7 @@ AUDIO: café murmur, the click of phone cameras, an espresso machine hissing, th
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the river scene below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK]
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
 
 SETTING: the stone steps of a calm, wide river in an old city at dusk. The sky is soft violet and gold, the first warm street lights glow on the far bank and reflect in the slow water.
 
@@ -156,7 +157,7 @@ AUDIO: gentle water lapping on stone, paper folding, distant city evening sounds
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the close-up described below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK]
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
 
 SETTING: a quiet room at night lit only by one warm candle. On a dark wooden table stands a small antique hourglass with a polished brass frame and fine golden sand. On the round brass base of the hourglass, engraved in classical Roman capital letters, is the single word "STOIKOS", clearly readable and correctly spelled: S-T-O-I-K-O-S.
 
@@ -179,7 +180,7 @@ AUDIO: the soft hiss of falling sand, a candle flame flickering, deep quiet, one
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the beach scene below. No studio portrait, no plain or grey background at any moment.
 
-[CHARACTER BLOCK]
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
 
 SETTING: a wide, empty sandy beach at sunrise. The sea is calm with small gentle waves, the sky glowing gold, pink and pale blue, the sun just above the horizon. No other people.
 
