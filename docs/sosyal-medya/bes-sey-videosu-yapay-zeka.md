@@ -12,7 +12,7 @@
 | # | Süre | Ekranda yazı (TR / EN) | Sahne |
 |---|---|---|---|
 | 0 | 5 sn | Stoacı bir kadının asla yapmadığı 5 şey / 5 things a Stoic woman never does | Kalabalık yaya geçidinin ortasında durur, kameraya bakar, hafifçe gülümser |
-| 1 | 8 sn | 1. Güne telefonla başlamaz / 1. She doesn't start the day with her phone | Şafak; komodinde ters duran telefon titreşiyor, o pencereyi açıp nefes alıyor |
+| 1 | 8 sn | 1. Güne başkalarının gündemiyle başlamaz / 1. She doesn't start her day on everyone else's agenda | Şafak; komodinde ters duran telefon titreşiyor, o pencereyi açıp nefes alıyor |
 | 2 | 8 sn | 2. Kontrol edemediğine öfkelenmez / 2. She doesn't rage at what she can't control | Ani sağanak; herkes kaçışıyor, o yavaşça yürümeye devam edip yüzünü yağmura kaldırıyor (şemsiyeli ilk deneme tutmadı) |
 | 3 | 8 sn | 3. Onay peşinde koşmaz / 3. She doesn't chase approval | Herkesin telefonla kendini çektiği bir kafe; o tek başına kitap okuyor |
 | 4 | 8 sn | 4. Geçmişte yaşamaz / 4. She doesn't live in the past | Alacakaranlıkta nehir; eski bir mektubu kâğıt kayık yapıp suya bırakıyor |
@@ -60,7 +60,9 @@ STRICTLY FORBIDDEN: the reference image or any studio portrait; any readable tex
 AUDIO: dense city crowd murmur, footsteps, distant traffic, a pedestrian-crossing beeping signal. No spoken words in any language, no music.
 ```
 
-## Çekim 1: Güne telefonla başlamaz (8 sn)
+## Çekim 1: Güne başkalarının gündemiyle başlamaz (8 sn)
+
+> Yazı değişti (27 Ekim 2026, kullanıcı): "Güne telefonla başlamaz" bizim uygulamayla çelişiyordu (sabah bildirimi, nefes çiçeği telefonda). Sorun telefon değil, **başkalarının gündemi**: titreşen bildirimler. Sahne aynı kalıyor.
 
 ```
 The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the bedroom scene below. No studio portrait, no plain or grey background at any moment.
