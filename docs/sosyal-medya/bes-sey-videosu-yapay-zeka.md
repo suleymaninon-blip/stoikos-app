@@ -13,7 +13,7 @@
 |---|---|---|---|
 | 0 | 5 sn | Stoacı bir kadının asla yapmadığı 5 şey / 5 things a Stoic woman never does | Kalabalık yaya geçidinin ortasında durur, kameraya bakar, hafifçe gülümser |
 | 1 | 8 sn | 1. Güne telefonla başlamaz / 1. She doesn't start the day with her phone | Şafak; komodinde ters duran telefon titreşiyor, o pencereyi açıp nefes alıyor |
-| 2 | 8 sn | 2. Kontrol edemediğine öfkelenmez / 2. She doesn't rage at what she can't control | Rüzgârda şemsiyesi ters dönüyor; herkes söyleniyor, o gülüp şemsiyeyi kapatıyor, yağmurda yürüyor |
+| 2 | 8 sn | 2. Kontrol edemediğine öfkelenmez / 2. She doesn't rage at what she can't control | Ani sağanak; herkes kaçışıyor, o yavaşça yürümeye devam edip yüzünü yağmura kaldırıyor (şemsiyeli ilk deneme tutmadı) |
 | 3 | 8 sn | 3. Onay peşinde koşmaz / 3. She doesn't chase approval | Herkesin telefonla kendini çektiği bir kafe; o tek başına kitap okuyor |
 | 4 | 8 sn | 4. Geçmişte yaşamaz / 4. She doesn't live in the past | Alacakaranlıkta nehir; eski bir mektubu kâğıt kayık yapıp suya bırakıyor |
 | 5 | 8 sn | 5. Ölümü unutmaz… / 5. She never forgets she will die… | Yakın çekim: avucunda pirinç tabanında "STOIKOS" yazan küçük bir kum saati |
@@ -106,6 +106,36 @@ STRICTLY FORBIDDEN: the reference image or any studio portrait; any readable tex
 
 AUDIO: strong wind, heavy rain, the snap of an umbrella flipping, a soft laugh, footsteps in puddles. No spoken words in any language, no music.
 ```
+
+## Çekim 2 (yeni): Ani sağanak (8 sn) — şemsiyesiz
+
+İlk denemede (`bes-sey-videosu/cekim-2-semsiye-deneme1-gemini-720p.mp4`) şemsiye ters dönmedi; 5,5. saniyede açık şemsiye birden yok olup kapalı hâlde elinde belirdi. Gemini nesne dönüşümlerini (ters dönen şemsiye, çevrilen kum saati) tutarlı yapamıyor; bu yüzden sahnede **hiç nesne yok**: yalnız hava değişiyor, insanlar ve o tepki veriyor.
+
+```
+The attached image is ONLY a reference for the woman's face, hair and clothes. It must NEVER appear in the video: do not show it, do not start with it. The very first frame (0.0 s) is already the street scene below. No studio portrait, no plain or grey background at any moment.
+
+CHARACTER (exactly as in the reference image, identical in every frame): a calm woman about 40 years old; very dark brown, almost black hair with a few silver strands, in a long loose braid over one shoulder; olive-toned Mediterranean skin; a long narrow oval face, dark straight eyebrows, dark brown eyes, a straight nose, a few fine lines around the eyes; no make-up, no jewellery. She wears a simple ankle-length undyed off-white linen tunic with a thin brown leather belt, brown leather sandals, and a long heavy sand-coloured wool cloak over BOTH shoulders. She is the only person in ancient clothes; everyone else wears ordinary modern clothes.
+She holds NOTHING in her hands for the whole video: no umbrella, no bag, no phone.
+
+SETTING: a lively pedestrian street with outdoor café tables in a modern European city on a grey afternoon. People in ordinary modern clothes sit at the tables and walk by. The sky is dark and heavy.
+
+CAMERA: eye level, medium shot facing her as she walks towards the camera, slowly moving backwards in front of her. No cuts.
+
+TIMELINE (8 s):
+0–2 s: she walks calmly along the street towards the camera, past the café tables. The first big raindrops start to fall.
+2–5 s: suddenly a heavy downpour begins. All around her people jump up from the café tables, cover their heads with jackets, newspapers-shaped dark folders and their hands, and run for cover under the awnings, faces annoyed and stressed. Nobody opens an umbrella.
+5–8 s: she does not run. She keeps walking at the same slow pace, lifts her face to the rain, closes her eyes and smiles, the rain running down her face and darkening her cloak. End on her calm, smiling face in the pouring rain while the street empties behind her.
+
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, cold blue-grey light, heavy visible rain, real-time speed. Single continuous shot, no cuts. Vertical 9:16.
+
+STRICTLY FORBIDDEN: the reference image or any studio portrait; umbrellas anywhere in her hands; objects appearing or disappearing; any readable text, shop names, signs on the awnings, menus, logos or brands; anyone shouting words; her running, talking or looking into the camera; a different woman, make-up, jewellery; slow motion; cuts.
+
+AUDIO: light rain turning into a loud downpour, chairs scraping, hurried footsteps and splashing, surprised gasps without words, then the steady roar of rain. No spoken words in any language, no music.
+```
+
+## Çekim 5 notu
+
+Kum saati çevrilirken "STOIKOS" yazılı pirinç taban 0,5. saniyede birden beliriyor, 4,2. saniyede kayboluyor. Kurguda çözüldü: **0,9–4,0** (yazı net ve doğru) + **6,3–10** (yüz; kum saati kadrajda yok). Yeniden çekim gerekmiyor.
 
 ## Çekim 3: Onay peşinde koşmaz (8 sn)
 
