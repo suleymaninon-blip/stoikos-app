@@ -28,9 +28,9 @@
   #skyDay   { background:linear-gradient(180deg, #d9c6a2 0%, #e8d8b8 45%, #f2e7cf 100%); }
   #skyDusk  { background:linear-gradient(180deg, #1c2236 0%, #3b3550 40%, #8a5a52 75%, #c8875a 100%); }
   #skyGold  { background:radial-gradient(ellipse at 50% 60%, #4a3a22 0%, #241c12 50%, #120f0a 100%); }
-  #sun { width:260px; height:260px; border-radius:50%; left:820px; top:300px; margin:-130px;
+  #sun { width:240px; height:240px; border-radius:50%; left:975px; top:640px; margin:-120px;
     background:radial-gradient(circle, rgba(255,236,190,.95) 0%, rgba(255,214,150,.55) 35%, rgba(255,200,130,0) 70%); opacity:0; }
-  #moon { width:110px; height:110px; border-radius:50%; left:860px; top:230px; margin:-55px;
+  #moon { width:90px; height:90px; border-radius:50%; left:975px; top:560px; margin:-45px;
     background:radial-gradient(circle at 40% 40%, #f6ecd6 0%, #d9ccb0 60%, #b8ab90 100%); box-shadow:0 0 60px rgba(246,236,214,.35); opacity:0; }
   .star { width:4px; height:4px; border-radius:50%; background:#f6ecd6; opacity:0; }
 
@@ -279,7 +279,7 @@ function init(lang) {
   $('tag').innerHTML = L.tag.replace('\n', '<br>'); $('cta').querySelector('span').textContent = L.cta;
   const st = $('stars'); st.innerHTML = '';
   for (let i = 0; i < 40; i++) { const s = document.createElement('div'); s.className = 'star abs';
-    s.style.left = ((i * 263) % 1060 + 10) + 'px'; s.style.top = ((i * 157) % 700 + 40) + 'px'; st.appendChild(s); }
+    s.style.left = ((i * 263) % 1060 + 10) + 'px'; s.style.top = ((i * 157) % 1200 + 440) + 'px'; if (i % 3) s.style.left = (i % 2 ? 40 + (i*37)%160 : 880 + (i*53)%180) + 'px'; st.appendChild(s); }
   const fo = $('flowerOv'); fo.innerHTML = ''; petals = [];
   for (let i = 0; i < 6; i++) { const p = document.createElement('div'); p.className = 'p'; fo.appendChild(p); petals.push(p); }
 }
@@ -310,7 +310,8 @@ function renderFrame(t) {
     skyDusk: win(t, 25800, 36000, 900, 900), skyGold: win(t, 35200, 48000, 900, 1) };
   for (const k in sky) $(k).style.opacity = sky[k];
   $('sun').style.opacity = win(t, 4600, 26200, 1400, 1200);
-  $('sun').style.transform = `translate(${-200 + (t-4600)/21600*260}px, ${180 - Math.sin(clamp((t-4600)/21600)*Math.PI)*260}px)`;
+  // telefonun sağındaki boşlukta yükselip alçalır (başlığın üstüne binmesin)
+  $('sun').style.transform = `translateY(${120 - Math.sin(clamp((t-4600)/21600)*Math.PI)*200}px)`;
   $('moon').style.opacity = win(t, 27000, 35800, 1400, 1000);
   document.querySelectorAll('.star').forEach((s, i) => s.style.opacity = win(t, 26800 + i*30, 36000, 1200, 900) * (.35 + .5*((Math.sin(t/400 + i) + 1)/2)));
 
