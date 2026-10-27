@@ -123,7 +123,7 @@ CAMERA: eye level, medium shot facing her as she walks towards the camera, slowl
 
 TIMELINE (8 s):
 0–2 s: she walks calmly along the street towards the camera, past the café tables. The first big raindrops start to fall.
-2–5 s: suddenly a heavy downpour begins. All around her people jump up from the café tables, cover their heads with jackets, newspapers-shaped dark folders and their hands, and run for cover under the awnings, faces annoyed and stressed. Nobody opens an umbrella.
+2–5 s: suddenly a heavy downpour begins. All around her people jump up from the café tables, cover their heads with their jackets and hands, and run for cover under the awnings, faces annoyed and stressed. Nobody opens an umbrella.
 5–8 s: she does not run. She keeps walking at the same slow pace, lifts her face to the rain, closes her eyes and smiles, the rain running down her face and darkening her cloak. End on her calm, smiling face in the pouring rain while the street empties behind her.
 
 STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, cold blue-grey light, heavy visible rain, real-time speed. Single continuous shot, no cuts. Vertical 9:16.
