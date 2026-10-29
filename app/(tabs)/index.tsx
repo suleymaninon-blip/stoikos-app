@@ -199,6 +199,10 @@ export default function HomeScreen() {
 
           {/* Kaldığın yer — program (alt menüde olmayan tek bölüm) */}
           {resume && <ResumeCard resume={resume} />}
+          {/* Program listesine tek giriş (kart doğrudan programı açıyor; hepsi bitince kart da yok) */}
+          <TouchableOpacity onPress={() => router.push('/programs')} style={styles.allPrograms} activeOpacity={0.7} hitSlop={{ top: 8, bottom: 8 }}>
+            <Text style={styles.allProgramsText}>{t('home.allPrograms')}</Text>
+          </TouchableOpacity>
 
           {/* Nasıl hissediyorsun? — eskiden Bilgelik'e giden bir satırdı */}
           <MoodPicker />
@@ -280,6 +284,8 @@ const styles = StyleSheet.create({
   resumeBar: { flexDirection: 'row', gap: 6 },
   resumeSeg: { flex: 1, height: 5, borderRadius: 3 },
   resumeCta: { fontFamily: Fonts.jostMedium, fontSize: 15 },
+  allPrograms: { alignSelf: 'flex-end', marginTop: -6, marginBottom: 14, paddingVertical: 6, paddingHorizontal: 4 },
+  allProgramsText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand, letterSpacing: 0.3 },
 
   moodCard: {
     backgroundColor: Colors.stone2, borderRadius: 22, padding: 18, marginBottom: 16,
