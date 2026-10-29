@@ -14,7 +14,7 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 
 SRC=docs/sosyal-medya/bes-sey-videosu
-MUSIC=docs/sosyal-medya/muzik/bach-cello-suite-1-prelude-lud-schlatt.ogg
+MUSIC=${MUSIC:-docs/sosyal-medya/muzik/vivaldi-ilkbahar-allegro-modena.ogg}   # 29 Ekim 2026: Bach yerine Vivaldi İlkbahar (neşeli sahil finaline uyuyor)
 TMP=$(mktemp -d)
 P="scale=1080:1920:flags=lanczos,fps=30,setsar=1,format=yuv420p,settb=1/30"
 
@@ -77,7 +77,7 @@ for LANG in tr en; do
   LOGO=$k; MUS=$((k+1))
   IN="$IN -i $TMP/kapanis-$LANG-1080x1920.mp4 -i $MUSIC"
   FC="$FC[$last]settb=1/30[VQ];[$LOGO:v]$P[K];[VQ][K]xfade=transition=fadeblack:duration=0.6:offset=$X2[v];"
-  FC="$FC[A0]volume=0.55[amb];[$MUS:a]atrim=0.7:80,asetpts=N/SR/TB,afade=t=in:d=1.5,afade=t=out:st=$(echo "$TOTAL - 3.2" | bc):d=3.2[m];"
+  FC="$FC[A0]volume=0.55[amb];[$MUS:a]atrim=0:80,asetpts=N/SR/TB,afade=t=in:d=1.5,afade=t=out:st=$(echo "$TOTAL - 3.2" | bc):d=3.2[m];"
   FC="$FC[amb][m]amix=inputs=2:normalize=0:duration=longest,apad=whole_dur=$TOTAL,loudnorm=I=-16:TP=-1.5:LRA=11[au]"
   ffmpeg -v error -y $IN -filter_complex "$FC" -map "[v]" -map "[au]" -t $TOTAL -c:v libx264 -preset slow -crf 19 -pix_fmt yuv420p \
     -c:a aac -b:a 192k -ar 48000 -movflags +faststart $SRC/bes-sey-$LANG-1080x1920.mp4
