@@ -13,10 +13,12 @@ import { BrandIntro } from '../components/BrandIntro';
 import { Onboarding } from '../components/Onboarding';
 import { ReminderSync } from '../components/ReminderSync';
 import { registerServiceWorker } from '../constants/registerSW';
+import { installWebColumn } from '../constants/layout';
 import { ONBOARDED_KEY, onReplayOnboarding } from '../constants/onboarding';
 
 SplashScreen.preventAutoHideAsync();
 registerServiceWorker(); // web'de otomatik güncelleme; native'de no-op
+installWebColumn();      // masaüstü tarayıcıda telefon genişliğinde sütun; native'de no-op
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({

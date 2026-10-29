@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { appDimensions } from '../constants/layout';
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang } from '../constants/i18n';
 import StoikosMark from './StoikosMark';
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = appDimensions();
 
 /** Işığın dikey merkezi (ekran yüksekliğinin oranı). Logo grubu ortalı ama
  *  Ω merkezin biraz üstünde — en parlak nokta Ω ile STOIKOS arasına düşsün. */
