@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
-import { useLang, LANGUAGES } from '../constants/i18n';
+import { useLang, LANGUAGES, upper } from '../constants/i18n';
 import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
@@ -155,7 +155,7 @@ export default function SettingsScreen() {
 
         {/* Dil seçici */}
         <View style={styles.langWrap}>
-          <Text style={styles.langTitle}>{t('progress.langLabel')}</Text>
+          <Text style={styles.langTitle}>{upper(t('progress.langLabel'), lang)}</Text>
           <View style={styles.langRow}>
             {LANGUAGES.map((l) => (
               <TouchableOpacity

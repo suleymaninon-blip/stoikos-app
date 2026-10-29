@@ -299,7 +299,7 @@ export default function PracticeScreen() {
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.title}>{t('practice.calmTitle')}</Text>
+            <Text style={styles.title}>{t(new Date().getHours() < 18 ? 'practice.calmTitle' : 'practice.calmTitleEve')}</Text>
             <Text style={styles.intro}>{t('practice.intro')}</Text>
           </View>
 

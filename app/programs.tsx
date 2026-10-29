@@ -12,6 +12,7 @@ import { usePlus } from '../constants/entitlement';
 import { ENFORCE_PLUS_GATE } from '../constants/config';
 import { maybeAskForReview } from '../constants/review';
 import { Paywall } from '../components/Paywall';
+import { LockIcon } from '../components/Icons';
 
 export default function ProgramsScreen() {
   const { t, lang } = useLang();
@@ -217,7 +218,8 @@ export default function ProgramsScreen() {
                   activeOpacity={unlocked ? 0.7 : 1}
                 >
                   <View style={[styles.dayNum, completed && styles.dayNumDone, !unlocked && styles.dayNumLocked]}>
-                    <Text style={[styles.dayNumText, completed && styles.dayNumTextDone]}>{completed ? '✓' : unlocked ? i + 1 : '🔒'}</Text>
+                    <Text style={[styles.dayNumText, completed && styles.dayNumTextDone]}>{completed ? '✓' : unlocked ? i + 1 : ''}</Text>
+                    {!completed && !unlocked && <LockIcon size={15} color={Colors.muted} />}
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.dayLabel}>{t('programs.day')} {i + 1}</Text>
@@ -239,6 +241,10 @@ export default function ProgramsScreen() {
                 const completed = done.includes(dayIdx);
                 return (
                   <>
+                    {/* Kart neredeyse tüm ekranı kaplıyor; dışına dokunmak iPhone'da tek kapanma yolu olmamalı. */}
+                    <TouchableOpacity onPress={() => setDayIdx(null)} style={styles.modalClose} accessibilityRole="button" accessibilityLabel={t('practice.close')} hitSlop={6}>
+                      <Text style={styles.modalCloseText}>✕</Text>
+                    </TouchableOpacity>
                     <Text style={styles.modalDayLabel}>{t('programs.dayOf', { n: dayIdx + 1, total: open.dayCount })}</Text>
                     <Text style={styles.modalTitle}>{d.title}</Text>
                     <View style={styles.modalDivider} />
@@ -418,6 +424,8 @@ const styles = StyleSheet.create({
   // Gün modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 28 },
   modalCard: { width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
+  modalClose: { position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3, zIndex: 2 },
+  modalCloseText: { fontSize: 16, color: Colors.text2 },
   modalDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalTitle: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
   modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
