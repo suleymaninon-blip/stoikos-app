@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "patience": {
+   "title": "Geduld",
+   "subtitle": "In 7 Tagen ohne Eile gehen"
+  }
+ },
+ "patience": [
+  {
+   "title": "Die Feige",
+   "read": "Du hast angefangen, eine Sprache zu lernen; seit drei Wochen übst du und kannst immer noch keinen Film schauen. Du hast dich im Fitnessstudio angemeldet, und das Gesicht im Spiegel hat sich nicht verändert. Du fängst an zu sagen: „Bei mir klappt das einfach nicht.“\n\nEin Mann fragt Epiktet, wie er den Zorn seines Bruders auf ihn schnell besänftigen kann. Epiktet antwortet: Nichts Großes entsteht auf einmal; nicht einmal eine Weintraube, nicht einmal eine Feige. Wenn du mir sagst: „Ich will eine Feige“, sage ich: „Das braucht Zeit.“ Erst soll sie blühen, dann Frucht tragen, dann reifen.\n\nMan hält Geduld für Warten mit gebundenen Händen. Das ist sie nicht. Der Feigenbaum wartet nicht; jeden Tag zieht er Wasser durch seine Wurzeln und dreht seine Blätter zur Sonne. Geduld heißt, zu tun, was du zu tun hast, und das Ergebnis der Zeit zu überlassen.\n\nEine zu früh vom Zweig gepflückte Feige wird nie süß.\n\nDein heutiger Schritt mag klein aussehen. Aber der Baum besteht genau aus solchen Schritten.",
+   "body": "Wähle etwas, das du zu beschleunigen versuchst. Mach heute nur einen Schritt dafür und frag nicht nach dem Ergebnis.",
+   "ask": "Welchen Schritt hast du heute gemacht? Wie hat es sich angefühlt, ihn zu tun, ohne nach dem Ergebnis zu fragen?"
+  },
+  {
+   "title": "Das Wartezimmer",
+   "read": "Eine Wartenummer bei der Bank, ein Wartesaal im Krankenhaus, Verkehr, der an der roten Ampel steht. Du schaust auf die Uhr, du seufzt, du entsperrst das Handy und legst es wieder weg.\n\nSeneca wohnte eine Zeit lang direkt über einem vollen Badehaus. Das Stöhnen der Gewichtheber, das Klatschen des Masseurs, das Rufen der Händler füllten sein Zimmer. Statt umzuziehen, machte er daraus eine Übung: Solange ich innen ruhig bin, berührt mich der Lärm draußen nicht, schrieb er.\n\nMan hält Warten für verlorene Zeit. Dabei sind Wartemomente die reinsten Leerräume des Tages: Minuten, in denen du nichts tun musst und niemand etwas von dir will. Sich zu ärgern verkürzt das Warten nicht, es macht es nur schwerer.\n\nAn der Haltestelle schaut ein alter Mann den wechselnden Formen der Wolken zu; der junge Mann neben ihm blickt zum fünften Mal auf die Uhr. Beide steigen in denselben Bus.\n\nEin Moment des Wartens ist eine kleine Pause, die dir geschenkt wird. Du kannst sie annehmen.",
+   "body": "Greif beim Warten nicht zum Handy. Zähl deine Atemzüge oder schau dich um.",
+   "ask": "Was ist dir heute beim Warten aufgefallen? Wie ist die Zeit vergangen?"
+  },
+  {
+   "title": "Ungewissheit",
+   "read": "Ein Laborbefund, die Antwort auf eine Bewerbung, die Reaktion auf eine Nachricht. Jedes Mal, wenn dein Handy vibriert, zuckt etwas in dir zusammen. Noch ist nichts passiert, aber du hast jedes mögliche Ergebnis längst durchlebt.\n\nSeneca schreibt einem besorgten Freund: Was du fürchtest, kommt vielleicht nie; und was kommt, ist vielleicht etwas anderes. Manche Gefahr, die unvermeidlich schien, hat im letzten Moment ihren Weg geändert. Vieles kommt dazwischen.\n\nDas heißt nicht, dass alles gut wird; der Stoiker verspricht keine leere Hoffnung. Er erinnert dich nur daran: Sorge lässt dich heute eine Zukunft erleben, die noch nicht gekommen ist. Kommt eine schlechte Nachricht, erlebst du sie einmal; die Sorge lässt sie dich jeden Tag aufs Neue erleben.\n\nDer Bauer, der hört, dass ein Sturm kommt, starrt nicht in den Himmel und wartet; er bringt sein Heu ins Trockene und trinkt dann seinen Tee.\n\nDie Ungewissheit wird nicht enden. Aber du kannst lernen, in ihr zu sitzen.",
+   "body": "Schreib auf, worauf du voller Sorge wartest. Frag dich dann: „Was geschieht gerade wirklich?“",
+   "ask": "Wie oft konntest du heute, während du an das Erwartete dachtest, in den jetzigen Moment zurückkehren?"
+  },
+  {
+   "title": "Geduld mit anderen",
+   "read": "Du erklärst dasselbe zum dritten Mal. Deine Mutter fragt wieder nach den Einstellungen ihres Handys, dein Kollege hat wieder denselben Fehler gemacht, dein Kind lässt sich beim Schuhebinden alle Zeit der Welt.\n\nMarc Aurel notiert sich kurz: Die Menschen sind füreinander da; belehre sie oder ertrage sie. Einen Weg außerhalb dieser beiden lässt er nicht offen: weder Zorn noch Verachtung noch Aufgeben.\n\nMan hält Geduld dafür, den anderen für dumm zu halten und zu schweigen. Das ist sie nicht. Wer geduldig ist, erinnert sich, dass auch er einmal langsam verstanden hat und dass auch ihm jemand Zeit gelassen hat. Geduld heißt, jemandem Zeit zu schenken.\n\nDer Vater, der seinem Kind das Radfahren beibringt, hält auch beim hundertsten Sturz weiter den Sattel fest.\n\nDie Zeit, die du heute jemandem schenkst, bleibt länger als jedes Wort, das du ihm sagen könntest.",
+   "body": "Wähle für jemanden, der deine Geduld auf die Probe stellt: Erklär es freundlich noch einmal oder ertrage es still. Tu eins von beiden bewusst.",
+   "ask": "Mit wem warst du heute geduldig? Hast du dich fürs Belehren entschieden oder fürs Ertragen?"
+  },
+  {
+   "title": "Geduld mit dir selbst",
+   "read": "Eine Woche lang hattest du auf Zucker verzichtet; gestern hast du eine ganze Packung Kekse aufgegessen. Du denkst: „Ich schaffe es ja doch nicht“, und bist kurz davor, alles hinzuwerfen.\n\nEpiktet schlägt jemandem, der seinen Zorn loswerden will, einen einfachen Weg vor: Zähl die Tage, an denen du nicht zornig warst. Früher war ich jeden Tag zornig, dann jeden zweiten Tag, dann jeden dritten, dann jeden vierten. Sind dreißig Tage vergangen, sei dankbar. Eine Gewohnheit wird erst schwächer, dann verschwindet sie ganz.\n\nMan hält Geduld mit sich selbst dafür, sich gehen zu lassen. Im Gegenteil: Wer sich verurteilt, weil er einmal gefallen ist, fällt unter dem Gewicht dieses Urteils erneut. Ein Fehler ist nicht das Ende des Weges; er ist nur ein unvollständiger Tag.\n\nDie Wanderin, die sich verlaufen hat, zerreißt ihre Karte nicht; sie sucht die Stelle, an der sie abgekommen ist, und geht von dort weiter.\n\nDu musst nicht bei null anfangen. Du kannst dort weitermachen, wo du aufgehört hast.",
+   "body": "Fang an, für eine Gewohnheit, die du ändern willst, die Tage zu zählen. Reißt die Serie, lösch die Zahl nicht; mach dort weiter, wo du aufgehört hast.",
+   "ask": "Wie bist du heute mit dir umgegangen: wie ein Richter oder wie ein Lehrer?"
+  },
+  {
+   "title": "Unbehagen",
+   "read": "Dein Kopf tut weh, du hast nicht geschlafen, oder du bist einfach bedrückt. Die Stunden wollen nicht vergehen, und es fühlt sich an, als würde das nie aufhören.\n\nMarc Aurel lebte viele Jahre mit Krankheit und der Erschöpfung der Feldzüge. Er erinnerte sich selbst: Schmerz ist entweder erträglich, oder er geht vorbei. Wäre er unerträglich, hätte er dich längst dahingerafft; und endlos ist er auch nicht.\n\nGeduld heißt nicht, den Schmerz zu übergehen. Nimm deine Medizin, ruh dich aus, geh zum Arzt, wenn nötig. Der Stoiker legt dem Schmerz nur keine zweite Last auf: Gedanken wie „Das geht nie vorbei“ oder „Warum immer ich?“. Sie tragen meist das eigentliche Gewicht.\n\nAuch in der längsten Winternacht kommt die Morgendämmerung; über die Länge der Nacht zu klagen, bringt sie nicht schneller.\n\nAuch das geht vorbei. Und du wirst immer noch da sein.",
+   "body": "Sag dir in einem Moment des Unbehagens: „Das ist entweder erträglich, oder es geht vorbei“, und beobachte 60 Sekunden lang nur.",
+   "ask": "Was ist dir aufgefallen, als du ein Unbehagen beobachtet hast? Ist es größer oder kleiner geworden?"
+  },
+  {
+   "title": "Der lange Weg",
+   "read": "Seit einer Woche übst du Geduld. Vielleicht hast du in einer Schlange nicht zum Handy gegriffen, vielleicht hast du jemandem etwas noch einmal erklärt, vielleicht bist du dort aufgestanden, wo du gefallen warst.\n\nZenon, der Gründer der Stoa, sagte, dass ein gutes Leben in kleinen Schritten gewonnen wird, aber nichts Kleines ist. Er selbst kam zur Philosophie, nachdem er bei einem Schiffbruch alles verloren hatte, und lehrte sein Leben lang in derselben Säulenhalle.\n\nMan hält Geduld dafür, große Ziele aufzugeben. Im Gegenteil: Sie ist der einzige Weg, große Ziele zu erreichen. Wir überschätzen, was an einem Tag möglich ist, und unterschätzen, was in einem Jahr möglich ist.\n\nDer Tropfen höhlt den Stein nicht durch Kraft, sondern durch Beständigkeit.\n\nDu musst dich nicht beeilen. Es genügt, weiterzugehen.",
+   "body": "Schreib auf, wo du in einem Jahr sein willst. Füg darunter den kleinsten Schritt hinzu, den du heute machen kannst.",
+   "ask": "Was hat Geduld in diesen sieben Tagen für dich zu bedeuten begonnen?"
+  }
+ ]
+}
