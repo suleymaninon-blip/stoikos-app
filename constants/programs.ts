@@ -3,9 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type L = Partial<Record<Lang, string>>;
 const pick = (l: L, lang: Lang): string => l[lang] ?? l.en ?? l.tr ?? '';
-// read/ask: zenginleştirilmiş gün (25 Ekim 2026, önce Kontrol Dairesi). Yedek dile DÜŞMEZ:
-// o dilde yazılmadıysa bölüm hiç gösterilmez (Türkçe okuma İngilizce kullanıcıya çıkmasın).
-interface RawDay { title: L; body: L; read?: L; ask?: L; }
+interface RawDay { title: L; body: L; }
 interface RawProgram { id: string; icon: string; color: string; title: L; subtitle: L; days: RawDay[]; }
 
 // ─── Program içerikleri ───────────────────────────────────
@@ -24,63 +22,49 @@ const PROGRAMS_RAW: RawProgram[] = [
                 de: 'Teile heute alles, was dir begegnet, in zwei: in meiner Macht (Gedanken, Entscheidungen) und außerhalb (andere, Ergebnisse). Schon das zu bemerken erleichtert.',
                 ru: 'Сегодня дели всё на два: в моей власти (мысли, решения) и вне её (другие, итоги). Даже осознание этого приносит облегчение.',
                 fr: "Aujourd'hui, partage en deux tout ce que tu rencontres : ce qui dépend de moi (mes pensées, mes choix) et ce qui n'en dépend pas (les autres, les résultats). Le simple fait de le remarquer soulage.",
-                es: 'Hoy divide en dos todo lo que encuentres: lo que está en mi control (mis pensamientos, mis decisiones) y lo que no (los demás, los resultados). Solo notarlo ya alivia.' },
-        read: { tr: "Sabah alarmı çalıyor, telefonda üç mesaj, trafik yine sıkışık. Daha kahveni bitirmeden yorulmuşsun. Yorgunluğun çoğu işlerden değil, hepsini aynı anda taşımaya çalışmaktan geliyor.\n\nEpiktetos bir köleydi; bedenine, zamanına, hatta adına başkası karar veriyordu. Yine de kendine ait bir şey buldu: olanlar hakkında ne düşüneceği. Öğrettiği her şey bu tek ayrımdan çıkar: bazı şeyler senin elinde, bazıları değil.\n\nBu, umursamamak demek değil; umursadığın şeye doğru yerden dokunmak demek. Yağmuru durduramazsın. Şemsiyeyi almak senin elinde.\n\nBugün yalnızca fark et, değiştirmeye çalışma. Ayrımı görmek, yükün yarısını yere bırakmaktır." },
-        ask: { tr: "Bugün enerjinin çoğu hangi tarafa gitti: elindeki şeylere mi, elinde olmayanlara mı?" } },
+                es: 'Hoy divide en dos todo lo que encuentres: lo que está en mi control (mis pensamientos, mis decisiones) y lo que no (los demás, los resultados). Solo notarlo ya alivia.' } },
       { title: { tr: 'Sabah niyeti', en: 'Morning intention', de: 'Morgenvorsatz', ru: 'Утренний настрой', fr: 'Intention du matin', es: 'Intención matinal' },
         body: { tr: 'Güne şu cümleyle başla: "Bugün kontrolümde olan tek şey kendi tepkilerimdir." Gün boyunca bir kez daha hatırla.',
                 en: 'Begin the day with: "Today the only thing in my control is my own response." Recall it once more during the day.',
                 de: 'Beginne den Tag mit: „Heute liegt nur meine eigene Reaktion in meiner Macht.“ Erinnere dich tagsüber noch einmal daran.',
                 ru: 'Начни день со слов: «Сегодня в моей власти лишь моя реакция». Вспомни это ещё раз днём.',
                 fr: "Commence la journée par : « Aujourd'hui, la seule chose qui dépend de moi, c'est ma propre réaction. » Rappelle-le-toi encore une fois dans la journée.",
-                es: 'Empieza el día con: «Hoy lo único que está en mi control es mi propia reacción». Recuérdalo una vez más durante el día.' },
-        read: { tr: "Gün çoğu zaman sen daha karar vermeden başlar. Gözünü açtığın an bildirimler, haberler, başkalarının gündemi içeri dolar; ilk saatin sahibi sen olmazsın.\n\nMarcus Aurelius sabahları kendine bir hatırlatma yapardı: bugün nankör, kaba, sabırsız insanlarla karşılaşacağım. Kötümser olduğu için değil, hazırlıklı olmak istediği için. Sürprizi beklenen hâle getirince sarsıntısı küçülür.\n\nNiyet bir söz değil, bir pusuladır. Gün yine istediği yöne savrulacak; ama sen her savruluşta nereye döneceğini bileceksin.\n\nKısa tut: tek cümle, telefonuna bakmadan önce." },
-        ask: { tr: "Sabahki cümleyi gün içinde kaç kez hatırladın? Hatırladığın an ne değişti?" } },
+                es: 'Empieza el día con: «Hoy lo único que está en mi control es mi propia reacción». Recuérdalo una vez más durante el día.' } },
       { title: { tr: 'Başkalarının görüşü', en: "Others' opinions", de: 'Die Meinung anderer', ru: 'Мнение других', fr: "L'opinion des autres", es: 'La opinión de los demás' },
         body: { tr: 'Birinin seni eleştirmesi onun kontrolünde; buna nasıl tepki vereceğin senin. Bugün bir eleştiriye sakin kalmayı dene.',
                 en: "Someone's criticism is in their control; how you respond is in yours. Today, try staying calm in the face of one criticism.",
                 de: 'Die Kritik eines anderen liegt in seiner Macht; wie du reagierst, in deiner. Bleib heute bei einer Kritik ruhig.',
                 ru: 'Чужая критика — в их власти; твоя реакция — в твоей. Сегодня сохрани спокойствие в ответ на одну критику.',
                 fr: "La critique d'un autre dépend de lui ; ta réaction dépend de toi. Aujourd'hui, essaie de rester calme face à une critique.",
-                es: 'La crítica de otro está en su control; tu respuesta, en el tuyo. Hoy intenta mantener la calma ante una crítica.' },
-        read: { tr: "Biri toplantıda fikrini küçümsedi. Akşam olmuş, hâlâ o cümleyi zihninde çeviriyorsun; ona vereceğin cevabı yeniden yazıyorsun.\n\nOnun ne düşündüğü onun zihninde olan bir şey. Oraya giremezsin, orayı düzeltemezsin. Senin olan tek şey, o cümleye ne anlam yüklediğin.\n\nBu, eleştiriyi duymazdan gelmek değil. Doğruysa al, işine yarasın; yanlışsa bırak, yük olmasın. İkisinde de karar senin. Kendi değerini başkasının ağzına teslim etmiyorsun.\n\nBir taş düşün: üstüne yağmur da yağar, güneş de vurur. Taş, havanın nasıl olduğuna göre taş olmaktan çıkmaz." },
-        ask: { tr: "Bugün birinin sözü seni sarstı mı? O sözün ne kadarı doğruydu, ne kadarını sen büyüttün?" } },
+                es: 'La crítica de otro está en su control; tu respuesta, en el tuyo. Hoy intenta mantener la calma ante una crítica.' } },
       { title: { tr: 'Çaba, sonuç değil', en: 'Effort, not outcome', de: 'Mühe, nicht Ergebnis', ru: 'Усилие, не итог', fr: "L'effort, pas le résultat", es: 'El esfuerzo, no el resultado' },
         body: { tr: 'Sonuç kontrolünde değil; çaban senin. Bugün bir işte yalnızca elinden gelenin en iyisine odaklan, gerisini bırak.',
                 en: 'The outcome is not in your control; your effort is. Today focus only on doing your best at one task, and release the rest.',
                 de: 'Das Ergebnis liegt nicht in deiner Macht; deine Mühe schon. Konzentriere dich heute bei einer Aufgabe nur auf dein Bestes.',
                 ru: 'Итог не в твоей власти; усилие — да. Сегодня в одном деле сосредоточься лишь на лучшем, что можешь, остальное отпусти.',
                 fr: "Le résultat ne dépend pas de toi ; ton effort, si. Aujourd'hui, concentre-toi sur ton mieux dans une seule tâche et lâche le reste.",
-                es: 'El resultado no está en tu control; tu esfuerzo sí. Hoy céntrate solo en dar lo mejor en una tarea y suelta lo demás.' },
-        read: { tr: "Bir sınava, bir görüşmeye, bir sunuma hazırlanıyorsun. Gece yatarken aklındaki şey hazırlığın değil, sonuç: ya olmazsa?\n\nStoacılar okçuyu örnek verirdi. Okçunun işi yayı germek, nişan almak, oku bırakmaktır. Ok yaydan çıktıktan sonra rüzgâr eser, hedef kıpırdar; bunlar artık onun değil. İyi okçu her seferinde vuran değil, iyi atış yapandır.\n\nBu, sonucu umursamamak değil. Sonucu umursamanın işe yarar tek yolu çabana dönmek. Kaygı hedefe bakar, çaba ele.\n\nBugün bir işte yalnızca yayı germeye odaklan." },
-        ask: { tr: "Bugün sonucunu bilmediğin bir işte elinden geleni yaptın mı? Bu sana nasıl hissettirdi?" } },
+                es: 'El resultado no está en tu control; tu esfuerzo sí. Hoy céntrate solo en dar lo mejor en una tarea y suelta lo demás.' } },
       { title: { tr: 'Geçmiş ve gelecek', en: 'Past and future', de: 'Vergangenheit und Zukunft', ru: 'Прошлое и будущее', fr: "Le passé et l'avenir", es: 'El pasado y el futuro' },
         body: { tr: 'Geçmiş geçti, gelecek henüz yok — ikisi de kontrolün dışında. Bugün kaygı geldiğinde kendini şimdiki ana çağır.',
                 en: 'The past is gone, the future not yet here — both out of your control. When worry comes today, call yourself back to the present.',
                 de: 'Die Vergangenheit ist vorbei, die Zukunft noch nicht da — beides außerhalb deiner Macht. Hol dich heute bei Sorge in die Gegenwart zurück.',
                 ru: 'Прошлое ушло, будущего ещё нет — и то и другое вне власти. Сегодня при тревоге возвращай себя в настоящее.',
                 fr: "Le passé est parti, l'avenir n'est pas encore là — les deux échappent à ton contrôle. Quand l'inquiétude vient aujourd'hui, ramène-toi au présent.",
-                es: 'El pasado se fue, el futuro aún no llega: ambos están fuera de tu control. Cuando hoy llegue la preocupación, vuelve al presente.' },
-        read: { tr: "Dün söylediğin bir söz aklına takıldı. Yarın olacak bir şey midene oturdu. Arada kalan bugün, ikisinin gölgesinde geçip gidiyor.\n\nGeçmiş bitti; onu değiştiremezsin, yalnızca ondan öğrenebilirsin. Gelecek henüz yok; onu yalnızca bugün atacağın adımla etkileyebilirsin. İkisinin de kapısı şimdiden açılıyor.\n\nSeneca, insanların ellerindeki tek gerçek şeyi, bugünü, en kolay harcadıklarını söylerdi. Yarını planlarken bugünü kaçırırız.\n\nKaygı geldiğinde kendine sor: şu an, bu odada, bu nefeste yapabileceğim bir şey var mı? Varsa yap. Yoksa bırak." },
-        ask: { tr: "Bugün zihnin en çok nerede gezindi: geçmişte mi, gelecekte mi, burada mı?" } },
+                es: 'El pasado se fue, el futuro aún no llega: ambos están fuera de tu control. Cuando hoy llegue la preocupación, vuelve al presente.' } },
       { title: { tr: 'Öfke anında dur', en: 'Pause in anger', de: 'Innehalten im Zorn', ru: 'Пауза в гневе', fr: 'Une pause dans la colère', es: 'Una pausa en la ira' },
         body: { tr: 'Öfke, kontrolün dışındaki bir şeye verilen tepkidir. Bugün öfke gelirse harekete geçmeden önce on saniye bekle, nefes al.',
                 en: 'Anger is a reaction to something outside your control. If anger comes today, wait ten seconds and breathe before acting.',
                 de: 'Zorn ist eine Reaktion auf etwas außerhalb deiner Macht. Warte heute bei Zorn zehn Sekunden und atme, bevor du handelst.',
                 ru: 'Гнев — реакция на неподвластное. Сегодня при гневе подожди десять секунд и вдохни, прежде чем действовать.',
                 fr: "La colère est une réaction à ce qui échappe à ton contrôle. Si elle monte aujourd'hui, attends dix secondes et respire avant d'agir.",
-                es: 'La ira es una reacción a algo fuera de tu control. Si hoy aparece, espera diez segundos y respira antes de actuar.' },
-        read: { tr: "Biri önüne kırdı, bir mesaj canını sıktı, bir bekleyiş uzadı. Göğsünde bir sıcaklık yükseliyor; parmakların cevabı yazmaya başlamış bile.\n\nÖfke çoğu zaman bir talepten doğar: dünya böyle olmamalıydı. Ama dünya senin onayını almadan böyleydi. Öfke olanı değiştirmez; yalnızca senin ne yapacağını değiştirir, çoğu zaman da kötüye.\n\nSeneca öfkenin en iyi ilacının beklemek olduğunu söylerdi. İlk dalga gelir, tepe yapar, geri çekilir. Sen yalnızca o dalga çekilene kadar harekete geçme.\n\nOn saniye az görünür. Ama tepki ile cevap arasındaki fark tam da o on saniyedir." },
-        ask: { tr: "Bugün öfkelendiğin bir an oldu mu? Beklediğinde ne değişti, beklemediğinde ne oldu?" } },
+                es: 'La ira es una reacción a algo fuera de tu control. Si hoy aparece, espera diez segundos y respira antes de actuar.' } },
       { title: { tr: 'Özgürlük', en: 'Freedom', de: 'Freiheit', ru: 'Свобода', fr: 'La liberté', es: 'La libertad' },
         body: { tr: 'Gerçek özgürlük, istediğini elde etmek değil; kontrolün dışındakinden korkmamaktır. Bugün bir korkunu bu gözle değerlendir.',
                 en: 'True freedom is not getting what you want, but not fearing what is out of your control. View one fear through this lens today.',
                 de: 'Wahre Freiheit ist nicht, zu bekommen was du willst, sondern das Unkontrollierbare nicht zu fürchten. Betrachte heute eine Angst so.',
                 ru: 'Истинная свобода — не получать желаемое, а не бояться неподвластного. Посмотри сегодня на один свой страх так.',
                 fr: "La vraie liberté n'est pas d'obtenir ce que tu veux, mais de ne pas craindre ce qui ne dépend pas de toi. Regarde une de tes peurs sous cet angle aujourd'hui.",
-                es: 'La verdadera libertad no es conseguir lo que quieres, sino no temer lo que no está en tu control. Mira hoy uno de tus miedos con esa lente.' },
-        read: { tr: "Altı gündür aynı ayrımı farklı yerlerde denedin: sabahında, eleştiride, çabada, kaygıda, öfkede. Belki her seferinde başaramadın. Başarmak zaten amaç değildi; fark etmek amaçtı.\n\nEpiktetos'a göre özgür insan, istediği her şeye sahip olan değil, elinde olmayan hiçbir şeye köle olmayandır. Başkasının fikrine, sonuca, geçmişe, yarına zincirli olmayan.\n\nBu özgürlük bir kez kazanılıp cebe konmaz. Her gün, her küçük anda yeniden seçilir.\n\nDaire artık senin. Dünya ne zaman ağırlaşırsa ona dönebilirsin." },
-        ask: { tr: "Bu yedi günden yanında kalan tek cümle hangisi?" } },
+                es: 'La verdadera libertad no es conseguir lo que quieres, sino no temer lo que no está en tu control. Mira hoy uno de tus miedos con esa lente.' } },
     ],
   },
 
@@ -322,14 +306,14 @@ const PROGRAMS_RAW: RawProgram[] = [
   },
 ];
 
-export interface ProgramDay { title: string; body: string; read?: string; ask?: string; }
+export interface ProgramDay { title: string; body: string; }
 export interface Program { id: string; icon: string; color: string; title: string; subtitle: string; dayCount: number; days: ProgramDay[]; }
 
 export function getPrograms(lang: Lang): Program[] {
   return PROGRAMS_RAW.map((p) => ({
     id: p.id, icon: p.icon, color: p.color,
     title: pick(p.title, lang), subtitle: pick(p.subtitle, lang), dayCount: p.days.length,
-    days: p.days.map((d) => ({ title: pick(d.title, lang), body: pick(d.body, lang), read: d.read?.[lang], ask: d.ask?.[lang] })),
+    days: p.days.map((d) => ({ title: pick(d.title, lang), body: pick(d.body, lang) })),
   }));
 }
 
