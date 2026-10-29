@@ -332,7 +332,7 @@ function renderFrame(t) {
   // 5) kapanış (25.0–31.0)
   const m = out((t - 25400) / 900);
   $('mark').style.opacity = m; $('mark').style.transform = `scale(${0.85 + 0.15*m})`;
-  $('mkArc').style.strokeDasharray = '1400'; $('mkArc').style.strokeDashoffset = 1400 * (1 - ease((t - 25400) / 1400));
+  $('mkArc').style.strokeDasharray = '1500'; $('mkArc').style.strokeDashoffset = 1500 * (1 - ease((t - 25400) / 1400));
   $('mkOrbC').setAttribute('opacity', ease((t - 26300) / 700));
   $('brand').style.opacity = out((t - 26600) / 700);
   $('tag').style.opacity = out((t - 27200) / 700);
