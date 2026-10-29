@@ -34,12 +34,16 @@ export default function ProgramsScreen() {
   // Ana ekrandaki "Kaldığın yer" kartı programı doğrudan açar (?open=<id>).
   // `day` verilirse o günün penceresi de açılır ("Bugünkü adımı aç").
   const params = useLocalSearchParams<{ open?: string; day?: string }>();
+  // Ana ekrandan doğrudan açıldıysa geri tuşu listeye değil ana ekrana döner (29 Ekim 2026):
+  // kullanıcı listeyi hiç görmeden gelmişti, geri basınca araya liste çıkması şaşırtıyordu.
+  const [fromHome, setFromHome] = useState(false);
   useEffect(() => {
     const id = Array.isArray(params.open) ? params.open[0] : params.open;
     const day = Number(Array.isArray(params.day) ? params.day[0] : params.day);
     if (id && programs.some((p) => p.id === id)) {
       if (!plusOk) { setPaywallOpen(true); return; }
       setOpenId(id);
+      setFromHome(true);
       if (Number.isInteger(day) && day >= 0) setDayIdx(day);
     }
   }, [params.open, params.day, plusOk]);
@@ -119,7 +123,7 @@ export default function ProgramsScreen() {
       <SafeAreaView style={styles.container}>
         <LinearGradient colors={[open.color, 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
         <View style={styles.topBar}>
-          <TouchableOpacity onPress={() => setOpenId(null)} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => (fromHome ? (router.canGoBack() ? router.back() : router.replace('/')) : setOpenId(null))} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <Text style={styles.detailIcon}>{open.icon}</Text>
