@@ -42,6 +42,8 @@ mv dist "site$BASE"
 cp -r website/. site/   # açılış sayfası, 404, img/, media/
 cp public/gizlilik.html public/privacy.html public/terms.html public/terms-en.html site/
 
+# Uygulama kendi 6 dilini taşıyor: Chrome'un "Bu sayfayı çevir" önerisi çıkmasın (lang="en" yüzünden Türkçe sayfaya çeviri öneriyordu)
+sed -i 's|<html lang="en">|<html lang="en" translate="no">|' "site$BASE/index.html"
 # Web uygulaması "Ana ekrana ekle" ile tam ekran açılsın: manifest, tema rengi, iOS etiketleri.
-sed -i 's|</head>|<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#14120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Stoikos"><link rel="apple-touch-icon" href="/img/icon-180.png"></head>|' "site$BASE/index.html"
+sed -i 's|</head>|<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#14120e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Stoikos"><meta name="google" content="notranslate"><link rel="apple-touch-icon" href="/img/icon-180.png"></head>|' "site$BASE/index.html"
 echo "site/ hazır:"; ls site

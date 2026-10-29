@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, Animated, Pressable, TouchableOpacity, Easing,
-  useWindowDimensions, NativeSyntheticEvent, NativeScrollEvent,
+  NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
+import { useAppDimensions } from '../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
 import StoikosMark, { MARK_CENTER, MARK_PATH, MARK_PATH_LEN, MARK_VIEWBOX } from './StoikosMark';
@@ -199,7 +200,7 @@ function MiniOrb() {
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const { t, lang, setLang } = useLang();
-  const { width } = useWindowDimensions();
+  const { width } = useAppDimensions();
   const ref = useRef<any>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const [page, setPage] = useState(0);

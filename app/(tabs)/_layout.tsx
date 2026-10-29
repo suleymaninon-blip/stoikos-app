@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet, Platform, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
+import { useAppDimensions } from '../../constants/layout';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLang, upper } from '../../constants/i18n';
 
@@ -15,7 +16,7 @@ function TabIcon({ label, icon, focused, width }: { label: string; icon: string;
 
 export default function TabLayout() {
   const { t, lang } = useLang();
-  const { width: screenW } = useWindowDimensions();
+  const { width: screenW } = useAppDimensions();
   const itemW = Math.floor(screenW / 5); // her sekme = ekranın 1/5'i → etiket tek satıra sığar
   return (
     <Tabs

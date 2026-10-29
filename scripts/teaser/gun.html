@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "Stoikos'la bir gün" — uygulamanın nasıl kullanıldığını anlatan animasyon (48 sn, 1080×1920).
+     Sabah bildirimi → nefes → programın adımı · gün içinde duygu seçimi → söz → koç · akşam sorusu → günlük · hafta: ilerleme.
+     Telefondaki ekranlar uygulamanın gerçek, uzun ekran görüntüleri (scripts/teaser/shoot-tall.js) — kaydırma ve dokunuşlar animasyonla.
+     Çekim: TEASER_TPL=scripts/teaser/gun.html TEASER_MS=48000 TEASER_NAME=gun node scripts/teaser/render-teaser.js tr,en <çıkış> -->
+<style>
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:300;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_300Light.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:500;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf') format('truetype'); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  #stage { position:relative; width:1080px; height:1920px; overflow:hidden; background:#12100c; }
+  .abs { position:absolute; }
+  .sky { inset:0; opacity:0; }
+  #skyNight { background:radial-gradient(ellipse at 50% 30%, #2a2318 0%, #15120d 55%, #0d0b08 100%); opacity:1; }
+  #skyDawn  { background:linear-gradient(180deg, #3b2f3f 0%, #7a5a4a 35%, #c9935e 70%, #e9c48a 100%); }
+  #skyDay   { background:linear-gradient(180deg, #d9c6a2 0%, #e8d8b8 45%, #f2e7cf 100%); }
+  #skyDusk  { background:linear-gradient(180deg, #1c2236 0%, #3b3550 40%, #8a5a52 75%, #c8875a 100%); }
+  #skyGold  { background:radial-gradient(ellipse at 50% 60%, #4a3a22 0%, #241c12 50%, #120f0a 100%); }
+  #sun { width:240px; height:240px; border-radius:50%; left:975px; top:640px; margin:-120px;
+    background:radial-gradient(circle, rgba(255,236,190,.95) 0%, rgba(255,214,150,.55) 35%, rgba(255,200,130,0) 70%); opacity:0; }
+  #moon { width:90px; height:90px; border-radius:50%; left:975px; top:560px; margin:-45px;
+    background:radial-gradient(circle at 40% 40%, #f6ecd6 0%, #d9ccb0 60%, #b8ab90 100%); box-shadow:0 0 60px rgba(246,236,214,.35); opacity:0; }
+  .star { width:4px; height:4px; border-radius:50%; background:#f6ecd6; opacity:0; }
+
+  /* Başlıklar */
+  #chip { left:0; right:0; top:120px; text-align:center; opacity:0; }
+  #chip span { display:inline-flex; align-items:center; gap:14px; font-family:'Jost'; font-weight:500; font-size:30px; letter-spacing:5px;
+    padding:12px 30px; border-radius:40px; background:rgba(20,16,10,.55); color:#f0dcb0; border:1.5px solid rgba(240,220,176,.35); }
+  .hl { left:60px; right:60px; top:196px; text-align:center; font-family:'Cinzel'; font-weight:600; font-size:58px; line-height:1.14; opacity:0; }
+  .sb { left:70px; right:70px; top:340px; text-align:center; font-family:'Jost'; font-weight:400; font-size:34px; line-height:1.3; opacity:0; }
+  .light .hl, .light .sb { color:#2a2218; }
+  .hl { color:#f6ead2; } .sb { color:#eadcc0; }
+
+  /* Telefon */
+  #phoneWrap { left:540px; top:450px; width:600px; height:1240px; margin-left:-300px; perspective:2400px; opacity:0; }
+  #phone { position:absolute; inset:0; border-radius:86px; background:#0b0a08; border:16px solid #262019;
+    box-shadow:0 60px 120px rgba(0,0,0,.55), 0 0 0 2px rgba(212,179,118,.28), inset 0 0 0 2px rgba(255,255,255,.04); overflow:hidden;
+    transform-style:preserve-3d; }
+  #screen { position:absolute; left:0; top:0; width:568px; height:1208px; overflow:hidden; border-radius:70px; background:#1c1915; }
+  #status { position:absolute; left:0; right:0; top:0; height:56px; z-index:6; font-family:'Jost'; font-weight:500; font-size:24px; color:#efe6d4;
+    padding:16px 44px 0; display:flex; justify-content:space-between; }
+  #island { position:absolute; left:50%; top:14px; width:170px; height:46px; margin-left:-85px; border-radius:24px; background:#000; z-index:7; }
+  .app { position:absolute; left:0; top:56px; width:568px; bottom:0; overflow:hidden; opacity:0; }
+  .app .content { position:absolute; left:0; top:0; width:568px; height:2510px; background-size:568px 2510px; background-repeat:no-repeat; }
+  .app .tabs { position:absolute; left:0; bottom:0; width:568px; height:82px; background-size:568px 2510px; background-position:0 100%; z-index:2; }
+  /* kilit ekranı */
+  .lock { position:absolute; inset:0; opacity:0; background:radial-gradient(ellipse at 50% 35%, #3a2f22 0%, #17130e 60%, #0d0b08 100%); }
+  .lock .date { position:absolute; left:0; right:0; top:120px; text-align:center; font-family:'Jost'; font-weight:400; font-size:28px; color:#e9dcc2; }
+  .lock .time { position:absolute; left:0; right:0; top:150px; text-align:center; font-family:'Jost'; font-weight:300; font-size:150px; color:#f4ead6; letter-spacing:-2px; }
+  .lock .mk { position:absolute; left:50%; top:560px; width:220px; height:220px; margin-left:-110px; opacity:.16; }
+  .notif { position:absolute; left:22px; right:22px; top:380px; border-radius:30px; padding:22px 24px; background:rgba(58,50,40,.82);
+    border:1px solid rgba(255,255,255,.08); box-shadow:0 18px 40px rgba(0,0,0,.4); display:flex; gap:18px; opacity:0; }
+  .notif img { width:64px; height:64px; border-radius:15px; flex:none; }
+  .notif .h { display:flex; justify-content:space-between; font-family:'Jost'; font-weight:500; font-size:22px; color:#cbbd9f; letter-spacing:1px; margin-bottom:4px; }
+  .notif .b { font-family:'Jost'; font-weight:400; font-size:27px; line-height:1.3; color:#f6eedd; }
+
+  #tap { width:110px; height:110px; margin:-55px; border-radius:50%; border:5px solid rgba(255,255,255,.9); background:rgba(255,255,255,.22); opacity:0; z-index:9; pointer-events:none; }
+  #flowerOv { position:absolute; width:0; height:0; z-index:3; }
+  #flowerOv .p { position:absolute; width:120px; height:120px; margin:-60px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(255,236,196,.8), rgba(224,184,112,.5) 55%, rgba(160,120,60,.25));
+    border:1.5px solid rgba(250,228,180,.3); }
+  #typing { position:absolute; z-index:3; font-family:'Jost'; font-weight:400; font-size:21px; line-height:1.4; color:#efe6d4; background:#211e19;
+    border-radius:10px; padding:8px 4px; opacity:0; min-height:56px; }
+  #typing b { display:inline-block; width:2px; height:24px; background:#e7cf98; vertical-align:middle; margin-left:2px; }
+
+  /* Karakter */
+  #hero { left:540px; top:900px; width:520px; height:900px; margin-left:-260px; transform-origin:50% 100%; }
+
+  /* Kapanış */
+  #mark { left:540px; top:250px; width:300px; height:300px; margin-left:-150px; opacity:0; }
+  #brand { left:0; right:0; top:570px; text-align:center; font-family:'Cinzel'; font-weight:600; color:#f1e6cf; font-size:96px; letter-spacing:14px; opacity:0; }
+  #tag { left:90px; right:90px; top:705px; text-align:center; font-family:'Cormorant'; font-style:italic; color:#d8c49a; font-size:54px; line-height:1.2; opacity:0; }
+  #cta { left:0; right:0; top:880px; text-align:center; opacity:0; }
+  #cta span { display:inline-block; font-family:'Jost'; font-weight:500; font-size:34px; color:#1a1610; background:#d4b376; padding:16px 40px; border-radius:44px; }
+  #title { left:60px; right:60px; top:260px; text-align:center; opacity:0; }
+  #title .t { font-family:'Cinzel'; font-weight:600; color:#f4e8d0; font-size:78px; line-height:1.1; }
+  #title .s { font-family:'Cormorant'; font-style:italic; color:#d8c49a; font-size:52px; margin-top:26px; line-height:1.2; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="skyNight" class="abs sky"></div><div id="skyDawn" class="abs sky"></div><div id="skyDay" class="abs sky"></div>
+  <div id="skyDusk" class="abs sky"></div><div id="skyGold" class="abs sky"></div>
+  <div id="stars"></div>
+  <div id="sun" class="abs"></div><div id="moon" class="abs"></div>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="mkGold" gradientUnits="userSpaceOnUse" x1="0" y1="250" x2="0" y2="760"><stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/></linearGradient>
+      <radialGradient id="mkOrb" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/></radialGradient>
+      <radialGradient id="mkGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdb68d"/><stop offset="1" stop-color="#ad9670"/></linearGradient>
+      <linearGradient id="tunic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ecdd"/><stop offset="1" stop-color="#e2d7c1"/></linearGradient>
+      <symbol id="mk" viewBox="192 162 640 640">
+        <circle cx="512" cy="477" r="200" fill="url(#mkGlow)"/><circle cx="512" cy="477" r="128" fill="url(#mkOrb)"/>
+        <path d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkGold)" stroke-width="34" stroke-linecap="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div id="titleWrap">
+    <div id="title" class="abs"><div class="t"></div><div class="s"></div></div>
+  </div>
+
+  <div id="cap">
+    <div id="chip" class="abs"><span></span></div>
+    <div id="hl" class="hl abs"></div>
+    <div id="sb1" class="sb abs"></div><div id="sb2" class="sb abs"></div><div id="sb3" class="sb abs"></div>
+  </div>
+
+  <div id="phoneWrap" class="abs">
+    <div id="phone">
+      <div id="screen">
+        <div id="status"><span id="clock">09:00</span><span>●●● ▮</span></div>
+        <div id="island"></div>
+        <div id="lockM" class="lock"><div class="date"></div><div class="time">09:00</div>
+          <svg class="mk"><use href="#mk"/></svg>
+          <div class="notif" id="notifM"><img src="../../docs/sosyal-medya/animasyon/gun/icon.png"><div><div class="h"><span>STOIKOS</span><span class="now"></span></div><div class="b"></div></div></div></div>
+        <div id="lockE" class="lock"><div class="date"></div><div class="time">21:00</div>
+          <svg class="mk"><use href="#mk"/></svg>
+          <div class="notif" id="notifE"><img src="../../docs/sosyal-medya/animasyon/gun/icon.png"><div><div class="h"><span>STOIKOS</span><span class="now"></span></div><div class="b"></div></div></div></div>
+        <div class="app" id="a-home"><div class="content"></div><div class="tabs"></div></div>
+        <div class="app" id="a-home-mood"><div class="content"></div><div class="tabs"></div></div>
+        <div class="app" id="a-coach"><div class="content"></div><div class="tabs"></div></div>
+        <div class="app" id="a-practice"><div class="content"></div><div class="tabs"></div><div id="typing"></div></div>
+        <div class="app" id="a-progress"><div class="content"></div><div class="tabs"></div></div>
+        <div id="flowerOv"></div>
+        <div id="tap" class="abs"></div>
+      </div>
+    </div>
+  </div>
+
+  <svg id="hero" class="abs" viewBox="0 0 520 900">
+    <g id="body">
+      <!-- pelerin (arkada) -->
+      <path id="cloakStand" d="M150 250 Q110 280 92 420 Q70 640 60 860 L460 860 Q450 640 428 420 Q410 280 370 250 Z" fill="url(#cloak)"/>
+      <path id="cloakSit" d="M150 250 Q105 300 92 420 Q80 520 60 630 Q260 660 460 630 Q440 520 428 420 Q415 300 370 250 Z" fill="url(#cloak)" opacity="0"/>
+      <!-- tunik -->
+      <path id="tunicStand" d="M190 240 L330 240 Q360 420 372 860 L148 860 Q160 420 190 240 Z" fill="url(#tunic)"/>
+      <!-- bağdaş: dizler -->
+      <g id="legsSit" opacity="0">
+        <ellipse cx="260" cy="770" rx="230" ry="78" fill="url(#tunic)"/>
+        <ellipse cx="120" cy="790" rx="34" ry="16" fill="#8a5a35"/>
+        <ellipse cx="400" cy="790" rx="34" ry="16" fill="#8a5a35"/>
+      </g>
+      <path id="tunicSitTop" d="M190 240 L330 240 Q350 400 356 610 L164 610 Q170 400 190 240 Z" fill="url(#tunic)" opacity="0"/>
+      <!-- kemer -->
+      <rect id="belt" x="172" y="420" width="176" height="14" rx="6" fill="#7a4b2a"/>
+      <path id="beltTail" d="M255 434 L250 520 M265 434 L272 510" stroke="#7a4b2a" stroke-width="7" stroke-linecap="round"/>
+      <!-- sandaletler -->
+      <g id="feet">
+        <ellipse cx="215" cy="866" rx="34" ry="13" fill="#8a5a35"/>
+        <ellipse cx="305" cy="866" rx="34" ry="13" fill="#8a5a35"/>
+      </g>
+      <!-- kollar -->
+      <g id="armsStand">
+        <path d="M188 258 Q150 330 158 470" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <path d="M332 258 Q370 330 362 470" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <circle cx="158" cy="488" r="21" fill="#bf9469"/>
+        <circle cx="362" cy="488" r="21" fill="#bf9469"/>
+      </g>
+      <g id="armsSit" opacity="0">
+        <path d="M188 258 Q140 400 120 560" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <path d="M332 258 Q380 400 400 560" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <circle cx="116" cy="578" r="21" fill="#bf9469"/>
+        <circle cx="404" cy="578" r="21" fill="#bf9469"/>
+      </g>
+      <!-- pelerin yakası -->
+      <path id="collar" d="M160 248 Q260 300 360 248 Q340 228 260 236 Q180 228 160 248 Z" fill="#bea47a"/>
+      <!-- boyun -->
+      <rect id="neck" x="238" y="196" width="44" height="50" rx="16" fill="#b38960"/>
+    </g>
+    <g id="headG">
+      <!-- saç arka -->
+      <path d="M182 128 Q180 40 260 34 Q340 40 338 128 Q340 200 318 214 L202 214 Q180 200 182 128 Z" fill="#231912"/>
+      <!-- yüz -->
+      <ellipse cx="260" cy="132" rx="64" ry="78" fill="#c49a6c"/>
+      <!-- saç ön -->
+      <path d="M194 112 Q200 48 262 46 Q326 48 328 112 Q300 76 262 74 Q222 76 194 112 Z" fill="#231912"/>
+      <path d="M262 46 Q252 70 238 90" stroke="#3a2b20" stroke-width="3" fill="none"/>
+      <!-- gümüş teller -->
+      <path d="M300 62 Q312 80 318 104" stroke="#9b938a" stroke-width="2.5" fill="none" opacity=".8"/>
+      <!-- örgü sağ omuzdan öne -->
+      <g id="braid" fill="#231912">
+        <ellipse cx="322" cy="214" rx="17" ry="22"/><ellipse cx="327" cy="250" rx="16" ry="21"/>
+        <ellipse cx="331" cy="285" rx="15" ry="20"/><ellipse cx="334" cy="319" rx="14" ry="19"/>
+        <ellipse cx="336" cy="351" rx="13" ry="17"/><path d="M336 366 L328 392 L346 392 Z"/>
+      </g>
+      <!-- kaşlar -->
+      <path id="browL" d="M222 108 Q236 100 250 106" stroke="#231912" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path id="browR" d="M270 106 Q284 100 298 108" stroke="#231912" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- gözler -->
+      <g id="eyesOpen"><ellipse cx="236" cy="128" rx="7" ry="8.5" fill="#2a1d14"/><ellipse cx="284" cy="128" rx="7" ry="8.5" fill="#2a1d14"/>
+        <circle cx="238.5" cy="125" r="2" fill="#fff" opacity=".8"/><circle cx="286.5" cy="125" r="2" fill="#fff" opacity=".8"/></g>
+      <g id="eyesClosed" opacity="0"><path d="M226 130 Q236 138 246 130" stroke="#2a1d14" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M274 130 Q284 138 294 130" stroke="#2a1d14" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <!-- burun, ağız -->
+      <path d="M260 134 Q256 154 262 160" stroke="#9b7550" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path id="mouthWorry" d="M244 180 Q260 174 276 180" stroke="#7a4a36" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path id="mouthSmile" d="M242 176 Q260 192 278 176" stroke="#7a4a36" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
+    </g>
+  </svg>
+
+  <svg id="mark" class="abs" viewBox="192 162 640 640">
+    <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".18" stroke-width="5"/>
+    <circle cx="512" cy="477" r="200" fill="url(#mkGlow)"/>
+    <circle id="mkOrbC" cx="512" cy="477" r="128" fill="url(#mkOrb)"/>
+    <path id="mkArc" d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkGold)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <div id="brand" class="abs">STOIKOS</div>
+  <div id="tag" class="abs"></div>
+  <div id="cta" class="abs"><span></span></div>
+</div>
+
+<script>
+// Dokunma noktaları shoot-tall.js çekiminden (css px, 430 genişlik)
+window.BOXES = {"tr": {"breath": {"x": 172.171875, "y": 389, "width": 85.65625, "height": 30}, "resume": {"x": 43, "y": 547.5, "width": 110.1875, "height": 18}, "mood": {"x": 133.453125, "y": 785, "width": 30.25, "height": 22}, "coachTab": {"x": 235, "y": 1147, "width": 156, "height": 18}, "moodQuote": {"x": 43, "y": 1045, "width": 174.0625, "height": 22}, "journal": {"x": 45, "y": 689, "width": 130.125, "height": 16}}, "en": {"breath": {"x": 134.453125, "y": 389, "width": 161.078125, "height": 30}, "resume": {"x": 43, "y": 547.5, "width": 236.609375, "height": 18}, "mood": {"x": 144.90625, "y": 785, "width": 39.203125, "height": 22}, "coachTab": {"x": 235, "y": 1147, "width": 156, "height": 18}, "moodQuote": {"x": 43, "y": 1045, "width": 143.796875, "height": 22}, "journal": {"x": 45, "y": 689, "width": 135.84375, "height": 16}}};
+const T = {
+  tr: { title:'Stoikos’la bir gün', titleSub:'Günde birkaç dakika. Ömürlük bir alışkanlık.', date:'Salı, 27 Ekim', now:'şimdi',
+    notifM:'Kontrol Dairesi: Bugün karşına çıkan her şeyi ikiye ayır — elinde olan ve olmayan.',
+    notifE:'Bugün korktuğun bir şey oldu mu? Gerçekleşti mi?',
+    typing:'Korktum ama olmadı. Çoğu korku böyle.',
+    scenes:[
+      { chip:'☀  SABAH · 09:00', hl:'Güne kendi niyetinle başla', sb:['Sabah bildirimi: günün kavramı ya da bir söz','Bir dakikalık nefes: dokun, nefes al, bırak','Programında bugünün adımı seni bekliyor'] },
+      { chip:'◐  GÜN İÇİNDE', hl:'Zor bir anda elinde bir araç var', sb:['Neye ihtiyacın olduğunu seç…','…sana uygun Stoacı bir söz gelsin','Ya da koça sor: dinler, sakin bir bakış sunar'] },
+      { chip:'☾  AKŞAM · 21:00', hl:'Günü tek bir soruyla kapat', sb:['Her akşam yeni bir yansıma sorusu','Dün yazdığın da burada. Yazdıkların yalnızca senin cihazında.',''] },
+      { chip:'✦  HER GÜN BİRAZ', hl:'Küçük adımlar birikir', sb:['Süreklilik, son 7 gün, egzersizlerin bir bakışta','',''] },
+    ],
+    tag:'Günde birkaç dakika.\nKaosun ortasında sakin kal.', cta:'Ücretsiz başla · stoikos.app' },
+  en: { title:'A day with Stoikos', titleSub:'A few minutes a day. A habit for life.', date:'Tuesday, October 27', now:'now',
+    notifM:'Circle of Control: Today, sort everything you meet into two — what is yours and what is not.',
+    notifE:'Was there something you feared today? Did it happen?',
+    typing:'I was afraid, but it didn’t happen. Most fears don’t.',
+    scenes:[
+      { chip:'☀  MORNING · 9:00', hl:'Start the day on your own terms', sb:['A morning nudge: today’s idea or a quote','One minute of breathing: tap, breathe in, let go','Today’s step in your program is waiting'] },
+      { chip:'◐  DURING THE DAY', hl:'In a hard moment, you have a tool', sb:['Choose what you need…','…and get a Stoic word for it','Or ask the coach: it listens and offers a calmer view'] },
+      { chip:'☾  EVENING · 9:00 PM', hl:'Close the day with one question', sb:['A new reflection question every evening','Yesterday’s note is here too — and it stays on your device.',''] },
+      { chip:'✦  A LITTLE EVERY DAY', hl:'Small steps add up', sb:['Your streak, last 7 days and practice at a glance','',''] },
+    ],
+    tag:'A few minutes a day.\nCalm in the chaos.', cta:'Start free · stoikos.app' },
+};
+// sahne aralıkları (ms)
+const SC = [[4400, 15400], [15400, 26200], [26200, 35600], [35600, 41600]];
+const K = 568 / 430;           // ekran görüntüsü css px → telefon ekranı px
+const VIEW = (1208 - 56 - 82) / K;   // görünen içerik yüksekliği (css px)
+
+const $ = (id) => document.getElementById(id);
+const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x<.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const win = (t, a, b, fi=450, fo=450) => clamp((t-a)/fi) * (1 - clamp((t-(b-fo))/fo));
+let L, B, petals = [];
+
+function init(lang) {
+  L = T[lang];
+  B = window.BOXES[lang];
+  const pre = `../../docs/sosyal-medya/animasyon/gun/${lang}-`;
+  ['home','home-mood','coach','practice','progress'].forEach(n => {
+    const a = $('a-' + n); a.querySelector('.content').style.backgroundImage = `url('${pre}${n}.jpg')`;
+    a.querySelector('.tabs').style.backgroundImage = `url('${pre}${n}.jpg')`;
+    const im = new Image(); im.src = `${pre}${n}.jpg`; im.style.display = 'none'; document.body.appendChild(im);
+  });
+  document.querySelectorAll('.lock .date').forEach(d => d.textContent = L.date);
+  document.querySelectorAll('.notif .now').forEach(d => d.textContent = L.now);
+  $('notifM').querySelector('.b').textContent = L.notifM; $('notifE').querySelector('.b').textContent = L.notifE;
+  $('title').querySelector('.t').textContent = L.title; $('title').querySelector('.s').textContent = L.titleSub;
+  $('tag').innerHTML = L.tag.replace('\n', '<br>'); $('cta').querySelector('span').textContent = L.cta;
+  const st = $('stars'); st.innerHTML = '';
+  for (let i = 0; i < 40; i++) { const s = document.createElement('div'); s.className = 'star abs';
+    s.style.left = ((i * 263) % 1060 + 10) + 'px'; s.style.top = ((i * 157) % 1200 + 440) + 'px'; if (i % 3) s.style.left = (i % 2 ? 40 + (i*37)%160 : 880 + (i*53)%180) + 'px'; st.appendChild(s); }
+  const fo = $('flowerOv'); fo.innerHTML = ''; petals = [];
+  for (let i = 0; i < 6; i++) { const p = document.createElement('div'); p.className = 'p'; fo.appendChild(p); petals.push(p); }
+}
+
+// ekranlar arası geçiş: [başlangıç, bitiş] görünür olduğu aralık
+const SHOW = { lockM:[4400, 7700], 'a-home':[7500, 19600], 'a-home-mood':[16900, 20300], 'a-coach':[20100, 26400], lockE:[26200, 29000],
+  'a-practice':[28800, 35800], 'a-progress':[35600, 41800] };
+// kaydırma anahtar kareleri (ms, css y)
+const SCROLL = {
+  'a-home': [[7500,0],[11600,0],[12800,300],[15400,300],[16400,560]],
+  'a-home-mood': [[16900,560],[17700,560],[18700,760]],
+  'a-coach': [[20100,0],[21800,0],[25200,420]],
+  'a-practice': [[28800,520],[35800,560]],
+  'a-progress': [[35600,0],[37600,0],[40400,260]],
+};
+function scrollAt(id, t) {
+  const k = SCROLL[id]; if (!k) return 0;
+  if (t <= k[0][0]) return k[0][1];
+  for (let i = 1; i < k.length; i++) if (t <= k[i][0]) { const a = k[i-1], b = k[i]; return a[1] + (b[1]-a[1]) * ease((t - a[0]) / (b[0] - a[0])); }
+  return k[k.length-1][1];
+}
+const c = (b) => [b.x + b.width/2, b.y + b.height/2];
+
+function renderFrame(t) {
+  // gökyüzü
+  const sky = { skyNight: 1 - win(t, 3800, 42400, 900, 900),
+    skyDawn: win(t, 3800, 15800, 900, 900), skyDay: win(t, 15000, 26600, 900, 900),
+    skyDusk: win(t, 25800, 36000, 900, 900), skyGold: win(t, 35200, 48000, 900, 1) };
+  for (const k in sky) $(k).style.opacity = sky[k];
+  $('sun').style.opacity = win(t, 4600, 26200, 1400, 1200);
+  // telefonun sağındaki boşlukta yükselip alçalır (başlığın üstüne binmesin)
+  $('sun').style.transform = `translateY(${120 - Math.sin(clamp((t-4600)/21600)*Math.PI)*200}px)`;
+  $('moon').style.opacity = win(t, 27000, 35800, 1400, 1000);
+  document.querySelectorAll('.star').forEach((s, i) => s.style.opacity = win(t, 26800 + i*30, 36000, 1200, 900) * (.35 + .5*((Math.sin(t/400 + i) + 1)/2)));
+
+  // başlık (açılış)
+  const tw = win(t, 300, 4200, 700, 600);
+  $('title').style.opacity = tw; $('title').style.transform = `translateY(${(1-out((t-300)/700))*30}px)`;
+
+  // sahne yazıları; gündüz açık zemin → koyu yazı
+  const si = SC.findIndex(s => t >= s[0] && t < s[1]);
+  $('cap').className = si === 1 ? 'light' : '';
+  if (si >= 0) {
+    const s = L.scenes[si], [a, b] = SC[si];
+    $('chip').querySelector('span').textContent = s.chip; $('hl').textContent = s.hl;
+    $('chip').style.opacity = win(t, a + 100, b, 450, 400); $('hl').style.opacity = win(t, a + 300, b, 500, 400);
+    $('hl').style.transform = `translateY(${(1-out((t-a-300)/500))*24}px)`;
+    const subT = { 0:[[4900,7600],[8300,12000],[12400,15400]], 1:[[15700,17000],[17000,20000],[20100,26200]], 2:[[26700,29300],[29300,35600]], 3:[[36000,41600]] }[si];
+    ['sb1','sb2','sb3'].forEach((id, j) => { const w = subT[j]; const txt = s.sb[j];
+      $(id).textContent = txt || ''; $(id).style.opacity = w && txt ? win(t, w[0], w[1], 400, 350) : 0; });
+  } else { ['chip','hl','sb1','sb2','sb3'].forEach(id => $(id).style.opacity = 0); }
+
+  // telefon
+  const pin = out((t - 4200) / 900), pout = ease((t - 41400) / 800);
+  const pw = $('phoneWrap'); pw.style.opacity = pin * (1 - pout);
+  pw.style.transform = `translateY(${(1-pin)*500 + pout*700}px)`;
+  $('phone').style.transform = `rotateY(${Math.sin(t/2600)*5}deg) rotateX(${2 + Math.sin(t/3400)*2}deg)`;
+  $('clock').textContent = t > 26000 ? '21:00' : '09:00';
+  for (const id in SHOW) { const [a, b] = SHOW[id]; $(id).style.opacity = win(t, a, b, 350, 350); }
+  for (const id in SCROLL) $(id).querySelector('.content').style.transform = `translateY(${-scrollAt(id, t) * K}px)`;
+  // bildirimler
+  ['notifM', 'notifE'].forEach((id, j) => { const a = j ? 26900 : 5300; const k = out((t - a) / 600);
+    $(id).style.opacity = clamp((t - a) / 250); $(id).style.transform = `translateY(${(1-k)*-140}px) scale(${.96 + .04*k})`; });
+
+  // dokunuşlar: [zaman, ekran, css x, css y]
+  const sc = (id, ty) => scrollAt(id, ty);
+  const TAPS = [
+    [7150, 284, 470],                                                     // sabah bildirimi (telefon px)
+    [8600, c(B.breath)[0]*K, (c(B.breath)[1] - 110 - sc('a-home', 8600))*K + 56],   // çiçek
+    [13600, c(B.resume)[0]*K + 120, (c(B.resume)[1] + 50 - sc('a-home', 13600))*K + 56], // kaldığın yer
+    [16650, c(B.mood)[0]*K, (c(B.mood)[1] - sc('a-home', 16650))*K + 56],           // duygu çipi
+    [19750, 215*K, 1208 - 41],                                            // koç sekmesi
+    [28650, 284, 470],                                                    // akşam bildirimi
+  ];
+  const tp = $('tap'); let shown = 0;
+  for (const [ta, x, y] of TAPS) { const d = t - ta; if (d > -250 && d < 650) {
+      const k = clamp((d + 250) / 250), r = clamp(d / 650);
+      tp.style.left = x + 'px'; tp.style.top = y + 'px';
+      tp.style.opacity = d < 0 ? k : 1 - r; tp.style.transform = `scale(${d < 0 ? 1.15 - .15*k : 1 + r*.9})`; shown = 1; } }
+  if (!shown) tp.style.opacity = 0;
+
+  // canlı nefes çiçeği ekran görüntüsündeki çiçeğin üstünde (8,6–11,8 sn)
+  const fx = 215*K, fy = (c(B.breath)[1] - 112 - scrollAt('a-home', t))*K + 56;
+  const fl = win(t, 8700, 11900, 300, 400);
+  const br = (Math.sin((t - 8700) / 3000 * Math.PI * 2 - Math.PI/2) + 1) / 2;
+  $('flowerOv').style.left = fx + 'px'; $('flowerOv').style.top = fy + 'px'; $('flowerOv').style.opacity = fl;
+  petals.forEach((p, i) => { const a = i/6*Math.PI*2 + br*Math.PI/3; const r = 6 + 52*br;
+    p.style.transform = `translate(${Math.cos(a)*r}px, ${Math.sin(a)*r}px) scale(${.55 + .5*br})`; });
+
+  // akşam: günlüğe yazılıyor
+  const ty = $('typing'); const jy = (c(B.journal)[1] + 226 - scrollAt('a-practice', t)) * K;
+  ty.style.left = (50*K) + 'px'; ty.style.top = jy + 'px'; ty.style.width = (330*K) + 'px';
+  const n = Math.floor(clamp((t - 30600) / 2600) * L.typing.length);
+  ty.innerHTML = L.typing.slice(0, n) + (Math.floor(t / 450) % 2 ? '<b></b>' : '<b style="opacity:0"></b>');
+  ty.style.opacity = win(t, 30200, 35800, 300, 300);
+
+  // karakter: açılışta ortada, uygulama sahnelerinde sol altta küçük, kapanışta ortada bağdaş
+  const small = ease((t - 3600) / 900) * (1 - ease((t - 41600) / 900));
+  const fin = ease((t - 41800) / 900);
+  const hx = 540 - 400*small, hy = (1560 + 220*small) + 140*fin, hs = (1 - .68*small) * (1 - .12*fin);
+  const h = $('hero'); h.style.left = hx + 'px'; h.style.top = (hy - 900) + 'px';
+  h.style.transform = `scale(${hs * (1 + Math.sin(t/700)*.006)})`;
+  h.style.opacity = 1 - clamp((t - 47400) / 500);
+  const worried = win(t, 15400, 17000, 300, 400);           // zor an: kaşlar çatık
+  $('eyesOpen').setAttribute('opacity', 1); $('eyesClosed').setAttribute('opacity', 0);
+  if (t > 42800) { $('eyesOpen').setAttribute('opacity', 0); $('eyesClosed').setAttribute('opacity', 1); }
+  $('mouthWorry').setAttribute('opacity', worried); $('mouthSmile').setAttribute('opacity', 1 - worried);
+  $('browL').setAttribute('transform', `rotate(${10*worried} 250 106)`); $('browR').setAttribute('transform', `rotate(${-10*worried} 270 106)`);
+  const sit = fin;
+  ['cloakStand','tunicStand','armsStand','feet','beltTail'].forEach(id => $(id).setAttribute('opacity', 1 - sit));
+  ['cloakSit','legsSit','tunicSitTop','armsSit'].forEach(id => $(id).setAttribute('opacity', sit));
+  ['cloakSit','tunicSitTop','armsSit','belt','collar','neck','headG'].forEach(id => $(id).setAttribute('transform', `translate(0 ${170*sit})`));
+
+  // kapanış
+  const m = out((t - 42200) / 900);
+  $('mark').style.opacity = m; $('mark').style.transform = `scale(${0.85 + 0.15*m})`;
+  $('mkArc').style.strokeDasharray = '1500'; $('mkArc').style.strokeDashoffset = 1500 * (1 - ease((t - 42200) / 1400));
+  $('mkOrbC').setAttribute('opacity', ease((t - 43100) / 700));
+  $('brand').style.opacity = out((t - 43400) / 700);
+  $('tag').style.opacity = out((t - 44000) / 700);
+  $('cta').style.opacity = out((t - 44700) / 700);
+  $('stage').style.opacity = 1 - clamp((t - 47500) / 500);
+}
+window.init = init; window.renderFrame = renderFrame;
+</script>
+</body>
+</html>

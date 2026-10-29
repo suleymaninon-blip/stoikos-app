@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- Stoikos tanıtım animasyonu — 31 sn, 1080×1920. Karakter: serinin kadın kahramanının çizgi hâli
+     (koyu örgü, keten tunik, kum rengi pelerin). render-teaser.js ile kare kare çekilir:
+     TEASER_TPL=scripts/teaser/animasyon.html TEASER_MS=31000 TEASER_NAME=animasyon node scripts/teaser/render-teaser.js tr,en <çıkış> -->
+<style>
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:500;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf') format('truetype'); }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  #stage { position:relative; width:1080px; height:1920px; overflow:hidden; background:#14120e; }
+  .abs { position:absolute; }
+  #bgCold { inset:0; background:linear-gradient(180deg,#2b3038 0%,#1d2026 60%,#16181c 100%); }
+  #bgWarm { inset:0; background:radial-gradient(ellipse at 50% 58%, #3a2e1d 0%, #1d1811 45%, #12100c 100%); opacity:0; }
+  #halo { left:540px; top:1180px; width:1400px; height:1400px; margin:-700px 0 0 -700px; border-radius:50%;
+    background:radial-gradient(circle, rgba(232,196,128,.30) 0%, rgba(232,196,128,.10) 35%, rgba(232,196,128,0) 65%); opacity:0; }
+
+  .headline { left:0; right:0; text-align:center; font-family:'Cinzel'; font-weight:600; color:#f1e6cf;
+    font-size:68px; letter-spacing:1px; line-height:1.15; opacity:0; padding:0 70px; }
+  .sub { left:0; right:0; text-align:center; font-family:'Cormorant'; font-style:italic; color:#d8c49a; font-size:58px; opacity:0; }
+
+  /* Bildirim balonları */
+  .bub { background:#fbf8f2; color:#2a2620; border-radius:22px; padding:16px 24px 16px 18px; font-family:'Jost'; font-weight:500;
+    font-size:32px; display:flex; align-items:center; gap:14px; box-shadow:0 10px 30px rgba(0,0,0,.35); white-space:nowrap; opacity:0; }
+  .bub i { width:30px; height:30px; border-radius:50%; background:#e0533d; color:#fff; font-style:normal; font-size:19px;
+    display:grid; place-items:center; flex:none; }
+
+  #clock { left:820px; top:430px; width:150px; height:150px; opacity:0; }
+
+  /* Karakter */
+  #hero { left:540px; top:1180px; width:520px; height:900px; margin-left:-260px; transform-origin:50% 100%; }
+  #flower { left:540px; top:1130px; width:0; height:0; }
+  .petal { position:absolute; width:150px; height:150px; margin:-75px 0 0 -75px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(255,236,196,.75), rgba(224,184,112,.45) 55%, rgba(160,120,60,.22));
+    border:1.5px solid rgba(250,228,180,.30); opacity:0; }
+
+  /* Telefon */
+  #phone { left:540px; top:250px; width:560px; height:1180px; margin-left:-280px; border-radius:78px; background:#0c0b09;
+    border:14px solid #2a2620; box-shadow:0 40px 90px rgba(0,0,0,.55), 0 0 0 2px rgba(212,179,118,.25); overflow:hidden; opacity:0; }
+  #phone .scr { position:absolute; inset:0; background-size:cover; background-position:top center; opacity:0; }
+  #phone .island { position:absolute; left:50%; top:18px; width:150px; height:42px; margin-left:-75px; border-radius:22px; background:#000; z-index:3; }
+  .feat { left:0; right:0; top:1480px; text-align:center; opacity:0; }
+  .feat .n { display:inline-grid; place-items:center; width:62px; height:62px; border-radius:50%; background:#d4b376; color:#1a1610;
+    font-family:'Jost'; font-weight:500; font-size:34px; margin-bottom:18px; }
+  .feat .t { font-family:'Cinzel'; font-weight:600; color:#f1e6cf; font-size:54px; line-height:1.15; padding:0 80px; }
+  .feat .d { font-family:'Jost'; font-weight:400; color:#cabfa8; font-size:34px; margin-top:12px; padding:0 100px; }
+
+  /* Sayılar */
+  .stat { width:420px; height:250px; border-radius:34px; background:rgba(244,232,206,.07); border:1.5px solid rgba(212,179,118,.35);
+    text-align:center; padding-top:42px; opacity:0; }
+  .stat b { display:block; font-family:'Cinzel'; font-weight:600; font-size:110px; color:#e7cf98; line-height:1; }
+  .stat span { display:block; font-family:'Jost'; font-weight:400; font-size:34px; color:#cabfa8; margin-top:18px; }
+
+  /* Kapanış */
+  #mark { left:540px; top:250px; width:300px; height:300px; margin-left:-150px; opacity:0; }
+  #brand { left:0; right:0; top:570px; text-align:center; font-family:'Cinzel'; font-weight:600; color:#f1e6cf; font-size:96px; letter-spacing:14px; opacity:0; }
+  #tag { left:0; right:0; top:705px; text-align:center; font-family:'Cormorant'; font-style:italic; color:#d8c49a; font-size:56px; opacity:0; }
+  #soon { left:0; right:0; top:815px; text-align:center; opacity:0; }
+  #soon span { display:inline-block; font-family:'Jost'; font-weight:500; font-size:32px; color:#1a1610; background:#d4b376;
+    padding:14px 34px; border-radius:40px; letter-spacing:.5px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bgCold" class="abs"></div>
+  <div id="bgWarm" class="abs"></div>
+  <div id="halo" class="abs"></div>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="mkGold" gradientUnits="userSpaceOnUse" x1="0" y1="250" x2="0" y2="760"><stop offset="0" stop-color="#f4e2b8"/><stop offset=".45" stop-color="#d4b376"/><stop offset="1" stop-color="#9a7b44"/></linearGradient>
+      <radialGradient id="mkOrb" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#f6e6c0"/><stop offset=".45" stop-color="#cfae6c"/><stop offset="1" stop-color="#6e5530"/></radialGradient>
+      <radialGradient id="mkGlow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#e2b874" stop-opacity=".45"/><stop offset="1" stop-color="#e2b874" stop-opacity="0"/></radialGradient>
+      <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdb68d"/><stop offset="1" stop-color="#ad9670"/></linearGradient>
+      <linearGradient id="tunic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3ecdd"/><stop offset="1" stop-color="#e2d7c1"/></linearGradient>
+    </defs>
+  </svg>
+
+  <svg id="clock" class="abs" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="44" fill="#fbf8f2" stroke="#2a2620" stroke-width="5"/>
+    <g id="hHand"><line x1="50" y1="50" x2="50" y2="28" stroke="#2a2620" stroke-width="5" stroke-linecap="round"/></g>
+    <g id="mHand"><line x1="50" y1="50" x2="50" y2="14" stroke="#e0533d" stroke-width="3.5" stroke-linecap="round"/></g>
+    <circle cx="50" cy="50" r="4" fill="#2a2620"/>
+  </svg>
+
+  <div id="flower" class="abs"></div>
+
+  <!-- Karakter: 520×900, ayaklar altta. Ayakta ve bağdaş hâlleri aynı üst gövdeyi paylaşır. -->
+  <svg id="hero" class="abs" viewBox="0 0 520 900">
+    <g id="body">
+      <!-- pelerin (arkada) -->
+      <path id="cloakStand" d="M150 250 Q110 280 92 420 Q70 640 60 860 L460 860 Q450 640 428 420 Q410 280 370 250 Z" fill="url(#cloak)"/>
+      <path id="cloakSit" d="M150 250 Q105 300 92 420 Q80 520 60 630 Q260 660 460 630 Q440 520 428 420 Q415 300 370 250 Z" fill="url(#cloak)" opacity="0"/>
+      <!-- tunik -->
+      <path id="tunicStand" d="M190 240 L330 240 Q360 420 372 860 L148 860 Q160 420 190 240 Z" fill="url(#tunic)"/>
+      <!-- bağdaş: dizler -->
+      <g id="legsSit" opacity="0">
+        <ellipse cx="260" cy="770" rx="230" ry="78" fill="url(#tunic)"/>
+        <ellipse cx="120" cy="790" rx="34" ry="16" fill="#8a5a35"/>
+        <ellipse cx="400" cy="790" rx="34" ry="16" fill="#8a5a35"/>
+      </g>
+      <path id="tunicSitTop" d="M190 240 L330 240 Q350 400 356 610 L164 610 Q170 400 190 240 Z" fill="url(#tunic)" opacity="0"/>
+      <!-- kemer -->
+      <rect id="belt" x="172" y="420" width="176" height="14" rx="6" fill="#7a4b2a"/>
+      <path id="beltTail" d="M255 434 L250 520 M265 434 L272 510" stroke="#7a4b2a" stroke-width="7" stroke-linecap="round"/>
+      <!-- sandaletler -->
+      <g id="feet">
+        <ellipse cx="215" cy="866" rx="34" ry="13" fill="#8a5a35"/>
+        <ellipse cx="305" cy="866" rx="34" ry="13" fill="#8a5a35"/>
+      </g>
+      <!-- kollar -->
+      <g id="armsStand">
+        <path d="M188 258 Q150 330 158 470" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <path d="M332 258 Q370 330 362 470" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <circle cx="158" cy="488" r="21" fill="#bf9469"/>
+        <circle cx="362" cy="488" r="21" fill="#bf9469"/>
+      </g>
+      <g id="armsSit" opacity="0">
+        <path d="M188 258 Q140 400 120 560" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <path d="M332 258 Q380 400 400 560" stroke="#e8dfcc" stroke-width="40" fill="none" stroke-linecap="round"/>
+        <circle cx="116" cy="578" r="21" fill="#bf9469"/>
+        <circle cx="404" cy="578" r="21" fill="#bf9469"/>
+      </g>
+      <!-- pelerin yakası -->
+      <path id="collar" d="M160 248 Q260 300 360 248 Q340 228 260 236 Q180 228 160 248 Z" fill="#bea47a"/>
+      <!-- boyun -->
+      <rect id="neck" x="238" y="196" width="44" height="50" rx="16" fill="#b38960"/>
+    </g>
+    <g id="headG">
+      <!-- saç arka -->
+      <path d="M182 128 Q180 40 260 34 Q340 40 338 128 Q340 200 318 214 L202 214 Q180 200 182 128 Z" fill="#231912"/>
+      <!-- yüz -->
+      <ellipse cx="260" cy="132" rx="64" ry="78" fill="#c49a6c"/>
+      <!-- saç ön -->
+      <path d="M194 112 Q200 48 262 46 Q326 48 328 112 Q300 76 262 74 Q222 76 194 112 Z" fill="#231912"/>
+      <path d="M262 46 Q252 70 238 90" stroke="#3a2b20" stroke-width="3" fill="none"/>
+      <!-- gümüş teller -->
+      <path d="M300 62 Q312 80 318 104" stroke="#9b938a" stroke-width="2.5" fill="none" opacity=".8"/>
+      <!-- örgü sağ omuzdan öne -->
+      <g id="braid" fill="#231912">
+        <ellipse cx="322" cy="214" rx="17" ry="22"/><ellipse cx="327" cy="250" rx="16" ry="21"/>
+        <ellipse cx="331" cy="285" rx="15" ry="20"/><ellipse cx="334" cy="319" rx="14" ry="19"/>
+        <ellipse cx="336" cy="351" rx="13" ry="17"/><path d="M336 366 L328 392 L346 392 Z"/>
+      </g>
+      <!-- kaşlar -->
+      <path id="browL" d="M222 108 Q236 100 250 106" stroke="#231912" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path id="browR" d="M270 106 Q284 100 298 108" stroke="#231912" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- gözler -->
+      <g id="eyesOpen"><ellipse cx="236" cy="128" rx="7" ry="8.5" fill="#2a1d14"/><ellipse cx="284" cy="128" rx="7" ry="8.5" fill="#2a1d14"/>
+        <circle cx="238.5" cy="125" r="2" fill="#fff" opacity=".8"/><circle cx="286.5" cy="125" r="2" fill="#fff" opacity=".8"/></g>
+      <g id="eyesClosed" opacity="0"><path d="M226 130 Q236 138 246 130" stroke="#2a1d14" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M274 130 Q284 138 294 130" stroke="#2a1d14" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <!-- burun, ağız -->
+      <path d="M260 134 Q256 154 262 160" stroke="#9b7550" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path id="mouthWorry" d="M244 180 Q260 174 276 180" stroke="#7a4a36" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path id="mouthSmile" d="M242 176 Q260 192 278 176" stroke="#7a4a36" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
+    </g>
+  </svg>
+
+  <div id="bubbles"></div>
+
+  <div id="phone" class="abs"><div class="island"></div></div>
+
+  <div id="h1" class="headline abs" style="top:190px"></div>
+  <div id="h2" class="headline abs" style="top:190px"></div>
+  <div id="h3" class="headline abs" style="top:250px"></div>
+  <div id="s3" class="sub abs" style="top:400px"></div>
+
+  <div id="stats"></div>
+
+  <svg id="mark" class="abs" viewBox="192 162 640 640">
+    <circle cx="512" cy="477" r="292" fill="none" stroke="#d4b376" stroke-opacity=".18" stroke-width="5"/>
+    <circle cx="512" cy="477" r="200" fill="url(#mkGlow)"/>
+    <circle id="mkOrbC" cx="512" cy="477" r="128" fill="url(#mkOrb)"/>
+    <path id="mkArc" d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="url(#mkGold)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <div id="brand" class="abs">STOIKOS</div>
+  <div id="tag" class="abs"></div>
+  <div id="soon" class="abs"><span></span></div>
+</div>
+
+<script>
+const T = {
+  tr: { h1:'Her şey çok hızlı.', h2:'Zihnin hiç susmuyor.', h3:'Dur.', s3:'Bir nefes al.',
+    bub:['3 yeni mesaj','Toplantı 5 dk sonra','%70 indirim!','Acil!','Fatura gecikti','Kargo yolda','Grup: 99+','E-posta (12)','Son dakika','Hatırlatma','Yeni video','Pil %3'],
+    feats:[['Bir an dur','Bir dakikalık nefes, her gün'],['Her gün bir Stoacı söz','164 söz, 14 düşünür'],['Kontrol Dairesi','Yedi günlük rehberli yolculuklar'],['Seni dinleyen koç','Gerçek bir soru sor, Stoacı bir cevap al']],
+    stats:[['164','Stoacı söz'],['12','temel kavram'],['5','rehberli program'],['6','dil']],
+    tag:'Kaosun ortasında sakin kal.', soon:'Yakında App Store’da · stoikos.app' },
+  en: { h1:'Everything moves too fast.', h2:'Your mind never goes quiet.', h3:'Stop.', s3:'Take one breath.',
+    bub:['3 new messages','Meeting in 5 min','70% off!','Urgent!','Bill overdue','Package on the way','Group: 99+','Email (12)','Breaking news','Reminder','New video','Battery 3%'],
+    feats:[['Pause for a moment','One minute of breathing, every day'],['A Stoic quote a day','164 quotes, 14 thinkers'],['The Circle of Control','Seven-day guided journeys'],['A coach who listens','Ask a real question, get a Stoic answer']],
+    stats:[['164','Stoic quotes'],['12','core concepts'],['5','guided programs'],['6','languages']],
+    tag:'Stay calm in the chaos.', soon:'Coming soon to the App Store · stoikos.app' },
+};
+// Ekranlar: TR mağaza görüntüleri; EN için web sürümünden İngilizce çekildi (docs/sosyal-medya/animasyon/ekran-en-*.jpg)
+const SHOTS = { tr:['iphone-1-home','iphone-2-wisdom','iphone-6-programs','iphone-3-coach'].map(s => `../../store-assets/${s}.png`),
+  en:['en-1-home','en-2-wisdom','en-6-programs','en-3-coach'].map(s => `../../docs/sosyal-medya/animasyon/ekran-${s}.jpg`) };
+// balon yerleşimi: x, y, döndürme, doğuş ms
+const BPOS = [[70,900,-4,700],[620,860,3,1050],[90,1150,2,1400],[650,1120,-3,1700],[60,700,-2,2050],[600,640,4,2350],
+  [680,1380,-2,2650],[40,1420,3,2950],[330,560,-3,3250],[360,1640,2,3550],[700,1600,-4,3850],[60,1650,3,4150]];
+
+const $ = (id) => document.getElementById(id);
+const clamp = (x,a=0,b=1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x<.5 ? 4*x*x*x : 1 - Math.pow(-2*x+2,3)/2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const back = (x) => { x = clamp(x); const c1=1.70158,c3=c1+1; return 1 + c3*Math.pow(x-1,3) + c1*Math.pow(x-1,2); };
+const win = (t, a, b, fi=400, fo=400) => clamp((t-a)/fi) * (1 - clamp((t-(b-fo))/fo));
+
+let L, bubs = [], petals = [], scrs = [], feats = [], stats = [];
+
+function init(lang) {
+  L = T[lang];
+  $('h1').textContent = L.h1; $('h2').textContent = L.h2; $('h3').textContent = L.h3; $('s3').textContent = L.s3;
+  $('tag').textContent = L.tag; $('soon').querySelector('span').textContent = L.soon;
+  const bw = $('bubbles'); bw.innerHTML = ''; bubs = [];
+  BPOS.forEach((p, i) => { const d = document.createElement('div'); d.className = 'bub abs';
+    d.innerHTML = `<i>${(i%3)+1}</i>${L.bub[i]}`; d.style.left = p[0]+'px'; d.style.top = p[1]+'px'; bw.appendChild(d); bubs.push(d); });
+  const fl = $('flower'); fl.innerHTML = ''; petals = [];
+  for (let i = 0; i < 6; i++) { const d = document.createElement('div'); d.className = 'petal'; fl.appendChild(d); petals.push(d); }
+  const ph = $('phone'); ph.querySelectorAll('.scr').forEach(n => n.remove()); scrs = [];
+  SHOTS[lang].forEach((s) => { const d = document.createElement('div'); d.className = 'scr';
+    d.style.backgroundImage = `url('${s}')`; ph.appendChild(d); scrs.push(d);
+    const im = new Image(); im.src = s; im.style.display='none'; document.body.appendChild(im); });
+  document.querySelectorAll('.feat').forEach(n => n.remove()); feats = [];
+  L.feats.forEach((f, i) => { const d = document.createElement('div'); d.className = 'feat abs';
+    d.innerHTML = `<div class="n">${i+1}</div><div class="t">${f[0]}</div><div class="d">${f[1]}</div>`; $('stage').appendChild(d); feats.push(d); });
+  const sw = $('stats'); sw.innerHTML = ''; stats = [];
+  L.stats.forEach((s, i) => { const d = document.createElement('div'); d.className = 'stat abs';
+    d.style.left = (i%2 ? 570 : 90)+'px'; d.style.top = (560 + Math.floor(i/2)*300)+'px';
+    d.innerHTML = `<b>${s[0]}</b><span>${s[1]}</span>`; sw.appendChild(d); stats.push(d); });
+}
+
+function setHero(t) {
+  const h = $('hero');
+  // poz: 0 ayakta, 1 bağdaş
+  const sit = ease((t - 25300) / 900);
+  ['cloakStand','tunicStand','armsStand','feet','beltTail'].forEach(id => $(id).setAttribute('opacity', 1 - sit));
+  ['cloakSit','legsSit','tunicSitTop','armsSit'].forEach(id => $(id).setAttribute('opacity', sit));
+  // bağdaşta üst gövde dizlerin üstüne iner
+  ['cloakSit','tunicSitTop','armsSit','belt','collar','neck','headG'].forEach(id => $(id).setAttribute('transform', `translate(0 ${170*sit})`));
+  // yüz
+  const calm = ease((t - 6300) / 900);
+  $('eyesOpen').setAttribute('opacity', 1 - calm); $('eyesClosed').setAttribute('opacity', calm);
+  $('mouthWorry').setAttribute('opacity', 1 - calm); $('mouthSmile').setAttribute('opacity', calm);
+  // gerginken kaşlar içe çatık
+  const k = 1 - calm;
+  $('browL').setAttribute('transform', `rotate(${10*k} 250 106)`); $('browR').setAttribute('transform', `rotate(${-10*k} 270 106)`);
+  // titreme (kaosta artar), nefes (sakinken)
+  const chaos = clamp((t - 800) / 4800) * (1 - calm);
+  const shake = Math.sin(t / 37) * 5 * chaos;
+  const breath = 1 + Math.sin((t - 6300) / 4500 * Math.PI * 2) * 0.012 * calm;
+  // konum/ölçek: 10–25 sn arası küçülüp alta iner, 25 sn'den sonra ortaya döner
+  // 9,6–25 sn arası (telefon ve sayılar) sahneden çekilir, kapanışta bağdaş kurmuş olarak döner
+  const away = ease((t - 9400) / 600) * (1 - ease((t - 25000) / 900));
+  const fin = ease((t - 25000) / 900);
+  const sc = (1 - 0.12 * fin) * breath;
+  const y = 1580 + 160 * fin + 80 * away;    // ayak çizgisi
+  const x = 540;
+  const dropOut = away;
+  h.style.left = (x + shake) + 'px'; h.style.top = (y - 900) + 'px';
+  h.style.transform = `scale(${sc})`; h.style.opacity = 1 - dropOut;
+  $('headG').setAttribute('transform', `translate(0 ${170*sit}) rotate(${Math.sin(t/53)*3*chaos} 260 200)`);
+  return { x, y, sc, calm };
+}
+
+function renderFrame(t) {
+  const st = $('stage');
+  // arka plan: soğuk → sıcak
+  const warm = ease((t - 6000) / 1600);
+  $('bgWarm').style.opacity = warm;
+  const hero = setHero(t);
+
+  // 1) kaos
+  $('h1').style.opacity = win(t, 300, 3100);
+  $('h1').style.transform = `translateY(${(1-out((t-300)/500))*30}px)`;
+  $('h2').style.opacity = win(t, 3200, 6200);
+  $('h2').style.transform = `translateY(${(1-out((t-3200)/500))*30}px)`;
+  $('clock').style.opacity = win(t, 500, 6400, 400, 500);
+  $('mHand').setAttribute('transform', `rotate(${t*0.9} 50 50)`); $('hHand').setAttribute('transform', `rotate(${t*0.12} 50 50)`);
+  bubs.forEach((b, i) => {
+    const born = BPOS[i][3];
+    const pop = back((t - born) / 380);
+    const fly = ease((t - 6300 - i*40) / 1500);           // nefeste dağılır
+    const dx = (BPOS[i][0] + 150 - 540) * fly * 1.2, dy = (BPOS[i][1] - 1100) * fly * 1.2;
+    const jitter = Math.sin(t/41 + i) * 3 * (1 - fly);
+    b.style.opacity = clamp((t - born) / 120) * (1 - fly);
+    b.style.transform = `translate(${dx + jitter}px, ${dy}px) scale(${pop * (1 - .3*fly)}) rotate(${BPOS[i][2]}deg)`;
+  });
+
+  // 2) nefes
+  $('h3').style.opacity = win(t, 6500, 9800, 500, 500);
+  $('s3').style.opacity = win(t, 7100, 9800, 600, 500);
+  const bloom = ease((t - 6600) / 1400) * (1 - ease((t - 9300) / 800)) + 0.75 * ease((t - 26000) / 1500);
+  const br = (Math.sin((t - 6600) / 4500 * Math.PI * 2 - Math.PI/2) + 1) / 2;   // 0..1 nefes
+  $('flower').style.left = hero.x + 'px'; $('flower').style.top = (hero.y - (t > 20000 ? 420 : 560)*hero.sc) + 'px';
+  petals.forEach((p, i) => {
+    const a = i/6 * Math.PI*2 - Math.PI/2 + br * Math.PI/3;
+    const r = (60 + 130*br) * bloom;
+    p.style.opacity = .9 * bloom;
+    p.style.transform = `translate(${Math.cos(a)*r}px, ${Math.sin(a)*r}px) scale(${(0.7 + 0.6*br) * bloom * 1.9})`;
+  });
+  $('halo').style.opacity = clamp(warm) * (0.55 + 0.25*br);
+  $('halo').style.left = hero.x + 'px'; $('halo').style.top = (hero.y - 450*hero.sc) + 'px';
+
+  // 3) özellikler (10.0–20.8 sn): her biri 2,7 sn
+  const phIn = out((t - 9900) / 700), phOut = ease((t - 20400) / 500);
+  $('phone').style.opacity = phIn * (1 - phOut);
+  $('phone').style.transform = `translateY(${(1-phIn)*120 + phOut*-60}px) scale(${0.94 + 0.06*phIn})`;
+  scrs.forEach((s, i) => { const a = 10100 + i*2700;
+    s.style.opacity = clamp((t - a) / 350) * (i === 3 ? 1 : 1 - clamp((t - (a + 2700)) / 350));
+    s.style.transform = `translateY(${-Math.max(0, t - a) * 0.004}px)`; });
+  feats.forEach((f, i) => { const a = 10200 + i*2700;
+    f.style.opacity = win(t, a, a + 2650, 350, 300);
+    f.style.transform = `translateY(${(1 - out((t - a)/450))*24}px)`; });
+
+  // 4) sayılar (20.9–24.8)
+  stats.forEach((s, i) => { const a = 20900 + i*260;
+    s.style.opacity = win(t, a, 24800, 380, 450);
+    s.style.transform = `translateY(${(1 - out((t-a)/500))*40}px)`;
+    const target = Number(L.stats[i][0]); const k = out((t - a) / 1100);
+    s.querySelector('b').textContent = Math.round(target * k); });
+
+  // 5) kapanış (25.0–31.0)
+  const m = out((t - 25400) / 900);
+  $('mark').style.opacity = m; $('mark').style.transform = `scale(${0.85 + 0.15*m})`;
+  $('mkArc').style.strokeDasharray = '1500'; $('mkArc').style.strokeDashoffset = 1500 * (1 - ease((t - 25400) / 1400));
+  $('mkOrbC').setAttribute('opacity', ease((t - 26300) / 700));
+  $('brand').style.opacity = out((t - 26600) / 700);
+  $('tag').style.opacity = out((t - 27200) / 700);
+  $('soon').style.opacity = out((t - 27900) / 700);
+  st.style.opacity = 1 - clamp((t - 30500) / 500);
+}
+window.init = init; window.renderFrame = renderFrame;
+</script>
+</body>
+</html>

@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, FlatList,
-  StyleSheet, SafeAreaView, Animated, Modal, Pressable, useWindowDimensions,
+  StyleSheet, SafeAreaView, Animated, Modal, Pressable,
   NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
+import { useAppDimensions } from '../../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
 import { useLocalSearchParams } from 'expo-router';
@@ -132,7 +133,7 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
   onChange: (id: string) => void;
   itemW?: number;
 }) {
-  const { width } = useWindowDimensions();
+  const { width } = useAppDimensions();
   const n = opts.length;
   const ITEM_W = itemW;
   const BAR_W = width - 48;          // marginHorizontal 24 + 24
