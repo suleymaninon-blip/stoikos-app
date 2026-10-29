@@ -316,7 +316,7 @@ Kıyıya vuran dalga hem köpük getirir hem çakıl alır; kıyı yine de yerin
 
 Akşam oluyor ve günün nereye gittiğini bilmiyorsun. Meşguldün, yorgunsun, ama yaptıkların bir avuç kadar. Saatler bir yerden sızmış.
 
-Seneca bu duruma bir mektup yazdı: Hayatın Kısalığı Üzerine. Ana fikri şuydu: ömür kısa değil, biz onu kısaltıyoruz. Parayı kimseye kaptırmayız, ama zamanımızı herkese dağıtırız.
+Seneca bu duruma koca bir deneme ayırdı: Hayatın Kısalığı Üzerine. Ana fikri şuydu: ömür kısa değil, biz onu kısaltıyoruz. Parayı kimseye kaptırmayız, ama zamanımızı herkese dağıtırız.
 
 İlk adım değiştirmek değil, görmek. Nereye gittiğini bilmediğin bir şeyi yönetemezsin.
 
