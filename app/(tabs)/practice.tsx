@@ -19,6 +19,9 @@ import { ConceptModal } from '../../components/ConceptModal';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 // JOURNAL_KEY artık constants/journal.ts'te (program kapanışı da yazıyor).
+// Açıklaması en az bir kez açılmış egzersizler. İlk kez işaretlenen egzersizde kutucuk
+// doğrudan işaretlemez, önce açıklamayı açar (kullanıcı kararı, 29 Ekim 2026).
+const SEEN_KEY = 'stoikos_ex_seen';
 const COACH_CONSENT_KEY = 'stoikos_journal_coach_consent'; // açık rıza (KVKK), varsayılan kapalı
 
 // Sabah altın, akşam ay mavisi — bölüm etiketleri (moonTag/moonBadge) zaten
@@ -141,6 +144,7 @@ export default function PracticeScreen() {
   const [yesterdayNote, setYesterdayNote] = useState<string | null>(null);
   const [coachConsent, setCoachConsent] = useState(false); // yansımayı koça iletme izni
   const [selected, setSelected] = useState<(Exercise & { icon: DayPart }) | null>(null);
+  const [seen, setSeen] = useState<Set<string>>(new Set());
   const [conceptOpen, setConceptOpen] = useState(false);
   // Alttaki "… tamamlandı · Geri al" şeridi; 4 sn sonra kaybolur.
   const [toast, setToast] = useState<{ id: string; name: string; done: boolean } | null>(null);
@@ -184,6 +188,33 @@ export default function PracticeScreen() {
 
     const consent = await AsyncStorage.getItem(COACH_CONSENT_KEY);
     setCoachConsent(consent === '1');
+
+    // İlk sürüm: daha önce işaretlenmiş egzersizler zaten biliniyor sayılır.
+    const seenRaw = await AsyncStorage.getItem(SEEN_KEY);
+    if (seenRaw) setSeen(new Set(JSON.parse(seenRaw)));
+    else {
+      const keys = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith(COMPLETED_KEY));
+      const ids = new Set<string>();
+      for (const [, v] of await AsyncStorage.multiGet(keys)) for (const id of JSON.parse(v || '[]')) ids.add(id);
+      setSeen(ids);
+      AsyncStorage.setItem(SEEN_KEY, JSON.stringify([...ids])).catch(() => {});
+    }
+  }
+
+  function openExercise(ex: Exercise & { icon: DayPart }) {
+    setSelected(ex);
+    if (!seen.has(ex.id)) {
+      const next = new Set(seen).add(ex.id);
+      setSeen(next);
+      AsyncStorage.setItem(SEEN_KEY, JSON.stringify([...next])).catch(() => {});
+    }
+  }
+
+  // Kutucuk: ilk kez işaretlenecek egzersizde önce açıklama açılır; sonra hep doğrudan işaretler.
+  function tapCheckbox(ex: Exercise, part: DayPart) {
+    const isDone = completed.has(ex.id);
+    if (!isDone && !seen.has(ex.id)) openExercise({ ...ex, icon: part });
+    else markExercise(ex, !isDone);
   }
 
   async function toggleCoachConsent() {
@@ -306,8 +337,8 @@ export default function PracticeScreen() {
                 exercise={ex}
                 icon="morning"
                 completed={completed.has(ex.id)}
-                onToggle={() => markExercise(ex, !completed.has(ex.id))}
-                onOpen={() => setSelected({ ...ex, icon: 'morning' })}
+                onToggle={() => tapCheckbox(ex, 'morning')}
+                onOpen={() => openExercise({ ...ex, icon: 'morning' })}
                 markLabel={t('practice.markA11y', { name: ex.name })}
                 openLabel={t('practice.openA11y', { name: ex.name })}
               />
@@ -334,8 +365,8 @@ export default function PracticeScreen() {
                 exercise={ex}
                 icon="evening"
                 completed={completed.has(ex.id)}
-                onToggle={() => markExercise(ex, !completed.has(ex.id))}
-                onOpen={() => setSelected({ ...ex, icon: 'evening' })}
+                onToggle={() => tapCheckbox(ex, 'evening')}
+                onOpen={() => openExercise({ ...ex, icon: 'evening' })}
                 markLabel={t('practice.markA11y', { name: ex.name })}
                 openLabel={t('practice.openA11y', { name: ex.name })}
               />
