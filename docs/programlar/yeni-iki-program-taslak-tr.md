@@ -8,7 +8,7 @@
 
 ## 6. Kayıpla Yaşamak — "7 günde yasla yürümek"
 
-Simge **◌** · renk gece mavisi `rgba(90,120,170,0.18)`
+Simge **❍** · renk gece mavisi `rgba(90,120,170,0.18)`
 Kaynak damarı: Seneca'nın teselli mektupları (*Ad Marciam*, *Ad Helviam*, Mektuplar 63 ve 99), Epiktetos *Enchiridion* 3 ve 11, Marcus 10.34.
 Yay: izin ver → ödünç olduğunu gör → kalanı say → dalgayı tanı → başkasına dön → doğaya bak → taşı.
 
