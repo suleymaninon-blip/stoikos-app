@@ -7,6 +7,7 @@ import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { Colors, Fonts } from '../constants/theme';
 import StoikosMark from './StoikosMark';
+import { shareQuoteCardWeb } from '../constants/shareCard';
 
 export interface ShareableQuote { text: string; author: string; source: string; }
 
@@ -21,9 +22,19 @@ export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClos
   const [busy, setBusy] = useState(false);
   if (!quote) return null;
 
+  // Künye `quote.source` üzerinden uyarlama işaretini zaten taşıyor (content.ts → sourceName).
+  // Mesajın sonunda adres var: görselle birlikte giden metin uygulamayı tanıtsın.
+  const message = `“${quote.text}”\n— ${quote.author}, ${quote.source}\n\n✦ Stoikos · https://stoikos.app`;
+
   async function doShare() {
     setBusy(true);
     try {
+      if (Platform.OS === 'web') {
+        // Web'de view-shot çalışmıyor; kart canvas'a çizilip dosya olarak paylaşılıyor.
+        const r = await shareQuoteCardWeb({ text: quote!.text, author: quote!.author, source: quote!.source, tagline, message });
+        if (r !== 'unsupported') return;
+        throw new Error('web share unsupported');
+      }
       const uri = await captureRef(cardRef, { format: 'png', quality: 1, result: 'tmpfile' });
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: 'Stoikos' });
@@ -33,10 +44,7 @@ export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClos
     } catch (e) {
       // Görsel yakalama olmazsa (örn. Expo Go) metin olarak paylaş
       try {
-        // Künye `quote.source` üzerinden uyarlama işaretini zaten taşıyor
-        // (bkz. content.ts → sourceName), böylece paylaşım dışarı birebir
-        // alıntı iddiasıyla çıkmıyor.
-        await Share.share({ message: `"${quote!.text}"\n— ${quote!.author}, ${quote!.source}\n\n— Stoikos` });
+        await Share.share({ message });
       } catch {}
     } finally {
       setBusy(false);
@@ -73,7 +81,7 @@ export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClos
           <View style={styles.actions}>
             <TouchableOpacity style={styles.shareBtn} onPress={doShare} disabled={busy} activeOpacity={0.85}>
               {busy ? <ActivityIndicator size="small" color={Colors.stone} />
-                : <Text style={styles.shareBtnText}>↗  {shareLabel}</Text>}
+                : <Text style={styles.shareBtnText}>{'↗\uFE0E'}  {shareLabel}</Text>}
             </TouchableOpacity>
             <TouchableOpacity style={styles.closeBtn} onPress={onClose} activeOpacity={0.8}>
               <Text style={styles.closeBtnText}>{closeLabel}</Text>
