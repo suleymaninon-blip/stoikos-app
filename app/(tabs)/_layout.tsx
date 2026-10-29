@@ -63,6 +63,9 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: Colors.stone,
+    // react-navigation kendi `borderColor`'ını (açık gri) veriyor; web'de borderTopColor onu ezmiyordu
+    // ve her ekranın altında beyaz bir çizgi görünüyordu. İkisi birden aynı renk.
+    borderColor: 'rgba(194,168,120,0.10)',
     borderTopColor: 'rgba(194,168,120,0.10)',
     borderTopWidth: 1,
     height: Platform.OS === 'ios' ? 88 : 70,
