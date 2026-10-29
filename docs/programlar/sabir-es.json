@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "patience": {
+   "title": "La paciencia",
+   "subtitle": "Caminar sin prisa en 7 días"
+  }
+ },
+ "patience": [
+  {
+   "title": "El higo",
+   "read": "Empezaste a aprender un idioma; llevas tres semanas estudiando y todavía no puedes ver una película. Te apuntaste al gimnasio y la cara del espejo no ha cambiado. Empiezas a decirte: «A mí no me sale».\n\nUn hombre le pregunta a Epicteto cómo calmar de inmediato la ira que su hermano siente hacia él. Epicteto le responde: nada grande nace de golpe; ni siquiera un racimo de uvas, ni siquiera un higo. Si me dices «quiero un higo», te diré «hace falta tiempo». Que primero florezca, luego dé fruto, luego madure.\n\nSe cree que la paciencia es esperar de brazos cruzados. No lo es. La higuera no espera: cada día saca agua por sus raíces y vuelve sus hojas hacia el sol. La paciencia es hacer lo que te toca y dejarle el resultado al tiempo.\n\nEl higo arrancado de la rama antes de tiempo nunca llega a ser dulce.\n\nTu paso de hoy puede parecer pequeño. Pero el árbol está hecho precisamente de estos pasos.",
+   "body": "Elige algo que intentas acelerar. Hoy da solo un paso hacia ello y no preguntes por el resultado.",
+   "ask": "¿Qué paso diste hoy? ¿Cómo se sintió hacerlo sin preguntar por el resultado?"
+  },
+  {
+   "title": "La sala de espera",
+   "read": "El número de turno en el banco, la sala de espera del hospital, el tráfico detenido en el semáforo en rojo. Miras el reloj, suspiras, enciendes y apagas el teléfono.\n\nSéneca vivió un tiempo justo encima de unos baños públicos abarrotados. Los gemidos de los que levantaban pesas, las palmadas del masajista y los gritos de los vendedores llenaban su habitación. En lugar de mudarse, lo convirtió en un ejercicio: mientras por dentro esté en calma, el ruido de fuera no me alcanza, escribió.\n\nSe cree que esperar es tiempo perdido. Pero los momentos de espera son los huecos más puros del día: minutos en los que no necesitas hacer nada y nadie te pide nada. Enfadarse no acorta la espera; solo la hace más pesada.\n\nEn la parada, un anciano mira cómo cambian de forma las nubes; el joven que está a su lado mira el reloj por quinta vez. Los dos subirán al mismo autobús.\n\nEl momento de espera es un pequeño descanso que se te ha dado. Puedes aceptarlo.",
+   "body": "Mientras esperas, no busques el teléfono. Cuenta tus respiraciones u observa lo que te rodea.",
+   "ask": "¿Qué notaste hoy mientras esperabas? ¿Cómo pasó el tiempo?"
+  },
+  {
+   "title": "La incertidumbre",
+   "read": "El resultado de un análisis, la respuesta a una solicitud de empleo, la respuesta a un mensaje. Cada vez que vibra el teléfono, algo te da un salto por dentro. Todavía no ha pasado nada, pero tú ya has vivido cada resultado posible.\n\nSéneca le escribe a un amigo angustiado: lo que temes puede que no llegue; y lo que llegue quizá sea otra cosa. Muchos peligros que parecían inevitables cambiaron de rumbo en el último momento. Muchas cosas se interponen.\n\nEsto no significa que todo vaya a salir bien; el estoico no promete una esperanza vacía. Solo recuerda esto: la ansiedad te hace vivir hoy un futuro que aún no ha llegado. Si llega una mala noticia, la vivirás una vez; la preocupación, en cambio, te la hace vivir de nuevo cada día.\n\nEl campesino que oye que se acerca una tormenta no se queda mirando el cielo; mete el heno dentro y luego se toma su té.\n\nLa incertidumbre no se va a acabar. Pero puedes aprender a sentarte dentro de ella.",
+   "body": "Escribe lo que esperas con ansiedad. Luego pregúntate: «¿Qué está pasando de verdad ahora mismo?»",
+   "ask": "Hoy, al pensar en lo que esperas, ¿cuántas veces pudiste volver al momento presente?"
+  },
+  {
+   "title": "Paciencia con los demás",
+   "read": "Explicas lo mismo por tercera vez. Tu madre vuelve a preguntarte por los ajustes del teléfono, tu compañero de trabajo ha vuelto a cometer el mismo error, tu hijo se ata los zapatos sin ninguna prisa.\n\nMarco Aurelio anota algo breve: los seres humanos existen los unos para los otros; enséñales o sopórtalos. No deja ningún otro camino: ni enfadarse, ni despreciar, ni rendirse.\n\nSe cree que la paciencia es callarse tratando al otro como a un tonto. No lo es. Quien es paciente recuerda que tú también, alguna vez, entendiste despacio, y que alguien también te dio tiempo. La paciencia es darle tiempo a alguien.\n\nEl padre que le enseña a su hijo a montar en bicicleta sigue sujetando el sillín incluso en la caída número cien.\n\nEl tiempo que hoy le das a alguien durará más que cualquier palabra que pudieras decirle.",
+   "body": "Elige a alguien que pone a prueba tu paciencia: explícale una vez más con amabilidad o aguanta en silencio. Haz una de las dos cosas a conciencia.",
+   "ask": "¿Con quién tuviste paciencia hoy? ¿Elegiste enseñar o soportar?"
+  },
+  {
+   "title": "Paciencia contigo",
+   "read": "Llevabas una semana sin azúcar; ayer te terminaste un paquete de galletas. Piensas «total, no soy capaz» y estás a punto de dejarlo todo.\n\nA alguien que quiere librarse de su ira, Epicteto le propone un camino sencillo: cuenta los días en que no te has enfadado. Antes me enfadaba cada día, luego un día sí y otro no, luego cada tres días, luego cada cuatro. Si han pasado treinta días, da gracias. El hábito primero se debilita y después se borra por completo.\n\nSe cree que tener paciencia contigo es abandonarte. Al contrario: quien se juzga por haber caído una vez vuelve a caer bajo el peso de ese juicio. Un error no es el final del camino; es solo un día incompleto.\n\nEl excursionista que se pierde no rompe su mapa; busca dónde se desvió y sigue desde ahí.\n\nNo tienes que empezar de cero. Puedes seguir desde donde lo dejaste.",
+   "body": "Empieza a contar los días para un hábito que quieras cambiar. Si fallas, no borres la cuenta; sigue desde donde lo dejaste.",
+   "ask": "¿Cómo te trataste hoy: como un juez o como un maestro?"
+  },
+  {
+   "title": "La incomodidad",
+   "read": "Te duele la cabeza, no has dormido o simplemente tienes el ánimo bajo. Las horas no pasan y parece que esta sensación no se va a acabar nunca.\n\nMarco Aurelio vivió muchos años con la enfermedad y el cansancio de las campañas. Se recordaba a sí mismo: el dolor o se soporta o pasa. Si fuera insoportable, ya te habría llevado; y tampoco es eterno.\n\nLa paciencia no es ignorar el dolor. Tómate la medicina, descansa y, si hace falta, ve al médico. El estoico solo no le añade al dolor una segunda carga: pensamientos como «esto no va a pasar nunca» o «¿por qué siempre yo?». Muchas veces son ellos los que llevan el peso real.\n\nIncluso en la noche de invierno más larga llega el alba; quejarse de lo larga que es la noche no la acelera.\n\nEsto también pasará. Y tú seguirás aquí.",
+   "body": "En un momento de incomodidad, dite «o se soporta o pasa» y durante 60 segundos solo observa.",
+   "ask": "¿Qué notaste al observar una incomodidad? ¿Creció o se hizo más pequeña?"
+  },
+  {
+   "title": "El largo camino",
+   "read": "Llevas una semana trabajando la paciencia. Quizá en una fila no buscaste el teléfono, quizá le explicaste algo a alguien una vez más, quizá te levantaste donde habías caído.\n\nZenón, el fundador del estoicismo, decía que la buena vida se gana con pasos pequeños, pero que no es algo pequeño. Él mismo llegó a la filosofía después de perderlo todo en un naufragio, y enseñó toda su vida en el mismo pórtico de columnas.\n\nSe cree que la paciencia es renunciar a las grandes metas. Al contrario: es la única forma de alcanzarlas. Exageramos lo que se puede hacer en un día y subestimamos lo que se puede hacer en un año.\n\nLa gota perfora la piedra no por su fuerza, sino por su constancia.\n\nNo necesitas darte prisa. Basta con que sigas caminando.",
+   "body": "Escribe dónde quieres estar dentro de un año. Debajo, añade el paso más pequeño que puedas dar hoy.",
+   "ask": "¿Qué empezó a significar para ti la paciencia en estos siete días?"
+  }
+ ]
+}

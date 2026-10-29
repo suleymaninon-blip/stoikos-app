@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "patience": {
+   "title": "La patience",
+   "subtitle": "Marcher sans se presser en 7 jours"
+  }
+ },
+ "patience": [
+  {
+   "title": "La figue",
+   "read": "Tu as commencé à apprendre une langue ; tu travailles depuis trois semaines et tu ne peux toujours pas regarder un film. Tu t’es inscrit·e à la salle de sport, le visage dans le miroir n’a pas changé. Tu commences à te dire : « Ça ne marche pas pour moi. »\n\nUn homme demande à Épictète comment apaiser tout de suite la colère que son frère éprouve contre lui. Épictète répond : rien de grand ne naît d’un coup, pas même une grappe de raisin, pas même une figue. Si tu me dis « Je veux une figue », je te répondrai « Il faut du temps ». Qu’elle fleurisse d’abord, puis qu’elle donne son fruit, puis qu’il mûrisse.\n\nOn prend la patience pour une attente les bras croisés. Ce n’est pas cela. Le figuier n’attend pas : chaque jour, il tire l’eau par ses racines et tourne ses feuilles vers le soleil. La patience, c’est faire ce qu’on a à faire et laisser le résultat au temps.\n\nUne figue cueillie trop tôt sur sa branche ne devient jamais sucrée.\n\nTon pas d’aujourd’hui peut sembler petit. Mais l’arbre est fait justement de ces pas-là.",
+   "body": "Choisis une chose que tu essaies d’accélérer. Aujourd’hui, fais un seul pas pour elle, et ne demande pas le résultat.",
+   "ask": "Quel pas as-tu fait aujourd’hui ? Qu’as-tu ressenti à agir sans demander le résultat ?"
+  },
+  {
+   "title": "La salle d’attente",
+   "read": "Un ticket numéroté à la banque, une salle d’attente à l’hôpital, la circulation arrêtée au feu rouge. Tu regardes l’heure, tu soupires, tu allumes et éteins ton téléphone.\n\nSénèque a vécu un temps juste au-dessus de bains publics bondés. Les gémissements de ceux qui soulevaient des poids, les claques du masseur, les cris des marchands envahissaient sa chambre. Au lieu de déménager, il en a fait un exercice : tant que je suis calme au-dedans, le bruit du dehors ne m’atteint pas, a-t-il écrit.\n\nOn croit qu’attendre, c’est du temps perdu. Pourtant, les moments d’attente sont les vides les plus purs de la journée : des minutes où tu n’as rien à faire, où personne ne te demande rien. S’énerver ne raccourcit pas l’attente, cela ne fait que l’alourdir.\n\nÀ l’arrêt de bus, un vieil homme regarde les nuages changer de forme ; le jeune homme à côté de lui regarde sa montre pour la cinquième fois. Ils monteront tous les deux dans le même bus.\n\nLe moment d’attente est une petite pause qui t’est offerte. Tu peux l’accepter.",
+   "body": "Pendant que tu attends, ne tends pas la main vers ton téléphone. Compte tes respirations ou observe ce qui t’entoure.",
+   "ask": "Qu’as-tu remarqué aujourd’hui en attendant ? Comment le temps a-t-il passé ?"
+  },
+  {
+   "title": "L’incertitude",
+   "read": "Un résultat d’analyse, la réponse à une candidature, la réponse à un message. Chaque fois que le téléphone vibre, quelque chose sursaute en toi. Rien n’est encore arrivé, mais tu as déjà vécu toutes les issues possibles.\n\nSénèque écrit à un ami inquiet : ce que tu crains n’arrivera peut-être pas ; ce qui arrivera sera peut-être autre chose. Bien des dangers qui semblaient inévitables ont changé de route au dernier moment. Bien des choses peuvent s’interposer.\n\nCela ne veut pas dire que tout ira bien ; le stoïcien ne promet pas d’espoir vain. Il rappelle seulement ceci : l’inquiétude fait vivre aujourd’hui un avenir qui n’est pas encore venu. Si une mauvaise nouvelle arrive, tu la vivras une fois ; l’angoisse, elle, te la fait revivre chaque jour.\n\nLe paysan qui apprend qu’une tempête approche ne reste pas à regarder le ciel ; il rentre son foin, puis il boit son thé.\n\nL’incertitude ne finira pas. Mais tu peux apprendre à t’asseoir au milieu d’elle.",
+   "body": "Écris ce que tu attends avec inquiétude. Puis demande-toi : « Qu’est-ce qui se passe vraiment, là, maintenant ? »",
+   "ask": "Combien de fois aujourd’hui, en pensant à ce que tu attends, as-tu pu revenir à l’instant présent ?"
+  },
+  {
+   "title": "Patience envers les autres",
+   "read": "Tu expliques la même chose pour la troisième fois. Ta mère te redemande les réglages de son téléphone, ton collègue a refait la même erreur, ton enfant noue ses lacets sans la moindre hâte.\n\nMarc Aurèle note brièvement : les hommes existent les uns pour les autres ; instruis-les ou supporte-les. Il ne laisse aucune autre voie : ni la colère, ni le mépris, ni l’abandon.\n\nOn croit que la patience, c’est se taire en prenant l’autre pour un idiot. Ce n’est pas cela. La personne patiente se souvient que toi aussi, un jour, tu as compris lentement, et que quelqu’un t’a laissé du temps. La patience, c’est accorder du temps à quelqu’un.\n\nLe père qui apprend le vélo à son enfant continue de tenir la selle, même à la centième chute.\n\nLe temps que tu donnes aujourd’hui à quelqu’un restera plus longtemps que tous les mots que tu pourrais lui dire.",
+   "body": "Choisis quelqu’un qui met ta patience à l’épreuve : explique-lui encore une fois avec douceur, ou supporte en silence. Fais l’un des deux en connaissance de cause.",
+   "ask": "Envers qui as-tu été patient·e aujourd’hui ? As-tu choisi d’instruire ou de supporter ?"
+  },
+  {
+   "title": "Patience envers soi",
+   "read": "Tu avais arrêté le sucre depuis une semaine ; hier, tu as fini un paquet de biscuits. Tu te dis « De toute façon, je n’y arrive pas » et tu es sur le point de tout laisser tomber.\n\nÀ quelqu’un qui veut se libérer de sa colère, Épictète propose un chemin simple : compte les jours où tu ne t’es pas mis·e en colère. Avant, je me mettais en colère chaque jour, puis un jour sur deux, puis tous les trois jours, puis tous les quatre. Si trente jours ont passé, rends grâce. L’habitude s’affaiblit d’abord, puis s’efface complètement.\n\nOn croit qu’être patient·e avec soi, c’est se laisser aller. C’est l’inverse : celui qui se juge pour une seule chute retombe sous le poids de ce jugement. Une erreur n’est pas la fin du chemin ; ce n’est qu’un jour incomplet.\n\nLe randonneur qui a perdu son chemin ne déchire pas sa carte ; il trouve l’endroit où il s’est écarté et repart de là.\n\nTu n’as pas besoin de repartir de zéro. Tu peux reprendre là où tu t’es arrêté·e.",
+   "body": "Commence à compter les jours pour une habitude que tu veux changer. Si tu flanches, n’efface pas le compte ; reprends là où tu t’es arrêté·e.",
+   "ask": "Comment t’es-tu traité·e aujourd’hui : en juge ou en professeur ?"
+  },
+  {
+   "title": "L’inconfort",
+   "read": "Tu as mal à la tête, tu manques de sommeil, ou tu as simplement le cafard. Les heures n’en finissent pas, et ce sentiment semble ne jamais devoir passer.\n\nMarc Aurèle a vécu de longues années avec la maladie et la fatigue des campagnes militaires. Il se rappelait : la douleur est soit supportable, soit passagère. Si elle était insupportable, elle t’aurait déjà emporté·e ; et elle n’est pas éternelle non plus.\n\nLa patience, ce n’est pas ignorer la douleur. Prends ton médicament, repose-toi, va voir un médecin s’il le faut. Le stoïcien n’ajoute simplement pas un second fardeau à la douleur : des pensées comme « Ça ne passera jamais » ou « Pourquoi toujours moi ? ». Ce sont souvent elles qui portent le vrai poids.\n\nMême après la plus longue nuit d’hiver, l’aube arrive ; se plaindre de la longueur de la nuit ne la hâte pas.\n\nCela aussi passera. Et tu seras encore là.",
+   "body": "Dans un moment d’inconfort, dis-toi « Soit c’est supportable, soit ça passe », et pendant 60 secondes, contente-toi d’observer.",
+   "ask": "Qu’as-tu remarqué en observant un inconfort ? A-t-il grandi ou diminué ?"
+  },
+  {
+   "title": "Le long chemin",
+   "read": "Depuis une semaine, tu travailles la patience. Peut-être n’as-tu pas tendu la main vers ton téléphone dans une file d’attente, peut-être as-tu réexpliqué quelque chose à quelqu’un, peut-être t’es-tu relevé·e là où tu étais tombé·e.\n\nZénon, le fondateur du stoïcisme, disait que la vie bonne se gagne à petits pas, mais qu’elle n’est pas une petite chose. Lui-même est venu à la philosophie après avoir tout perdu dans un naufrage, et il a enseigné toute sa vie sous le même portique à colonnes.\n\nOn croit que la patience, c’est renoncer aux grands objectifs. C’est l’inverse : c’est le seul moyen de les atteindre. On surestime ce qu’on peut faire en un jour et on sous-estime ce qu’on peut faire en un an.\n\nLa goutte creuse la pierre non par sa force, mais par sa constance.\n\nTu n’as pas besoin de te presser. Il te suffit de continuer à marcher.",
+   "body": "Écris où tu veux être dans un an. En dessous, ajoute le plus petit pas que tu peux faire aujourd’hui.",
+   "ask": "Durant ces sept jours, qu’est-ce que la patience a commencé à signifier pour toi ?"
+  }
+ ]
+}
