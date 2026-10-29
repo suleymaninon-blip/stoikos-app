@@ -100,26 +100,26 @@ const QUOTES_RAW: RawQuote[] = [
     fr: "Ce ne sont pas les choses qui troublent les hommes, mais les opinions qu'ils en ont.",
     es: 'A las personas no las perturban las cosas, sino las opiniones que tienen de ellas.' } },
   { id: '3', authorId: 'marcus', sourceId: 'meditations', text: {
-    tr: 'Hayatını değiştirmek istiyorsan, düşüncelerini değiştir. Bu kadar basit, bu kadar zor.',
-    en: 'If you want to change your life, change your thoughts. This simple, this hard.',
-    de: 'Willst du dein Leben ändern, ändere deine Gedanken. So einfach, so schwer.',
-    ru: 'Хочешь изменить свою жизнь — измени свои мысли. Так просто и так трудно.',
-    fr: 'Si tu veux changer ta vie, change tes pensées. Aussi simple, aussi difficile.',
-    es: 'Si quieres cambiar tu vida, cambia tus pensamientos. Así de simple, así de difícil.' } },
+    tr: "Evren değişimdir; hayat, ona dair yargılarımızdan ibarettir.",
+    en: "The universe is change; life is what our judgments make of it.",
+    de: "Das Weltall ist Wandel, das Leben ist, was unsere Urteile daraus machen.",
+    ru: "Мир — это изменение; жизнь — это то, чем делают её наши суждения.",
+    fr: "L'univers est changement ; la vie est ce qu'en font nos jugements.",
+    es: "El universo es cambio; la vida es lo que nuestros juicios hacen de ella." } },
   { id: '4', authorId: 'seneca', sourceId: 'letters', text: {
-    tr: 'Kendine dönük yolculuk, tüm yolculukların en uzunudur.',
-    en: 'The journey toward oneself is the longest of all journeys.',
-    de: 'Die Reise zu sich selbst ist die längste aller Reisen.',
-    ru: 'Путь к самому себе — самый длинный из всех путей.',
-    fr: 'Le voyage vers soi-même est le plus long de tous les voyages.',
-    es: 'El viaje hacia uno mismo es el más largo de todos los viajes.' } },
+    tr: "Değiştirmen gereken gökyüzü değil, ruhundur.",
+    en: "It is your soul you must change, not the sky above you.",
+    de: "Du musst deine Seele ändern, nicht den Himmel über dir.",
+    ru: "Менять нужно душу, а не небо над головой.",
+    fr: "C'est ton âme qu'il faut changer, non le ciel au-dessus de toi.",
+    es: "Lo que debes cambiar es tu alma, no el cielo que te cubre." } },
   { id: '5', authorId: 'epictetus', sourceId: 'discourses', text: {
-    tr: 'Özgürlük, istediğini elde etmek değil; istemediğin şeyden korkmamaktır.',
-    en: 'Freedom is not getting what you want, but ceasing to fear what you do not want.',
-    de: 'Freiheit heißt nicht, zu bekommen, was man will, sondern das Unerwünschte nicht zu fürchten.',
-    ru: 'Свобода — не в том, чтобы получать желаемое, а в том, чтобы не бояться нежеланного.',
-    fr: "La liberté n'est pas d'obtenir ce qu'on veut, mais de cesser de craindre ce qu'on ne veut pas.",
-    es: 'La libertad no consiste en obtener lo que quieres, sino en dejar de temer lo que no quieres.' } },
+    tr: "Özgürlük, arzularını doyurarak değil, arzuyu söküp atarak kazanılır.",
+    en: "Freedom is won not by satisfying your desires, but by uprooting desire.",
+    de: "Freiheit gewinnt man nicht, indem man seine Wünsche erfüllt, sondern indem man das Begehren ausreißt.",
+    ru: "Свобода достигается не исполнением желаний, а искоренением желания.",
+    fr: "La liberté ne s'acquiert pas en satisfaisant ses désirs, mais en arrachant le désir.",
+    es: "La libertad no se gana satisfaciendo los deseos, sino arrancando el deseo." } },
   { id: '6', authorId: 'marcus', sourceId: 'meditations', text: {
     tr: 'Kayıplarını değil, sahip olduklarını say.',
     en: 'Count not your losses, but what you possess.',
@@ -149,19 +149,19 @@ const QUOTES_RAW: RawQuote[] = [
     fr: "S'inquiéter de l'avenir, c'est souffrir deux fois d'un mal qui n'est pas encore né.",
     es: 'Preocuparse por el futuro es sufrir dos veces un dolor que aún no ha nacido.' } },
   { id: '10', authorId: 'marcus', sourceId: 'meditations', text: {
-    tr: 'Kendi ruhunu değiştirmek, dünyanın geri kalanını değiştirmekten daha zordur.',
-    en: 'To change your own soul is harder than to change all the rest of the world.',
-    de: 'Die eigene Seele zu ändern ist schwerer, als die ganze übrige Welt zu ändern.',
-    ru: 'Изменить собственную душу труднее, чем изменить весь остальной мир.',
-    fr: "Changer sa propre âme est plus difficile que de changer tout le reste du monde.",
-    es: 'Cambiar tu propia alma es más difícil que cambiar todo el resto del mundo.' } },
-  { id: '11', authorId: 'seneca', sourceId: 'happyLife', text: {
-    tr: 'Az isteyen çok sahiptir. Çok isteyen hiçbir zaman yeterince sahip değildir.',
-    en: 'He who wants little has much. He who wants much never has enough.',
-    de: 'Wer wenig will, hat viel. Wer viel will, hat nie genug.',
-    ru: 'Кто желает малого, владеет многим. Кому нужно многое, тому всегда мало.',
-    fr: "Qui désire peu possède beaucoup. Qui désire beaucoup n'a jamais assez.",
-    es: 'Quien desea poco tiene mucho. Quien desea mucho nunca tiene suficiente.' } },
+    tr: "Ruh, düşüncelerinin rengine boyanır.",
+    en: "The soul takes on the color of its thoughts.",
+    de: "Die Seele nimmt die Farbe ihrer Gedanken an.",
+    ru: "Душа окрашивается в цвет своих мыслей.",
+    fr: "L'âme prend la couleur de ses pensées.",
+    es: "El alma se tiñe del color de sus pensamientos." } },
+  { id: '11', authorId: 'seneca', sourceId: 'letters', text: {
+    tr: "Yoksul, az şeyi olan değil, daha fazlasını isteyendir.",
+    en: "It is not the one who has too little who is poor, but the one who craves more.",
+    de: "Arm ist nicht, wer zu wenig hat, sondern wer mehr begehrt.",
+    ru: "Беден не тот, у кого мало, а тот, кто хочет больше.",
+    fr: "Le pauvre n'est pas celui qui a trop peu, mais celui qui désire davantage.",
+    es: "No es pobre el que tiene poco, sino el que desea más." } },
   { id: '12', authorId: 'epictetus', sourceId: 'discourses', text: {
     tr: 'Bilgelik; neyin senin kontrolünde olduğunu, neyin olmadığını bilmektir.',
     en: 'Wisdom is knowing what is in your control and what is not.',
@@ -177,13 +177,13 @@ const QUOTES_RAW: RawQuote[] = [
     ru: 'У нас два уха и один рот, поэтому слушать надо больше, а говорить меньше.',
     fr: "Nous avons deux oreilles et une seule bouche, afin d'écouter davantage et de parler moins.",
     es: 'Tenemos dos oídos y una sola boca, para escuchar más y hablar menos.' } },
-  { id: '14', authorId: 'zeno', sourceId: 'fragments', text: {
-    tr: 'İyi insanlar yasalardan değil, erdemden ötürü doğru davranır.',
-    en: 'Good people act rightly not because of laws, but because of virtue.',
-    de: 'Gute Menschen handeln recht nicht wegen der Gesetze, sondern aus Tugend.',
-    ru: 'Добрые люди поступают правильно не из-за законов, а из добродетели.',
-    fr: 'Les gens de bien agissent avec droiture non par crainte des lois, mais par vertu.',
-    es: 'Las personas buenas actúan rectamente no por las leyes, sino por la virtud.' } },
+  { id: '14', authorId: 'zeno', sourceId: 'laertius', text: {
+    tr: "İyi yaşam küçük adımlarla kazanılır, ama küçük bir şey değildir.",
+    en: "Well-being is attained little by little, and yet it is no little thing.",
+    de: "Das gute Leben erreicht man Schritt für Schritt, und doch ist es keine Kleinigkeit.",
+    ru: "Благо достигается понемногу, но это немалое дело.",
+    fr: "Le bien-vivre s'atteint peu à peu, et pourtant ce n'est pas peu de chose.",
+    es: "El bienestar se alcanza poco a poco, y sin embargo no es poca cosa." } },
   { id: '15', authorId: 'zeno', sourceId: 'laertius', text: {
     tr: 'Doğayla uyum içinde yaşamak — işte hayatın amacı budur.',
     en: 'To live in agreement with nature — that is the goal of life.',
@@ -199,13 +199,13 @@ const QUOTES_RAW: RawQuote[] = [
     fr: 'Le bonheur est un cours paisible de la vie.',
     es: 'La felicidad es un fluir sereno de la vida.' } },
 
-  { id: '17', authorId: 'musonius', sourceId: 'lectures', text: {
-    tr: 'Erdemli yaşamak için zenginliğe değil, yalnızca akla ihtiyacın var.',
-    en: 'To live virtuously you need not wealth, but only reason.',
-    de: 'Um tugendhaft zu leben, brauchst du keinen Reichtum, sondern nur Vernunft.',
-    ru: 'Чтобы жить добродетельно, нужно не богатство, а лишь разум.',
-    fr: "Pour vivre vertueusement, tu n'as pas besoin de richesse, mais seulement de raison.",
-    es: 'Para vivir con virtud no necesitas riqueza, sino solo razón.' } },
+  { id: '17', authorId: 'musonius', sourceId: 'fragments', text: {
+    tr: "İyi bir şeyi zahmetle yaparsan zahmet geçer, iyilik kalır. Utanç verici bir şeyi zevk için yaparsan zevk geçer, utanç kalır.",
+    en: "If you do something good with toil, the toil passes but the good remains. If you do something shameful for pleasure, the pleasure passes but the shame remains.",
+    de: "Tust du mit Mühe etwas Gutes, vergeht die Mühe, das Gute bleibt. Tust du aus Lust etwas Schändliches, vergeht die Lust, die Schande bleibt.",
+    ru: "Если сделаешь доброе с трудом, труд пройдёт, а добро останется. Если сделаешь постыдное ради удовольствия, удовольствие пройдёт, а стыд останется.",
+    fr: "Si tu fais une bonne action avec peine, la peine passe et le bien demeure. Si tu fais une chose honteuse par plaisir, le plaisir passe et la honte demeure.",
+    es: "Si haces algo bueno con esfuerzo, el esfuerzo pasa y el bien permanece. Si haces algo vergonzoso por placer, el placer pasa y la vergüenza permanece." } },
   { id: '18', authorId: 'musonius', sourceId: 'lectures', text: {
     tr: 'İyi yaşamayı öğrenmek, tüm hayatı öğrenmektir; çünkü her an doğru davranma fırsatıdır.',
     en: 'To learn to live well is to learn all of life, for every moment is a chance to act rightly.',
@@ -222,12 +222,12 @@ const QUOTES_RAW: RawQuote[] = [
     es: 'Quien elige soportar la dificultad es más libre que quien se entrega al placer.' } },
 
   { id: '20', authorId: 'chrysippus', sourceId: 'fragments', text: {
-    tr: 'Yaşamak, erdemi öğrenmek için verilmiş bir okuldur.',
-    en: 'To live is a school given to us for learning virtue.',
-    de: 'Das Leben ist eine Schule, die uns zum Erlernen der Tugend gegeben ist.',
-    ru: 'Жизнь — это школа, данная нам для обучения добродетели.',
-    fr: 'Vivre est une école qui nous est donnée pour apprendre la vertu.',
-    es: 'Vivir es una escuela que se nos da para aprender la virtud.' } },
+    tr: "Silindiri iten onu harekete geçirir; ama nasıl yuvarlanacağı kendi biçiminden gelir.",
+    en: "Whoever pushes a cylinder sets it in motion; but how it rolls comes from its own shape.",
+    de: "Wer eine Walze anstößt, setzt sie in Bewegung; doch wie sie rollt, kommt aus ihrer eigenen Form.",
+    ru: "Толкнувший цилиндр приводит его в движение; но как он покатится, зависит от его собственной формы.",
+    fr: "Celui qui pousse un cylindre le met en mouvement ; mais la façon dont il roule vient de sa propre forme.",
+    es: "Quien empuja un cilindro lo pone en movimiento; pero cómo rueda depende de su propia forma." } },
   { id: '21', authorId: 'chrysippus', sourceId: 'fragments', text: {
     tr: 'Hiçbir şey rastlantı değildir; her şey aklın düzeni içinde olur.',
     en: 'Nothing happens by chance; everything occurs within the order of reason.',
@@ -243,7 +243,7 @@ const QUOTES_RAW: RawQuote[] = [
     fr: "Le sage n'a besoin de rien, et pourtant peut user de tout.",
     es: 'El sabio no necesita nada, y sin embargo puede servirse de todo.' } },
 
-  { id: '23', authorId: 'cleanthes', sourceId: 'hymnZeus', text: {
+  { id: '23', authorId: 'cleanthes', sourceId: 'enchiridion', text: {
     tr: 'Beni yönet ey Zeus, ve sen ey Kader, bana çizdiğiniz yola. Tereddütsüz izleyeceğim; istemesem bile gitmem gerekir.',
     en: 'Lead me, O Zeus, and you, O Destiny, upon the path you have set for me. I will follow without hesitation; even unwilling, I must go.',
     de: 'Führe mich, o Zeus, und du, o Schicksal, auf dem Weg, den ihr mir bestimmt habt. Ich folge ohne Zögern; selbst widerwillig muss ich gehen.',
@@ -320,13 +320,13 @@ const QUOTES_RAW: RawQuote[] = [
     es: 'Cuando estés enojado, recita para ti todo el alfabeto antes de hablar o actuar.' } },
 
   { id: '33', authorId: 'cato', sourceId: 'plutarch', text: {
-    tr: 'Özgür bir insan ancak kendi erdemiyle yenilebilir; düşmanıyla değil.',
-    en: 'A free person can be conquered only by his own virtue, never by an enemy.',
-    de: 'Ein freier Mensch kann nur durch seine eigene Tugend besiegt werden, nie durch einen Feind.',
-    ru: 'Свободного человека можно победить лишь его собственной добродетелью, но не врагом.',
-    fr: 'Un homme libre ne peut être vaincu que par sa propre vertu, jamais par un ennemi.',
-    es: 'A un hombre libre solo puede vencerlo su propia virtud, nunca un enemigo.' } },
-  { id: '34', authorId: 'cato', sourceId: 'plutarch', text: {
+    tr: "Yeter ki hayatımı eleştirmesinler. Söylenmeye değer bir şeyim olduğunda konuşurum.",
+    en: "So long as they do not find fault with my life. I will speak when I have something worth saying.",
+    de: "Solange sie nicht mein Leben tadeln. Ich rede, wenn ich etwas Sagenswertes habe.",
+    ru: "Лишь бы не осуждали мою жизнь. Я заговорю, когда мне будет что сказать.",
+    fr: "Pourvu qu'on ne blâme pas ma vie. Je parlerai quand j'aurai quelque chose qui vaille d'être dit.",
+    es: "Mientras no censuren mi vida. Hablaré cuando tenga algo que valga la pena decir." } },
+  { id: '34', authorId: 'cato', sourceId: 'attributed', text: {
     tr: 'Doğru olanı yap; sonucu kadere bırak.',
     en: 'Do what is right; leave the outcome to fate.',
     de: 'Tu das Rechte; den Ausgang überlass dem Schicksal.',
@@ -1077,12 +1077,12 @@ export const COACH_SUGGESTIONS: Record<Lang, string[]> = {
 };
 
 export const COACH_INITIAL: Record<Lang, string> = {
-  tr: 'Merhaba. Bugün sana nasıl yardımcı olabilirim? Yaşadığın zorluğu veya hissettiğin duyguyu bana anlat — birlikte Stoacı bir bakış açısı geliştirelim.\n\n[ALINTI: "Kendine dönük yolculuk, tüm yolculukların en uzunudur." — Seneca, Epistulae · serbest uyarlama]',
-  en: 'Hello. How can I help you today? Tell me about the difficulty you face or the emotion you feel — together we will develop a Stoic perspective.\n\n[ALINTI: "The journey toward oneself is the longest of all journeys." — Seneca, Moral Letters · freely adapted]',
-  de: 'Hallo. Wie kann ich dir heute helfen? Erzähl mir von der Schwierigkeit, der du begegnest, oder dem Gefühl, das dich bewegt — gemeinsam entwickeln wir eine stoische Sicht.\n\n[ALINTI: "Die Reise zu sich selbst ist die längste aller Reisen." — Seneca, Briefe an Lucilius · frei bearbeitet]',
-  ru: 'Здравствуй. Чем я могу помочь тебе сегодня? Расскажи о трудности, с которой ты столкнулся, или о чувстве, что тебя тревожит, — вместе мы выработаем стоический взгляд.\n\n[ALINTI: "Путь к самому себе — самый длинный из всех путей." — Сенека, Нравственные письма · вольное переложение]',
-  fr: "Bonjour. Comment puis-je t'aider aujourd'hui ? Parle-moi de la difficulté que tu rencontres ou de l'émotion que tu ressens — ensemble, développons une perspective stoïcienne.\n\n[ALINTI: \"La route vers soi-même est la plus longue de toutes.\" — Sénèque, Lettres à Lucilius · adaptation libre]",
-  es: 'Hola. ¿Cómo puedo ayudarte hoy? Cuéntame la dificultad que enfrentas o la emoción que sientes — juntos desarrollaremos una perspectiva estoica.\n\n[ALINTI: "El viaje hacia uno mismo es el más largo de todos." — Séneca, Cartas a Lucilio · adaptación libre]',
+  tr: 'Merhaba. Bugün sana nasıl yardımcı olabilirim? Yaşadığın zorluğu veya hissettiğin duyguyu bana anlat — birlikte Stoacı bir bakış açısı geliştirelim.\n\n[ALINTI: "Değiştirmen gereken gökyüzü değil, ruhundur." — Seneca, Epistulae · serbest uyarlama]',
+  en: 'Hello. How can I help you today? Tell me about the difficulty you face or the emotion you feel — together we will develop a Stoic perspective.\n\n[ALINTI: "It is your soul you must change, not the sky above you." — Seneca, Moral Letters · freely adapted]',
+  de: 'Hallo. Wie kann ich dir heute helfen? Erzähl mir von der Schwierigkeit, der du begegnest, oder dem Gefühl, das dich bewegt — gemeinsam entwickeln wir eine stoische Sicht.\n\n[ALINTI: "Du musst deine Seele ändern, nicht den Himmel über dir." — Seneca, Briefe an Lucilius · frei bearbeitet]',
+  ru: 'Здравствуй. Чем я могу помочь тебе сегодня? Расскажи о трудности, с которой ты столкнулся, или о чувстве, что тебя тревожит, — вместе мы выработаем стоический взгляд.\n\n[ALINTI: "Менять нужно душу, а не небо над головой." — Сенека, Нравственные письма · вольное переложение]',
+  fr: "Bonjour. Comment puis-je t'aider aujourd'hui ? Parle-moi de la difficulté que tu rencontres ou de l'émotion que tu ressens — ensemble, développons une perspective stoïcienne.\n\n[ALINTI: \"C'est ton âme qu'il faut changer, non le ciel au-dessus de toi.\" — Sénèque, Lettres à Lucilius · adaptation libre]",
+  es: 'Hola. ¿Cómo puedo ayudarte hoy? Cuéntame la dificultad que enfrentas o la emoción que sientes — juntos desarrollaremos una perspectiva estoica.\n\n[ALINTI: "Lo que debes cambiar es tu alma, no el cielo que te cubre." — Séneca, Cartas a Lucilio · adaptación libre]',
 };
 
 const LANG_NAME: Record<Lang, string> = { tr: 'Türkçe', en: 'English', de: 'Deutsch', ru: 'русском языке', fr: 'français', es: 'español' };
