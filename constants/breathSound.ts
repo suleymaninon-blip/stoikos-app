@@ -10,6 +10,8 @@
 // dosyası da MP3 ve sorunsuz çalışıyor, yani biçim kanıtlı.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
+import { Asset } from 'expo-asset';
+import { Platform } from 'react-native';
 
 const PREF_KEY = 'stoikos_breath_sound';
 
@@ -74,8 +76,33 @@ const SOURCE = require('../assets/audio/breath-orb.mp3');
  * susturuyordu. Ön yükleme yapılacaksa ses öğesi değil, yalnız DOSYA
  * önbelleğe alınmalı.)
  */
+// Web: expo-av yerine doğrudan <audio>. expo-av'nin createAsync'i web'de play() sözünü
+// bekleyerek çözülüyor; ses çalarken bile `sound` boş kalabiliyordu ve durdur'a basınca
+// stopBreathSound erken dönüyor, ses çalmaya devam ediyordu (29 Ekim 2026: "başlatıyorum
+// ama kapatamıyorum"). Burada play()/pause() dokunuşun içinde, eşzamanlı çağrılıyor —
+// iOS kuralı için de en güvenli yol.
+let webAudio: HTMLAudioElement | null = null;
+
+function webSourceUri(): string {
+  return Asset.fromModule(SOURCE).uri;
+}
+
 export async function startBreathSound(): Promise<void> {
   wantPlaying = true;
+
+  if (Platform.OS === 'web') {
+    try {
+      if (!webAudio) {
+        webAudio = new window.Audio(webSourceUri());
+        webAudio.loop = true;
+        webAudio.volume = 0.85;
+      }
+      lastError = null;
+      const p = webAudio.play();
+      if (p) p.then(() => { if (!wantPlaying) webAudio?.pause(); }).catch((e) => note('play', e));
+    } catch (e) { note('webAudio', e); }
+    return;
+  }
 
   if (sound) {
     try { lastError = null; await sound.playAsync(); } catch (e) { note('playAsync', e); }
@@ -112,6 +139,10 @@ export async function startBreathSound(): Promise<void> {
 
 export async function stopBreathSound(): Promise<void> {
   wantPlaying = false;
+  if (Platform.OS === 'web') {
+    if (webAudio) { webAudio.pause(); webAudio.currentTime = 0; }
+    return;
+  }
   if (!sound) return;
   try { await sound.stopAsync(); } catch (e) { note('stopAsync', e); }
 }
