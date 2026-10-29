@@ -1,0 +1,100 @@
+{
+ "programs": {
+  "grief": {
+   "title": "Kayıpla Yaşamak",
+   "subtitle": "7 günde yasla yürümek"
+  },
+  "enough": {
+   "title": "Az ile Yetinmek",
+   "subtitle": "7 günde yeterliliği keşfet"
+  }
+ },
+ "grief": [
+  {
+   "title": "Yasın hakkı",
+   "read": "Herkes sana güçlü olmanı söylüyor. Sen de gülümsüyorsun, işe gidiyorsun, sorulunca \"iyiyim\" diyorsun. Sonra bir akşam, mutfakta onun sevdiği bardağı görünce içinde bir şey yerinden kopuyor.\n\nSeneca, çok sevdiği bir dostunu kaybettiğinde kendini tutamayacak kadar ağladığını yazdı ve bundan utanmadı. Gözyaşı dökülsün, dedi, ama sel olup seni sürüklemesin.\n\nStoacılık duygusuzluk sanılır. Değildir. Yası bastırmak da onda boğulmak da aynı şeyden kaçmaktır: onunla yüz yüze oturmaktan. Stoacı acıyı inkâr etmez; ona yer açar, ama evin anahtarını vermez.\n\nGözyaşı bir zayıflık değil; sevginin hâlâ yerinde durduğunun kanıtıdır.\n\nBugün ağlamana izin var. Yas çok ağır geliyorsa bir uzmandan destek istemek de Stoacı bir seçimdir.",
+   "body": "Kendine on dakika ayır. Yalnızca özlediğin şeyi düşün; durdurmaya, düzeltmeye çalışma. Süre dolunca bir bardak su iç ve gününe dön.",
+   "ask": "Bugün özlemine yer açtığında ne hissettin? Bir şey değişti mi?"
+  },
+  {
+   "title": "Ödünç verilmişti",
+   "read": "Telefonunda hâlâ onun numarası duruyor. Silemiyorsun; silmek, kaybı ikinci kez yaşamak gibi geliyor. \"Benimdi,\" diyorsun, \"elimden alındı.\"\n\nEpiktetos öğrencilerine tuhaf bir öneride bulunurdu: hiçbir şey için \"kaybettim\" deme, \"geri verdim\" de. Sevdiğin gitti mi? Geri verildi.\n\nBu soğuk bir teselli gibi duyulur, ama tersidir. \"Kaybettim\" diyen, kendisinden çalınmış bir şeyin hesabını sorar. \"Geri verdim\" diyen ise bir süre yanında olmuş bir armağanın hesabını yapar.\n\nKütüphaneden ödünç aldığın kitabı geri verirken öfkelenmezsin; okuduğun sayfalar artık senindir.\n\nNe kadar sürdüyse, o süre senindi.",
+   "body": "Kaybettiğin kişinin ya da şeyin sana verdiklerini yaz: bir alışkanlık, bir söz, bir bakış, bir ders. Aldıklarını değil, verdiklerini.",
+   "ask": "Yazdıklarından hangisi bugün hâlâ seninle?"
+  },
+  {
+   "title": "Kalan yıllar",
+   "read": "Takvimdeki o tarih yaklaştıkça içini bir ağırlık kaplıyor. Aklın hep aynı güne dönüyor: son konuşmaya, son bakışa, söyleyemediğin şeye.\n\nSeneca, oğlunu kaybettikten yıllar sonra hâlâ yas tutan Marcia'ya bir mektup yazdı. Ona yasını bırakmasını söylemedi; yalnızca bakışını çevirmesini istedi: onu kaybettiğin günü değil, onunla geçirdiğin yılları say.\n\nBu, kaybı küçültmek değildir. Son gün, birlikte geçen binlerce günün yalnızca biridir. Ama acı ona bütün hikâyeymiş gibi davranır.\n\nBir fotoğraf albümünü hep son sayfasından açan biri, geri kalan sayfaları hiç görmez.\n\nSonu değil, hikâyenin bütününü hatırlamak onu sana geri verir.",
+   "body": "Onunla ilgili sevdiğin bir anıyı biriyle paylaş ya da yaz. Ayrıntılarıyla: neredeydiniz, ne konuştunuz, neye güldünüz.",
+   "ask": "Bugün hatırladığın anı seni nereye götürdü: acıya mı, sıcaklığa mı?"
+  },
+  {
+   "title": "Dalga",
+   "read": "Birkaç gündür iyiydin. Sonra markette bir şarkı çaldı ve olduğun yerde kaldın. \"Geçmişti sanıyordum,\" diye düşündün.\n\nYas düz bir yol değildir, dalga dalga gelir. Seneca, sürgündeyken annesine teselli mektubu yazmak için bir süre bekledi; yara tazeyken dokunmanın onu kanatacağını biliyordu. Acının da bir ritmi vardır.\n\nGeri dönen bir dalga, yerinde saydığın anlamına gelmez. Zamanla dalgalar seyrekleşir ama bazen birden yükselir. Bu bir başarısızlık değil, sevginin hâlâ yaşadığının işaretidir.\n\nDenizde yüzen biri dalgayla savaşmaz; nefesini tutar, altından geçer, yeniden su yüzüne çıkar.\n\nDalga gelecek ve geçecek. Sen yine kıyıda olacaksın.",
+   "body": "Yasın yükseldiği anı fark et. Ne tetikledi: bir koku, bir yer, bir saat? Kaçmadan yalnızca adını koy: \"Bu bir dalga.\"",
+   "ask": "Bugün bir dalga geldi mi? Onu fark ettiğinde ne yaptın?"
+  },
+  {
+   "title": "Başkasının yası",
+   "read": "Kaybın seni bir odaya kapatmış gibi. Kimsenin anlamadığını düşünüyorsun; anlatmaya çalıştıkça yalnızlık büyüyor.\n\nOysa aynı kaybı yaşayan başkaları da var: bir kardeş, bir arkadaş, aynı sofrada oturmuş biri. Onlar da kendi odalarında, belki senin kapını çalmayı bekliyor.\n\nStoacılar insanı bir bütünün parçası olarak gördü; bir uzvun acısı bütün bedenin acısıdır. Yası paylaşmak onu ikiye katlamaz, yarıya böler. Güçlü görünmek için yalnız kalmak, yükü tek omza almaktır.\n\nİki kişinin taşıdığı bir masa, tek kişinin sürüklediğinden çok daha hafiftir.\n\nYalnız değilsin. Yalnızca kapıyı henüz açmadın.",
+   "body": "Aynı kaybı yaşayan birine ulaş: kısa bir mesaj, bir telefon. \"Seni düşündüm\" demen yeter.",
+   "ask": "Bugün birine ulaştın mı? Bu sende ne bıraktı?"
+  },
+  {
+   "title": "Yapraklar",
+   "read": "Ağaçlar yapraklarını döküyor. Yürürken ayağının altında hışırdıyorlar ve her şeyin ne kadar geçici olduğunu düşünüyorsun.\n\nMarcus Aurelius eski bir şiirden alıntı yapar: rüzgâr yaprakları yere döker, orman baharda yenilerini verir. İnsan kuşakları da böyledir, der; biri gider, biri gelir.\n\nBu, ölümü önemsizleştirmek değildir. Kaybı bir haksızlık olarak değil, doğanın düzeni içinde görmek, yükün bir kısmını alır. Yas \"neden\" sorusundan \"nasıl\" sorusuna döner.\n\nDalda son yaprak titrerken, toprağın altında kökler yeni bahara hazırlanır.\n\nHiçbir şey yok olmaz; yalnızca biçim değiştirir.",
+   "body": "Dışarı çık ve mevsimin değişimine bak: dökülen yapraklara, kısalan güne, gökyüzüne. Hiçbir şey düşünmeden, yalnızca bak.",
+   "ask": "Doğadaki değişime bakarken kendi kaybın hakkında ne fark ettin?"
+  },
+  {
+   "title": "Onu taşımak",
+   "read": "Bir haftadır yasınla yürüyorsun. Acı belki azalmadı ama biçimi değişti: artık yalnızca ezmiyor, bazen sıcak bir anıya da dönüşüyor.\n\nSeneca, kaybedilen dostların anısının zamanla acı olmaktan çıkıp tatlılaştığını yazar; tıpkı ekşi bir meyvenin olgunlaşması gibi.\n\nYası bitirmek onu unutmak demek değildir. Sevdiğini geride bırakmazsın, yanına alırsın. Onun gülüşünü, sabrını, bir alışkanlığını kendi hayatında sürdürdükçe o da yaşamaya devam eder.\n\nAnnesinin tarifini her yıl aynı gün pişiren biri, mutfağı her seferinde onunla doldurur.\n\nOnu kaybetmedin. Artık sende yaşıyor.",
+   "body": "Onun ruhuna uygun tek bir şey yap: sevdiği yemeği pişir, sevdiği yere git ya da onun yapacağı bir iyiliği sen yap.",
+   "ask": "Bugün onu nasıl taşıdın? Bu yedi günde yasın nasıl değişti?"
+  }
+ ],
+ "enough": [
+  {
+   "title": "Neye sahipsin?",
+   "read": "Dolabını açıyorsun ve giyecek bir şey bulamıyorsun. Oysa dolap dolu. Çekmecelerde hiç kullanılmamış şarj aletleri, kutusundan çıkmamış bir hediye, \"bir gün lazım olur\" dediğin şeyler.\n\nBazı eşyalara sen sahipsin, bazıları sana. Onları korumak, temizlemek, taşımak, yenisi çıkınca kıskanmak zorundasın. Seneca, yoksulun az şeyi olan değil, daha fazlasını isteyen olduğunu söyler.\n\nAz ile yetinmek her şeyi bırakıp bir mağarada yaşamak değildir. Stoacılar zenginliği yasaklamadı; yalnızca ona köle olmamayı öğretti. Sorun sahip olmak değil, sahip olunmak.\n\nTaşınırken kutuya koyduğun her eşyanın bir ağırlığı vardır; bazıları kolundan çok aklına ağır gelir.\n\nBugün yalnızca bak: neyi sen taşıyorsun, ne seni taşıyor?",
+   "body": "Sahip olduğun on şeyi yaz. Her birinin yanına sor: Bu bana mı hizmet ediyor, ben mi ona? Seni yoranları işaretle.",
+   "ask": "Listendeki hangi şey sana beklediğinden ağır geldi?"
+  },
+  {
+   "title": "Yoksulluğu prova et",
+   "read": "Faturalar, kira, bir gün işsiz kalma ihtimali. Para kaygısı çoğu zaman yokluğun kendisinden değil, yokluğun hayalinden gelir.\n\nSeneca, varlıklı bir dostuna garip bir öneride bulundu: ayda birkaç gün en sade yemeği ye, en kaba giysiyi giy, sonra kendine sor: korktuğum şey bu muydu?\n\nBu bir çile değildir. Amaç kendini cezalandırmak değil, korkunun gerçek boyunu görmektir. Çoğu insan sade bir öğünün ne kadar iyi gelebileceğini hiç denemediği için bilmez.\n\nBir dilim ekmek, biraz peynir ve bir bardak su: aç bir insan için bundan güzel sofra yoktur.\n\nKorktuğun şeyle bir kez yüz yüze geldiğinde, ondan artık o kadar korkmazsın.",
+   "body": "Tek bir öğünü olabildiğince sade ye ya da hiç harcama yapmadan bir gün geçir. Gün sonunda sor: ne eksikti?",
+   "ask": "Sade öğün ya da harcamasız gün sende ne bıraktı? Korktuğun kadar zor muydu?"
+  },
+  {
+   "title": "Kıyasın hilesi",
+   "read": "Bir arkadaşının yeni arabası, ekranda başka birinin tatili, komşunun yenilenen mutfağı. Sabah hiçbir şeye ihtiyacın yokken akşam bir eksiklikle uyuyorsun.\n\nİstediğimiz şeylerin çoğunu başkasında gördüğümüz için isteriz. Kendimize sorsak belki hiç istemeyeceğimiz şeyler, başkasının vitrininde parlayınca birden zorunluluğa dönüşür.\n\nBu kıskançlık sanılır ama çoğu zaman öyle değildir; bir dikkat kaymasıdır. Kendi hayatına bakmayı bırakıp başkasınınkini ölçü alırsın. Ve o ölçü her gün değişir; yetişemezsin.\n\nYan kulvara bakan koşucu, kendi adımını kaçırır.\n\nKendi kulvarına döndüğünde, ne kadar yol aldığını görürsün.",
+   "body": "Bir şeyi istediğini fark ettiğinde dur ve sor: Bunu ben mi istiyorum, yoksa birinde gördüğüm için mi?",
+   "ask": "Bugün hangi isteğinin aslında bir kıyastan doğduğunu fark ettin?"
+  },
+  {
+   "title": "Doğanın ölçüsü",
+   "read": "Sepete bir şey ekliyorsun. Gerçekten lazım mı? Belki. Belki de yalnızca indirimde olduğu için ya da bir anlığına iyi hissetmek için.\n\nEpiktetos basit bir ölçü önerir: ayak, ayakkabının ölçüsüdür. Ayağına uyan ayakkabıyı alırsın. Ölçüyü aşınca önce yaldızlısını, sonra mor olanını, sonra işlemelisini istersin; sonu gelmez.\n\nBu ölçü yoksulluk değildir. Doğanın istediği azdır ve kolay bulunur: yemek, barınak, sıcaklık, birkaç dost. Sonsuz olan, görüntünün istedikleridir. Doğaya göre yaşayan asla yoksul olmaz; başkalarının görüşüne göre yaşayan asla zengin olmaz.\n\nBir çocuk, en pahalı oyuncağın kutusuyla bütün öğleden sonra mutlu oynayabilir.\n\nÖlçüyü sen koyduğunda, yeten sana yeter.",
+   "body": "Bir şey satın almadan önce kendine sor: Bunu ihtiyacım mı istiyor, yoksa görüntüm mü?",
+   "ask": "Bugün ihtiyaç ile görüntü arasındaki farkı nerede gördün?"
+  },
+  {
+   "title": "Evinde değil kalbinde",
+   "read": "Sevdiğin bir saat, belki bir kitap koleksiyonu, belki güzel bir ev. Sonra bir gün çizilir, kaybolur, bozulur ve günün kararır.\n\nSeneca çok zengin bir adamdı ve bu yüzden eleştirildi. Cevabı şuydu: bilge zenginliği evinde tutar, kalbinde değil. Eşya ona hizmet eder, o eşyaya değil.\n\nAz ile yetinmek güzel şeylere sırt çevirmek değildir. Bir şeyin tadını çıkarmakla ona bağlanmak arasında ince bir çizgi var. Tadını çıkaran şimdiye bakar; bağlanan, kaybetme korkusuna.\n\nGüzel bir fincanda kahve içen biri onu her sabah sever; fincan kırıldığında üzülür, ama sabahı fincanla birlikte kırılmaz.\n\nKaybetmekten korkmadığında, sahip olduklarından gerçekten zevk alırsın.",
+   "body": "Sahip olduğun bir şeyin tadını gerçekten çıkar; daha fazlasını ya da daha iyisini istemeden.",
+   "ask": "Tadını çıkardığın şeye bakarken, onu kaybetme korkusu da yanında mıydı?"
+  },
+  {
+   "title": "Vermek",
+   "read": "Dolabında giymediğin bir mont, rafta okunmuş bir kitap, takviminde birine ayırabileceğin bir saat. Bir yerlerde birileri tam da onlara ihtiyaç duyuyor.\n\nSeneca iyilik üzerine koca bir kitap yazdı. En çok üzerinde durduğu şey ne verildiği değil, nasıl verildiğiydi: karşılık beklemeden, sessizce ve alanı utandırmadan.\n\nVermek, az ile yetinmenin tersi gibi görünür ama aynı kasın iki hareketidir. Sıkıca tutmadığın bir şeyi verebilirsin; verdikçe de neye ihtiyacın olmadığını görürsün.\n\nBir mumla başka bir mumu yaktığında, kendi alevinden hiçbir şey eksilmez.\n\nVerdiğin şey azalmaz; senden çıkıp bir başkasında sürer.",
+   "body": "Zamanından ya da eşyandan bir şeyi sessizce ver. Kimseye anlatmadan.",
+   "ask": "Sessizce verdiğinde ne hissettin? Bir şey eksildi mi?"
+  },
+  {
+   "title": "Yeter",
+   "read": "Bir haftadır sahip olduklarına başka bir gözle bakıyorsun. Belki birkaç şeyi verdin, belki bir alışverişten vazgeçtin, belki sade bir öğünün tadını çıkardın.\n\nZenginliğin sonu yoktur; her basamak bir sonrakini gösterir. Yeterliliğin ise bir sınırı vardır, ama o sınırı kimse senin için çizmez. Onu koyan sensin.\n\nAz ile yetinmek istememek değil, istediğini seçmektir. Neyin yettiğini bilen, gerisini isteyebilir de bırakabilir de; ama hiçbir zaman ona muhtaç olmaz.\n\nUzun bir yürüyüşten dönüp eşiğe oturduğunda, yorgun bacakların ve bir bardak su dünyadaki her şeyden değerli gelir.\n\nZaten yeterince var. Bunu görmek, en büyük zenginliktir.",
+   "body": "Bir \"bana yeten\" listesi yaz: Neye zaten sahipsin? Hangisi olmasa da huzurun yerinde kalır?",
+   "ask": "Bu yedi günde \"yeter\" kelimesi senin için nasıl değişti?"
+  }
+ ]
+}
