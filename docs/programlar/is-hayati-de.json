@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "work": {
+   "title": "Stoisch bei der Arbeit",
+   "subtitle": "Gelassen auf die Arbeit schauen in 7 Tagen"
+  }
+ },
+ "work": [
+  {
+   "title": "Warum stehst du auf?",
+   "read": "Der Wecker klingelt zum dritten Mal. Du drückst auf Schlummern und gehst unter der Decke die Liste des Tages durch: Besprechungen, E-Mails, eine Akte, die nie fertig wird. Du findest keinen einzigen Grund aufzustehen.\n\nAuch der römische Kaiser Marc Aurel wollte an manchen Morgen nicht aus dem Bett. In einer Notiz an sich selbst gibt er das zu und fragt: Ich stehe auf, um das Werk eines Menschen zu tun; wenn ich dafür geboren bin, warum murre ich? Bin ich dafür geschaffen, unter der warmen Decke zu liegen?\n\nDen Sinn der Arbeit sucht man in einem großen Titel oder im Gehalt. Dabei steckt er meistens an einem viel kleineren Ort: im Leben eines einzigen Menschen, den deine Arbeit berührt. Wer eine Rechnung richtig ausstellt, einen Patienten freundlich empfängt, Code mit Sorgfalt schreibt, macht jemandem den Tag leichter.\n\nDer Bäcker holt das Brot aus dem Ofen, bevor die Sonne aufgeht; wer um diese Zeit nach dem warmen Brot greift, kennt ihn nie, und doch hat er ihn berührt.\n\nDas, wofür du heute aufstehst, hat ein Gesicht. Es zu sehen macht den Wecker ein wenig leichter.",
+   "body": "Schreib in einem Satz auf, wem deine Arbeit nützt: einem bestimmten Menschen, einem Gesicht. Wenn es im Lauf des Tages schwer wird, kehr zu diesem Satz zurück.",
+   "ask": "Hat deine Arbeit heute jemanden berührt? Was hast du gefühlt, als du es bemerkt hast?"
+  },
+  {
+   "title": "Eine Sache",
+   "read": "Du schreibst einen Bericht; mittendrin kommt eine Nachricht. Während du sie liest, fällt dir eine E-Mail ein, und als du die E-Mail öffnest, siehst du die Besprechung im Kalender. Der Tag geht zu Ende, aber keine Aufgabe.\n\nMarc Aurel schreibt sich: Tu, was du gerade tust, als wäre es die letzte Tat deines Lebens, frei von Zerstreuung, Hast und Verstellung. Auf seinem Tisch warteten Krieg, Gerichtsverfahren und Briefe zugleich; trotzdem mahnt er sich, zu der einen Aufgabe vor ihm zurückzukehren.\n\nMan glaubt, viel zu schaffen heiße, vieles gleichzeitig zu tun. Das stimmt nicht. Je mehr sich die Aufmerksamkeit teilt, desto länger dauert jede Aufgabe und desto mehr ermüdet sie. Die meiste Müdigkeit kommt nicht von der Arbeit selbst, sondern vom ständigen Springen von einer Aufgabe zur nächsten.\n\nMit der einen Kerze in deiner Hand erhellst du eine Ecke des Zimmers; willst du mit ihr das ganze Zimmer ausleuchten, siehst du nirgends etwas.\n\nDie stille Erleichterung über eine einzige erledigte Aufgabe ist mehr wert als der Lärm von zehn halb fertigen.",
+   "body": "Erledige eine Aufgabe mit ausgeschalteten Benachrichtigungen, ohne einen anderen Tab zu öffnen, bis sie fertig ist.",
+   "ask": "Wie ist die Zeit vergangen, als du bei einer einzigen Aufgabe geblieben bist? Was hat sich anders angefühlt?"
+  },
+  {
+   "title": "Weniger tun",
+   "read": "Dein Kalender ist voll, deine To-do-Liste lang. Wenn du am Abend zurückschaust, weißt du nicht, wie viel davon wirklich nötig war; du bist nur müde.\n\nMarc Aurel gibt den Rat eines alten Philosophen weiter: Wenn du Ruhe willst, tu wenig. Dann verbessert er sich: besser gesagt, tu das Nötige. Das meiste, was wir sagen und tun, ist nicht nötig; lässt du es weg, bleiben dir Zeit und Gelassenheit.\n\nDas ist keine Faulheit. Weniger tun heißt nicht fliehen, sondern wählen. Wer zu allem „Ja“ sagt, hat in Wahrheit zum Wichtigen „Nein“ gesagt. Das Unnötige loszulassen schafft Platz für das Nötige.\n\nDer Gärtner schneidet auch schöne Zweige zurück; der Baum gibt seine Früchte den Zweigen, die bleiben.\n\nLass heute eine Sache los. Die Leichtigkeit kommt nicht von der Arbeit, die du tust, sondern von der, die du nicht tust.",
+   "body": "Lass eine unnötige Aufgabe, Besprechung oder Nachricht weg. Frag dich dreimal am Tag: „Ist das nötig?“",
+   "ask": "Was hast du heute losgelassen? Was ist passiert, als du es losgelassen hast?"
+  },
+  {
+   "title": "Der schwierige Kollege",
+   "read": "Da ist jemand, der dir in Besprechungen ins Wort fällt, seine Arbeit auf dich abwälzt und in E-Mails stichelt. Schon wenn du den Namen auf dem Bildschirm siehst, spannen sich deine Schultern an.\n\nMarc Aurel erinnerte sich jeden Morgen: Heute werde ich groben, undankbaren, neidischen Menschen begegnen. Aber auch sie sind Menschen wie ich; sie handeln so, weil sie Gut und Böse nicht unterscheiden können. Wir sind geschaffen, um zusammenzuarbeiten, wie Hände, Füße und Zähne.\n\nDas heißt nicht, alles zu ertragen. Du kannst Grenzen setzen, offen sprechen und dich, wenn nötig, beschweren. Der Stoiker trennt nur das Verhalten des anderen von seinem eigenen: Die Grobheit gehört dem anderen, deine Antwort gehört dir.\n\nWenn ein Ruderer wütend wird, weil sein Nachbar aus dem Takt gekommen ist, und auch sein eigenes Ruder fallen lässt, kommt das Boot nie voran.\n\nVielleicht kannst du ihn nicht ändern. Aber du musst ihm deinen Tag nicht überlassen.",
+   "body": "Geh mit einem Menschen bei der Arbeit, mit dem du dich schwertust, einen einzigen Schritt auf Zusammenarbeit zu. Schreib am Abend sein Verhalten und deine Antwort in zwei getrennte Zeilen.",
+   "ask": "Konntest du heute einen Abstand zwischen seinem Verhalten und deiner Antwort finden?"
+  },
+  {
+   "title": "Arbeit ohne Lob",
+   "read": "Die Arbeit, an der du wochenlang gesessen hast, hat in der Besprechung jemand anderes vorgestellt, und niemand hat deinen Namen genannt. Oder eine Aufgabe, die du seit Jahren gut erledigst, fiel erst auf, als sie eines Tages hakte.\n\nMarc Aurel fragt sich: Wird etwas besser, weil es gelobt wird? Ist ein Smaragd weniger Smaragd, weil ihn niemand lobt? Gold, eine Blume, ein Messer; sie alle sind, was sie sind, auch wenn niemand hinsieht.\n\nAnerkennung zu wollen ist keine Schande. Aber wenn du den Wert deiner Arbeit an die Augen anderer bindest, erlischst du jedes Mal, wenn sich diese Augen schließen. Gut gemachte Arbeit ist gut, auch wenn niemand sie sieht; und wer sie getan hat, weiß das.\n\nDer Steinmetz meißelt die Figur oben auf der Kathedrale, die niemand je sehen wird, mit derselben Sorgfalt.\n\nGesehen zu werden ist schön. Aber um gut zu sein, ist es nicht nötig.",
+   "body": "Erledige eine Arbeit, die niemand sehen wird, mit Sorgfalt, und erzähl es niemandem.",
+   "ask": "Welches Gefühl hat die Arbeit, die du gut gemacht hast, ohne dass jemand zusah, in dir hinterlassen?"
+  },
+  {
+   "title": "Der Fehler",
+   "read": "Du hast die falsche Datei verschickt, eine Frist verpasst, einem Kunden die falsche Zahl genannt. In diesem Moment ein Knoten im Magen; selbst nachts im Bett geht es dir noch durch den Kopf.\n\nMarc Aurel schreibt sich: Wenn es dir nicht gelingt, nach deinen Grundsätzen zu handeln, sei nicht angewidert, verlier nicht den Mut, gib nicht auf. Wenn du fällst, kehr zurück; und wenn das meiste, was du tust, eines Menschen würdig ist, sei zufrieden.\n\nEinen Fehler zu übergehen und dich mit ihm zu bestrafen führt an denselben Ort: nichts aus ihm zu lernen. Das Gewicht eines Fehlers kommt meistens nicht von seinen Folgen, sondern von dem Urteil, das du über dich fällst: „Ich bin unfähig.“ Dabei ist ein Fehler ein Ereignis, keine Identität.\n\nDer Wanderer, der auf dem Weg stolpert, bleibt stehen, bindet seinen Schuh und geht weiter; er läuft nicht den ganzen Weg noch einmal von vorn.\n\nEinen Fehler anzunehmen heißt, ihn nicht tragen zu müssen.",
+   "body": "Stell dir nach einem Fehler drei Fragen: Was ist passiert? Was war mein Anteil? Was mache ich beim nächsten Mal? Schreib die Antworten auf und lass es dann los.",
+   "ask": "Wie hast du heute auf einen Fehler geschaut? Was hat sich verändert, als du Fragen gestellt hast, statt ein Urteil zu fällen?"
+  },
+  {
+   "title": "Ausruhen",
+   "read": "Am Abend bist du nach Hause gekommen, aber dein Kopf ist noch bei der Arbeit. Sogar am Wochenende schaust du in deine E-Mails. Ausruhen fühlt sich an wie ein Luxus, fast wie ein Vergehen.\n\nSeneca schreibt, dass der Geist nicht ständig angespannt sein kann: Selbst der fruchtbarste Acker wird karg, wenn man ihn nie ruhen lässt. Sokrates schämte sich nicht, mit Kindern zu spielen; Cato erleichterte sich am Abend die Last des Tages mit einem Glas Wein. Ein Geist, der sich entspannt, steht stärker wieder auf.\n\nAusruhen ist keine Faulheit; es gehört zur Arbeit. Wer nicht nur arbeiten, sondern auch innehalten kann, schafft den langen Weg. Wer nie anhält, muss eines Tages anhalten.\n\nEin Bogen, der immer gespannt ist, verliert seine Kraft; wenn der Bogenschütze ihn nicht braucht, lockert er die Sehne.\n\nHeute darfst du anhalten. Und wenn die Müdigkeit seit Monaten nicht vergeht, wenn Schlaf und Appetit gestört sind, ist es ebenfalls eine stoische Entscheidung, dich an eine Fachperson zu wenden.",
+   "body": "Plane eine echte Pause ohne Bildschirm und schütze sie wie einen Termin.",
+   "ask": "Hast du dich heute wirklich ausgeruht? Wie hat sich dein Blick auf die Arbeit in diesen sieben Tagen verändert?"
+  }
+ ]
+}
