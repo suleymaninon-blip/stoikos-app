@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "work": {
+   "title": "Le stoïcisme au travail",
+   "subtitle": "Regarder son travail avec calme en 7 jours"
+  }
+ },
+ "work": [
+  {
+   "title": "Pourquoi te lèves-tu ?",
+   "read": "Le réveil sonne pour la troisième fois. Tu appuies sur « répéter » et, sous la couette, tu passes en revue la liste de la journée : réunions, e-mails, un dossier qui n’en finit pas. Tu ne trouves pas une seule raison de te lever.\n\nL’empereur romain Marc Aurèle, lui aussi, certains matins, n’avait pas envie de sortir du lit. Dans une note écrite pour lui-même, il l’avoue et se demande : je me lève pour faire le travail d’un être humain ; si je suis né pour cela, pourquoi est-ce que je me plains ? Ai-je été fait pour rester couché sous une couverture chaude ?\n\nOn cherche le sens du travail dans un grand titre ou dans un salaire. Pourtant, il se trouve souvent dans un endroit bien plus petit : dans la vie d’une seule personne que ton travail touche. Celui ou celle qui établit correctement une facture, accueille un patient avec le sourire, écrit un code avec soin, facilite la journée de quelqu’un.\n\nLe boulanger sort le pain avant le lever du jour ; la personne qui, à cette heure-là, tend la main vers le pain chaud ne le connaîtra jamais, mais il l’a touchée.\n\nCe pour quoi tu te lèves aujourd’hui a un visage. Le voir rend le réveil un peu plus léger.",
+   "body": "Écris en une phrase à qui ton travail est utile : une personne précise, un visage. Quand la journée devient difficile, reviens à cette phrase.",
+   "ask": "Aujourd’hui, quelqu’un a-t-il été touché par ton travail ? Qu’as-tu ressenti en le remarquant ?"
+  },
+  {
+   "title": "Une seule tâche",
+   "read": "Tu écris un rapport ; à mi-chemin, un message arrive. Pendant que tu le lis, un e-mail te revient en tête ; en ouvrant l’e-mail, tu vois la réunion dans l’agenda. La journée se termine, aucune tâche n’est terminée.\n\nMarc Aurèle s’écrit : fais ce que tu as entre les mains comme si c’était la dernière tâche de ta vie, loin de la dispersion, de la précipitation, de la comédie. Sur sa table attendaient en même temps la guerre, les procès et les lettres ; il conseille pourtant de revenir à la seule tâche qui est devant soi.\n\nOn croit que faire beaucoup, c’est faire beaucoup de choses à la fois. Ce n’est pas le cas. Plus l’attention se divise, plus chaque tâche s’allonge, plus elle fatigue. La plus grande part de la fatigue ne vient pas du travail lui-même, mais du fait de sauter sans cesse d’une tâche à l’autre.\n\nAvec la seule bougie que tu tiens, tu éclaires un coin de la pièce ; si tu essaies de la faire suffire à toute la pièce, tu ne vois plus rien.\n\nLe soulagement silencieux d’une seule tâche terminée vaut mieux que le bruit de dix tâches à moitié faites.",
+   "body": "Fais une tâche jusqu’au bout, notifications coupées, sans ouvrir d’autre onglet.",
+   "ask": "Comment le temps a-t-il passé quand tu es resté·e sur une seule tâche ? Qu’as-tu ressenti de différent ?"
+  },
+  {
+   "title": "Faire moins",
+   "read": "Ton agenda est plein, ta liste de choses à faire est longue. Le soir, en regardant en arrière, tu ne sais pas combien de ces choses étaient vraiment nécessaires ; tu es seulement fatigué·e.\n\nMarc Aurèle rapporte le conseil d’un ancien philosophe : si tu veux la paix, fais peu de choses. Puis il corrige : ou plutôt, fais ce qui est nécessaire. La plupart de ce que nous disons et faisons n’est pas nécessaire ; quand on le laisse, il reste du temps et de la sérénité.\n\nCe n’est pas de la paresse. Faire moins, ce n’est pas fuir, c’est choisir. Qui dit « oui » à tout a en réalité dit « non » à ce qui compte. Laisser le superflu fait de la place au nécessaire.\n\nLe jardinier taille aussi les belles branches ; l’arbre donne ses fruits aux branches qui restent.\n\nAujourd’hui, laisse une chose. La légèreté ne viendra pas de ce que tu fais, mais de ce que tu ne fais pas.",
+   "body": "Laisse tomber une tâche, une réunion ou un message inutile. Trois fois dans la journée, demande-toi : « Est-ce nécessaire ? »",
+   "ask": "Qu’as-tu laissé aujourd’hui ? Que s’est-il passé quand tu l’as laissé ?"
+  },
+  {
+   "title": "Le collègue difficile",
+   "read": "Il y a quelqu’un qui te coupe la parole en réunion, te refile son travail, glisse des piques dans ses e-mails. Rien qu’en voyant son nom à l’écran, tes épaules se crispent.\n\nMarc Aurèle se rappelait chaque matin : aujourd’hui, je rencontrerai des gens grossiers, ingrats, envieux. Mais eux aussi sont humains, comme moi ; ils agissent ainsi parce qu’ils ne savent pas distinguer le bien du mal. Nous sommes faits pour travailler ensemble, comme les mains, les pieds, les dents.\n\nCela ne veut pas dire tout supporter. Tu peux poser une limite, parler franchement, te plaindre s’il le faut. Le stoïcien sépare simplement le comportement de l’autre du sien : sa grossièreté lui appartient, ta réponse t’appartient.\n\nSi le rameur, fâché que son voisin ait perdu le rythme, lâche aussi sa propre rame, la barque n’avance plus du tout.\n\nTu ne pourras peut-être pas le changer. Mais tu n’es pas obligé·e de lui livrer ta journée.",
+   "body": "Fais un pas de coopération avec un·e collègue avec qui c’est difficile. Le soir, écris son comportement et ta réponse sur deux lignes séparées.",
+   "ask": "As-tu trouvé aujourd’hui un espace entre son comportement et ta réponse ?"
+  },
+  {
+   "title": "Le travail sans éloge",
+   "read": "Le travail sur lequel tu as peiné des semaines, quelqu’un d’autre l’a présenté en réunion, et personne n’a cité ton nom. Ou bien un travail que tu fais bien depuis des années n’a été remarqué que le jour où il a coincé.\n\nMarc Aurèle se demande : une chose louée devient-elle meilleure parce qu’on la loue ? L’émeraude est-elle moins émeraude parce qu’on ne la loue pas ? L’or, une fleur, un couteau : tous sont ce qu’ils sont, même si personne ne les regarde.\n\nVouloir de la reconnaissance n’a rien de honteux. Mais si tu attaches la valeur de ton travail au regard des autres, chaque fois que ce regard se ferme, tu t’éteins aussi. Un travail bien fait est bon même si personne ne le voit ; et celui ou celle qui l’a fait le sait.\n\nLe tailleur de pierre sculpte avec le même soin la statue au sommet de la cathédrale, que personne ne pourra voir.\n\nÊtre vu·e, c’est agréable. Mais ce n’est pas nécessaire pour être bon·ne.",
+   "body": "Fais avec soin un travail que personne ne verra, et ne le dis à personne.",
+   "ask": "Quel sentiment t’a laissé le travail bien fait sans que personne ne le voie ?"
+  },
+  {
+   "title": "L’erreur",
+   "read": "Tu as envoyé le mauvais fichier, manqué une date, donné un mauvais chiffre au client. À ce moment-là, un nœud dans l’estomac ; même la nuit, au lit, ça tourne dans ta tête.\n\nMarc Aurèle s’écrit : quand tu n’arrives pas à agir selon tes principes, n’en sois pas dégoûté·e, ne perds pas espoir, n’abandonne pas. Quand tu tombes, reviens ; et si la plupart de tes actes sont dignes d’un être humain, sois-en content·e.\n\nIgnorer l’erreur ou s’en punir mène au même endroit : n’en rien apprendre. Le poids d’une erreur vient souvent non de ses conséquences, mais du verdict que tu portes sur toi : « Je suis incapable. » Pourtant, une erreur est un événement, pas une identité.\n\nLe voyageur qui trébuche sur la route s’arrête, renoue sa chaussure et continue de marcher ; il ne refait pas tout le chemin depuis le début.\n\nAccepter l’erreur, c’est ne plus être obligé·e de la porter.",
+   "body": "Après une erreur, pose trois questions : Que s’est-il passé ? Quelle est ma part ? Que ferai-je la prochaine fois ? Écris les réponses, puis laisse aller.",
+   "ask": "Comment as-tu regardé une de tes erreurs aujourd’hui ? Qu’est-ce que poser des questions au lieu de rendre un verdict a changé ?"
+  },
+  {
+   "title": "Se reposer",
+   "read": "Le soir, tu es rentré·e à la maison, mais ton esprit est encore au travail. Même le week-end, tu regardes tes e-mails. Se reposer te semble un luxe, voire un crime.\n\nSénèque écrit que l’esprit ne peut pas rester tendu en permanence : même le champ le plus fertile s’épuise si on ne le laisse jamais se reposer. Socrate n’avait pas honte de jouer avec des enfants ; Caton allégeait le soir le poids de la journée avec un verre de vin. L’esprit qui se détend se relève plus fort.\n\nSe reposer n’est pas de la paresse ; c’est une partie du travail. Qui sait s’arrêter autant que travailler fait un long chemin. Celui qui ne s’arrête jamais finit un jour par être forcé de s’arrêter.\n\nL’arc toujours tendu perd sa force ; quand l’archer ne s’en sert pas, il détend la corde.\n\nAujourd’hui, tu as le droit de t’arrêter. Si la fatigue ne passe pas depuis des mois, si ton sommeil et ton appétit sont perturbés, consulter un·e spécialiste est aussi un choix stoïcien.",
+   "body": "Prévois une vraie pause, sans écran, et protège-la comme une réunion.",
+   "ask": "T’es-tu vraiment reposé·e aujourd’hui ? En ces sept jours, comment ton regard sur le travail a-t-il changé ?"
+  }
+ ]
+}
