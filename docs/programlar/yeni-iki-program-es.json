@@ -1,0 +1,100 @@
+{
+ "programs": {
+  "grief": {
+   "title": "Vivir con la pérdida",
+   "subtitle": "Caminar con el duelo en 7 días"
+  },
+  "enough": {
+   "title": "Conformarse con poco",
+   "subtitle": "Descubrir lo suficiente en 7 días"
+  }
+ },
+ "grief": [
+  {
+   "title": "El derecho al duelo",
+   "read": "Todos te dicen que seas fuerte. Y tú sonríes, vas al trabajo, dices «estoy bien» cuando te preguntan. Luego, una tarde, en la cocina, ves el vaso que le gustaba y algo dentro de ti se desprende.\n\nSéneca escribió que, al perder a un amigo muy querido, lloró tanto que no pudo contenerse, y no se avergonzó de ello. Que caigan las lágrimas, dijo, pero que no se vuelvan una inundación que te arrastre.\n\nSe cree que el estoicismo es no sentir nada. No lo es. Reprimir el duelo y ahogarse en él son dos formas de huir de lo mismo: de sentarse cara a cara con él. El estoico no niega el dolor; le hace sitio, pero no le entrega la llave de la casa.\n\nUna lágrima no es una debilidad; es la prueba de que el amor sigue en su sitio.\n\nHoy tienes permiso para llorar. Si el duelo pesa demasiado, pedir apoyo a un profesional también es una elección estoica.",
+   "body": "Reserva diez minutos para ti. Piensa solo en lo que echas de menos; no intentes detenerlo ni arreglarlo. Cuando se acabe el tiempo, bebe un vaso de agua y vuelve a tu día.",
+   "ask": "Hoy, al hacerle sitio a la añoranza, ¿qué sentiste? ¿Cambió algo?"
+  },
+  {
+   "title": "Era un préstamo",
+   "read": "Su número sigue en tu teléfono. No puedes borrarlo; borrarlo sería como vivir la pérdida por segunda vez. «Era mío», dices, «me lo quitaron».\n\nEpicteto hacía a sus alumnos una propuesta extraña: nunca digas de nada «lo he perdido», di «lo he devuelto». ¿Se fue la persona que amabas? Fue devuelta.\n\nSuena a consuelo frío, pero es lo contrario. Quien dice «lo he perdido» pide cuentas por algo que le robaron. Quien dice «lo he devuelto» hace la cuenta de un regalo que estuvo a su lado durante un tiempo.\n\nCuando devuelves un libro prestado a la biblioteca, no te enfadas; las páginas que leíste ya son tuyas.\n\nLo que haya durado, ese tiempo fue tuyo.",
+   "body": "Escribe lo que te dio la persona o la cosa que perdiste: un hábito, una frase, una mirada, una lección. No lo que te quitó, sino lo que te dio.",
+   "ask": "De lo que escribiste, ¿qué sigue hoy contigo?"
+  },
+  {
+   "title": "Los años que quedan",
+   "read": "A medida que se acerca esa fecha del calendario, un peso te llena por dentro. Tu mente vuelve siempre al mismo día: a la última conversación, a la última mirada, a lo que no llegaste a decir.\n\nSéneca escribió una carta a Marcia, que años después de perder a su hijo seguía de luto. No le pidió que dejara su duelo; solo que cambiara la mirada: no cuentes el día en que lo perdiste, cuenta los años que pasaste con él.\n\nEsto no es empequeñecer la pérdida. El último día es solo uno de los miles de días compartidos. Pero el dolor lo trata como si fuera toda la historia.\n\nQuien abre siempre un álbum de fotos por la última página nunca ve el resto.\n\nRecordar la historia entera, y no solo el final, te lo devuelve.",
+   "body": "Comparte con alguien, o escribe, un recuerdo que te guste de esa persona. Con detalles: dónde estaban, de qué hablaron, de qué se rieron.",
+   "ask": "¿Adónde te llevó hoy el recuerdo: al dolor o a la calidez?"
+  },
+  {
+   "title": "La ola",
+   "read": "Llevabas unos días bien. Luego, en el supermercado, sonó una canción y te quedaste inmóvil. «Creía que ya había pasado», pensaste.\n\nEl duelo no es un camino recto; llega en olas. Séneca, en el exilio, esperó un tiempo antes de escribirle a su madre una carta de consuelo; sabía que tocar la herida mientras estaba fresca la haría sangrar. El dolor también tiene su ritmo.\n\nUna ola que vuelve no significa que estés estancado. Con el tiempo las olas se espacian, pero a veces se alzan de golpe. No es un fracaso, es la señal de que el amor sigue vivo.\n\nQuien nada en el mar no lucha contra la ola; contiene la respiración, pasa por debajo y vuelve a salir a la superficie.\n\nLa ola llegará y pasará. Y tú seguirás en la orilla.",
+   "body": "Fíjate en el momento en que el duelo sube. ¿Qué lo desencadenó: un olor, un lugar, una hora? Sin huir, solo ponle nombre: «Esto es una ola».",
+   "ask": "¿Llegó hoy una ola? ¿Qué hiciste al notarla?"
+  },
+  {
+   "title": "El duelo de otros",
+   "read": "Es como si la pérdida te hubiera encerrado en una habitación. Piensas que nadie lo entiende; cuanto más intentas explicarlo, más crece la soledad.\n\nPero hay otros que viven la misma pérdida: un hermano, un amigo, alguien que se sentó a la misma mesa. Ellos también están en su propia habitación, quizá esperando para llamar a tu puerta.\n\nLos estoicos veían a la persona como parte de un todo; el dolor de un miembro es el dolor de todo el cuerpo. Compartir el duelo no lo duplica, lo divide a la mitad. Quedarse solo para parecer fuerte es cargar el peso sobre un solo hombro.\n\nUna mesa que llevan dos personas pesa mucho menos que la que arrastra una sola.\n\nNo estás solo. Solo que aún no has abierto la puerta.",
+   "body": "Contacta con alguien que viva la misma pérdida: un mensaje corto, una llamada. Basta con decir «Pensé en ti».",
+   "ask": "¿Contactaste hoy con alguien? ¿Qué te dejó eso?"
+  },
+  {
+   "title": "Las hojas",
+   "read": "Los árboles sueltan sus hojas. Crujen bajo tus pies al caminar, y piensas en lo pasajero que es todo.\n\nMarco Aurelio cita un viejo poema: el viento tira las hojas al suelo, y en primavera el bosque da otras nuevas. Así son también las generaciones humanas, dice; una se va, otra llega.\n\nEsto no es quitarle importancia a la muerte. Ver la pérdida no como una injusticia, sino dentro del orden de la naturaleza, aligera parte de la carga. El duelo pasa de la pregunta «¿por qué?» a la pregunta «¿cómo?».\n\nMientras la última hoja tiembla en la rama, bajo tierra las raíces se preparan para una nueva primavera.\n\nNada desaparece; solo cambia de forma.",
+   "body": "Sal afuera y mira el cambio de estación: las hojas que caen, el día que se acorta, el cielo. Sin pensar en nada, solo mira.",
+   "ask": "Mientras mirabas el cambio en la naturaleza, ¿qué notaste sobre tu propia pérdida?"
+  },
+  {
+   "title": "Llevarlo contigo",
+   "read": "Llevas una semana caminando con tu duelo. Quizá el dolor no ha disminuido, pero ha cambiado de forma: ya no solo aplasta, a veces también se convierte en un recuerdo cálido.\n\nSéneca escribe que, con el tiempo, el recuerdo de los amigos perdidos deja de ser amargo y se vuelve dulce, como una fruta ácida que madura.\n\nTerminar el duelo no significa olvidar. No dejas atrás a quien amas; lo llevas contigo. Mientras sigas en tu propia vida su sonrisa, su paciencia o alguno de sus hábitos, esa persona sigue viviendo.\n\nQuien cocina la receta de su madre cada año el mismo día llena la cocina de ella cada vez.\n\nNo lo has perdido. Ahora vive en ti.",
+   "body": "Haz una sola cosa fiel a su espíritu: cocina su comida favorita, ve a un lugar que le gustaba o haz tú el gesto amable que habría hecho esa persona.",
+   "ask": "¿Cómo lo llevaste contigo hoy? ¿Cómo ha cambiado tu duelo en estos siete días?"
+  }
+ ],
+ "enough": [
+  {
+   "title": "¿Qué tienes?",
+   "read": "Abres el armario y no encuentras nada que ponerte. Y sin embargo, el armario está lleno. En los cajones, cargadores sin usar, un regalo que nunca salió de su caja, cosas que guardaste porque «algún día harán falta».\n\nDe algunas cosas eres dueño tú; otras son dueñas de ti. Tienes que cuidarlas, limpiarlas, cargarlas, envidiar la nueva versión cuando sale. Séneca dice que pobre no es quien tiene poco, sino quien desea más.\n\nConformarse con poco no es dejarlo todo y vivir en una cueva. Los estoicos no prohibieron la riqueza; solo enseñaron a no ser su esclavo. El problema no es poseer, sino ser poseído.\n\nCada objeto que metes en una caja durante una mudanza tiene su peso; algunos pesan más en la cabeza que en los brazos.\n\nHoy solo mira: ¿qué llevas tú y qué te lleva a ti?",
+   "body": "Escribe diez cosas que tienes. Junto a cada una, pregúntate: ¿esto me sirve a mí o yo le sirvo a esto? Marca las que te cansan.",
+   "ask": "¿Qué cosa de tu lista te pesó más de lo que esperabas?"
+  },
+  {
+   "title": "Ensaya la pobreza",
+   "read": "Las facturas, el alquiler, la posibilidad de quedarte algún día sin trabajo. La preocupación por el dinero muchas veces no viene de la carencia en sí, sino de imaginarla.\n\nSéneca le hizo a un amigo adinerado una propuesta curiosa: unos días al mes, come la comida más sencilla, ponte la ropa más tosca y luego pregúntate: ¿era esto lo que temía?\n\nNo es una penitencia. El objetivo no es castigarte, sino ver el tamaño real del miedo. La mayoría de la gente no sabe lo bien que puede sentar una comida sencilla porque nunca lo ha probado.\n\nUna rebanada de pan, un poco de queso y un vaso de agua: para alguien con hambre, no hay mesa más hermosa.\n\nCuando te encuentras una vez cara a cara con lo que temes, ya no lo temes tanto.",
+   "body": "Haz una sola comida lo más sencilla posible o pasa un día entero sin gastar nada. Al final del día, pregúntate: ¿qué faltó?",
+   "ask": "¿Qué te dejó la comida sencilla o el día sin gastos? ¿Fue tan difícil como temías?"
+  },
+  {
+   "title": "La trampa de la comparación",
+   "read": "El coche nuevo de un amigo, las vacaciones de otra persona en la pantalla, la cocina reformada del vecino. Por la mañana no necesitabas nada; por la noche te duermes con una sensación de falta.\n\nQueremos la mayoría de las cosas porque las vemos en otros. Cosas que quizá nunca querríamos si nos lo preguntáramos a nosotros mismos se vuelven de repente imprescindibles cuando brillan en el escaparate de otro.\n\nSe confunde con envidia, pero muchas veces no lo es; es un desvío de la atención. Dejas de mirar tu propia vida y tomas la de otro como medida. Y esa medida cambia cada día; nunca la alcanzas.\n\nEl corredor que mira a la calle de al lado pierde su propio paso.\n\nCuando vuelves a tu propia calle, ves cuánto camino has recorrido.",
+   "body": "Cuando notes que quieres algo, detente y pregúntate: ¿lo quiero yo, o lo quiero porque se lo vi a alguien?",
+   "ask": "¿Qué deseo tuyo descubriste hoy que en realidad nacía de una comparación?"
+  },
+  {
+   "title": "La medida de la naturaleza",
+   "read": "Añades algo a la cesta. ¿De verdad lo necesitas? Quizá. O quizá solo porque está rebajado, o para sentirte bien un momento.\n\nEpicteto propone una medida sencilla: el pie es la medida del zapato. Compras el zapato que le queda bien a tu pie. Si pasas de esa medida, primero quieres uno dorado, luego uno morado, luego uno bordado; no se acaba nunca.\n\nEsta medida no es pobreza. Lo que pide la naturaleza es poco y fácil de encontrar: comida, techo, calor, unos pocos amigos. Lo infinito es lo que pide la apariencia. Quien vive según la naturaleza nunca será pobre; quien vive según la opinión de los demás nunca será rico.\n\nUn niño puede pasarse toda la tarde jugando feliz con la caja del juguete más caro.\n\nCuando la medida la pones tú, lo que basta te basta.",
+   "body": "Antes de comprar algo, pregúntate: ¿esto lo pide mi necesidad o mi apariencia?",
+   "ask": "¿Dónde viste hoy la diferencia entre la necesidad y la apariencia?"
+  },
+  {
+   "title": "En la casa, no en el corazón",
+   "read": "Un reloj que te gusta, quizá una colección de libros, quizá una casa bonita. Un día se raya, se pierde, se estropea, y tu día se oscurece.\n\nSéneca era un hombre muy rico y por eso lo criticaban. Su respuesta fue esta: el sabio guarda la riqueza en su casa, no en su corazón. Las cosas le sirven a él, no él a las cosas.\n\nConformarse con poco no es dar la espalda a lo bello. Entre disfrutar de algo y apegarse a ello hay una línea fina. Quien disfruta mira el presente; quien se apega mira el miedo a perderlo.\n\nQuien toma el café en una taza bonita la quiere cada mañana; si la taza se rompe, se entristece, pero su mañana no se rompe con ella.\n\nCuando no temes perder, disfrutas de verdad de lo que tienes.",
+   "body": "Disfruta de verdad de algo que tienes, sin desear más ni algo mejor.",
+   "ask": "Mientras mirabas lo que disfrutabas, ¿estaba también a tu lado el miedo a perderlo?"
+  },
+  {
+   "title": "Dar",
+   "read": "Un abrigo que no te pones en el armario, un libro ya leído en la estantería, una hora de tu agenda que podrías dedicarle a alguien. En algún lugar, alguien necesita justo eso.\n\nSéneca escribió un libro entero sobre los favores. Lo que más le importaba no era qué se daba, sino cómo: sin esperar nada a cambio, en silencio y sin avergonzar a quien recibe.\n\nDar parece lo contrario de conformarse con poco, pero son dos movimientos del mismo músculo. Puedes dar lo que no agarras con fuerza; y cuanto más das, más ves lo que no necesitas.\n\nCuando enciendes una vela con otra, la llama de la primera no pierde nada.\n\nLo que das no disminuye; sale de ti y continúa en otra persona.",
+   "body": "Da en silencio algo de tu tiempo o de tus cosas. Sin contárselo a nadie.",
+   "ask": "¿Qué sentiste al dar en silencio? ¿Te faltó algo?"
+  },
+  {
+   "title": "Basta",
+   "read": "Llevas una semana mirando lo que tienes con otros ojos. Quizá regalaste algunas cosas, quizá renunciaste a una compra, quizá disfrutaste de una comida sencilla.\n\nLa riqueza no tiene fin; cada peldaño señala el siguiente. Lo suficiente, en cambio, tiene un límite, pero nadie lo traza por ti. Quien lo pone eres tú.\n\nConformarse con poco no es no desear, sino elegir lo que deseas. Quien sabe qué le basta puede desear el resto o soltarlo; pero nunca lo necesitará.\n\nCuando vuelves de una larga caminata y te sientas en el umbral, tus piernas cansadas y un vaso de agua valen más que cualquier cosa del mundo.\n\nYa tienes suficiente. Verlo es la mayor riqueza.",
+   "body": "Escribe una lista de «lo que me basta»: ¿qué tienes ya? ¿Sin cuál de esas cosas tu paz seguiría intacta?",
+   "ask": "En estos siete días, ¿cómo ha cambiado para ti la palabra «basta»?"
+  }
+ ]
+}

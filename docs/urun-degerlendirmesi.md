@@ -29,7 +29,7 @@ Bir daha saymaya gerek kalmasın:
 | Kavram | 12 · altı dilde tam (7'si ~120 karakter, 5'i ~700) |
 | Filozof | 10 · altı dilde tam |
 | Egzersiz | 5 (3 sabah, 2 akşam) |
-| Program | 5 × 7 gün = 35 gün · altı dilde tam (fr/es ve 3.–5. programlar Eylül 2026'da eklendi) |
+| Program | 7 × 7 gün = 49 gün · altı dilde tam (fr/es ve 3.–5. programlar Eylül 2026, 6.–7. programlar 29 Ekim 2026) |
 | Arayüz metni | 234 anahtar × 6 dil · eksiksiz |
 | Çalışma sağlığı | 8 ekranın hiçbirinde yakalanmamış istisna yok |
 
