@@ -29,24 +29,25 @@ const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitud
 // için aynı rengin başka opaklıkları gerekiyor.
 const tint = (color: string, a: number) => color.replace(/[\d.]+\)\s*$/, `${a})`);
 
-type Resume = { program: Program; done: number; started: boolean };
+// next: ilk tamamlanmamış gün (aradaki bir günün işareti geri alınmış olabilir; sayı yetmez)
+type Resume = { program: Program; done: number[]; next: number; started: boolean };
 
 // ── Kaldığın yer: yarım kalan program, yoksa başlanmamış ilk program ──
 // Alt menüde olmayan tek bölüm; eskiden listenin en sonundaydı (22 Ekim 2026).
 function ResumeCard({ resume }: { resume: Resume }) {
   const { t } = useLang();
-  const { program, done, started } = resume;
-  const day = program.days[Math.min(done, program.dayCount - 1)];
+  const { program, done, next, started } = resume;
+  const day = program.days[Math.min(next, program.dayCount - 1)];
   const c = program.color;
   return (
     <TouchableOpacity
       style={[styles.resume, { backgroundColor: tint(c, 0.08), borderColor: tint(c, 0.4) }]}
       activeOpacity={0.85}
-      onPress={() => router.push({ pathname: '/programs', params: started ? { open: program.id, day: String(done) } : { open: program.id } })}
+      onPress={() => router.push({ pathname: '/programs', params: started ? { open: program.id, day: String(next) } : { open: program.id } })}
     >
       <View style={styles.resumeTop}>
         <Text style={[styles.resumeLabel, { color: tint(c, 1) }]}>{t(started ? 'home.resume' : 'home.startJourney')}</Text>
-        {started && <Text style={styles.resumeDay}>{t('programs.dayOf', { n: done + 1, total: program.dayCount })}</Text>}
+        {started && <Text style={styles.resumeDay}>{t('programs.dayOf', { n: next + 1, total: program.dayCount })}</Text>}
       </View>
       <View style={styles.resumeMain}>
         <View style={[styles.resumeIconBox, { backgroundColor: tint(c, 0.18) }]}>
@@ -60,7 +61,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
       {started && (
         <View style={styles.resumeBar}>
           {program.days.map((_, i) => (
-            <View key={i} style={[styles.resumeSeg, { backgroundColor: i < done ? tint(c, 1) : i === done ? tint(c, 0.4) : 'rgba(255,255,255,0.06)' }]} />
+            <View key={i} style={[styles.resumeSeg, { backgroundColor: done.includes(i) ? tint(c, 1) : i === next ? tint(c, 0.4) : 'rgba(255,255,255,0.06)' }]} />
           ))}
         </View>
       )}
@@ -125,11 +126,15 @@ export default function HomeScreen() {
       // Yarım kalan ilk program; yoksa başlanmamış ilk program; hepsi bittiyse kart yok.
       (async () => {
         const programs = getPrograms(lang);
-        const all = await Promise.all(programs.map(async (p) => ({ program: p, done: (await getProgress(p.id)).length })));
-        const inProgress = all.find((x) => x.done > 0 && x.done < x.program.dayCount);
-        const fresh = all.find((x) => x.done === 0);
+        const all = await Promise.all(programs.map(async (p) => {
+          const done = await getProgress(p.id);
+          const next = p.days.findIndex((_, i) => !done.includes(i));
+          return { program: p, done, next };
+        }));
+        const inProgress = all.find((x) => x.done.length > 0 && x.next >= 0);
+        const fresh = all.find((x) => x.done.length === 0);
         const r = inProgress ?? fresh;
-        setResume(r ? { ...r, started: r.done > 0 } : null);
+        setResume(r ? { ...r, next: Math.max(0, r.next), started: r.done.length > 0 } : null);
       })();
     }, [refresh, lang])
   );

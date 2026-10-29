@@ -71,9 +71,11 @@ export default function ProgramsScreen() {
     if (!done && total != null && next.length === total) maybeAskForReview('programDone');
   }
 
+  // Tamamlanmış gün her zaman açık kalır: önceki bir günün işareti geri alınınca sonraki
+  // tamamlanmış gün kilitlenip kendi işaretini geri almak imkânsızlaşıyordu (29 Ekim 2026).
   function isUnlocked(pid: string, idx: number): boolean {
-    if (idx === 0) return true;
-    return (progress[pid] || []).includes(idx - 1);
+    const d = progress[pid] || [];
+    return idx === 0 || d.includes(idx) || d.includes(idx - 1);
   }
 
   const isComplete = (p: Program) => (progress[p.id] || []).length === p.dayCount;
