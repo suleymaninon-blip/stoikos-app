@@ -31,7 +31,8 @@ export function QuoteShareModal({ quote, tagline, shareLabel, closeLabel, onClos
     try {
       if (Platform.OS === 'web') {
         // Web'de view-shot çalışmıyor; kart canvas'a çizilip dosya olarak paylaşılıyor.
-        const r = await shareQuoteCardWeb({ text: quote!.text, author: quote!.author, source: quote!.source, tagline, message });
+        // Söz zaten görselde: yanına yalnız tıklanabilir adres (kullanıcı: "niye hem kart hem yazı gidiyor").
+        const r = await shareQuoteCardWeb({ text: quote!.text, author: quote!.author, source: quote!.source, tagline, message: '✦ Stoikos · https://stoikos.app' });
         if (r !== 'unsupported') return;
         throw new Error('web share unsupported');
       }
