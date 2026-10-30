@@ -253,7 +253,7 @@ yeniden üretme komutları: **`store-assets/README.md`**.
   bunu reddediyor. Ayrıca köşeleri iki mağaza da kendisi yuvarladığı için
   hazır yuvarlatılmış simge iki kez kırpılıyordu.
 - ✅ Gizlilik politikası bağlantısı — mevcut (`gizlilik.html` / `privacy.html`)
-- ⏳ Yaş sınırı anketi — mağaza formunda doldurulacak
+- ⏳ Yaş sınırı anketi — mağaza formunda doldurulacak. **Karar (30 Ekim 2026): kullanıcı yaşı 18+** (kullanım koşulları §5 ve gizlilik §8, sürüm 1.3). Mağaza yaş etiketi ise anketin dürüst cevaplarıyla belirlenecek (muhtemelen 12+/13+); 18+ etiketi bilerek seçilmedi — o etiket "yetişkin içerik" anlamına gelir, keşfedilmeyi düşürür.
 - ⏳ Kategori — öneri: Sağlık ve Fitness (birincil), Yaşam Tarzı (ikincil)
 - ⏳ `constants/config.ts` → `storeUrl` — uygulama yayına girmeden doldurulamaz
 
