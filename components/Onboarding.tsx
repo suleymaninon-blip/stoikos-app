@@ -229,7 +229,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     if (!REMINDERS_SUPPORTED) return;
     try {
       if (!remindOn) { const ok = await enableReminders(lang); setRemindOn(ok); }
-      else { await disableReminders(); setRemindOn(false); }
+      else { await disableReminders(lang); setRemindOn(false); }
     } catch { setRemindOn(false); }
   };
 

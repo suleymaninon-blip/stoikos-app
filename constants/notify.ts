@@ -126,8 +126,8 @@ export async function enableReminders(lang: Lang): Promise<boolean> {
     });
   }
 
-  await scheduleDays(lang);
   await AsyncStorage.setItem(NOTIFY_STORAGE, '1');
+  await scheduleAll(lang);
   return true;
 }
 
@@ -144,7 +144,6 @@ const SCHEDULE_DAYS = 14;
 export const EVENING_URL = '/practice?focus=journal';
 
 async function scheduleDays(lang: Lang): Promise<void> {
-  await Notifications.cancelAllScheduledNotificationsAsync();
   const tx = TEXTS[lang] ?? TEXTS.en;
   const times = await getReminderTimes();
   const now = new Date();
@@ -167,18 +166,68 @@ async function scheduleDays(lang: Lang): Promise<void> {
   }
 }
 
+/**
+ * Hayat haftaları: her pazar 20:30'da "bir hafta daha doldu" (30 Ekim 2026). iPhone duvar kağıdını
+ * uygulama değiştiremiyor; kullanıcı yeni noktayla resmi yeniden kaydetsin diye hatırlatılır.
+ * Günlük hatırlatıcılardan bağımsız bir tercih; dokununca oluşturucu açılır.
+ */
+export const WEEKS_REMINDER_KEY = 'stoikos_weeks_sunday';
+export const WEEKS_URL = '/wallpaper';
+const WEEKS_TEXT: Record<Lang, { t: string; b: string }> = {
+  tr: { t: 'Hayat haftaları', b: 'Bir hafta daha doldu. Duvar kağıdına bir nokta ekle.' },
+  en: { t: 'Life in weeks', b: 'Another week is full. Add a dot to your wallpaper.' },
+  de: { t: 'Leben in Wochen', b: 'Wieder ist eine Woche voll. Füge deinem Hintergrund einen Punkt hinzu.' },
+  ru: { t: 'Жизнь в неделях', b: 'Ещё одна неделя прожита. Добавь точку на обои.' },
+  fr: { t: 'La vie en semaines', b: 'Une semaine de plus est pleine. Ajoute un point à ton fond d’écran.' },
+  es: { t: 'La vida en semanas', b: 'Otra semana se ha llenado. Añade un punto a tu fondo de pantalla.' },
+};
+
+export async function isWeeksReminderOn(): Promise<boolean> {
+  return (await AsyncStorage.getItem(WEEKS_REMINDER_KEY)) === '1';
+}
+
+/** Pazar hatırlatmasını açar/kapatır. Açarken izin ister; verilmezse false döner. */
+export async function setWeeksReminder(on: boolean, lang: Lang): Promise<boolean> {
+  if (!REMINDERS_SUPPORTED) return false;
+  if (on && !(await ensurePermission())) return false;
+  await AsyncStorage.setItem(WEEKS_REMINDER_KEY, on ? '1' : '0');
+  await scheduleAll(lang);
+  return true;
+}
+
+/** Bütün takvimi baştan kurar: açıksa 14 günlük sabah/akşam + açıksa pazar hatırlatması. */
+async function scheduleAll(lang: Lang): Promise<void> {
+  await Notifications.cancelAllScheduledNotificationsAsync();
+  if (await isNotifyEnabled()) await scheduleDays(lang);
+  if (await isWeeksReminderOn()) {
+    const w = WEEKS_TEXT[lang] ?? WEEKS_TEXT.en;
+    await Notifications.scheduleNotificationAsync({
+      content: { title: w.t, body: w.b, data: { url: WEEKS_URL } },
+      // expo-notifications: weekday 1 = pazar
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 1, hour: 20, minute: 30 },
+    });
+  }
+}
+
 /** Açıksa takvimi bugünden itibaren yeniden kurar (uygulama öne gelince ve dil değişince). İzin istemez. */
 export async function topUpReminders(lang: Lang): Promise<void> {
-  if (!REMINDERS_SUPPORTED || !(await isNotifyEnabled())) return;
+  if (!REMINDERS_SUPPORTED) return;
+  if (!(await isNotifyEnabled()) && !(await isWeeksReminderOn())) return;
   try {
     const perm = await Notifications.getPermissionsAsync();
-    if (perm.granted) await scheduleDays(lang);
+    if (perm.granted) await scheduleAll(lang);
   } catch {}
 }
 
-export async function disableReminders(): Promise<void> {
+/** Tüm verileri silerken: günlük ve pazar hatırlatmalarının hepsini kaldırır. */
+export async function cancelAllReminders(): Promise<void> {
+  await AsyncStorage.multiSet([[NOTIFY_STORAGE, '0'], [WEEKS_REMINDER_KEY, '0']]);
   if (REMINDERS_SUPPORTED) await Notifications.cancelAllScheduledNotificationsAsync();
+}
+
+export async function disableReminders(lang: Lang = 'tr'): Promise<void> {
   await AsyncStorage.setItem(NOTIFY_STORAGE, '0');
+  if (REMINDERS_SUPPORTED) await scheduleAll(lang);
 }
 
 // Dil değişince, açıksa hatırlatıcıları yeni dille yeniden kur

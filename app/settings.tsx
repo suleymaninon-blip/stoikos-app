@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
 import { exportJournal } from '../constants/journal';
-import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind } from '../constants/notify';
+import { isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
@@ -53,7 +53,7 @@ export default function SettingsScreen() {
     if (!REMINDERS_SUPPORTED) return;   // web: kart zaten açıklama gösteriyor
     try {
       if (notifyOn) {
-        await disableReminders();
+        await disableReminders(lang);
         setNotifyOn(false);
       } else {
         const ok = await enableReminders(lang);
@@ -137,7 +137,7 @@ export default function SettingsScreen() {
       notify(t('data.deleteAll'), t('data.deleteAllFailed'));
       return;
     }
-    if (REMINDERS_SUPPORTED) await disableReminders().catch(() => {});
+    await cancelAllReminders().catch(() => {});
     const keys = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith('stoikos'));
     await AsyncStorage.multiRemove(keys);
     notify(t('data.deleteAll'), t('data.deleteAllDone'));
@@ -246,7 +246,15 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Tanıtımı tekrar göster */}
+        {/* Hayat haftaları — memento mori duvar kağıdı (30 Ekim 2026) */}
+        <TouchableOpacity style={styles.notifyCard} onPress={() => router.push('/wallpaper')} activeOpacity={0.85} accessibilityRole="button">
+          <View style={{ flex: 1 }}>
+            <Text style={styles.notifyTitle}>{t('wp.title')}</Text>
+            <Text style={styles.notifyHint}>{t('wp.rowHint')}</Text>
+          </View>
+          <Text style={styles.aboutArrow}>›</Text>
+        </TouchableOpacity>
+
         {/* Nasıl kullanılır? (6 hareketli kart) + tanıtımı tekrar göster — yan yana (30 Ekim 2026) */}
         <View style={styles.helpRow}>
           <TouchableOpacity style={[styles.resetBtn, styles.helpBtn]} onPress={() => router.push('/help')} activeOpacity={0.8} accessibilityRole="button">
