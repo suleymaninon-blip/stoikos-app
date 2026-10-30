@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
 import { exportJournal } from '../constants/journal';
-import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
+import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
@@ -27,6 +27,18 @@ export default function SettingsScreen() {
   const [adminKey, setAdminKey] = useState('');
 
   useEffect(() => { isNotifyEnabled().then(setNotifyOn); }, []);
+  const [times, setTimes] = useState<Record<ReminderKind, number> | null>(null);
+  useEffect(() => { getReminderTimes().then(setTimes); }, []);
+
+  // Hatırlatıcı saatini 15 dk kaydır; açıksa takvim yeni saatle yeniden kurulur.
+  function shiftTime(kind: ReminderKind, dir: 1 | -1) {
+    if (!times) return;
+    const [lo, hi] = TIME_RANGE[kind];
+    const next = Math.min(hi, Math.max(lo, times[kind] + dir * TIME_STEP));
+    if (next === times[kind]) return;
+    setTimes({ ...times, [kind]: next });
+    setReminderTime(kind, next, lang).catch(() => {});
+  }
   useEffect(() => { isHealthSyncOn().then(setHealthOn); }, []);
 
   async function toggleHealth() {
@@ -199,6 +211,28 @@ export default function SettingsScreen() {
           )}
         </TouchableOpacity>
 
+        {/* Saatleri kullanıcı seçer (30 Ekim 2026): 15 dk adımlı − / + */}
+        {REMINDERS_SUPPORTED && notifyOn && times && (
+          <View style={styles.timesCard}>
+            {(['morning', 'evening'] as ReminderKind[]).map((k, i) => {
+              const [lo, hi] = TIME_RANGE[k];
+              const label = t(k === 'morning' ? 'notify.morning' : 'notify.evening');
+              return (
+                <View key={k} style={[styles.timeRow, i === 0 && styles.timeRowBorder]}>
+                  <Text style={styles.timeLabel}>{label}</Text>
+                  <TouchableOpacity onPress={() => shiftTime(k, -1)} disabled={times[k] <= lo} style={[styles.timeBtn, times[k] <= lo && styles.timeBtnOff]} accessibilityRole="button" accessibilityLabel={`${label}: ${t('notify.earlier')}`}>
+                    <Text style={styles.timeBtnText}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.timeValue} accessibilityLiveRegion="polite">{formatTime(times[k])}</Text>
+                  <TouchableOpacity onPress={() => shiftTime(k, 1)} disabled={times[k] >= hi} style={[styles.timeBtn, times[k] >= hi && styles.timeBtnOff]} accessibilityRole="button" accessibilityLabel={`${label}: ${t('notify.later')}`}>
+                    <Text style={styles.timeBtnText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
         {/* Sağlık uygulamasına farkındalık dakikası yazma — yalnız iPhone/Android'de */}
         {HEALTH_SUPPORTED && (
           <TouchableOpacity style={styles.notifyCard} onPress={toggleHealth} activeOpacity={0.85} accessibilityRole="switch" accessibilityState={{ checked: healthOn }}>
@@ -323,6 +357,14 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(212,146,74,0.18)',
   },
   notifyCardOff: { opacity: 0.7 },
+  timesCard: { backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, marginTop: -10, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(212,146,74,0.12)' },
+  timeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
+  timeRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.stone4 },
+  timeLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2 },
+  timeValue: { minWidth: 64, textAlign: 'center', fontFamily: Fonts.jostMedium, fontSize: 18, color: Colors.sand2, fontVariant: ['tabular-nums'] },
+  timeBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3 },
+  timeBtnOff: { opacity: 0.35 },
+  timeBtnText: { fontFamily: Fonts.jostMedium, fontSize: 20, color: Colors.sand2 },
   notifyTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.sand2, letterSpacing: 0.3, marginBottom: 4 },
   notifyHint: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19 },
   toggle: { width: 46, height: 27, borderRadius: 14, backgroundColor: Colors.stone4, padding: 3, justifyContent: 'center' },
