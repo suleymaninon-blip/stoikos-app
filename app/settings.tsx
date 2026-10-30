@@ -241,6 +241,8 @@ export default function SettingsScreen() {
         {/* Verilerin — geri alınamayan işlem ayrı bölümde ve uyarı renginde
             (22 Ekim 2026'ya kadar "Tanıtımı tekrar göster" ile aynı görünüyordu). */}
         <Text style={styles.aboutSection}>{t('settings.dataSection')}</Text>
+        {/* Hesap yok: veriler cihazda. Silinince kaybolacağını önceden söyle (rakiplerde "kaybolan günlük" 1★ sebebiydi). */}
+        <Text style={styles.dataNote}>{t('settings.localDataNote')}</Text>
         <TouchableOpacity style={styles.dangerBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
           <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
         </TouchableOpacity>
@@ -325,6 +327,7 @@ const styles = StyleSheet.create({
   dangerText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: '#e3a08f', letterSpacing: 0.3 },
 
   // Destek & Hakkında
+  dataNote: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.text2, marginBottom: 14 },
   aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
   aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', overflow: 'hidden' },
   aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
