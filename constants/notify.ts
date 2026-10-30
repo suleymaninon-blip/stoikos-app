@@ -7,6 +7,39 @@ import { getMorningNudge, getReflectionPromptFor } from './content';
 export const NOTIFY_STORAGE = 'stoikos_notify_enabled';
 
 /**
+ * Hatırlatıcı saatleri kullanıcının (30 Ekim 2026; önce sabit 09:00 / 21:00'dı).
+ * Dakika cinsinden gece yarısından itibaren saklanır; Ayarlar'da 15'er dakikalık
+ * adımlarla değişir. Sabah 05:00–12:00, akşam 17:00–23:45 arası.
+ */
+export type ReminderKind = 'morning' | 'evening';
+const TIME_KEY: Record<ReminderKind, string> = { morning: 'stoikos_notify_morning', evening: 'stoikos_notify_evening' };
+const DEFAULT_MIN: Record<ReminderKind, number> = { morning: 9 * 60, evening: 21 * 60 };
+export const TIME_RANGE: Record<ReminderKind, [number, number]> = { morning: [5 * 60, 12 * 60], evening: [17 * 60, 23 * 60 + 45] };
+export const TIME_STEP = 15;
+
+export async function getReminderTimes(): Promise<Record<ReminderKind, number>> {
+  const out = { ...DEFAULT_MIN };
+  try {
+    const [m, e] = await AsyncStorage.multiGet([TIME_KEY.morning, TIME_KEY.evening]);
+    const pm = Number(m[1]), pe = Number(e[1]);
+    if (m[1] !== null && Number.isFinite(pm)) out.morning = pm;
+    if (e[1] !== null && Number.isFinite(pe)) out.evening = pe;
+  } catch {}
+  return out;
+}
+
+/** Saati kaydeder; hatırlatıcılar açıksa takvimi yeni saatle yeniden kurar. */
+export async function setReminderTime(kind: ReminderKind, minutes: number, lang: Lang): Promise<void> {
+  const [lo, hi] = TIME_RANGE[kind];
+  const v = Math.min(hi, Math.max(lo, Math.round(minutes / TIME_STEP) * TIME_STEP));
+  await AsyncStorage.setItem(TIME_KEY[kind], String(v));
+  await topUpReminders(lang);
+}
+
+export const formatTime = (minutes: number): string =>
+  `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+
+/**
  * Zamanlanmış yerel bildirim WEB'DE YOK.
  *
  * Tarayıcıların "her gün 09:00'da bildirim gönder" diye bir API'si bulunmuyor
@@ -80,7 +113,7 @@ async function ensurePermission(): Promise<boolean> {
   return req.granted;
 }
 
-// Günlük sabah (09:00) ve akşam (21:00) hatırlatıcıları kur
+// Günlük sabah ve akşam hatırlatıcılarını kullanıcının seçtiği saatlerde kur
 export async function enableReminders(lang: Lang): Promise<boolean> {
   if (!REMINDERS_SUPPORTED) return false;
   const ok = await ensurePermission();
@@ -113,11 +146,12 @@ export const EVENING_URL = '/practice?focus=journal';
 async function scheduleDays(lang: Lang): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
   const tx = TEXTS[lang] ?? TEXTS.en;
+  const times = await getReminderTimes();
   const now = new Date();
   for (let i = 0; i < SCHEDULE_DAYS; i++) {
     const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
-    const morning = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9, 0);
-    const evening = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 21, 0);
+    const morning = new Date(day.getFullYear(), day.getMonth(), day.getDate(), Math.floor(times.morning / 60), times.morning % 60);
+    const evening = new Date(day.getFullYear(), day.getMonth(), day.getDate(), Math.floor(times.evening / 60), times.evening % 60);
     if (morning > now) {
       await Notifications.scheduleNotificationAsync({
         content: { title: tx.morningT, body: getMorningNudge(lang, day) },
