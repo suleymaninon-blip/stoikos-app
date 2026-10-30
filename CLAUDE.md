@@ -167,6 +167,16 @@
 > Koç etkilenmiyor (kapısı sunucuda), yani gelir kaybı yok; ama Plus
 > paketinin içi şu an boş görünüyor.
 
+> ⏸️ **BEKLEYEN KARAR — Hayat haftaları duvar kağıdı** (30 Ekim 2026)
+> Kullanıcı son hâlini (bilinçli haftalar/halka, PR #156) **beğenmedi**: "şimdilik dursun,
+> sonra kaldıralım ya da değiştirelim". Şu an yayında, dokunulmadı. Ne beğenilmediği henüz
+> konuşulmadı — değiştirmeden önce sor.
+> Kaldırılırsa: Ayarlar'daki "Hayat haftaları" satırı, `app/wallpaper.tsx`,
+> `components/WeeksWallpaper.tsx`, `constants/lifeWeeks.ts`, `constants/weeksCanvas.ts`,
+> `wp.*` metinleri; `notify.ts`'te `scheduleWeeks`/`WEEKS_*` (⚠️ pazar hatırlatmasını açmış
+> kullanıcılar için `scheduleAll` artık onu kurmamalı — `stoikos_weeks_sunday` bayrağını silip
+> takvimi yeniden kur, yoksa eski bildirimler bir kez daha gelir). `loadActiveDays` yalnız burada kullanılıyor.
+
 > 📋 **Ürün ve pazar değerlendirmesi: `docs/urun-degerlendirmesi.md`**
 > (Eylül 2026). Uygulama baştan sona incelendi; içerik envanteri, bulgular,
 > rakip ve fiyat verisi orada. Çıkan **yayın öncesi** dört madde:
