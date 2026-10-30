@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "criticism": {
+   "title": "Eleştiriyi Kaldırmak",
+   "subtitle": "7 günde eleştiriden ders çıkarmak"
+  }
+ },
+ "criticism": [
+  {
+   "title": "Doğru mu?",
+   "read": "Toplantıdan sonra yöneticin \"Sunumun dağınıktı\" dedi. Akşam boyunca o cümle aklında döndü: nasıl söylediğini, herkesin önünde söylediğini, aslında kendisinin de hazırlıksız geldiğini düşündün.\n\nMarcus Aurelius kendine şunu yazar: biri bana yanıldığımı gösterirse memnuniyetle değişirim. Çünkü ben doğruyu arıyorum ve doğrudan bugüne kadar kimse zarar görmedi; zarar gören, yanılgısında ısrar edendir.\n\nEleştiri gelince ilk sorduğumuz şey genellikle \"Kim söyledi? Nasıl söyledi? Ne hakla?\" olur. Bunlar önemsiz değil, ama ilk soru değil. İlk soru şudur: doğru mu? Kaba bir ağızdan da doğru bir söz çıkabilir; kibar bir ağızdan da yanlış.\n\nAltın arayan, çamurlu nehirden yüz çevirmez; tavasını sallar, çamuru akıtır, parlayanı alır.\n\nEleştirinin içindeki doğruyu bulduğunda, o artık sana yapılmış bir saldırı değil, sana verilmiş bir şeydir.",
+   "body": "Son aldığın bir eleştiriyi yaz. Kimin, nasıl söylediğini bir kenara koy ve yalnızca sor: içinde doğru olan ne? Payını yüzde olarak işaretle.",
+   "ask": "Bugün bir eleştirinin içinde doğru bir şey buldun mu? Onu görmek neyi değiştirdi?"
+  },
+  {
+   "title": "Diğer kusurlarım",
+   "read": "Biri senin hakkında arkandan konuşmuş; arkadaşın sana anlattı. Hemen cevabını kuruyorsun: aslında öyle değildi, o da hiç masum değil, neden bunu söyledi?\n\nEpiktetos öğrencilerine şunu öğütlerdi: biri senin hakkında kötü konuşmuş diye duyarsan, kendini savunma. Yalnızca şöyle de: \"Demek diğer kusurlarımı bilmiyor; yoksa onları da söylerdi.\"\n\nBu kendini küçümsemek değildir. Kusursuz olmadığını zaten bilen biri, bir kusurunun söylenmesiyle yıkılmaz. Savunma ise bir duvar gibidir: seni korur ama arkasından hiçbir şey duymanı da engeller.\n\nGülümseyen bir yüze atılan taş, taş duvara çarpandan daha az ses çıkarır.\n\nSavunmayı bıraktığında, kaybettiğin bir şey olmaz. Yalnızca dinlemek için yer açılır.",
+   "body": "Bugün eleştirildiğinde, cevap vermeden önce \"Haklı olabilirsin, düşüneyim\" de. Savunmayı sonraya bırak.",
+   "ask": "Bugün savunmayı ertelediğinde ne oldu? Ne duydun?"
+  },
+  {
+   "title": "Haksız eleştiri",
+   "read": "Gerçekten haksızdı. Senin yapmadığın bir hata yüzünden suçlandın ya da emeğin hiç anlaşılmadan küçümsendi. İçinde bir öfke ve \"bunu düzeltmem gerek\" acelesi var.\n\nEpiktetos şunu hatırlatır: biri sana kötü davrandığında ya da hakkında kötü konuştuğunda, bunu kendine doğru göründüğü için yapar. Senin doğruna göre değil, kendi doğrusuna göre davranabilir. Yanılıyorsa zarar gören sen değil, aldanan odur.\n\nBu, haksızlığa boyun eğmek demek değildir. Gerekirse sakince düzeltebilir, kanıtını gösterebilirsin. Ama onun yanlış yargısını kendi sırtına yüklemek zorunda değilsin. Yanlış bir harita, yolu değiştirmez; yalnızca haritayı taşıyanı kaybettirir.\n\nYanlış adrese bırakılmış bir mektup, kapındaysa bile senin değildir.\n\nHaksız eleştiri onun yükü. Sen yalnızca nasıl cevap vereceğini taşırsın.",
+   "body": "Haksız bulduğun bir eleştiriye cevap vermeden önce, onun gözünden tek bir cümle yaz: \"O bunu şöyle gördü, çünkü…\"",
+   "ask": "Haksız bir eleştiriyi onun gözünden görmeye çalışınca öfken ne oldu?"
+  },
+  {
+   "title": "Hoca",
+   "read": "Geri bildirim istemek zor. \"Nasıl buldun?\" diye sorduğunda aslında \"beğendim\" duymak istiyorsun; gerçek cevaptan korkuyorsun.\n\nMarcus Aurelius kitabının ilk bölümünü kendisine bir şey öğreten insanlara teşekkürle açar. Hocası Rusticus için şunu yazar: ondan, karakterimin düzeltilmeye ve terbiyeye ihtiyacı olduğunu öğrendim. Roma'nın imparatoru, kendisini eleştiren adamı en değerli hocaları arasında sayar.\n\nEleştiri genellikle başımıza gelen bir şey sanılır. Oysa bilge onu bekleyip katlanmaz, arar. Çünkü insan kendi sırtını göremez; bunun için başka bir göze ihtiyaç vardır.\n\nTerzi kendi ceketinin arkasını göremez; aynanın karşısında bile birinin bakması gerekir.\n\nEleştiri istemek cesaret ister. Ama onu isteyen, kendisine bir hoca bulmuş olur.",
+   "body": "Güvendiğin birinden bir konuda açıkça geri bildirim iste: \"Bunu nasıl daha iyi yapabilirim?\" Cevabı kesmeden dinle.",
+   "ask": "İstediğin geri bildirimde seni en çok şaşırtan ne oldu?"
+  },
+  {
+   "title": "İçerideki eleştirmen",
+   "read": "Kimse bir şey söylemedi ama sen kendine söylüyorsun: \"Yine beceremedin. Neden hep böylesin?\" Gece yatağında günün en kötü anı tekrar tekrar oynuyor.\n\nSeneca her gece ışık söndükten sonra gününü gözden geçirirdi: bugün hangi kusurumu iyileştirdim, hangi hatayı yaptım? Ama sorgusunun sonunda kendine şöyle derdi: \"Bunu bir daha yapma; bu sefer seni affediyorum.\"\n\nEn sert eleştirmen çoğu zaman dışarıda değil, içeridedir. Kendini hırpalamak, kendini düzeltmek sanılır. Değildir. Korkuyla eğitilen çocuk nasıl daha iyi olmazsa, sürekli azarlanan zihin de iyileşmez; yalnızca yorulur.\n\nİyi bir hoca hatayı gösterir, sonra öğrencisinin omzuna dokunur.\n\nKendine de bir hoca gibi bakabilirsin: dürüst, ama şefkatli.",
+   "body": "Akşam gününü Seneca gibi gözden geçir. Üç şey yaz: bir hata, ondan bir ders ve kendine bir affediş.",
+   "ask": "Bugün kendine nasıl konuştun? Bir arkadaşına aynı şekilde konuşur muydun?"
+  },
+  {
+   "title": "Eleştirirken",
+   "read": "Ekip arkadaşın yine teslim tarihini kaçırdı. Söylemen gerekiyor ama ya çok sert söyleyeceksin ya da hiç söylemeyip içinde biriktireceksin.\n\nMarcus, biri hata yaptığında ne yapacağını kendine yazar: ona alay etmeden, kırmadan, nazikçe yanlışını göster. Tıpkı bir babanın çocuğuna \"Hayır evladım, biz bunun için yaratılmadık; bu sana zarar veriyor\" demesi gibi. Ve bunu başkalarının önünde değil, baş başa yap.\n\nEleştiri vermek, karşındakini mahkûm etmek sanılır. Değildir. İyi bir eleştiri kişiye değil davranışa bakar, geçmişi değil sonraki adımı konuşur. Amacı haklı çıkmak değil, birlikte daha iyisini yapmaktır.\n\nUsta bir bahçıvan dalı keserken ağaca kızmaz; yalnızca nereden büyüyeceğini gösterir.\n\nEleştiriyi nasıl verdiğin, onun duyulup duyulmayacağını belirler.",
+   "body": "Söylemen gereken bir eleştiriyi seç. Sakin bir anda, baş başa, kişiyi değil somut bir davranışı konuşarak söyle.",
+   "ask": "Bugün birine eleştiri verdin mi? Nasıl karşılandı, sen nasıl hissettin?"
+  },
+  {
+   "title": "Küçümsenmek",
+   "read": "Bir haftadır eleştirilerle çalışıyorsun. Bazılarında doğru bir pay buldun, bazılarını onların gözünden gördün, belki birinden kendin istedin.\n\nMarcus kendine şöyle sorar: biri beni küçümseyecek mi? Bu onun işi. Benim işim, küçümsenmeyi hak edecek bir şey yapmamak ya da söylememek. Bana kızacak mı? Bu da onun işi. Ben herkese karşı nazik ve iyi niyetli kalırım.\n\nEleştiriyi kaldırmak, her söyleneni içinde taşımak sanılır. Tersine: eleştiriden alınacak ders alındıktan sonra gerisi bırakılır. Kabuğu kırıp içini alan, kabuğu cebinde taşımaz.\n\nFındığı kıran el, kabukları yere bırakır; avucunda yalnızca içi kalır.\n\nÖlçün artık başkalarının sözünde değil. Ama onların sözünden öğrenmeye hâlâ açıksın.",
+   "body": "Bu haftaki eleştirilerden birini seç. Ondan alacağın tek dersi bir cümleyle yaz; gerisini bilerek bırak.",
+   "ask": "Bu yedi günde eleştiriye bakışın nasıl değişti?"
+  }
+ ]
+}
