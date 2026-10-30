@@ -21,6 +21,7 @@ import { useStreak } from '../../hooks/useStreak';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
+import { FirstTip } from '../../components/FirstTip';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
@@ -141,6 +142,8 @@ export default function HomeScreen() {
 
   const quote = getTodaysQuote(lang);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const rootRef = useRef<View>(null);
+  const orbRef = useRef<View>(null);
   const slideAnim = useRef(new Animated.Value(16)).current;
 
   useEffect(() => {
@@ -156,7 +159,7 @@ export default function HomeScreen() {
   const greeting = hour < 18 ? t('home.greetMorn') : t('home.greetEve');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
         colors={['rgba(194,168,120,0.06)', 'transparent']}
         style={styles.gradientTop}
@@ -184,6 +187,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Nefes çiçeği — bir dokunuşla başlar, bir dokunuşla biter (yeni ekran açmaz) */}
+          <View ref={orbRef} collapsable={false}>
           <BreathOrb
             idleTitle={t('home.breathTitle')}
             tapHint={t('home.breathTap')}
@@ -196,6 +200,7 @@ export default function HomeScreen() {
             exhaleLabel={t('home.breathOut')}
             soundLabel={t('breathSound.label')}
           />
+          </View>
 
           {/* Kaldığın yer — program (alt menüde olmayan tek bölüm) */}
           {resume && <ResumeCard resume={resume} />}
@@ -255,6 +260,7 @@ export default function HomeScreen() {
 
         </Animated.View>
       </ScrollView>
+      <FirstTip id="home" text={t('tip.home')} target={orbRef} container={rootRef} />
     </SafeAreaView>
   );
 }

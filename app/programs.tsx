@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Modal, Pressable, TextInput,
 } from 'react-native';
@@ -13,6 +13,7 @@ import { ENFORCE_PLUS_GATE } from '../constants/config';
 import { maybeAskForReview } from '../constants/review';
 import { Paywall } from '../components/Paywall';
 import { LockIcon } from '../components/Icons';
+import { FirstTip } from '../components/FirstTip';
 
 export default function ProgramsScreen() {
   const { t, lang } = useLang();
@@ -20,6 +21,8 @@ export default function ProgramsScreen() {
   const [progress, setProgress] = useState<Record<string, number[]>>({});
   const [openId, setOpenId] = useState<string | null>(null);
   const [dayIdx, setDayIdx] = useState<number | null>(null);
+  const rootRef = useRef<View>(null);
+  const daysRef = useRef<View>(null);
   // Programlar Stoikos Plus'a dahil. Kilitliyken kart gizlenmiyor — ne olduğu
   // görünsün, dokununca ödeme duvarı açılsın; kapatmak yerine tanıtmak.
   const { plus } = usePlus();
@@ -121,7 +124,7 @@ export default function ProgramsScreen() {
   if (open) {
     const done = progress[open.id] || [];
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView ref={rootRef} style={styles.container}>
         <LinearGradient colors={[open.color, 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
         <View style={styles.topBar}>
           <TouchableOpacity onPress={() => (fromHome ? (router.canGoBack() ? router.back() : router.replace('/')) : setOpenId(null))} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
@@ -213,6 +216,7 @@ export default function ProgramsScreen() {
               return (
                 <TouchableOpacity
                   key={i}
+                  ref={i === 0 ? (daysRef as any) : undefined}
                   style={[styles.dayRow, !unlocked && styles.dayRowLocked]}
                   onPress={() => unlocked && setDayIdx(i)}
                   activeOpacity={unlocked ? 0.7 : 1}
@@ -292,6 +296,7 @@ export default function ProgramsScreen() {
             </Pressable>
           </Pressable>
         </Modal>
+        <FirstTip id="programs" text={t('tip.programs')} target={daysRef} container={rootRef} />
       </SafeAreaView>
     );
   }

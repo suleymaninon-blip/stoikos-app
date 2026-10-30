@@ -14,7 +14,7 @@ import { Onboarding } from '../components/Onboarding';
 import { ReminderSync } from '../components/ReminderSync';
 import { registerServiceWorker } from '../constants/registerSW';
 import { installWebColumn } from '../constants/layout';
-import { ONBOARDED_KEY, onReplayOnboarding } from '../constants/onboarding';
+import { ONBOARDED_KEY, onReplayOnboarding, notifyOnboardingDone } from '../constants/onboarding';
 
 SplashScreen.preventAutoHideAsync();
 registerServiceWorker(); // web'de otomatik güncelleme; native'de no-op
@@ -45,7 +45,7 @@ export default function RootLayout() {
 
   const finishOnboarding = () => {
     setOnboarded(true);
-    AsyncStorage.setItem(ONBOARDED_KEY, '1').catch(() => {});
+    AsyncStorage.setItem(ONBOARDED_KEY, '1').catch(() => {}).finally(notifyOnboardingDone);
   };
 
   if (!fontsLoaded) return null;
@@ -61,6 +61,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="help" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
