@@ -1,0 +1,52 @@
+{
+ "programs": {
+  "criticism": {
+   "title": "Recibir la crítica",
+   "subtitle": "Aprender de la crítica en 7 días"
+  }
+ },
+ "criticism": [
+  {
+   "title": "¿Es verdad?",
+   "read": "Después de la reunión, tu jefe te dijo: «Tu presentación fue desordenada». Durante toda la noche esa frase te dio vueltas en la cabeza: pensaste en cómo lo dijo, en que lo dijo delante de todos, en que en realidad él tampoco había venido preparado.\n\nMarco Aurelio se escribe a sí mismo: si alguien me demuestra que me equivoco, cambiaré con gusto. Porque busco la verdad, y nadie ha salido nunca perjudicado por la verdad; el perjudicado es quien persiste en su error.\n\nCuando llega una crítica, lo primero que solemos preguntar es «¿Quién lo dijo? ¿Cómo lo dijo? ¿Con qué derecho?». Estas preguntas no son insignificantes, pero no son las primeras. La primera pregunta es: ¿es verdad? De una boca grosera también puede salir una palabra verdadera; y de una boca amable, una falsa.\n\nQuien busca oro no le da la espalda al río fangoso; agita su batea, deja correr el barro y se queda con lo que brilla.\n\nCuando encuentras la verdad dentro de una crítica, ya no es un ataque contra ti, sino algo que se te ha dado.",
+   "body": "Escribe la última crítica que recibiste. Deja a un lado quién la hizo y cómo, y pregunta solo: ¿qué hay de verdad en ella? Marca esa parte en porcentaje.",
+   "ask": "¿Encontraste hoy algo verdadero dentro de una crítica? ¿Qué cambió al verlo?"
+  },
+  {
+   "title": "Mis otros defectos",
+   "read": "Alguien habló de ti a tus espaldas; te lo contó un amigo. Enseguida armas tu respuesta: en realidad no fue así, él tampoco es ningún santo, ¿por qué dijo eso?\n\nEpicteto aconsejaba a sus alumnos: si te cuentan que alguien habla mal de ti, no te defiendas. Di solamente: «Se ve que no conoce mis otros defectos; si no, también los habría mencionado».\n\nEsto no es menospreciarte. Quien ya sabe que no es perfecto no se derrumba porque le señalen un defecto. La defensa, en cambio, es como un muro: te protege, pero también te impide oír nada de lo que hay detrás.\n\nUna piedra lanzada contra una cara sonriente hace menos ruido que la que choca contra un muro de piedra.\n\nCuando dejas de defenderte, no pierdes nada. Solo se abre espacio para escuchar.",
+   "body": "Hoy, cuando te critiquen, antes de responder di: «Puede que tengas razón; déjame pensarlo». Deja la defensa para después.",
+   "ask": "¿Qué pasó hoy cuando aplazaste la defensa? ¿Qué oíste?"
+  },
+  {
+   "title": "La crítica injusta",
+   "read": "De verdad fue injusto. Te culparon de un error que no cometiste, o menospreciaron tu esfuerzo sin entenderlo en absoluto. Por dentro sientes ira y la prisa de «tengo que arreglar esto».\n\nEpicteto recuerda: cuando alguien te trata mal o habla mal de ti, lo hace porque le parece correcto. No puede actuar según tu verdad, sino según la suya. Si se equivoca, el perjudicado no eres tú, sino el que se ha engañado.\n\nEsto no significa someterse a la injusticia. Si hace falta, puedes corregirlo con calma y mostrar tus pruebas. Pero no tienes por qué cargar a la espalda su juicio equivocado. Un mapa equivocado no cambia el camino; solo hace perderse a quien lo lleva.\n\nUna carta dejada en la dirección equivocada no es tuya, aunque esté en tu puerta.\n\nLa crítica injusta es su carga. Tú solo llevas la manera en que vas a responder.",
+   "body": "Antes de responder a una crítica que te parece injusta, escribe una sola frase desde su mirada: «Lo vio así porque…»",
+   "ask": "Cuando intentaste ver una crítica injusta desde su mirada, ¿qué pasó con tu enfado?"
+  },
+  {
+   "title": "El maestro",
+   "read": "Pedir una opinión sincera es difícil. Cuando preguntas «¿Qué te pareció?», en realidad quieres oír «Me gustó»; te da miedo la respuesta de verdad.\n\nMarco Aurelio abre el primer libro de sus escritos dando las gracias a quienes le enseñaron algo. Sobre su maestro Rústico escribe: de él aprendí que mi carácter necesitaba corrección y disciplina. El emperador de Roma cuenta al hombre que lo criticaba entre sus maestros más valiosos.\n\nSe suele creer que la crítica es algo que nos pasa. Pero el sabio no la espera para aguantarla: la busca. Porque nadie puede verse la propia espalda; para eso hace falta otra mirada.\n\nEl sastre no puede ver la espalda de su propia chaqueta; incluso frente al espejo, alguien tiene que mirar.\n\nPedir una crítica exige valor. Pero quien la pide se ha encontrado un maestro.",
+   "body": "Pídele a alguien de confianza una opinión sincera sobre algo concreto: «¿Cómo puedo hacer esto mejor?». Escucha la respuesta sin interrumpir.",
+   "ask": "En la opinión que pediste, ¿qué fue lo que más te sorprendió?"
+  },
+  {
+   "title": "El crítico interior",
+   "read": "Nadie ha dicho nada, pero tú te lo dices: «Otra vez no lo lograste. ¿Por qué siempre eres así?». Por la noche, en la cama, el peor momento del día se repite una y otra vez.\n\nSéneca, cada noche, después de apagar la luz, repasaba su día: ¿qué defecto mío he curado hoy?, ¿qué error he cometido? Pero al final de su examen se decía: «No vuelvas a hacerlo; esta vez te perdono».\n\nEl crítico más duro muchas veces no está fuera, sino dentro. Se cree que maltratarse es corregirse. No lo es. Igual que un niño educado con miedo no se vuelve mejor, una mente reprendida sin parar no sana; solo se cansa.\n\nUn buen maestro señala el error y luego toca el hombro de su alumno.\n\nTambién puedes mirarte como lo haría un maestro: con honestidad, pero con ternura.",
+   "body": "Por la noche, repasa tu día como Séneca. Escribe tres cosas: un error, una lección que saques de él y un perdón para ti.",
+   "ask": "¿Cómo te hablaste hoy? ¿Le hablarías así a un amigo?"
+  },
+  {
+   "title": "Al criticar",
+   "read": "Tu compañero de equipo ha vuelto a saltarse la fecha de entrega. Tienes que decírselo, pero o se lo vas a decir con demasiada dureza o no le vas a decir nada y lo vas a ir acumulando por dentro.\n\nMarco Aurelio anota para sí qué hacer cuando alguien se equivoca: muéstrale su error con suavidad, sin burlarte, sin herirlo. Como un padre que le dice a su hijo: «No, hijo, no hemos nacido para esto; esto te hace daño». Y hazlo no delante de los demás, sino a solas.\n\nSe cree que criticar es condenar al otro. No lo es. Una buena crítica mira la conducta, no a la persona; habla del siguiente paso, no del pasado. Su fin no es tener razón, sino hacerlo mejor juntos.\n\nUn jardinero experto no se enfada con el árbol al podar una rama; solo le muestra por dónde crecer.\n\nLa forma en que das una crítica decide si será escuchada o no.",
+   "body": "Elige una crítica que tengas que hacer. Dila en un momento tranquilo, a solas, hablando de una conducta concreta y no de la persona.",
+   "ask": "¿Le hiciste hoy una crítica a alguien? ¿Cómo la recibió y cómo te sentiste tú?"
+  },
+  {
+   "title": "El menosprecio",
+   "read": "Llevas una semana trabajando con la crítica. En algunas encontraste una parte de verdad, otras las viste desde su mirada, quizá hasta se la pediste tú a alguien.\n\nMarco Aurelio se pregunta: ¿alguien me va a despreciar? Eso es asunto suyo. El mío es no hacer ni decir nada que merezca desprecio. ¿Se va a enfadar conmigo? Eso también es asunto suyo. Yo sigo siendo amable y benévolo con todos.\n\nSe cree que soportar la crítica es cargar con todo lo que te dicen. Al contrario: una vez sacada la lección, se suelta el resto. Quien rompe la cáscara y se queda con el fruto no lleva la cáscara en el bolsillo.\n\nLa mano que casca avellanas deja caer las cáscaras al suelo; en la palma solo le queda el fruto.\n\nTu medida ya no está en las palabras de los demás. Pero sigues con la puerta abierta para aprender de ellas.",
+   "body": "Elige una de las críticas de esta semana. Escribe en una frase la única lección que te llevas de ella; suelta el resto a propósito.",
+   "ask": "¿Cómo cambió tu forma de ver la crítica en estos siete días?"
+  }
+ ]
+}
