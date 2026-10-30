@@ -8,7 +8,8 @@ import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
-import { useLang, LANGUAGES, upper } from '../constants/i18n';
+import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
+import { exportJournal } from '../constants/journal';
 import { isNotifyEnabled, enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
@@ -102,6 +103,13 @@ export default function SettingsScreen() {
   // Tüm verileri sil: önce sunucudaki koç hafızası (ağ gerekir), o onaylanınca cihazdaki
   // bütün stoikos_* kayıtları ve kurulu hatırlatıcılar. Sunucu silinmezse hiçbir şeye
   // dokunulmaz — "silindi" ancak gerçekten silinince söylenir. Abonelik mağazada, etkilenmez.
+  async function exportMyJournal() {
+    try {
+      const r = await exportJournal(t('data.exportTitle'), localeOf(lang));
+      if (r === 'empty') notify(t('data.export'), t('data.exportEmpty'));
+    } catch {}
+  }
+
   async function deleteAllData() {
     const ok = await confirmAction({
       title: t('data.deleteAll'),
@@ -243,6 +251,9 @@ export default function SettingsScreen() {
         <Text style={styles.aboutSection}>{t('settings.dataSection')}</Text>
         {/* Hesap yok: veriler cihazda. Silinince kaybolacağını önceden söyle (rakiplerde "kaybolan günlük" 1★ sebebiydi). */}
         <Text style={styles.dataNote}>{t('settings.localDataNote')}</Text>
+        <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={exportMyJournal} activeOpacity={0.8}>
+          <Text style={styles.resetText}>{t('data.export')}</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.dangerBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
           <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
         </TouchableOpacity>

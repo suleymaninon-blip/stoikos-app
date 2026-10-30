@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { Colors, Fonts } from '../constants/theme';
-import { JOURNAL_KEY } from '../constants/journal';
+import { loadJournalEntries, JournalEntry } from '../constants/journal';
 import { useLang, localeOf } from '../constants/i18n';
 
-// JOURNAL_KEY artık constants/journal.ts'te.
-
-type Entry = { key: string; date: Date; text: string };
+type Entry = JournalEntry;
 
 export default function JournalScreen() {
   const { t, lang } = useLang();
@@ -19,17 +16,7 @@ export default function JournalScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const keys = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith(JOURNAL_KEY));
-        const pairs = await AsyncStorage.multiGet(keys);
-        const list: Entry[] = [];
-        for (const [k, v] of pairs) {
-          const text = (v || '').trim();
-          if (!text) continue;
-          const datePart = k.slice(JOURNAL_KEY.length);
-          const date = new Date(datePart);
-          list.push({ key: k, date: isNaN(date.getTime()) ? new Date(0) : date, text });
-        }
-        list.sort((a, b) => b.date.getTime() - a.date.getTime());
+        const list = await loadJournalEntries();
         setEntries(list);
       } catch {}
       setLoaded(true);
