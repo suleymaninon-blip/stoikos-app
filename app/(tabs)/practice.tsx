@@ -9,6 +9,7 @@ import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, Fonts } from '../../constants/theme';
+import { FirstTip } from '../../components/FirstTip';
 import { JOURNAL_KEY, journalKeyFor } from '../../constants/journal';
 import { DayPartIcon, DayPart } from '../../components/Icons';
 import { useLang } from '../../constants/i18n';
@@ -157,6 +158,8 @@ export default function PracticeScreen() {
   // Akşam bildirimine dokununca `/practice?focus=journal` açılır → günlük kartına kaydır.
   const { focus } = useLocalSearchParams<{ focus?: string }>();
   const scrollRef = useRef<ScrollView>(null);
+  const rootRef = useRef<View>(null);
+  const firstRowRef = useRef<View>(null);
   const journalY = useRef<number | null>(null);
   const scrollToJournal = () => {
     if (journalY.current != null) scrollRef.current?.scrollTo({ y: Math.max(0, journalY.current - 16), animated: true });
@@ -286,7 +289,7 @@ export default function PracticeScreen() {
   const progress = totalCount > 0 ? doneCount / totalCount : 0;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
         colors={['rgba(196,169,106,0.06)', 'transparent']}
         style={styles.grad}
@@ -331,7 +334,8 @@ export default function PracticeScreen() {
                 </Text>
               </View>
             </View>
-            {MORNING_EXERCISES.map((ex) => (
+            {MORNING_EXERCISES.map((ex, i) => (
+              <View key={ex.id} ref={i === 0 ? firstRowRef : undefined} collapsable={false}>
               <ExerciseRow
                 key={ex.id}
                 exercise={ex}
@@ -342,6 +346,7 @@ export default function PracticeScreen() {
                 markLabel={t('practice.markA11y', { name: ex.name })}
                 openLabel={t('practice.openA11y', { name: ex.name })}
               />
+              </View>
             ))}
           </View>
 
@@ -468,6 +473,7 @@ export default function PracticeScreen() {
           </TouchableOpacity>
         </View>
       )}
+      <FirstTip id="practice" text={t('tip.practice')} target={firstRowRef} container={rootRef} enabled={MORNING_EXERCISES.length > 0} />
     </SafeAreaView>
   );
 }

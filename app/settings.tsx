@@ -213,9 +213,15 @@ export default function SettingsScreen() {
         )}
 
         {/* Tanıtımı tekrar göster */}
-        <TouchableOpacity style={styles.resetBtn} onPress={showOnboardingAgain} activeOpacity={0.8}>
-          <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
-        </TouchableOpacity>
+        {/* Nasıl kullanılır? (6 hareketli kart) + tanıtımı tekrar göster — yan yana (30 Ekim 2026) */}
+        <View style={styles.helpRow}>
+          <TouchableOpacity style={[styles.resetBtn, styles.helpBtn]} onPress={() => router.push('/help')} activeOpacity={0.8} accessibilityRole="button">
+            <Text style={[styles.resetText, styles.helpText]}>{t('help.title')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.resetBtn, { flex: 1 }]} onPress={showOnboardingAgain} activeOpacity={0.8} accessibilityRole="button">
+            <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
+          </TouchableOpacity>
+        </View>
 
 
         {/* Destek & Hakkında */}
@@ -325,12 +331,15 @@ const styles = StyleSheet.create({
   toggleKnobOn: { alignSelf: 'flex-end' },
 
   // Reset / aksiyon butonları
+  helpRow: { flexDirection: 'row', gap: 10 },
+  helpBtn: { flex: 1, borderColor: 'rgba(194,168,120,0.45)', backgroundColor: Colors.stone3 },
+  helpText: { color: Colors.sand2 },
   resetBtn: {
     backgroundColor: Colors.stone2, borderRadius: 14,
-    paddingVertical: 14, alignItems: 'center',
+    paddingVertical: 14, paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
-  resetText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text2, letterSpacing: 0.3 },
+  resetText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text2, letterSpacing: 0.3, textAlign: 'center' },
   dangerBtn: {
     minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: 'rgba(214,120,100,0.35)', backgroundColor: 'rgba(214,120,100,0.06)',

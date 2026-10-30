@@ -7,6 +7,7 @@ import {
 import { useAppDimensions } from '../../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Fonts } from '../../constants/theme';
+import { FirstTip } from '../../components/FirstTip';
 import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
 import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD_THEMES, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
@@ -325,6 +326,8 @@ export default function WisdomScreen() {
   // Filtre değişince yeni sonuçlar baştan gösterilir; kısa bir listede başlık
   // kapalı kalırsa kaydırarak açılamazdı.
   const listRef = useRef<FlatList<Quote>>(null);
+  const rootRef = useRef<View>(null);
+  const wheelRef = useRef<View>(null);
   useEffect(() => {
     listRef.current?.scrollToOffset({ offset: 0, animated: false });
     setHeaderCollapsed(false);
@@ -337,7 +340,7 @@ export default function WisdomScreen() {
     quotes.filter((q) => q.authorId === filter);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
         colors={['rgba(196,169,106,0.05)', 'transparent']}
         style={styles.grad}
@@ -411,6 +414,7 @@ export default function WisdomScreen() {
       {tab === 'quotes' ? (
         <>
           {/* Tek tekerlek — seçilen moda göre içerik (mod değişince remount) */}
+          <View ref={wheelRef} collapsable={false}>
           <WheelSelector
             key={mode}
             opts={mode === 'author' ? authorOpts : moodOpts}
@@ -418,6 +422,7 @@ export default function WisdomScreen() {
             onChange={setFilter}
             itemW={mode === 'author' ? 144 : 124}
           />
+          </View>
 
           <FlatList
             ref={listRef}
@@ -471,6 +476,7 @@ export default function WisdomScreen() {
         onClose={() => setShareQuote(null)}
       />
 
+      <FirstTip id="wisdom" text={t('tip.wisdom')} target={wheelRef} container={rootRef} enabled={tab === 'quotes'} />
     </SafeAreaView>
   );
 }
