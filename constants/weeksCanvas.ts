@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 import { Fonts } from './theme';
-import { WP_W, WP_H, WP_OUT, PALETTES, weeksLayout, marbleVeins, groupNum, type WeeksPrefs } from './lifeWeeks';
+import { WP_W, WP_H, WP_OUT, PALETTES, weeksLayout, weeksTexts, marbleVeins, type WeeksPrefs } from './lifeWeeks';
 import { MARK_PATH } from '../components/StoikosMark';
 
 /**
@@ -9,14 +9,14 @@ import { MARK_PATH } from '../components/StoikosMark';
  * yolları SVG yolu olarak Path2D'ye verilir, tuval 390×844'ten ölçeklenir.
  * Kaydet → indirme; Paylaş → Web Share (dosya destekleniyorsa), yoksa indirme.
  */
-type Texts = { caption: string; weeksUpper: string; lang: string };
+type Texts = { t: (k: string) => string; lang: string; activeDays: Date[] };
 
 async function render(p: WeeksPrefs, tx: Texts): Promise<Blob> {
   try {
-    await Promise.all([`17px "${Fonts.cormorantItalic}"`, `11px "${Fonts.jost}"`, `10px "${Fonts.cinzel}"`].map((f) => (document as any).fonts.load(f)));
+    await Promise.all([`16px "${Fonts.cormorantItalic}"`, `11px "${Fonts.jost}"`, `10px "${Fonts.cinzel}"`].map((f) => (document as any).fonts.load(f)));
   } catch {}
   const P = PALETTES[p.theme];
-  const L = weeksLayout(p);
+  const L = weeksLayout(p, tx.activeDays);
   const c = document.createElement('canvas');
   c.width = WP_OUT.width; c.height = WP_OUT.height;
   const ctx = c.getContext('2d')!;
@@ -48,6 +48,10 @@ async function render(p: WeeksPrefs, tx: Texts): Promise<Blob> {
   ctx.globalAlpha = 0.95; ctx.fill(new Path2D(L.recentPath));
   ctx.globalAlpha = 1;
   ctx.strokeStyle = P.rest; ctx.lineWidth = 0.7; ctx.stroke(new Path2D(L.restPath));
+  if (L.activePath) {
+    ctx.fill(new Path2D(L.activePath));
+    ctx.strokeStyle = P.ring; ctx.lineWidth = 0.9; ctx.stroke(new Path2D(L.ringPath));
+  }
   ctx.fillStyle = P.now; ctx.beginPath(); ctx.arc(L.now.x, L.now.y, L.now.r, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = P.now; ctx.globalAlpha = 0.55; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(L.now.x, L.now.y, L.now.halo, 0, Math.PI * 2); ctx.stroke();
@@ -57,24 +61,29 @@ async function render(p: WeeksPrefs, tx: Texts): Promise<Blob> {
   ctx.fillStyle = P.muted; ctx.font = `9px "${Fonts.jost}"`; ctx.textAlign = 'right';
   for (const d of L.decades) ctx.fillText(d.label, d.right, d.y);
   ctx.textAlign = 'center';
-  const stat = p.numbers
-    ? `MEMENTO MORI · ${groupNum(L.lived, tx.lang)} / ${groupNum(L.total, tx.lang)} ${tx.weeksUpper}`
-    : 'MEMENTO MORI';
+  // Native ile aynı düzen (components/WeeksWallpaper.tsx): MEMENTO MORI / sayılar / açıklama
+  const { stat, caption } = weeksTexts(L, tx.lang, tx.t);
+  const fit = (text: string, size: number, fam: string) => {
+    for (let s = size; s >= 10; s -= 0.5) { ctx.font = `${s}px "${fam}"`; if (ctx.measureText(text).width <= WP_W - 48) return; }
+  };
   ctx.font = `11px "${Fonts.jost}"`; (ctx as any).letterSpacing = '3px';
-  ctx.fillText(stat, WP_W / 2, 758);
+  ctx.fillText('MEMENTO MORI', WP_W / 2, 751);
+  (ctx as any).letterSpacing = '0.5px';
+  let y = 772;
+  if (p.numbers) { fit(stat, 12, Fonts.jost); ctx.fillText(stat, WP_W / 2, 768); y = 791; }
   (ctx as any).letterSpacing = '0px';
-  ctx.fillStyle = P.text; ctx.font = `17px "${Fonts.cormorantItalic}"`;
-  ctx.fillText(tx.caption, WP_W / 2, 782);
+  ctx.fillStyle = P.text; fit(caption, 16, Fonts.cormorantItalic);
+  ctx.fillText(caption, WP_W / 2, y);
 
   // İşaret + STOIKOS, ortalı
   ctx.globalAlpha = 0.7;
   ctx.font = `10px "${Fonts.cinzel}"`; (ctx as any).letterSpacing = '4px';
   const bw = ctx.measureText('STOIKOS').width, total = 13 + 8 + bw;
   const bx = WP_W / 2 - total / 2;
-  ctx.save(); ctx.translate(bx, 806); ctx.scale(13 / 640, 13 / 640); ctx.translate(-192, -162);
+  ctx.save(); ctx.translate(bx, 816); ctx.scale(13 / 640, 13 / 640); ctx.translate(-192, -162);
   ctx.strokeStyle = P.brand; ctx.lineWidth = 79; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   ctx.stroke(new Path2D(MARK_PATH)); ctx.restore();
-  ctx.fillStyle = P.brand; ctx.textAlign = 'left'; ctx.fillText('STOIKOS', bx + 21, 813);
+  ctx.fillStyle = P.brand; ctx.textAlign = 'left'; ctx.fillText('STOIKOS', bx + 21, 823);
   (ctx as any).letterSpacing = '0px'; ctx.globalAlpha = 1;
 
   return await new Promise<Blob>((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('toBlob'))), 'image/png'));

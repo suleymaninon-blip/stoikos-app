@@ -3,6 +3,7 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Lang } from './i18n';
 import { getMorningNudge, getReflectionPromptFor } from './content';
+import { loadActiveDays } from './lifeWeeks';
 
 export const NOTIFY_STORAGE = 'stoikos_notify_enabled';
 
@@ -167,20 +168,50 @@ async function scheduleDays(lang: Lang): Promise<void> {
 }
 
 /**
- * Hayat haftaları: her pazar 20:30'da "bir hafta daha doldu" (30 Ekim 2026). iPhone duvar kağıdını
- * uygulama değiştiremiyor; kullanıcı yeni noktayla resmi yeniden kaydetsin diye hatırlatılır.
- * Günlük hatırlatıcılardan bağımsız bir tercih; dokununca oluşturucu açılır.
+ * Hayat haftaları: her pazar 20:30 (30 Ekim 2026). iPhone duvar kağıdını uygulama değiştiremiyor;
+ * kullanıcı yeni haftayla resmi yeniden kaydetsin diye hatırlatılır. Günlük hatırlatıcılardan bağımsız
+ * bir tercih; dokununca oluşturucu açılır.
+ * Metin geriye değil ileriye bakar ("bir hafta daha doldu" moral bozuyordu): o hafta uygulamada bir şey
+ * yapıldıysa kaç gün yapıldığını söyler ve yeni halkayı eklemeye çağırır; boş geçtiyse suçlamaz,
+ * yeni haftaya bakar. Bildirim içeriği kurulurken sabitlendiği için yalnız ilk pazar sayıyı taşır;
+ * sonrakiler nötr metinle kurulur. Uygulama her açıldığında takvim yeniden kurulduğundan sayı tazelenir.
  */
 export const WEEKS_REMINDER_KEY = 'stoikos_weeks_sunday';
 export const WEEKS_URL = '/wallpaper';
-const WEEKS_TEXT: Record<Lang, { t: string; b: string }> = {
-  tr: { t: 'Hayat haftaları', b: 'Bir hafta daha doldu. Duvar kağıdına bir nokta ekle.' },
-  en: { t: 'Life in weeks', b: 'Another week is full. Add a dot to your wallpaper.' },
-  de: { t: 'Leben in Wochen', b: 'Wieder ist eine Woche voll. Füge deinem Hintergrund einen Punkt hinzu.' },
-  ru: { t: 'Жизнь в неделях', b: 'Ещё одна неделя прожита. Добавь точку на обои.' },
-  fr: { t: 'La vie en semaines', b: 'Une semaine de plus est pleine. Ajoute un point à ton fond d’écran.' },
-  es: { t: 'La vida en semanas', b: 'Otra semana se ha llenado. Añade un punto a tu fondo de pantalla.' },
+const ruDays = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'день' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'дня' : 'дней');
+const WEEKS_TEXT: Record<Lang, { t: string; active: (n: number) => string; idle: string }> = {
+  tr: { t: 'Hayat haftaları', active: (n) => `Bu hafta ${n} gün pratik yaptın. Yeni halkanı duvar kağıdına ekle.`, idle: 'Yeni bir hafta başlıyor. Ona ne katacaksın?' },
+  en: { t: 'Life in weeks', active: (n) => `You practiced on ${n} ${n === 1 ? 'day' : 'days'} this week. Add your new ring to your wallpaper.`, idle: 'A new week begins. What will you put into it?' },
+  de: { t: 'Leben in Wochen', active: (n) => `Diese Woche hast du an ${n} ${n === 1 ? 'Tag' : 'Tagen'} geübt. Füge deinem Hintergrund den neuen Ring hinzu.`, idle: 'Eine neue Woche beginnt. Was wirst du ihr geben?' },
+  ru: { t: 'Жизнь в неделях', active: (n) => `На этой неделе ты практиковал(а) ${n} ${ruDays(n)}. Добавь новое кольцо на обои.`, idle: 'Начинается новая неделя. Что ты в неё вложишь?' },
+  fr: { t: 'La vie en semaines', active: (n) => `Cette semaine, tu as pratiqué ${n} jour${n > 1 ? 's' : ''}. Ajoute ton nouvel anneau à ton fond d’écran.`, idle: 'Une nouvelle semaine commence. Qu’y mettras-tu ?' },
+  es: { t: 'La vida en semanas', active: (n) => `Esta semana practicaste ${n} ${n === 1 ? 'día' : 'días'}. Añade tu nuevo anillo al fondo de pantalla.`, idle: 'Empieza una nueva semana. ¿Qué pondrás en ella?' },
 };
+
+/** Önümüzdeki pazarlar 20:30 (bugün pazarsa ve saat geçmediyse bugün de). */
+function nextSundays(count: number, now = new Date()): Date[] {
+  const out: Date[] = [];
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + ((7 - now.getDay()) % 7), 20, 30);
+  if (d <= now) d.setDate(d.getDate() + 7);
+  for (let i = 0; i < count; i++) out.push(new Date(d.getFullYear(), d.getMonth(), d.getDate() + i * 7, 20, 30));
+  return out;
+}
+
+async function scheduleWeeks(lang: Lang): Promise<void> {
+  const w = WEEKS_TEXT[lang] ?? WEEKS_TEXT.en;
+  const sundays = nextSundays(3);
+  // İlk pazarın haftası: pazartesi 00:00 → pazar
+  const first = sundays[0];
+  const monday = new Date(first.getFullYear(), first.getMonth(), first.getDate() - 6);
+  const days = (await loadActiveDays()).filter((d) => d >= monday && d <= first).length;
+  for (let i = 0; i < sundays.length; i++) {
+    const body = i === 0 && days > 0 ? w.active(days) : w.idle;
+    await Notifications.scheduleNotificationAsync({
+      content: { title: w.t, body, data: { url: WEEKS_URL } },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: sundays[i] },
+    });
+  }
+}
 
 export async function isWeeksReminderOn(): Promise<boolean> {
   return (await AsyncStorage.getItem(WEEKS_REMINDER_KEY)) === '1';
@@ -199,14 +230,7 @@ export async function setWeeksReminder(on: boolean, lang: Lang): Promise<boolean
 async function scheduleAll(lang: Lang): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (await isNotifyEnabled()) await scheduleDays(lang);
-  if (await isWeeksReminderOn()) {
-    const w = WEEKS_TEXT[lang] ?? WEEKS_TEXT.en;
-    await Notifications.scheduleNotificationAsync({
-      content: { title: w.t, body: w.b, data: { url: WEEKS_URL } },
-      // expo-notifications: weekday 1 = pazar
-      trigger: { type: Notifications.SchedulableTriggerInputTypes.WEEKLY, weekday: 1, hour: 20, minute: 30 },
-    });
-  }
+  if (await isWeeksReminderOn()) await scheduleWeeks(lang);
 }
 
 /** Açıksa takvimi bugünden itibaren yeniden kurar (uygulama öne gelince ve dil değişince). İzin istemez. */

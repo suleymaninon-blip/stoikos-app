@@ -9,6 +9,7 @@ import { useLang } from '../constants/i18n';
 import { WeeksWallpaper } from '../components/WeeksWallpaper';
 import {
   WP_W, WP_H, WP_OUT, WEEKS_THEMES, SWATCH, MIN_YEAR, maxBirthYear,
+  LIFE_OPTIONS, lifeAllowed, fitLife, loadActiveDays,
   loadWeeksPrefs, saveWeeksPrefs, type WeeksPrefs, type WeeksTheme,
 } from '../constants/lifeWeeks';
 import { exportWeeksWeb } from '../constants/weeksCanvas';
@@ -18,7 +19,8 @@ import { notify } from '../constants/dialog';
 /**
  * Hayat haftaları — memento mori duvar kağıdı oluşturucu (30 Ekim 2026; tasarım
  * https://claude.ai/artifact/59VknQFbGf1zGqT5v8cJEU). Ayarlar'dan açılır.
- * Doğum ayı/yılı, ömür (80/90), dört görünüm, sayılar; resim 1290×2796.
+ * Doğum ayı/yılı, ömür (80/90/100, yaşın altında kalamaz), dört görünüm, sayılar; resim 1290×2796.
+ * Uygulamada bir şey yapılan haftalar halkayla işaretlenir ("bilinçli haftalar").
  * iPhone duvar kağıdını uygulama değiştiremez: Kaydet paylaşım ekranını açar ("Resmi Kaydet"),
  * kullanıcı Fotoğraflar'dan "Duvar Kağıdı Olarak Kullan"ı seçer. Yeni izin gerekmiyor.
  * Pazar hatırlatması isteğe bağlı (notify.ts → setWeeksReminder), yalnız iOS/Android.
@@ -31,15 +33,19 @@ export default function WallpaperScreen() {
   const [sunday, setSunday] = useState(false);
   const [busy, setBusy] = useState<'save' | 'share' | null>(null);
   const [toast, setToast] = useState('');
+  const [activeDays, setActiveDays] = useState<Date[]>([]);
   const shot = useRef<View>(null);
 
   useEffect(() => { loadWeeksPrefs().then(({ prefs }) => setPrefs(prefs)); }, []);
+  useEffect(() => { loadActiveDays().then(setActiveDays); }, []);
   useEffect(() => { isWeeksReminderOn().then(setSunday); }, []);
 
   if (!prefs) return <View style={styles.container} />;
 
   const update = (patch: Partial<WeeksPrefs>) => {
-    const next = { ...prefs, ...patch };
+    const merged = { ...prefs, ...patch };
+    // Doğum tarihi değişince ömür yaşın altında kalmasın (bkz. lifeWeeks.ts → fitLife).
+    const next = { ...merged, life: fitLife(merged.year, merged.month, merged.life) };
     setPrefs(next); setToast('');
     saveWeeksPrefs(next);
   };
@@ -58,7 +64,7 @@ export default function WallpaperScreen() {
     const shareText = t('wp.shareText');
     try {
       if (Platform.OS === 'web') {
-        const r = await exportWeeksWeb(prefs!, { caption: t('wp.caption'), weeksUpper: t('wp.weeksUpper'), lang }, mode, shareText);
+        const r = await exportWeeksWeb(prefs!, { t, lang, activeDays }, mode, shareText);
         if (r === 'downloaded') setToast(t('wp.downloaded'));
         return;
       }
@@ -87,7 +93,7 @@ export default function WallpaperScreen() {
       {/* Resim bu tam boyutlu, saatsiz kopyadan alınır (önizleme ölçekli). Ekranda ama opak bir
           katmanın arkasında: ekran dışına itilen görünümü iOS boş yakalayabiliyor. */}
       <View style={styles.hidden} pointerEvents="none">
-        <WeeksWallpaper ref={shot} prefs={prefs} lang={lang} t={t} />
+        <WeeksWallpaper ref={shot} prefs={prefs} lang={lang} t={t} activeDays={activeDays} />
       </View>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: Colors.bg }]} pointerEvents="none" />
       <LinearGradient colors={['rgba(196,169,106,0.05)', 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
@@ -99,13 +105,14 @@ export default function WallpaperScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.title}>{t('wp.title')}</Text>
             <Text style={styles.subtitle}>{t('wp.subtitle')}</Text>
+            <Text style={styles.intent}>{t('wp.intent')}</Text>
           </View>
         </View>
 
         {/* Önizleme: gerçek boyutta çizilir, ölçeklenerek gösterilir; resim bu görünümden alınır. */}
         <View style={styles.previewBox}>
           <View style={styles.previewInner}>
-            <WeeksWallpaper prefs={prefs} lang={lang} t={t} clock />
+            <WeeksWallpaper prefs={prefs} lang={lang} t={t} activeDays={activeDays} clock />
           </View>
         </View>
 
@@ -122,11 +129,14 @@ export default function WallpaperScreen() {
 
           <View style={[styles.row, styles.rowBorder]}>
             <Text style={styles.label}>{t('wp.life')}</Text>
-            {([80, 90] as const).map((n) => (
-              <TouchableOpacity key={n} onPress={() => update({ life: n })} style={[styles.chip, prefs.life === n && styles.chipOn]} accessibilityRole="radio" accessibilityState={{ selected: prefs.life === n }}>
-                <Text style={[styles.chipText, prefs.life === n && styles.chipTextOn]}>{t('wp.years').replace('{n}', String(n))}</Text>
-              </TouchableOpacity>
-            ))}
+            {LIFE_OPTIONS.map((n) => {
+              const ok = lifeAllowed(n, prefs.year, prefs.month);
+              return (
+                <TouchableOpacity key={n} onPress={() => update({ life: n })} disabled={!ok} style={[styles.chip, prefs.life === n && styles.chipOn, !ok && { opacity: 0.3 }]} accessibilityRole="radio" accessibilityState={{ selected: prefs.life === n, disabled: !ok }}>
+                  <Text style={[styles.chipText, prefs.life === n && styles.chipTextOn]}>{t('wp.years').replace('{n}', String(n))}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           <View style={[styles.rowBorder, { paddingVertical: 12, gap: 10 }]}>
@@ -184,6 +194,7 @@ const styles = StyleSheet.create({
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 28, lineHeight: 32, color: Colors.text },
   subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
+  intent: { fontFamily: Fonts.cormorantItalic, fontSize: 16, lineHeight: 20, color: Colors.text2, marginTop: 4 },
   previewBox: {
     alignSelf: 'center', width: WP_W * PREVIEW, height: WP_H * PREVIEW, borderRadius: 22, overflow: 'hidden',
     borderWidth: 1, borderColor: 'rgba(194,168,120,0.25)',
@@ -201,7 +212,7 @@ const styles = StyleSheet.create({
   value: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.sand2, textAlign: 'center' },
   step: { width: 30, height: 44, alignItems: 'center', justifyContent: 'center' },
   stepText: { fontFamily: Fonts.jostLight, fontSize: 22, color: Colors.sand },
-  chip: { minWidth: 64, height: 36, borderRadius: 18, borderWidth: 1, borderColor: '#3a342a', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12, marginLeft: 6 },
+  chip: { minWidth: 58, height: 36, borderRadius: 18, borderWidth: 1, borderColor: '#3a342a', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10, marginLeft: 6 },
   chipOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
   chipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
   chipTextOn: { color: Colors.bg, fontFamily: Fonts.jostMedium },

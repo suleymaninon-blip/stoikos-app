@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Path, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { Fonts } from '../constants/theme';
 import { localeOf, type Lang } from '../constants/i18n';
-import { WP_W, WP_H, PALETTES, weeksLayout, marbleVeins, groupNum, type WeeksPrefs } from '../constants/lifeWeeks';
+import { WP_W, WP_H, PALETTES, weeksLayout, weeksTexts, marbleVeins, type WeeksPrefs } from '../constants/lifeWeeks';
 import StoikosMark from './StoikosMark';
 
 /**
@@ -13,15 +13,13 @@ import StoikosMark from './StoikosMark';
  * Web dışa aktarımı aynı geometriyi canvas'a çizer (constants/weeksCanvas.ts).
  */
 export const WeeksWallpaper = forwardRef<View, {
-  prefs: WeeksPrefs; lang: Lang; t: (k: string) => string; clock?: boolean;
-}>(function WeeksWallpaper({ prefs, lang, t, clock }, ref) {
+  prefs: WeeksPrefs; lang: Lang; t: (k: string) => string; clock?: boolean; activeDays?: Date[];
+}>(function WeeksWallpaper({ prefs, lang, t, clock, activeDays = [] }, ref) {
   const P = PALETTES[prefs.theme];
-  const L = useMemo(() => weeksLayout(prefs), [prefs.year, prefs.month, prefs.life]);
+  const L = useMemo(() => weeksLayout(prefs, activeDays), [prefs.year, prefs.month, prefs.life, activeDays]);
   const veins = useMemo(() => (P.veins ? marbleVeins() : []), [P.veins]);
   const id = `wk${prefs.theme}`;
-  const stat = prefs.numbers
-    ? `MEMENTO MORI · ${groupNum(L.lived, lang)} / ${groupNum(L.total, lang)} ${t('wp.weeksUpper')}`
-    : 'MEMENTO MORI';
+  const { stat, caption } = weeksTexts(L, lang, t);
   const now = new Date();
 
   return (
@@ -55,6 +53,8 @@ export const WeeksWallpaper = forwardRef<View, {
         <Path d={L.oldPath} fill={P.lived} fillOpacity={0.55} />
         <Path d={L.recentPath} fill={P.lived} fillOpacity={0.95} />
         <Path d={L.restPath} fill="none" stroke={P.rest} strokeWidth={0.7} />
+        <Path d={L.activePath} fill={P.lived} />
+        <Path d={L.ringPath} fill="none" stroke={P.ring} strokeWidth={0.9} />
         <Circle cx={L.now.x} cy={L.now.y} r={L.now.r} fill={P.now} />
         <Circle cx={L.now.x} cy={L.now.y} r={L.now.halo} fill="none" stroke={P.now} strokeOpacity={0.55} strokeWidth={1} />
       </Svg>
@@ -64,8 +64,9 @@ export const WeeksWallpaper = forwardRef<View, {
       ))}
 
       <View style={styles.footer}>
-        <Text style={[styles.stat, { color: P.muted }]}>{stat}</Text>
-        <Text style={[styles.caption, { color: P.text }]}>{t('wp.caption')}</Text>
+        <Text style={[styles.memento, { color: P.muted }]}>MEMENTO MORI</Text>
+        {prefs.numbers && <Text style={[styles.stat, { color: P.muted }]}>{stat}</Text>}
+        <Text style={[styles.caption, { color: P.text }]} numberOfLines={1} adjustsFontSizeToFit>{caption}</Text>
       </View>
       <View style={styles.brandRow}>
         <StoikosMark size={13} variant="line" color={P.brand} />
@@ -89,10 +90,11 @@ export const WeeksWallpaper = forwardRef<View, {
 const styles = StyleSheet.create({
   root: { width: WP_W, height: WP_H, overflow: 'hidden' },
   decade: { position: 'absolute', left: 0, textAlign: 'right', fontFamily: Fonts.jost, fontSize: 9, letterSpacing: 1 },
-  footer: { position: 'absolute', left: 0, right: 0, top: 750, alignItems: 'center', gap: 4 },
-  stat: { fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 3 },
-  caption: { fontFamily: Fonts.cormorantItalic, fontSize: 17, textAlign: 'center', paddingHorizontal: 24 },
-  brandRow: { position: 'absolute', left: 0, right: 0, top: 806, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: 0.7 },
+  footer: { position: 'absolute', left: 24, right: 24, top: 744, alignItems: 'center', gap: 3 },
+  memento: { fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 3 },
+  stat: { fontFamily: Fonts.jost, fontSize: 12, letterSpacing: 0.5 },
+  caption: { fontFamily: Fonts.cormorantItalic, fontSize: 16, lineHeight: 19, textAlign: 'center' },
+  brandRow: { position: 'absolute', left: 0, right: 0, top: 816, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: 0.7 },
   brand: { fontFamily: Fonts.cinzel, fontSize: 10, letterSpacing: 4 },
   clock: { position: 'absolute', left: 0, right: 0, top: 70, alignItems: 'center' },
   clockDate: { fontFamily: Fonts.jostMedium, fontSize: 18 },
