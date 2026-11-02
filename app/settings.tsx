@@ -19,6 +19,7 @@ import { notify, confirmAction } from '../constants/dialog';
 import { HEALTH_SUPPORTED, isHealthSyncOn, setHealthSync, healthAppName } from '../constants/healthPrefs';
 import { LockIcon } from '../components/Icons';
 import { ThemePicker } from '../components/ThemePicker';
+import { TypePicker } from '../components/TypePicker';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
@@ -199,6 +200,12 @@ export default function SettingsScreen() {
         <View style={styles.langWrap}>
           <Text style={styles.langTitle}>{upper(t('theme.title'), lang)}</Text>
           <ThemePicker />
+        </View>
+
+        {/* Yazı tipi ve boyutu (2 Kasım 2026): en hızlı okunan yazı tipi kişiden kişiye değişir */}
+        <View style={styles.langWrap}>
+          <Text style={styles.langTitle}>{upper(t('font.title'), lang)}</Text>
+          <TypePicker />
         </View>
 
         {/* Günlük hatırlatıcılar */}

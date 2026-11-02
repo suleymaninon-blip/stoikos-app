@@ -192,7 +192,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 26 },
   writeCard: { width: '100%', backgroundColor: Colors.stone2, borderRadius: 22, padding: 24, borderWidth: 1, borderColor: Colors.tint(0.25), alignItems: 'center' },
   writeTitle: { fontFamily: Fonts.cinzel, fontSize: 18, color: Colors.sand2, marginBottom: 16, textAlign: 'center' },
-  writeInput: { width: '100%', minHeight: 90, backgroundColor: Colors.stone3, borderRadius: 12, padding: 14, fontFamily: Fonts.cormorantItalic, fontSize: 16, color: Colors.text, borderWidth: 1, borderColor: Colors.overlay(0.07), marginBottom: 10 },
+  writeInput: { width: '100%', minHeight: 90, backgroundColor: Colors.stone3, borderRadius: 12, padding: 14, fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, borderWidth: 1, borderColor: Colors.overlay(0.07), marginBottom: 10 },
   authorInput: { width: '100%', backgroundColor: Colors.stone3, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10, fontFamily: Fonts.jost, fontSize: 13, color: Colors.text, borderWidth: 1, borderColor: Colors.overlay(0.07), marginBottom: 12 },
   result: { fontFamily: Fonts.jost, fontSize: 12.5, marginBottom: 12, lineHeight: 18, alignSelf: 'flex-start' },
   resultOk: { color: Colors.success }, resultErr: { color: '#e08080' },

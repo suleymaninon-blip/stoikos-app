@@ -624,13 +624,13 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
   modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
-  modalExample: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand3, lineHeight: 26 },
+  modalExample: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 25 },
   modalPracticeBox: {
     backgroundColor: Colors.moonA(0.08), borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
   modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
-  modalPractice: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.text, lineHeight: 26 },
+  modalPractice: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
   modalClose: {
     backgroundColor: Colors.stone3, borderRadius: 12,
     paddingVertical: 12, alignItems: 'center',

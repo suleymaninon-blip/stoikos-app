@@ -109,13 +109,13 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
   exampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
-  example: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand3, lineHeight: 26 },
+  example: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 25 },
   practiceBox: {
     backgroundColor: Colors.moonA(0.08), borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
   practiceLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
-  practice: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.text, lineHeight: 26 },
+  practice: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
   closeBtn: {
     backgroundColor: Colors.stone3, borderRadius: 12, minHeight: 48,
     paddingVertical: 12, alignItems: 'center', justifyContent: 'center',
