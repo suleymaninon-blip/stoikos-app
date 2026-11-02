@@ -238,6 +238,15 @@ export default function ProgressScreen() {
           </>
           )}
 
+          {/* Yansımaların (2 Kasım 2026): günlük ve program yansımalarına Pratik'e gitmeden ulaşılsın */}
+          <TouchableOpacity style={styles.journalRow} onPress={() => router.push('/journal')} activeOpacity={0.8} accessibilityRole="button">
+            <View style={{ flex: 1 }}>
+              <Text style={styles.journalRowTitle}>{t('journal.title')}</Text>
+              <Text style={styles.journalRowHint}>{t('journal.rowHint')}</Text>
+            </View>
+            <Text style={styles.journalRowArrow}>›</Text>
+          </TouchableOpacity>
+
           {/* Nazik yansıma */}
           <View style={styles.quoteBox}>
             <Text style={styles.quoteText}>“{t('progress.motivQuote')}”</Text>
@@ -262,6 +271,15 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   subtitle: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted, letterSpacing: 0.2, lineHeight: 21 },
   gearBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 2 },
   gearIcon: { fontSize: 17, color: Colors.sand },
+
+  journalRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 64,
+    backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12, marginBottom: 16,
+    borderWidth: 1, borderColor: Colors.overlay(0.05),
+  },
+  journalRowTitle: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2, letterSpacing: 0.3 },
+  journalRowHint: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 3, lineHeight: 18 },
+  journalRowArrow: { fontFamily: Fonts.jostLight, fontSize: 24, color: Colors.sand },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
