@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function StreakBar({ streak, weekDays }: Props) {
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   return (
     <View style={styles.container}>
@@ -35,13 +37,13 @@ export function StreakBar({ streak, weekDays }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: {
     backgroundColor: Colors.stone2,
     borderRadius: 14,
     padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
+    borderColor: Colors.overlay(0.06),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

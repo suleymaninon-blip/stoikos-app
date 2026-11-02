@@ -7,8 +7,10 @@ import { useAppDimensions } from '../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
 import StoikosMark, { MARK_CENTER, MARK_PATH, MARK_PATH_LEN, MARK_VIEWBOX } from './StoikosMark';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper } from '../constants/i18n';
+import { ThemePicker } from './ThemePicker';
 import { enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -21,6 +23,7 @@ const OMEGA_LEN = MARK_PATH_LEN;
 
 // Fallback: simple fade-in + one breath (no SVG stroke draw)
 function OmegaFallback({ size }: { size: number }) {
+  const logoSt = useStyles(makeLogoSt);
   const op = useRef(new Animated.Value(0)).current;
   const sc = useRef(new Animated.Value(0.92)).current;
   const brandOp = useRef(new Animated.Value(0)).current;
@@ -54,6 +57,7 @@ function OmegaFallback({ size }: { size: number }) {
 
 // SVG stroke-draw scene: önce kavis çizilir, sonra içinde küre "nefes alarak" belirir.
 function OmegaSvgScene({ size }: { size: number }) {
+  const logoSt = useStyles(makeLogoSt);
   const dashOff = useRef(new Animated.Value(OMEGA_LEN)).current;
   const orbOp = useRef(new Animated.Value(0)).current;
   const ringOp = useRef(new Animated.Value(0)).current;
@@ -129,7 +133,7 @@ class LogoSceneBoundary extends React.Component<{ size: number }, { err: boolean
   }
 }
 
-const logoSt = StyleSheet.create({
+const makeLogoSt = (Colors: Palette) => StyleSheet.create({
   scene: { alignItems: 'center', justifyContent: 'center' },
   omegaText: { fontFamily: Fonts.cinzel, color: Colors.sand2, lineHeight: 110 },
   brand: {
@@ -140,6 +144,7 @@ const logoSt = StyleSheet.create({
 
 // Yumuşak nabız parıltısı (ikon arkası)
 function PulseGlow({ size }: { size: number }) {
+  const { C: Colors } = useTheme();
   const a = useRef(new Animated.Value(0.4)).current;
   useEffect(() => {
     const loop = Animated.loop(Animated.sequence([
@@ -152,7 +157,7 @@ function PulseGlow({ size }: { size: number }) {
   return (
     <Animated.View style={{
       position: 'absolute', width: size, height: size, borderRadius: size / 2,
-      backgroundColor: 'rgba(216,196,154,0.12)', opacity: a,
+      backgroundColor: Colors.tint(0.12), opacity: a,
       transform: [{ scale: a.interpolate({ inputRange: [0.4, 1], outputRange: [0.9, 1.25] }) }],
     }} />
   );
@@ -163,6 +168,8 @@ function PulseGlow({ size }: { size: number }) {
 const MINI_PETAL = 50;
 const MINI_SPREAD = 20;
 function MiniOrb() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const b = useRef(new Animated.Value(0.35)).current;
   useEffect(() => {
     const loop = Animated.loop(Animated.sequence([
@@ -185,8 +192,8 @@ function MiniOrb() {
             <Animated.View key={i} style={[styles.miniPetal, { transform: [{ translateX: tx }, { translateY: ty }, { scale: petalScale }] }]}>
               <LinearGradient
                 colors={i % 2 === 0
-                  ? ['rgba(255,236,196,0.62)', 'rgba(224,184,112,0.38)', 'rgba(160,120,60,0.20)']
-                  : ['rgba(248,210,150,0.56)', 'rgba(212,160,92,0.34)', 'rgba(140,100,48,0.18)']}
+                  ? [Colors.tint(0.62), Colors.tint(0.38), Colors.tint(0.20)]
+                  : [Colors.tint(0.56), Colors.tint(0.34), Colors.tint(0.18)]}
                 start={{ x: 0.2, y: 0.1 }} end={{ x: 0.85, y: 0.95 }}
                 style={{ flex: 1 }}
               />
@@ -199,6 +206,8 @@ function MiniOrb() {
 }
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang, setLang } = useLang();
   const { width } = useAppDimensions();
   const ref = useRef<any>(null);
@@ -209,6 +218,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   const slides = [
     { key: 'logo' as const },
     { key: 'welcome' as const },
+    { key: 'theme' as const, title: t('theme.pickTitle'), desc: t('theme.pickDesc') },
     { key: 'p1' as const, icon: '☀', title: t('onb.p1t'), desc: t('onb.p1d') },
     { key: 'p2' as const, icon: '◎', title: t('onb.p2t'), desc: t('onb.p2d') },
     { key: 'p3' as const, orb: true, title: t('onb.p3t'), desc: t('onb.p3d') },
@@ -236,7 +246,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   return (
     <View style={styles.root}>
       <LinearGradient
-        colors={['rgba(194,168,120,0.10)', 'transparent']}
+        colors={[Colors.tint(0.10), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 0.6 }}
       />
@@ -294,6 +304,12 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                       })}
                     </View>
                   </>
+                ) : s.key === 'theme' ? (
+                  <>
+                    <Text style={styles.title}>{s.title}</Text>
+                    <Text style={[styles.desc, { marginBottom: 20 }]}>{s.desc}</Text>
+                    <ThemePicker />
+                  </>
                 ) : (
                   <>
                     {s.orb ? (
@@ -349,7 +365,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   root: { ...StyleSheet.absoluteFillObject, backgroundColor: Colors.bg, zIndex: 50 },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 360 },
   skip: { position: 'absolute', top: 56, right: 24, zIndex: 5, paddingHorizontal: 8, paddingVertical: 6 },
@@ -368,9 +384,9 @@ const styles = StyleSheet.create({
   langChip: {
     flexDirection: 'row', alignItems: 'center', gap: 7,
     backgroundColor: Colors.stone2, borderRadius: 22, paddingHorizontal: 14, paddingVertical: 9,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
-  langChipActive: { backgroundColor: 'rgba(194,168,120,0.16)', borderColor: Colors.sand },
+  langChipActive: { backgroundColor: Colors.tint(0.16), borderColor: Colors.sand },
   langFlag: { fontSize: 15 },
   langLabel: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
   langLabelActive: { color: Colors.sand2 },
@@ -378,35 +394,35 @@ const styles = StyleSheet.create({
   iconWrap: { width: 110, height: 110, alignItems: 'center', justifyContent: 'center', marginBottom: 28 },
   iconBox: {
     width: 92, height: 92, borderRadius: 30, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(194,168,120,0.10)', borderWidth: 1, borderColor: 'rgba(194,168,120,0.2)',
+    backgroundColor: Colors.tint(0.10), borderWidth: 1, borderColor: Colors.tint(0.2),
   },
   icon: { fontSize: 38, color: Colors.sand2 },
   miniFlower: { width: 110, height: 110, alignItems: 'center', justifyContent: 'center' },
   miniPetal: {
     position: 'absolute', width: MINI_PETAL, height: MINI_PETAL, borderRadius: MINI_PETAL / 2, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(250,228,180,0.22)',
+    borderWidth: 1, borderColor: Colors.tint(0.22),
   },
   title: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, letterSpacing: 0.5, marginBottom: 14, textAlign: 'center' },
   desc: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, textAlign: 'center', lineHeight: 24 },
 
   remindBtn: {
     marginTop: 26, borderRadius: 22, paddingHorizontal: 22, paddingVertical: 12,
-    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(194,168,120,0.3)',
+    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.tint(0.3),
   },
   remindBtnOff: { opacity: 0.45 },
   remindWebNote: { fontFamily: Fonts.jostLight, fontSize: 12.5, color: Colors.muted, textAlign: 'center', marginTop: 12, lineHeight: 18, paddingHorizontal: 12 },
-  remindBtnOn: { backgroundColor: 'rgba(194,168,120,0.18)', borderColor: Colors.sand },
+  remindBtnOn: { backgroundColor: Colors.tint(0.18), borderColor: Colors.sand },
   remindText: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, letterSpacing: 0.3 },
   remindTextOn: { color: Colors.sand2 },
 
   dots: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 20 },
-  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: 'rgba(194,168,120,0.25)' },
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: Colors.tint(0.25) },
   dotActive: { backgroundColor: Colors.sand, width: 20 },
 
   btn: {
     marginHorizontal: 36, marginBottom: 44, borderRadius: 16, paddingVertical: 16,
-    alignItems: 'center', backgroundColor: 'rgba(194,168,120,0.16)',
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.35)',
+    alignItems: 'center', backgroundColor: Colors.isDark ? Colors.tint(0.16) : Colors.accent,
+    borderWidth: 1, borderColor: Colors.isDark ? Colors.tint(0.35) : Colors.accent,
   },
-  btnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1.5, color: Colors.sand2 },
+  btnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1.5, color: Colors.isDark ? Colors.sand2 : Colors.onAccent },
 });

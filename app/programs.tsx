@@ -4,7 +4,8 @@ import {
 } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, upper } from '../constants/i18n';
 import { getPrograms, getProgress, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
 import { appendToJournalToday } from '../constants/journal';
@@ -16,6 +17,8 @@ import { LockIcon } from '../components/Icons';
 import { FirstTip } from '../components/FirstTip';
 
 export default function ProgramsScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const programs = getPrograms(lang);
   const [progress, setProgress] = useState<Record<string, number[]>>({});
@@ -304,7 +307,7 @@ export default function ProgramsScreen() {
   // ─── LİSTE ───
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['rgba(196,169,106,0.06)', 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
+      <LinearGradient colors={[Colors.tint(0.06), 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
       <View style={styles.topBar}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
       </View>
@@ -348,23 +351,23 @@ export default function ProgramsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   cardBadge: {
     fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 1.4, color: Colors.sand,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.4)', borderRadius: 4,
+    borderWidth: 1, borderColor: Colors.tint(0.4), borderRadius: 4,
     paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden',
   },
   container: { flex: 1, backgroundColor: Colors.stone },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 240 },
   topBar: { paddingHorizontal: 16, paddingTop: 8, height: 44, justifyContent: 'center' },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07) },
   backIcon: { fontSize: 26, color: Colors.sand2, marginTop: -3 },
   scroll: { padding: 24, paddingTop: 8, paddingBottom: 40 },
   title: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, letterSpacing: 0.3 },
 
   // Liste kartı
-  card: { borderRadius: 20, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  card: { borderRadius: 20, padding: 20, borderWidth: 1, borderColor: Colors.overlay(0.07) },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
   cardIcon: { fontSize: 30, color: Colors.sand2 },
   cardTitle: { fontFamily: Fonts.cinzel, fontSize: 17, color: Colors.text, letterSpacing: 0.3, marginBottom: 2 },
@@ -383,7 +386,7 @@ const styles = StyleSheet.create({
   finished: { fontFamily: Fonts.cormorantItalic, fontSize: 15, color: Colors.sand, textAlign: 'center', marginTop: 8 },
 
   // ─── Bitiş akışı ───
-  finishBox: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)', gap: 16 },
+  finishBox: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: Colors.tint(0.18), gap: 16 },
 
   reflectWrap: { gap: 8 },
   reflectPrompt: { fontFamily: Fonts.cormorant, fontSize: 19, color: Colors.text, textAlign: 'center' },
@@ -391,7 +394,7 @@ const styles = StyleSheet.create({
   reflectInput: {
     marginTop: 4, minHeight: 92, backgroundColor: Colors.stone, borderRadius: 12, padding: 12,
     fontFamily: Fonts.jost, fontSize: 16, color: Colors.text,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
   reflectNote: { fontFamily: Fonts.jostLight, fontSize: 13, color: Colors.muted, textAlign: 'center' },
   reflectRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
@@ -401,7 +404,7 @@ const styles = StyleSheet.create({
   reflectBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.bg, letterSpacing: 0.4 },
   reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
 
-  nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', gap: 4 },
+  nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: Colors.tint(0.22), gap: 4 },
   nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
   nextTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text },
 
@@ -414,11 +417,11 @@ const styles = StyleSheet.create({
   restart: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.faint, textAlign: 'center' },
   restartArmed: { color: Colors.sand },
 
-  dayRow: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  dayRow: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: Colors.overlay(0.05) },
   dayRowLocked: { opacity: 0.55 },
-  dayNum: { width: 34, height: 34, borderRadius: 17, borderWidth: 1.5, borderColor: 'rgba(196,169,106,0.4)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  dayNum: { width: 34, height: 34, borderRadius: 17, borderWidth: 1.5, borderColor: Colors.tint(0.4), alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   dayNumDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
-  dayNumLocked: { borderColor: 'rgba(255,255,255,0.12)' },
+  dayNumLocked: { borderColor: Colors.overlay(0.12) },
   dayNumText: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2 },
   dayNumTextDone: { color: Colors.stone },
   dayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.5, color: Colors.muted, marginBottom: 2 },
@@ -428,22 +431,22 @@ const styles = StyleSheet.create({
 
   // Gün modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 28 },
-  modalCard: { width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
+  modalCard: { width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center', borderWidth: 1, borderColor: Colors.tint(0.25) },
   modalClose: { position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3, zIndex: 2 },
   modalCloseText: { fontSize: 16, color: Colors.text2 },
   modalDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalTitle: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
-  modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
+  modalDivider: { width: 40, height: 2, backgroundColor: Colors.tint(0.4), borderRadius: 1, marginVertical: 18 },
   modalScroll: { alignSelf: 'stretch', maxHeight: 460, marginBottom: 20 },
   modalRead: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 18 },
-  modalBox: { backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 14, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', padding: 16, marginBottom: 14 },
+  modalBox: { backgroundColor: Colors.tint(0.08), borderRadius: 14, borderWidth: 1, borderColor: Colors.tint(0.22), padding: 16, marginBottom: 14 },
   modalBoxLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalBoxText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
   modalAsk: { paddingHorizontal: 4 },
   modalAskText: { fontFamily: Fonts.cormorantItalic, fontSize: 19, color: Colors.sand3, lineHeight: 27 },
   modalBody: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 26, textAlign: 'center', marginBottom: 26 },
   modalBtn: { width: '100%', backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 16, alignItems: 'center' },
-  modalBtnDone: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  modalBtnDone: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.overlay(0.1) },
   modalBtnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.stone },
   modalBtnTextDone: { color: Colors.muted },
   // Pratik ekranındakiyle birebir aynı — iki ekran aynı onayı göstermeli.

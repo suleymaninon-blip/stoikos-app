@@ -6,7 +6,8 @@ import {
 } from 'react-native';
 import { useAppDimensions } from '../../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Fonts } from '../../constants/theme';
+import { Fonts } from '../../constants/theme';
+import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { FirstTip } from '../../components/FirstTip';
 import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
@@ -23,6 +24,7 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
   isFav: boolean; onFav: (id: string) => void;
   onAuthor?: (authorId: string) => void; // filozof kartı varsa dokunulabilir
 }) {
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   const favAddLabel = t('a11y.favAdd'), favRemoveLabel = t('a11y.favRemove'), shareLabel = t('a11y.share');
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -65,6 +67,7 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
 
 // ─── ConceptCard ───────────────────────────────────────────
 function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPress: () => void; moreLabel: string }) {
+  const styles = useStyles(makeStyles);
   return (
     <TouchableOpacity style={[styles.conceptCard, { backgroundColor: concept.color }]} onPress={onPress} activeOpacity={0.8}>
       <Text style={styles.conceptIcon}>{concept.icon + TEXT_GLYPH}</Text>
@@ -78,6 +81,7 @@ function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPres
 
 // ─── Philosopher Card ──────────────────────────────────────
 function PhilosopherCard({ philo, onPress }: { philo: Philosopher; onPress: () => void }) {
+  const styles = useStyles(makeStyles);
   return (
     <TouchableOpacity style={[styles.philoCard, { backgroundColor: philo.color }]} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.philoSymbolBox}><PhilosopherSymbol id={philo.id} size={24} /></View>
@@ -94,6 +98,7 @@ function PhilosopherCard({ philo, onPress }: { philo: Philosopher; onPress: () =
 function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
   philo: Philosopher | null; onClose: () => void; contributionLabel: string; closeLabel: string;
 }) {
+  const styles = useStyles(makeStyles);
   if (!philo) return null;
   return (
     <Modal transparent animationType="fade" onRequestClose={onClose}>
@@ -134,6 +139,7 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
   onChange: (id: string) => void;
   itemW?: number;
 }) {
+  const styles = useStyles(makeStyles);
   const { width } = useAppDimensions();
   const n = opts.length;
   const ITEM_W = itemW;
@@ -244,6 +250,8 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
 
 // ─── Main ──────────────────────────────────────────────────
 export default function WisdomScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const [tab, setTab] = useState<'quotes' | 'concepts' | 'philosophers'>('quotes');
   const [filter, setFilter] = useState('all'); // 'all' | 'fav' | authorId | 'mood:<tema>'
@@ -342,7 +350,7 @@ export default function WisdomScreen() {
   return (
     <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
-        colors={['rgba(196,169,106,0.05)', 'transparent']}
+        colors={[Colors.tint(0.05), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -482,7 +490,7 @@ export default function WisdomScreen() {
 }
 
 // ─── Styles ───────────────────────────────────────────────
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
   header: { paddingHorizontal: 24, paddingTop: 10, paddingBottom: 12 },
@@ -492,7 +500,7 @@ const styles = StyleSheet.create({
   tabs: {
     flexDirection: 'row', marginHorizontal: 24, marginBottom: 12,
     backgroundColor: Colors.stone2, borderRadius: 12,
-    padding: 4, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    padding: 4, borderWidth: 1, borderColor: Colors.overlay(0.05),
   },
   tabBtn: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 10 },
   tabBtnActive: { backgroundColor: Colors.stone3 },
@@ -504,9 +512,9 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 6,
     borderRadius: 20, backgroundColor: Colors.stone2,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
-  filterChipActive: { backgroundColor: 'rgba(196,169,106,0.15)', borderColor: 'rgba(196,169,106,0.3)' },
+  filterChipActive: { backgroundColor: Colors.tint(0.15), borderColor: Colors.tint(0.3) },
   filterChipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
   filterChipTextActive: { color: Colors.sand2 },
 
@@ -517,16 +525,16 @@ const styles = StyleSheet.create({
   filterRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 24, marginBottom: 12 },
   segment: { flex: 1, flexDirection: 'row', backgroundColor: Colors.stone2, borderRadius: 13, padding: 4 },
   segBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 9, borderRadius: 10 },
-  segBtnOn: { backgroundColor: 'rgba(196,169,106,0.16)' },
+  segBtnOn: { backgroundColor: Colors.tint(0.16) },
   segTxt: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
   segTxtOn: { color: Colors.sand2 },
-  heartBtn: { width: 46, height: 46, borderRadius: 13, borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2 },
-  heartBtnOn: { backgroundColor: 'rgba(212,146,74,0.2)', borderColor: Colors.accent },
+  heartBtn: { width: 46, height: 46, borderRadius: 13, borderWidth: 1, borderColor: Colors.tint(0.22), alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2 },
+  heartBtnOn: { backgroundColor: Colors.tint(0.2), borderColor: Colors.accent },
   heartIcon: { fontSize: 18, color: Colors.muted },
   heartIconOn: { color: Colors.accent },
   moodBar: {
     alignSelf: 'center', marginTop: 4, marginBottom: 10,
-    backgroundColor: Colors.stone2, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(159,176,196,0.22)',
+    backgroundColor: Colors.stone2, borderRadius: 14, borderWidth: 1, borderColor: Colors.moonA(0.22),
     height: 48, overflow: 'hidden',
   },
   moodItem: { height: 48, alignItems: 'center', justifyContent: 'center' },
@@ -541,7 +549,7 @@ const styles = StyleSheet.create({
   attribution: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
   quoteCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 18,
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.10)', overflow: 'hidden',
+    borderWidth: 1, borderColor: Colors.tint(0.10), overflow: 'hidden',
   },
   quoteMark: { fontFamily: Fonts.cormorant, fontSize: 64, color: Colors.sand, opacity: 0.25, height: 48, marginBottom: -4 },
   quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 16 },
@@ -549,7 +557,7 @@ const styles = StyleSheet.create({
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, letterSpacing: 0.3 },
   quoteAuthorLink: { color: Colors.accent },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, fontStyle: 'italic' },
-  listenBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.38)' },
+  listenBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.38) },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
   // SVG sarmalayıcı (kavram hoparlörü, satır ~96) — View'e uygulanıyor, boyut doğru.
   listenIcon: { width: 14, height: 14 },
@@ -558,14 +566,14 @@ const styles = StyleSheet.create({
   // stili paylaşıyordu, bu yüzden glifler renksiz kalıp varsayılan koyu renge
   // düşüyordu ve paylaş düğmesi karanlıkta kayboluyordu.
   glyphIcon: { fontSize: 15, lineHeight: 18, color: Colors.sand2 },
-  favBtnActive: { backgroundColor: 'rgba(212,146,74,0.2)', borderColor: Colors.accent },
+  favBtnActive: { backgroundColor: Colors.tint(0.2), borderColor: Colors.accent },
   favIconActive: { color: Colors.accent },
-  modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)', marginTop: 4, marginBottom: 4 },
+  modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.25), marginTop: 4, marginBottom: 4 },
 
   conceptsGrid: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
   conceptCard: {
     borderRadius: 18, padding: 20,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   conceptIcon: { fontSize: 22, color: Colors.sand2, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 24, color: Colors.sand2, marginBottom: 2 },
@@ -577,12 +585,12 @@ const styles = StyleSheet.create({
   philoCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 16,
     borderRadius: 18, padding: 18,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   philoSymbolBox: {
     width: 48, height: 48, borderRadius: 24,
     alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.18)', borderWidth: 1, borderColor: 'rgba(216,196,154,0.25)',
+    backgroundColor: 'rgba(0,0,0,0.18)', borderWidth: 1, borderColor: Colors.tint(0.25),
   },
   philoSymbol: { fontFamily: Fonts.cinzel, fontSize: 20, color: Colors.sand2 },
   philoName: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.sand2, marginBottom: 2 },
@@ -593,7 +601,7 @@ const styles = StyleSheet.create({
   philoModalSymbolBox: {
     alignSelf: 'center', width: 56, height: 56, borderRadius: 28,
     alignItems: 'center', justifyContent: 'center', marginBottom: 12,
-    backgroundColor: 'rgba(216,196,154,0.10)', borderWidth: 1, borderColor: 'rgba(216,196,154,0.28)',
+    backgroundColor: Colors.tint(0.10), borderWidth: 1, borderColor: Colors.tint(0.28),
   },
   philoModalSymbol: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.sand2 },
   philoModalEra: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, textAlign: 'center', letterSpacing: 0.3, marginTop: -10, marginBottom: 16 },
@@ -604,21 +612,21 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     backgroundColor: Colors.stone2, borderRadius: 24, padding: 28, width: '100%', maxHeight: '85%',
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)',
+    borderWidth: 1, borderColor: Colors.tint(0.2),
   },
   modalIcon: { fontSize: 32, color: Colors.sand2, marginBottom: 12, textAlign: 'center' },
   modalLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.sand2, textAlign: 'center', marginBottom: 4 },
   modalTr: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', letterSpacing: 0.5, marginBottom: 16 },
-  modalDivider: { height: 1, backgroundColor: 'rgba(196,169,106,0.15)', marginBottom: 16 },
+  modalDivider: { height: 1, backgroundColor: Colors.tint(0.15), marginBottom: 16 },
   modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 16 },
   modalExampleBox: {
-    backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 12, padding: 14,
+    backgroundColor: Colors.tint(0.08), borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
   modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalExample: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand3, lineHeight: 26 },
   modalPracticeBox: {
-    backgroundColor: 'rgba(159,176,196,0.08)', borderRadius: 12, padding: 14,
+    backgroundColor: Colors.moonA(0.08), borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
   modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
@@ -626,7 +634,7 @@ const styles = StyleSheet.create({
   modalClose: {
     backgroundColor: Colors.stone3, borderRadius: 12,
     paddingVertical: 12, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
   modalCloseText: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.text2, letterSpacing: 1 },
 });

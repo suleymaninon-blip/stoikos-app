@@ -8,6 +8,7 @@ import { Jost_300Light, Jost_400Regular, Jost_500Medium } from '@expo-google-fon
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LanguageProvider } from '../constants/i18n';
+import { ThemeProvider, useTheme } from '../constants/themeContext';
 import { EntitlementProvider } from '../constants/entitlement';
 import { BrandIntro } from '../components/BrandIntro';
 import { Onboarding } from '../components/Onboarding';
@@ -53,22 +54,35 @@ export default function RootLayout() {
   const showOnboarding = introDone && onboarded === false;
 
   return (
-    <LanguageProvider>
-      <EntitlementProvider>
-        <StatusBar style="light" />
-        <ReminderSync />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="help" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
-        </Stack>
-        {showOnboarding && <Onboarding onDone={finishOnboarding} />}
-        {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
-      </EntitlementProvider>
-    </LanguageProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <EntitlementProvider>
+          <ThemedStack />
+          <ReminderSync />
+          {showOnboarding && <Onboarding onDone={finishOnboarding} />}
+          {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
+        </EntitlementProvider>
+      </LanguageProvider>
+    </ThemeProvider>
+  );
+}
+
+/** Durum çubuğu ve ekran zemini seçili temaya uyar (açık temada koyu saat/pil simgeleri). */
+function ThemedStack() {
+  const { C } = useTheme();
+  return (
+    <>
+      <StatusBar style={C.isDark ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.bg } }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="help" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="wallpaper" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="challenge-admin" options={{ animation: 'slide_from_right' }} />
+      </Stack>
+    </>
   );
 }

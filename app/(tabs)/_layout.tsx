@@ -1,10 +1,12 @@
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { useAppDimensions } from '../../constants/layout';
-import { Colors, Fonts } from '../../constants/theme';
+import { Fonts } from '../../constants/theme';
+import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { useLang, upper } from '../../constants/i18n';
 
 function TabIcon({ label, icon, focused, width }: { label: string; icon: string; focused: boolean; width: number }) {
+  const styles = useStyles(makeStyles);
   return (
     <View style={[styles.tabItem, { width }]}>
       <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>{icon}</Text>
@@ -15,6 +17,7 @@ function TabIcon({ label, icon, focused, width }: { label: string; icon: string;
 }
 
 export default function TabLayout() {
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const { width: screenW } = useAppDimensions();
   const itemW = Math.floor(screenW / 5); // her sekme = ekranın 1/5'i → etiket tek satıra sığar
@@ -60,13 +63,13 @@ export default function TabLayout() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   tabBar: {
     backgroundColor: Colors.stone,
     // react-navigation kendi `borderColor`'ını (açık gri) veriyor; web'de borderTopColor onu ezmiyordu
     // ve her ekranın altında beyaz bir çizgi görünüyordu. İkisi birden aynı renk.
-    borderColor: 'rgba(194,168,120,0.10)',
-    borderTopColor: 'rgba(194,168,120,0.10)',
+    borderColor: Colors.tint(0.10),
+    borderTopColor: Colors.tint(0.10),
     borderTopWidth: 1,
     height: Platform.OS === 'ios' ? 88 : 70,
     paddingTop: 14,

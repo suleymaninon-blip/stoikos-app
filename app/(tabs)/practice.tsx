@@ -8,7 +8,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, Fonts } from '../../constants/theme';
+import { Fonts } from '../../constants/theme';
+import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { FirstTip } from '../../components/FirstTip';
 import { JOURNAL_KEY, journalKeyFor } from '../../constants/journal';
 import { DayPartIcon, DayPart } from '../../components/Icons';
@@ -27,7 +28,7 @@ const COACH_CONSENT_KEY = 'stoikos_journal_coach_consent'; // açık rıza (KVKK
 
 // Sabah altın, akşam ay mavisi — bölüm etiketleri (moonTag/moonBadge) zaten
 // bu ayrımı yapıyor, ikonlar da ona uyuyor.
-const ICON_COLOR: Record<DayPart, string> = { morning: Colors.sand, evening: Colors.moon };
+const iconColor = (C: Palette, part: DayPart) => (part === 'morning' ? C.sand : C.moon);
 
 // ─── Liste satırı: daire işaretler, satır açar ───────────
 // Eskiden daire de satır da aynı pencereyi açıyordu; işaretlemek de işareti
@@ -48,6 +49,8 @@ function ExerciseRow({
   markLabel: string;
   openLabel: string;
 }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   return (
     <View style={styles.row}>
       <Pressable
@@ -74,7 +77,7 @@ function ExerciseRow({
         accessibilityRole="button"
         accessibilityLabel={openLabel}
       >
-        <View style={styles.rowIcon}><DayPartIcon part={icon} size={16} color={ICON_COLOR[icon]} /></View>
+        <View style={styles.rowIcon}><DayPartIcon part={icon} size={16} color={iconColor(Colors, icon)} /></View>
         <Text style={[styles.rowName, completed && styles.rowNameDone]} numberOfLines={1}>{exercise.name}</Text>
         <Text style={styles.rowDuration}>{exercise.duration}</Text>
         <Text style={styles.rowChevron}>›</Text>
@@ -97,6 +100,8 @@ function ExerciseSheet({
   onClose: () => void;
   labels: { complete: string; doneToday: string; unmark: string; close: string };
 }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   if (!exercise) return null;
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
@@ -107,7 +112,7 @@ function ExerciseSheet({
           <TouchableOpacity onPress={onClose} style={styles.sheetClose} accessibilityRole="button" accessibilityLabel={labels.close} hitSlop={6}>
             <Text style={styles.sheetCloseText}>✕</Text>
           </TouchableOpacity>
-          <View style={styles.modalIcon}><DayPartIcon part={icon} size={40} color={ICON_COLOR[icon]} /></View>
+          <View style={styles.modalIcon}><DayPartIcon part={icon} size={40} color={iconColor(Colors, icon)} /></View>
           <Text style={styles.modalDuration}>{exercise.duration}</Text>
           <Text style={styles.modalName}>{exercise.name}</Text>
           <View style={styles.modalDivider} />
@@ -135,6 +140,8 @@ function ExerciseSheet({
 
 // ─── Main ──────────────────────────────────────────────────
 export default function PracticeScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const today = new Date().toDateString();
   const [completed, setCompleted] = useState<Set<string>>(new Set());
@@ -291,7 +298,7 @@ export default function PracticeScreen() {
   return (
     <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
-        colors={['rgba(196,169,106,0.06)', 'transparent']}
+        colors={[Colors.tint(0.06), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -323,7 +330,7 @@ export default function PracticeScreen() {
           {/* Morning */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <View style={styles.sectionIcon}><DayPartIcon part="morning" size={22} color={ICON_COLOR.morning} /></View>
+              <View style={styles.sectionIcon}><DayPartIcon part="morning" size={22} color={iconColor(Colors, 'morning')} /></View>
               <View>
                 <Text style={styles.sectionTag}>{t('practice.morningTag')}</Text>
                 <Text style={styles.sectionTitle}>{t('practice.morningTitle')}</Text>
@@ -353,7 +360,7 @@ export default function PracticeScreen() {
           {/* Evening */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <View style={styles.sectionIcon}><DayPartIcon part="evening" size={22} color={ICON_COLOR.evening} /></View>
+              <View style={styles.sectionIcon}><DayPartIcon part="evening" size={22} color={iconColor(Colors, 'evening')} /></View>
               <View>
                 <Text style={[styles.sectionTag, styles.moonTag]}>{t('practice.eveningTag')}</Text>
                 <Text style={styles.sectionTitle}>{t('practice.eveningTitle')}</Text>
@@ -479,7 +486,7 @@ export default function PracticeScreen() {
 }
 
 // ─── Styles ───────────────────────────────────────────────
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 40 },
@@ -501,21 +508,21 @@ const styles = StyleSheet.create({
   section: {
     backgroundColor: Colors.stone2, borderRadius: 20,
     padding: 20, marginBottom: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1, borderColor: Colors.overlay(0.05),
   },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
   sectionIcon: { width: 22, height: 22 },
   sectionTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 2 },
   sectionTitle: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.text, letterSpacing: 0.3 },
   sectionBadge: {
-    marginLeft: 'auto', backgroundColor: 'rgba(196,169,106,0.1)',
+    marginLeft: 'auto', backgroundColor: Colors.tint(0.1),
     borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)',
+    borderWidth: 1, borderColor: Colors.tint(0.2),
   },
   sectionBadgeText: { fontFamily: Fonts.cinzel, fontSize: 11, color: Colors.sand },
   // Akşam — ay-mavisi aksan
   moonTag: { color: Colors.moon },
-  moonBadge: { backgroundColor: 'rgba(159,176,196,0.1)', borderColor: 'rgba(159,176,196,0.25)' },
+  moonBadge: { backgroundColor: Colors.moonA(0.1), borderColor: Colors.moonA(0.25) },
   moonBadgeText: { color: Colors.moon },
 
   // Nazik kapanış kartı
@@ -523,7 +530,7 @@ const styles = StyleSheet.create({
   // Sade satır
   row: {
     flexDirection: 'row', alignItems: 'center',
-    borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.04)',
+    borderBottomWidth: 1, borderBottomColor: Colors.overlay(0.04),
   },
   // Dokunma alanı 44×48; görünen daire 26 px.
   rowCheckHit: { width: 44, height: 48, marginLeft: -9, alignItems: 'center', justifyContent: 'center' },
@@ -531,11 +538,11 @@ const styles = StyleSheet.create({
   // Onay kutusu: kare, 7 px köşe. Boş kenar 3:1'in üstünde kalsın diye %70.
   rowCheck: {
     width: 26, height: 26, borderRadius: 7,
-    borderWidth: 1.5, borderColor: 'rgba(201,168,118,0.7)',
+    borderWidth: 1.5, borderColor: Colors.tint(0.7),
     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
   },
   rowCheckDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
-  rowCheckPressed: { transform: [{ scale: 0.92 }], backgroundColor: 'rgba(201,168,118,0.18)', borderColor: Colors.accent },
+  rowCheckPressed: { transform: [{ scale: 0.92 }], backgroundColor: Colors.tint(0.18), borderColor: Colors.accent },
   rowIcon: { width: 16, height: 16 },
   rowName: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.text },
   rowNameDone: { color: Colors.muted },
@@ -548,14 +555,14 @@ const styles = StyleSheet.create({
   sheet: {
     backgroundColor: Colors.stone2, borderTopLeftRadius: 26, borderTopRightRadius: 26,
     paddingHorizontal: 28, paddingTop: 12, paddingBottom: 36, alignItems: 'center',
-    borderWidth: 1, borderBottomWidth: 0, borderColor: 'rgba(196,169,106,0.25)',
+    borderWidth: 1, borderBottomWidth: 0, borderColor: Colors.tint(0.25),
   },
-  sheetHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: 'rgba(255,255,255,0.12)', marginBottom: 8 },
+  sheetHandle: { width: 40, height: 4, borderRadius: 2, backgroundColor: Colors.overlay(0.12), marginBottom: 8 },
   sheetClose: { position: 'absolute', top: 14, right: 16, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3 },
   sheetCloseText: { fontSize: 16, color: Colors.text2 },
   sheetDoneBox: {
     width: '100%', borderRadius: 16, paddingVertical: 15, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.45)',
+    borderWidth: 1, borderColor: Colors.tint(0.45),
   },
   sheetDoneText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.sand2 },
   sheetUnmark: { minHeight: 44, paddingHorizontal: 16, justifyContent: 'center', marginTop: 6 },
@@ -566,7 +573,7 @@ const styles = StyleSheet.create({
     position: 'absolute', left: 16, right: 16, bottom: 16,
     flexDirection: 'row', alignItems: 'center', gap: 10,
     backgroundColor: Colors.stone3, borderRadius: 16, paddingLeft: 16, paddingRight: 6, paddingVertical: 6,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.35)',
+    borderWidth: 1, borderColor: Colors.tint(0.35),
     shadowColor: '#000', shadowOpacity: 0.4, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
   },
   toastText: { flex: 1, fontFamily: Fonts.jost, fontSize: 14, color: Colors.text, lineHeight: 19 },
@@ -575,7 +582,7 @@ const styles = StyleSheet.create({
   modalIcon: { marginBottom: 8 },
   modalDuration: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   modalName: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
-  modalDivider: { width: 40, height: 2, backgroundColor: 'rgba(196,169,106,0.4)', borderRadius: 1, marginVertical: 18 },
+  modalDivider: { width: 40, height: 2, backgroundColor: Colors.tint(0.4), borderRadius: 1, marginVertical: 18 },
   modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 26, textAlign: 'center', marginBottom: 26 },
   modalBtn: {
     width: '100%', backgroundColor: Colors.accent, borderRadius: 16, paddingVertical: 16, alignItems: 'center',
@@ -585,34 +592,34 @@ const styles = StyleSheet.create({
   // Journal
   journalCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, padding: 20,
-    marginBottom: 16, borderWidth: 1, borderColor: 'rgba(159,176,196,0.15)',
+    marginBottom: 16, borderWidth: 1, borderColor: Colors.moonA(0.15),
   },
   journalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: 'rgba(159,176,196,0.8)' },
-  journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: 'rgba(159,176,196,0.9)', letterSpacing: 0.3 },
+  journalTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2.5, color: Colors.moonA(0.8) },
+  journalHistoryLink: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.moonA(0.9), letterSpacing: 0.3 },
   journalHint: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 24, marginBottom: 12 },
   yesterdayBox: {
-    borderLeftWidth: 2, borderLeftColor: 'rgba(159,176,196,0.45)', paddingLeft: 12, paddingVertical: 4,
+    borderLeftWidth: 2, borderLeftColor: Colors.moonA(0.45), paddingLeft: 12, paddingVertical: 4,
     marginTop: 6, marginBottom: 14,
   },
-  yesterdayTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: 'rgba(159,176,196,0.75)', marginBottom: 4 },
+  yesterdayTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: Colors.moonA(0.75), marginBottom: 4 },
   yesterdayText: { fontFamily: Fonts.cormorantItalic, fontSize: 17, color: Colors.text2, lineHeight: 24 },
   yesterdayAsk: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 6 },
   consentRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, minHeight: 44 },
-  consentBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: 'rgba(159,176,196,0.5)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
-  consentBoxOn: { backgroundColor: 'rgba(159,176,196,0.85)', borderColor: 'rgba(159,176,196,0.85)' },
-  consentCheck: { fontSize: 12, color: '#0c1116', fontFamily: Fonts.jostMedium, marginTop: -1 },
+  consentBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: Colors.moonA(0.5), alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },
+  consentBoxOn: { backgroundColor: Colors.moonA(0.85), borderColor: Colors.moonA(0.85) },
+  consentCheck: { fontSize: 12, color: Colors.isDark ? '#0c1116' : '#FFFFFF', fontFamily: Fonts.jostMedium, marginTop: -1 },
   consentLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19 },
   journalCoachNote: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.text2, lineHeight: 19, marginTop: 8 },
   journalInput: {
     backgroundColor: Colors.stone3, borderRadius: 12, padding: 14,
     fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 24,
-    minHeight: 100, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', marginBottom: 12,
+    minHeight: 100, borderWidth: 1, borderColor: Colors.overlay(0.05), marginBottom: 12,
   },
   journalSaveBtn: {
-    backgroundColor: 'rgba(159,176,196,0.15)', borderRadius: 10,
+    backgroundColor: Colors.moonA(0.15), borderRadius: 10,
     paddingVertical: 10, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(159,176,196,0.25)',
+    borderWidth: 1, borderColor: Colors.moonA(0.25),
   },
   journalSaveBtnDim: { opacity: 0.5 },
   journalSaveBtnText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.moon, letterSpacing: 0.5 },
@@ -620,12 +627,12 @@ const styles = StyleSheet.create({
   // Concept
   conceptCard: {
     backgroundColor: Colors.stone2, borderRadius: 20, padding: 22,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.18)',
+    borderWidth: 1, borderColor: Colors.tint(0.18),
   },
   conceptTag: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand, marginBottom: 10 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.sand2, letterSpacing: 0.5, marginBottom: 2 },
   conceptTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.5, marginBottom: 14 },
-  conceptDivider: { height: 1, backgroundColor: 'rgba(196,169,106,0.12)', marginBottom: 14 },
+  conceptDivider: { height: 1, backgroundColor: Colors.tint(0.12), marginBottom: 14 },
   conceptDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26 },
   conceptMoreBtn: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center', marginTop: 4 },
   conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.sand2 },

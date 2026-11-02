@@ -13,7 +13,8 @@ import {
   Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Fonts } from '../../constants/theme';
+import { Fonts } from '../../constants/theme';
+import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLang, localeOf } from '../../constants/i18n';
 import { router } from 'expo-router';
@@ -54,6 +55,8 @@ function parseResponse(text: string): { body: string; quote: string | null } {
 
 // ─── MessageBubble ────────────────────────────────────────
 function MessageBubble({ message }: { message: Message }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const isUser = message.role === 'user';
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(10)).current;
@@ -102,6 +105,7 @@ function MessageBubble({ message }: { message: Message }) {
 
 // Nabız atan "Yanında" noktası
 function PulseDot() {
+  const styles = useStyles(makeStyles);
   const pulse = useRef(new Animated.Value(0.5)).current;
   useEffect(() => {
     const loop = Animated.loop(
@@ -117,6 +121,8 @@ function PulseDot() {
 }
 
 function TypingIndicator() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const dots = [useRef(new Animated.Value(0.3)).current, useRef(new Animated.Value(0.3)).current, useRef(new Animated.Value(0.3)).current];
   useEffect(() => {
     dots.forEach((dot, i) => {
@@ -148,6 +154,8 @@ function TypingIndicator() {
 
 // ─── Main Screen ──────────────────────────────────────────
 export default function CoachScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const makeInitial = useCallback((): Message => ({ id: '0', role: 'assistant', content: COACH_INITIAL[lang], timestamp: new Date() }), [lang]);
 
@@ -262,7 +270,7 @@ export default function CoachScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['rgba(212,146,74,0.05)', 'transparent']} style={styles.gradientTop} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
+      <LinearGradient colors={[Colors.tint(0.05), 'transparent']} style={styles.gradientTop} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -383,10 +391,10 @@ export default function CoachScreen() {
 }
 
 // ─── Styles ───────────────────────────────────────────────
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   gradientTop: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
-  header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
+  header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: Colors.overlay(0.05) },
   titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   title: { fontFamily: Fonts.cinzel, fontSize: 20, letterSpacing: 0.8, color: Colors.text },
   subtitle: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, letterSpacing: 0.3 },
@@ -394,10 +402,10 @@ const styles = StyleSheet.create({
   statusDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: Colors.success },
   statusText: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 0.4, color: Colors.success },
   quotaBadge: {
-    backgroundColor: 'rgba(196,169,106,0.1)', borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)',
+    backgroundColor: Colors.tint(0.1), borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4,
+    borderWidth: 1, borderColor: Colors.tint(0.25),
   },
-  quotaBadgeEnded: { backgroundColor: 'rgba(196,169,106,0.2)', borderColor: 'rgba(196,169,106,0.45)' },
+  quotaBadgeEnded: { backgroundColor: Colors.tint(0.2), borderColor: Colors.tint(0.45) },
   quotaText: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 0.4, color: Colors.sand2 },
   quotaTextEnded: { color: Colors.sand3 },
   unlockBtn: {
@@ -406,34 +414,34 @@ const styles = StyleSheet.create({
   },
   unlockText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.stone, letterSpacing: 1 },
   // 44 px dokunma alanı (eskiden ~30 px'ti).
-  clearBtn: { backgroundColor: Colors.stone3, borderRadius: 12, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  clearBtn: { backgroundColor: Colors.stone3, borderRadius: 12, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center', borderWidth: 1, borderColor: Colors.overlay(0.07) },
   clearBtnText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
   messages: { flex: 1 },
   messagesContent: { padding: 20, gap: 16, paddingBottom: 8 },
   divider: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
-  dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(196,169,106,0.12)' },
+  dividerLine: { flex: 1, height: 1, backgroundColor: Colors.tint(0.12) },
   dividerSymbol: { fontSize: 12, color: Colors.sand, opacity: 0.5 },
   userBubbleWrap: { alignItems: 'flex-end' },
-  userBubble: { backgroundColor: Colors.stone3, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  userBubble: { backgroundColor: Colors.stone3, borderRadius: 18, borderBottomRightRadius: 5, padding: 14, maxWidth: '82%', borderWidth: 1, borderColor: Colors.overlay(0.06) },
   userText: { fontFamily: Fonts.jost, fontSize: 16, lineHeight: 24, color: Colors.text },
   aiBubbleWrap: { alignItems: 'flex-start' },
   aiLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 6, opacity: 0.8 },
   aiLabel: { fontFamily: Fonts.cinzel, fontSize: 11, letterSpacing: 1.5, color: Colors.sand },
-  aiBubble: { backgroundColor: 'rgba(194,168,120,0.09)', borderRadius: 18, borderBottomLeftRadius: 5, padding: 16, maxWidth: '90%', borderWidth: 1, borderColor: 'rgba(194,168,120,0.18)' },
+  aiBubble: { backgroundColor: Colors.tint(0.09), borderRadius: 18, borderBottomLeftRadius: 5, padding: 16, maxWidth: '90%', borderWidth: 1, borderColor: Colors.tint(0.18) },
   aiText: { fontFamily: Fonts.jost, fontSize: 16, lineHeight: 26, color: Colors.text },
-  quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: 'rgba(196,169,106,0.15)' },
+  quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: Colors.tint(0.15) },
   quoteInlineText: { fontFamily: Fonts.cormorantItalic, fontSize: 17, lineHeight: 24, color: Colors.sand2 },
   timeMeta: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 4, letterSpacing: 0.3 },
   suggestions: { marginTop: 16 },
   disclaimer: { fontFamily: Fonts.jost, fontSize: 12, lineHeight: 18, color: Colors.muted, marginTop: 18 },
   suggestionsLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
   chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)' },
+  chip: { backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8, borderWidth: 1, borderColor: Colors.tint(0.2) },
   chipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.text2 },
   lastWarning: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.sand2, marginBottom: 8 },
   weekCard: {
     margin: 16, marginTop: 8, padding: 18, gap: 12, borderRadius: 22,
-    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(201,168,118,0.3)',
+    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.tint(0.3),
   },
   weekTitle: { fontFamily: Fonts.cormorant, fontSize: 22, color: Colors.text },
   weekBody: { fontFamily: Fonts.jost, fontSize: 15, lineHeight: 22, color: Colors.text2, marginTop: -6 },
@@ -441,13 +449,13 @@ const styles = StyleSheet.create({
   weekPlusText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.bg, textAlign: 'center' },
   weekWaitLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginTop: 2 },
   weekRow: { flexDirection: 'row', gap: 8 },
-  weekAlt: { flex: 1, minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(194,168,120,0.3)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
-  weekAltMoon: { borderColor: 'rgba(159,176,196,0.3)' },
+  weekAlt: { flex: 1, minHeight: 48, borderRadius: 14, borderWidth: 1, borderColor: Colors.tint(0.3), alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
+  weekAltMoon: { borderColor: Colors.moonA(0.3) },
   weekAltText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
-  inputArea: { padding: 16, paddingBottom: 8, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  inputArea: { padding: 16, paddingBottom: 8, borderTopWidth: 1, borderTopColor: Colors.overlay(0.05) },
   inputLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.muted, marginBottom: 8, paddingLeft: 4 },
   inputRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 10 },
-  input: { flex: 1, backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12, fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)', maxHeight: 110, lineHeight: 22 },
+  input: { flex: 1, backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 12, fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, borderWidth: 1, borderColor: Colors.overlay(0.08), maxHeight: 110, lineHeight: 22 },
   sendBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.accent, alignItems: 'center', justifyContent: 'center' },
   sendBtnDisabled: { opacity: 0.4 },
   sendIcon: { fontSize: 16, color: Colors.stone },
