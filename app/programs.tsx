@@ -450,5 +450,5 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   modalBtnText: { fontFamily: Fonts.cinzel, fontSize: 14, letterSpacing: 1, color: Colors.stone },
   modalBtnTextDone: { color: Colors.muted },
   // Pratik ekranındakiyle birebir aynı — iki ekran aynı onayı göstermeli.
-  modalDoneNote: { fontFamily: Fonts.cormorantItalic, fontSize: 14, color: Colors.sand, marginTop: 14 },
+  modalDoneNote: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand, marginTop: 14 },
 });

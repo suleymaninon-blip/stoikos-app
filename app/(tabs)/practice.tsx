@@ -603,7 +603,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     marginTop: 6, marginBottom: 14,
   },
   yesterdayTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.5, color: Colors.moonA(0.75), marginBottom: 4 },
-  yesterdayText: { fontFamily: Fonts.cormorantItalic, fontSize: 17, color: Colors.text2, lineHeight: 24 },
+  yesterdayText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 24 },
   yesterdayAsk: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 6 },
   consentRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, minHeight: 44 },
   consentBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: Colors.moonA(0.5), alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' },

@@ -171,7 +171,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     backgroundColor: Colors.tint(0.08), borderRadius: 12, padding: 13,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 12,
   },
-  freeNoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 13, lineHeight: 20, color: Colors.sand3 },
+  freeNoteText: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 20, color: Colors.sand3 },
 
   termsBox: {
     backgroundColor: Colors.tint(0.06), borderRadius: 10, padding: 11,

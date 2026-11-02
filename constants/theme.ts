@@ -104,3 +104,31 @@ export const Fonts = {
   jostMedium: 'Jost_500Medium',
   jostLight: 'Jost_300Light',
 };
+
+/**
+ * Yazı tipi setleri (2 Kasım 2026; araştırma: Wallace vd. 2022 — en hızlı okunan yazı tipi kişiden
+ * kişiye değişir, bu yüzden seçim kullanıcıda). Ekranlar hep `Fonts.*` (klasik adlar) yazar;
+ * `useStyles` stil tablosundaki aileyi seçili setin karşılığıyla değiştirir (themeContext.tsx).
+ * Klasik'te Cinzel'de Kiril yok: Rusçada başlıklar Cormorant Garamond'a düşer.
+ */
+export type FontSetId = 'klasik' | 'kitap' | 'yumusak';
+export const FONT_SETS: FontSetId[] = ['klasik', 'kitap', 'yumusak'];
+export const FONT_MAP: Record<FontSetId, Record<string, string>> = {
+  klasik: {},
+  kitap: {
+    Cinzel_400Regular: 'Literata_600SemiBold', Cinzel_600SemiBold: 'Literata_700Bold',
+    CormorantGaramond_400Regular: 'Literata_400Regular', CormorantGaramond_400Regular_Italic: 'Literata_400Regular_Italic',
+    Jost_400Regular: 'SourceSans3_400Regular', Jost_500Medium: 'SourceSans3_600SemiBold', Jost_300Light: 'SourceSans3_300Light',
+  },
+  yumusak: {
+    Cinzel_400Regular: 'Nunito_700Bold', Cinzel_600SemiBold: 'Nunito_800ExtraBold',
+    CormorantGaramond_400Regular: 'Lora_500Medium', CormorantGaramond_400Regular_Italic: 'Lora_500Medium_Italic',
+    Jost_400Regular: 'Nunito_400Regular', Jost_500Medium: 'Nunito_600SemiBold', Jost_300Light: 'Nunito_300Light',
+  },
+};
+export const RU_DISPLAY_FALLBACK: Record<string, string> = {
+  Cinzel_400Regular: 'CormorantGaramond_400Regular', Cinzel_600SemiBold: 'CormorantGaramond_400Regular',
+};
+export type TextSize = 'normal' | 'large';
+export const TEXT_SCALE: Record<TextSize, number> = { normal: 1, large: 1.15 };
+
