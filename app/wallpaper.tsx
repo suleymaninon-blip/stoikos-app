@@ -4,7 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
 import { WeeksWallpaper } from '../components/WeeksWallpaper';
 import {
@@ -28,6 +29,8 @@ import { notify } from '../constants/dialog';
 const PREVIEW = 0.44;
 
 export default function WallpaperScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const [prefs, setPrefs] = useState<WeeksPrefs | null>(null);
   const [sunday, setSunday] = useState(false);
@@ -96,7 +99,7 @@ export default function WallpaperScreen() {
         <WeeksWallpaper ref={shot} prefs={prefs} lang={lang} t={t} activeDays={activeDays} />
       </View>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: Colors.bg }]} pointerEvents="none" />
-      <LinearGradient colors={['rgba(196,169,106,0.05)', 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
+      <LinearGradient colors={[Colors.tint(0.05), 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.headRow}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} accessibilityRole="button" accessibilityLabel={t('practice.close')}>
@@ -185,26 +188,26 @@ export default function WallpaperScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 20, paddingBottom: 48, gap: 16 },
   headRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 },
-  backBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  backBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07) },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 28, lineHeight: 32, color: Colors.text },
   subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   intent: { fontFamily: Fonts.cormorantItalic, fontSize: 16, lineHeight: 20, color: Colors.text2, marginTop: 4 },
   previewBox: {
     alignSelf: 'center', width: WP_W * PREVIEW, height: WP_H * PREVIEW, borderRadius: 22, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.25)',
+    borderWidth: 1, borderColor: Colors.tint(0.25),
   },
   previewInner: {
     width: WP_W, height: WP_H,
     transform: [{ translateX: -(WP_W * (1 - PREVIEW)) / 2 }, { translateY: -(WP_H * (1 - PREVIEW)) / 2 }, { scale: PREVIEW }],
   },
   hidden: { position: 'absolute', left: 0, top: 0, width: WP_W, height: WP_H },
-  card: { backgroundColor: Colors.stone2, borderRadius: 18, paddingHorizontal: 14, paddingVertical: 4, borderWidth: 1, borderColor: 'rgba(212,146,74,0.12)' },
+  card: { backgroundColor: Colors.stone2, borderRadius: 18, paddingHorizontal: 14, paddingVertical: 4, borderWidth: 1, borderColor: Colors.tint(0.12) },
   row: { flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 56, paddingVertical: 6 },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.stone4 },
   label: { flex: 1, fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2 },
@@ -212,14 +215,14 @@ const styles = StyleSheet.create({
   value: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.sand2, textAlign: 'center' },
   step: { width: 30, height: 44, alignItems: 'center', justifyContent: 'center' },
   stepText: { fontFamily: Fonts.jostLight, fontSize: 22, color: Colors.sand },
-  chip: { minWidth: 58, height: 36, borderRadius: 18, borderWidth: 1, borderColor: '#3a342a', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10, marginLeft: 6 },
+  chip: { minWidth: 58, height: 36, borderRadius: 18, borderWidth: 1, borderColor: Colors.stone4, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10, marginLeft: 6 },
   chipOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
   chipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
   chipTextOn: { color: Colors.bg, fontFamily: Fonts.jostMedium },
   themes: { flexDirection: 'row', gap: 8 },
   theme: { flex: 1, alignItems: 'center', gap: 6, paddingVertical: 8, borderRadius: 12, borderWidth: 1, borderColor: 'transparent' },
   themeOn: { borderColor: Colors.sand },
-  swatch: { width: 30, height: 30, borderRadius: 15, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  swatch: { width: 30, height: 30, borderRadius: 15, borderWidth: 1, borderColor: Colors.overlay(0.15) },
   themeText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
   toggle: { width: 46, height: 27, borderRadius: 14, backgroundColor: Colors.stone4, padding: 3, justifyContent: 'center' },
   toggleOn: { backgroundColor: Colors.accent },
@@ -228,7 +231,7 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', gap: 10 },
   primary: { flex: 1, minHeight: 50, borderRadius: 14, backgroundColor: Colors.sand, alignItems: 'center', justifyContent: 'center' },
   primaryText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.bg },
-  secondary: { flex: 1, minHeight: 50, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(194,168,120,0.5)', alignItems: 'center', justifyContent: 'center' },
+  secondary: { flex: 1, minHeight: 50, borderRadius: 14, borderWidth: 1, borderColor: Colors.tint(0.5), alignItems: 'center', justifyContent: 'center' },
   secondaryText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.sand2 },
   toast: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.text2, textAlign: 'center' },
   privacy: { fontFamily: Fonts.jost, fontSize: 12, lineHeight: 18, color: Colors.muted, textAlign: 'center' },

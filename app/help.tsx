@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
 import { authorName } from '../constants/content';
 
@@ -34,6 +35,8 @@ function useLoop(duration: number, pingPong = false) {
 }
 
 function HelpAnim({ kind, big }: { kind: Kind; big: boolean }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const s = big ? 2 : 1; // ölçek
   const box = big ? styles.animBig : styles.anim;
@@ -137,12 +140,14 @@ function HelpAnim({ kind, big }: { kind: Kind; big: boolean }) {
 }
 
 export default function HelpScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   const [open, setOpen] = useState<Kind | null>('breath');
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['rgba(194,168,120,0.06)', 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
+      <LinearGradient colors={[Colors.tint(0.06), 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} accessibilityRole="button" accessibilityLabel={t('practice.close')}>
           <Text style={styles.backIcon}>‹</Text>
@@ -188,16 +193,16 @@ export default function HelpScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 20, paddingBottom: 48 },
-  backBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 4, marginBottom: 12 },
+  backBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 4, marginBottom: 12 },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.text, lineHeight: 36 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted, lineHeight: 21, marginTop: 4, marginBottom: 16 },
 
-  card: { backgroundColor: Colors.stone2, borderRadius: 18, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(194,168,120,0.12)' },
+  card: { backgroundColor: Colors.stone2, borderRadius: 18, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: Colors.tint(0.12) },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   cardTitle: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.text },
   cardLine: { fontFamily: Fonts.jost, fontSize: 14, lineHeight: 20, color: Colors.muted },
@@ -208,7 +213,7 @@ const styles = StyleSheet.create({
 
   anim: { width: 72, height: 72, borderRadius: 18, backgroundColor: Colors.stone3, overflow: 'hidden' },
   animBig: { width: '100%', height: 150, borderRadius: 16, backgroundColor: Colors.stone3, overflow: 'hidden' },
-  petal: { position: 'absolute', left: '50%', top: '50%', backgroundColor: 'rgba(216,196,154,0.32)' },
+  petal: { position: 'absolute', left: '50%', top: '50%', backgroundColor: Colors.tint(0.32) },
   cb: { position: 'absolute', borderWidth: 2, borderColor: Colors.sand },
   cbFill: { position: 'absolute', backgroundColor: Colors.sand, alignItems: 'center', justifyContent: 'center' },
   cbTick: { color: Colors.bg, fontWeight: '700' },
@@ -218,7 +223,7 @@ const styles = StyleSheet.create({
   dayOn: { backgroundColor: '#4f9a76' },
   bub: { position: 'absolute' },
   wheel: { position: 'absolute', left: 0, flexDirection: 'row' },
-  chip: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: '#3a342a' },
+  chip: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: Colors.stone4 },
   chipOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
   chipText: { fontFamily: Fonts.jostMedium, color: Colors.muted },
   chipTextOn: { color: Colors.bg },

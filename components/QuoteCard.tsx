@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { Quote } from '../constants/content';
 import { useLang } from '../constants/i18n';
 
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export function QuoteCard({ quote }: Props) {
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   return (
     <View style={styles.card}>
@@ -28,13 +30,13 @@ export function QuoteCard({ quote }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   card: {
     backgroundColor: Colors.stone2,
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: 'rgba(196,169,106,0.2)',
+    borderColor: Colors.tint(0.2),
     marginBottom: 16,
     overflow: 'hidden',
   },
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     lineHeight: 40,
     height: 24,
-    color: 'rgba(196,169,106,0.45)',
+    color: Colors.tint(0.45),
   },
   quoteText: {
     fontFamily: Fonts.cormorantItalic,

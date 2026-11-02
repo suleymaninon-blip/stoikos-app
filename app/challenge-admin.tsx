@@ -4,11 +4,14 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
 import { adminPending, adminModerate, ADMIN_KEY_STORAGE } from '../constants/api';
 
 export default function ChallengeAdminScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   const [key, setKey] = useState('');
   const [items, setItems] = useState<{ id: number; text: string; author: string | null; lang: string }[]>([]);
@@ -60,21 +63,21 @@ export default function ChallengeAdminScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.stone },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 10, height: 50 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
+  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07) },
   backIcon: { fontSize: 26, color: Colors.sand2, marginTop: -3 },
   title: { fontFamily: Fonts.cinzel, fontSize: 17, color: Colors.text },
   list: { padding: 20, gap: 12 },
   empty: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', marginTop: 40 },
-  card: { backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)' },
+  card: { backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: Colors.overlay(0.06) },
   quote: { fontFamily: Fonts.cormorantItalic, fontSize: 17, lineHeight: 25, color: Colors.sand3, marginBottom: 8 },
   meta: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginBottom: 14 },
   row: { flexDirection: 'row', gap: 10 },
   btn: { flex: 1, borderRadius: 12, paddingVertical: 11, alignItems: 'center', borderWidth: 1 },
   approve: { backgroundColor: 'rgba(76,175,110,0.15)', borderColor: 'rgba(76,175,110,0.4)' },
   approveTxt: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.success },
-  reject: { backgroundColor: Colors.stone3, borderColor: 'rgba(255,255,255,0.08)' },
+  reject: { backgroundColor: Colors.stone3, borderColor: Colors.overlay(0.08) },
   rejectTxt: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
 });

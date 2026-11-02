@@ -3,7 +3,8 @@ import { Animated, Easing, View, Text, StyleSheet, Pressable, TouchableOpacity, 
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle } from 'react-native-svg';
 import { useFocusEffect } from 'expo-router';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { SoundIcon } from './Icons';
 import {
   isBreathSoundSupported, getSoundPref, setSoundPref,
@@ -66,6 +67,8 @@ export default function BreathOrb({
   noLimitLabel = 'Süresiz',
   onComplete,
 }: Props) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const breath = useRef(new Animated.Value(0)).current;   // 0 = kapalı (verilmiş), 1 = tam açık (alınmış)
   const live = useRef(new Animated.Value(0)).current;     // 0 = dururken, 1 = egzersizde (parlaklık)
   const textFade = useRef(new Animated.Value(1)).current;
@@ -257,8 +260,8 @@ export default function BreathOrb({
       >
         <LinearGradient
           colors={i % 2 === 0
-            ? ['rgba(255,236,196,0.62)', 'rgba(224,184,112,0.38)', 'rgba(160,120,60,0.20)']
-            : ['rgba(248,210,150,0.56)', 'rgba(212,160,92,0.34)', 'rgba(140,100,48,0.18)']}
+            ? [Colors.petal(0.62), Colors.petal(0.38), Colors.petal(0.20)]
+            : [Colors.petal(0.56), Colors.petal(0.34), Colors.petal(0.18)]}
           start={{ x: 0.2, y: 0.1 }}
           end={{ x: 0.85, y: 0.95 }}
           style={styles.petalFill}
@@ -293,7 +296,7 @@ export default function BreathOrb({
         <View style={styles.flowerBox}>
           {active && duration > 0 && (
             <Svg width={SIZE} height={SIZE} style={styles.ring} pointerEvents="none">
-              <Circle cx={SIZE / 2} cy={SIZE / 2} r={RING_R} stroke="rgba(216,196,154,0.10)" strokeWidth={2} fill="none" />
+              <Circle cx={SIZE / 2} cy={SIZE / 2} r={RING_R} stroke={Colors.tint(0.10)} strokeWidth={2} fill="none" />
               <AnimatedCircle
                 cx={SIZE / 2} cy={SIZE / 2} r={RING_R}
                 stroke="#d4b376" strokeOpacity={0.85} strokeWidth={2.5} strokeLinecap="round" fill="none"
@@ -384,41 +387,41 @@ export default function BreathOrb({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   healthCard: {
-    marginTop: 10, backgroundColor: 'rgba(194,168,120,0.07)', borderRadius: 16, padding: 14,
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.18)',
+    marginTop: 10, backgroundColor: Colors.tint(0.07), borderRadius: 16, padding: 14,
+    borderWidth: 1, borderColor: Colors.tint(0.18),
   },
   healthText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21 },
   healthRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 12 },
   healthBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 11, paddingHorizontal: 18, minHeight: 44, justifyContent: 'center' },
-  healthBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: '#1a1814' },
+  healthBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.onAccent },
   healthLater: { minHeight: 44, justifyContent: 'center' },
   healthLaterText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted },
   wrap: { marginBottom: 16, position: 'relative' },
   card: {
-    backgroundColor: 'rgba(194,168,120,0.07)',
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.14)',
+    backgroundColor: Colors.tint(0.07),
+    borderWidth: 1, borderColor: Colors.tint(0.14),
     borderRadius: 28, paddingTop: 16, paddingBottom: 20, paddingHorizontal: 20,
     alignItems: 'center',
   },
-  cardActive: { backgroundColor: 'rgba(194,168,120,0.10)', borderColor: 'rgba(194,168,120,0.24)' },
+  cardActive: { backgroundColor: Colors.tint(0.10), borderColor: Colors.tint(0.24) },
   soundBtn: {
     position: 'absolute', top: 14, right: 16, zIndex: 5,
     width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(194,168,120,0.08)',
+    backgroundColor: Colors.tint(0.08),
   },
   soundIcon: { opacity: 0.55 },
   soundIconOn: { opacity: 1 },
   flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   halo: {
     position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2,
-    backgroundColor: 'rgba(240,196,120,0.22)',
+    backgroundColor: Colors.tint(0.22),
   },
   flower: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
   petal: {
     position: 'absolute', width: PETAL, height: PETAL, borderRadius: PETAL / 2, overflow: 'hidden',
-    borderWidth: 1, borderColor: 'rgba(250,228,180,0.22)',
+    borderWidth: 1, borderColor: Colors.tint(0.22),
   },
   petalFill: { flex: 1 },
   ring: { position: 'absolute', top: 0, left: 0 },
@@ -426,9 +429,9 @@ const styles = StyleSheet.create({
   durRowHidden: { opacity: 0 },
   durChip: {
     minWidth: 52, minHeight: 34, justifyContent: 'center', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.16)',
+    borderWidth: 1, borderColor: Colors.tint(0.16),
   },
-  durChipOn: { backgroundColor: 'rgba(194,168,120,0.14)', borderColor: 'rgba(216,196,154,0.42)' },
+  durChipOn: { backgroundColor: Colors.tint(0.14), borderColor: Colors.tint(0.42) },
   durText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3 },
   durTextOn: { color: Colors.sand2 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 23, color: Colors.sand2, marginBottom: 6, minHeight: 30 },

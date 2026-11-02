@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { loadJournalEntries, JournalEntry } from '../constants/journal';
 import { useLang, localeOf } from '../constants/i18n';
 
 type Entry = JournalEntry;
 
 export default function JournalScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -29,7 +32,7 @@ export default function JournalScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['rgba(100,160,220,0.05)', 'transparent']}
+        colors={[Colors.moonA(0.05), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -62,11 +65,11 @@ export default function JournalScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 4, marginBottom: 12 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 4, marginBottom: 12 },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
   header: { marginBottom: 22 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
@@ -78,8 +81,8 @@ const styles = StyleSheet.create({
 
   entryCard: {
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 18, marginBottom: 12,
-    borderWidth: 1, borderColor: 'rgba(100,160,220,0.12)',
+    borderWidth: 1, borderColor: Colors.moonA(0.12),
   },
-  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: 'rgba(100,160,220,0.8)', marginBottom: 8, textTransform: 'capitalize' },
+  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: Colors.moon, marginBottom: 8, textTransform: 'capitalize' },
   entryText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 25 },
 });

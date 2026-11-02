@@ -1,6 +1,6 @@
 import React from 'react';
 import Svg, { Path, Circle, Line } from 'react-native-svg';
-import { Colors } from '../constants/theme';
+import { useTheme } from '../constants/themeContext';
 
 /**
  * Arayüz ikonları — emoji yerine.
@@ -30,7 +30,8 @@ const base = (color: string) => ({
 });
 
 /** Sabah — çekirdek + sekiz ışın. */
-export function SunIcon({ size = 24, color = Colors.sand }: IconProps) {
+export function SunIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
   const b = base(color);
   const rIn = 6.8;
   const rOut = 9.5;
@@ -57,7 +58,8 @@ export function SunIcon({ size = 24, color = Colors.sand }: IconProps) {
 }
 
 /** Akşam — hilal. Dış yay r=8,5, iç yay r=8; ince bir ay bırakır. */
-export function MoonIcon({ size = 24, color = Colors.sand }: IconProps) {
+export function MoonIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path d="M 15.5 4.2 A 8.5 8.5 0 1 0 15.5 19.8 A 8 8 0 0 1 15.5 4.2 Z" {...base(color)} />
@@ -66,7 +68,8 @@ export function MoonIcon({ size = 24, color = Colors.sand }: IconProps) {
 }
 
 /** Nefes orbunun ses düğmesi. `on=false` iken hoparlörün yanına çarpı gelir. */
-export function SoundIcon({ size = 24, color = Colors.sand, on = true }: IconProps & { on?: boolean }) {
+export function SoundIcon({ size = 24, color: colorProp, on = true }: IconProps & { on?: boolean }) {
+  const color = colorProp ?? useTheme().C.sand;
   const b = base(color);
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
@@ -88,7 +91,8 @@ export function SoundIcon({ size = 24, color = Colors.sand, on = true }: IconPro
 }
 
 /** Sesli anlatım çalarken — yuvarlatılmış kare. */
-export function StopIcon({ size = 24, color = Colors.sand }: IconProps) {
+export function StopIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path d="M 7.5 7.5 H 16.5 V 16.5 H 7.5 Z" {...base(color)} />
@@ -97,7 +101,8 @@ export function StopIcon({ size = 24, color = Colors.sand }: IconProps) {
 }
 
 /** Gizlilik — asma kilit (Ayarlar'daki 🔒 emojisinin yerine). */
-export function LockIcon({ size = 24, color = Colors.sand }: IconProps) {
+export function LockIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       <Path d="M 6 11 H 18 V 20 H 6 Z" {...base(color)} />

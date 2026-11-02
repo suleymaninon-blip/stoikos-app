@@ -12,7 +12,8 @@ import {
 import { router, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, Fonts } from '../../constants/theme';
+import { Fonts } from '../../constants/theme';
+import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { MoonIcon } from '../../components/Icons';
 import { getTodaysQuote, getMoodQuote, MOOD_THEMES } from '../../constants/content';
 import { getPrograms, getProgress, Program } from '../../constants/programs';
@@ -36,6 +37,8 @@ type Resume = { program: Program; done: number[]; next: number; started: boolean
 // ── Kaldığın yer: yarım kalan program, yoksa başlanmamış ilk program ──
 // Alt menüde olmayan tek bölüm; eskiden listenin en sonundaydı (22 Ekim 2026).
 function ResumeCard({ resume }: { resume: Resume }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   const { program, done, next, started } = resume;
   const day = program.days[Math.min(next, program.dayCount - 1)];
@@ -62,7 +65,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
       {started && (
         <View style={styles.resumeBar}>
           {program.days.map((_, i) => (
-            <View key={i} style={[styles.resumeSeg, { backgroundColor: done.includes(i) ? tint(c, 1) : i === next ? tint(c, 0.4) : 'rgba(255,255,255,0.06)' }]} />
+            <View key={i} style={[styles.resumeSeg, { backgroundColor: done.includes(i) ? tint(c, 1) : i === next ? tint(c, 0.4) : Colors.overlay(0.06) }]} />
           ))}
         </View>
       )}
@@ -73,6 +76,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
 
 // ── Nasıl hissediyorsun? — duygu çipleri; seçilen temadan bugünün sözü ──
 function MoodPicker() {
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const [mood, setMood] = useState<string | null>(null);
   const picked = mood ? getMoodQuote(mood, lang) : null;
@@ -112,6 +116,8 @@ function MoodPicker() {
 }
 
 export default function HomeScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const { streak, weekDays, refresh } = useStreak();
   const [practiceDone, setPracticeDone] = useState(0);
@@ -161,7 +167,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
-        colors={['rgba(194,168,120,0.06)', 'transparent']}
+        colors={[Colors.tint(0.06), 'transparent']}
         style={styles.gradientTop}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -265,7 +271,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   gradientTop: { position: 'absolute', top: 0, left: 0, right: 0, height: 300 },
   scroll: { flex: 1 },
@@ -273,7 +279,7 @@ const styles = StyleSheet.create({
 
   headerRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20, marginTop: 8 },
   greetingBlock: { flex: 1 },
-  gearBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 2 },
+  gearBtn: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 2 },
   gearIcon: { fontSize: 17, color: Colors.sand },
   dateText: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand, marginBottom: 8 },
   greetingText: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 38 },
@@ -295,18 +301,18 @@ const styles = StyleSheet.create({
 
   moodCard: {
     backgroundColor: Colors.stone2, borderRadius: 22, padding: 18, marginBottom: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)',
+    borderWidth: 1, borderColor: Colors.overlay(0.05),
   },
   moodTitle: { fontFamily: Fonts.cormorant, fontSize: 23, color: Colors.text, marginBottom: 14 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
     minHeight: 40, paddingHorizontal: 15, borderRadius: 20, justifyContent: 'center',
-    borderWidth: 1, borderColor: 'rgba(194,168,120,0.3)',
+    borderWidth: 1, borderColor: Colors.tint(0.3),
   },
   chipOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
   chipText: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2 },
   chipTextOn: { fontFamily: Fonts.jostMedium, color: Colors.bg },
-  moodQuote: { borderTopWidth: 1, borderTopColor: 'rgba(194,168,120,0.18)', marginTop: 16, paddingTop: 14, gap: 8 },
+  moodQuote: { borderTopWidth: 1, borderTopColor: Colors.tint(0.18), marginTop: 16, paddingTop: 14, gap: 8 },
   moodQuoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, lineHeight: 29, color: Colors.text },
   moodQuoteMeta: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   moodLinkBtn: { alignSelf: 'flex-start', minHeight: 40, justifyContent: 'center' },
@@ -315,7 +321,7 @@ const styles = StyleSheet.create({
   shortcuts: { flexDirection: 'row', gap: 10, marginBottom: 28 },
   shortcut: {
     flex: 1, backgroundColor: Colors.stone2, borderRadius: 18, padding: 14, gap: 4,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   shortcutLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
   shortcutText: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text },
@@ -324,8 +330,8 @@ const styles = StyleSheet.create({
   continuityRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 14 },
   continuityLabel: { fontFamily: Fonts.jost, fontSize: 14, letterSpacing: 1, color: Colors.muted },
   dots: { flexDirection: 'row', gap: 10 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: 'rgba(194,168,120,0.18)' },
-  dotDone: { backgroundColor: 'rgba(194,168,120,0.5)' },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.tint(0.18) },
+  dotDone: { backgroundColor: Colors.tint(0.5) },
   dotToday: { backgroundColor: Colors.sand2, width: 9, height: 9, borderRadius: 4.5 },
 
 });

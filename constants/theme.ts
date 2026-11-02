@@ -1,31 +1,83 @@
 // ── Sakin / huzur paleti (STOIKOS-SAKIN-TASARIM-SPEC) ──
 // Zemin yumuşak/koyu, METİN kontrastı yüksek tutuldu (okunabilirlik şart).
 
-export const Colors = {
-  // arka planlar
-  bg: '#14120e',      // bgDeep — ana arka plan
-  stone: '#1c1915',   // bgSoft
-  stone2: '#211d18',  // surface — kart yüzeyi
-  stone3: '#25201a',  // surface2 — hover/aktif yüzey
-  stone4: '#2e2a22',
+/**
+ * Renk paletleri (2 Kasım 2026, test edenler: "çok kasvetli, içeride durmak istemiyorum").
+ * Kullanıcı Ayarlar → Görünüm'den seçer; varsayılan Otomatik (gündüz Ege, akşam Gece mavisi).
+ * Tasarım: https://claude.ai/artifact/BPif3C9QxLu7j8wfNjgB7Y — gerekçe: parlaklık hoşnutluğu,
+ * doygunluk uyarılmayı artırır; mavi/mavi-yeşil/yeşil en sevilen tonlar (Valdez & Mehrabian 1994,
+ * Palmer & Schloss 2010). Kırmızı yalnız uyarılarda.
+ *
+ * Anahtar adları eski tek paletten kalma (sand = ana vurgu, stone* = yüzeyler) ki ekran kodu
+ * değişmesin. Ekranlar renkleri `useTheme()` / `useStyles(makeStyles)` ile alır
+ * (constants/themeContext.tsx); sabit `Colors` yalnız temadan bağımsız yerler içindir.
+ */
+export type ThemeId = 'classic' | 'ege' | 'zeytin' | 'gece';
 
-  // altın vurgular
-  sand: '#c2a878',    // gold — ana vurgu
-  sand2: '#d8c49a',   // goldSoft — başlık/açık vurgu
-  sand3: '#f5edd8',
-  goldWarm: '#c9a876',
+export interface Palette {
+  id: ThemeId;
+  isDark: boolean;
+  bg: string; stone: string; stone2: string; stone3: string; stone4: string;
+  sand: string; sand2: string; sand3: string; goldWarm: string; accent: string;
+  text: string; text2: string; muted: string; faint: string;
+  moon: string; success: string;
+  /** Vurgu rengindeki düğmenin üstündeki yazı. */
+  onAccent: string;
+  /** Eski `rgba(255,255,255,a)` ince çizgi/yüzey: koyuda beyaz, açıkta mürekkep. */
+  overlay: (a: number) => string;
+  /** Eski altın saydamlıkları: vurgu renginin saydam hâli. */
+  tint: (a: number) => string;
+  /** Akşam aksanının saydam hâli. */
+  moonA: (a: number) => string;
+  /** Nefes çiçeğinin taç yaprakları. */
+  petal: (a: number) => string;
+  /** Uyarı/silme yazısı. */
+  danger: string;
+}
 
-  // metin (yüksek kontrast)
-  text: '#ece4d4',    // ana metin
-  text2: '#cabfa8',   // ikincil
-  muted: '#8a8070',   // açıklama
-  faint: '#5a5348',   // en silik (etiketler)
+const rgba = (rgb: string, k = 1) => (a: number) => `rgba(${rgb},${Math.min(1, +(a * k).toFixed(3))})`;
 
-  // aksanlar
-  moon: '#9fb0c4',    // akşam/gece aksanı (Pratik + İlerleme)
-  accent: '#c9a876',  // genel vurgu (yumuşak altın)
-  success: '#4caf6e',
+export const PALETTES: Record<ThemeId, Palette> = {
+  classic: {
+    id: 'classic', isDark: true,
+    bg: '#14120e', stone: '#1c1915', stone2: '#211d18', stone3: '#25201a', stone4: '#2e2a22',
+    sand: '#c2a878', sand2: '#d8c49a', sand3: '#f5edd8', goldWarm: '#c9a876', accent: '#c9a876',
+    text: '#ece4d4', text2: '#cabfa8', muted: '#8a8070', faint: '#5a5348',
+    moon: '#9fb0c4', success: '#4caf6e', onAccent: '#14120e',
+    overlay: rgba('255,255,255'), tint: rgba('196,169,106'), moonA: rgba('159,176,196'),
+    petal: rgba('248,210,150'), danger: '#e3a08f',
+  },
+  ege: {
+    id: 'ege', isDark: false,
+    bg: '#F5F1E8', stone: '#FBF8F2', stone2: '#FFFFFF', stone3: '#EFEADF', stone4: '#E2DCCF',
+    sand: '#2B7476', sand2: '#236264', sand3: '#1D2A2F', goldWarm: '#2B7476', accent: '#2B7476',
+    text: '#1D2A2F', text2: '#3E4F55', muted: '#5B6A70', faint: '#727F84',
+    moon: '#3C5D86', success: '#2E8B57', onAccent: '#FFFFFF',
+    overlay: rgba('29,42,47', 1.5), tint: rgba('43,116,118', 1.2), moonA: rgba('60,93,134', 1.2),
+    petal: rgba('58,147,150', 1.1), danger: '#A8452F',
+  },
+  zeytin: {
+    id: 'zeytin', isDark: false,
+    bg: '#F4F1E9', stone: '#FAF8F2', stone2: '#FFFFFF', stone3: '#EDEAE0', stone4: '#E0DBCC',
+    sand: '#55704A', sand2: '#4A6340', sand3: '#262A20', goldWarm: '#55704A', accent: '#55704A',
+    text: '#262A20', text2: '#474D3E', muted: '#5F6557', faint: '#777D6F',
+    moon: '#4F5A85', success: '#3E8A4F', onAccent: '#FFFFFF',
+    overlay: rgba('38,42,32', 1.5), tint: rgba('85,112,74', 1.2), moonA: rgba('79,90,133', 1.2),
+    petal: rgba('111,143,98', 1.1), danger: '#A8452F',
+  },
+  gece: {
+    id: 'gece', isDark: true,
+    bg: '#141D2A', stone: '#18222F', stone2: '#1D2938', stone3: '#223042', stone4: '#2C3B4F',
+    sand: '#86BDD0', sand2: '#9CCADB', sand3: '#EAF0F6', goldWarm: '#86BDD0', accent: '#86BDD0',
+    text: '#EAF0F6', text2: '#C4D0DC', muted: '#9AA9BA', faint: '#73859A',
+    moon: '#B9B4E0', success: '#5CC08A', onAccent: '#0F1824',
+    overlay: rgba('255,255,255'), tint: rgba('134,189,208'), moonA: rgba('185,180,224'),
+    petal: rgba('150,205,222'), danger: '#F0A898',
+  },
 };
+
+/** Temadan bağımsız yerler (marka kartı, paylaşım görseli) için klasik palet. */
+export const Colors = PALETTES.classic;
 
 // Spec'in semantik isimleriyle birebir erişim (yeni bileşenler için)
 export const colors = {

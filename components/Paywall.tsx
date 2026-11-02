@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
 import StoikosMark from './StoikosMark';
 
@@ -29,6 +30,7 @@ export function Paywall({
   onClose: () => void;
   onSubscribe?: (plan: Plan) => void;
 }) {
+  const styles = useStyles(makeStyles);
   const { t } = useLang();
   // Yıllık önseçili: kategorinin gelirinin ~%60-68'i yıllık planlardan geliyor
   // ve ücretli edinme yalnızca yıllıkla geri kazanılıyor.
@@ -125,7 +127,7 @@ export function Paywall({
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   overlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.78)',
     justifyContent: 'center', alignItems: 'center', padding: 24,
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.stone2, borderRadius: 24, padding: 28,
     width: '100%', maxWidth: 420, maxHeight: '90%',
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.22)',
+    borderWidth: 1, borderColor: Colors.tint(0.22),
   },
   omega: { alignItems: 'center', marginBottom: 8 },
   title: { fontFamily: Fonts.cinzel, fontSize: 21, color: Colors.sand2, textAlign: 'center', letterSpacing: 0.8, marginBottom: 6 },
@@ -142,9 +144,9 @@ const styles = StyleSheet.create({
   plans: { flexDirection: 'row', gap: 10 },
   plan: {
     flex: 1, borderRadius: 14, paddingVertical: 13, paddingHorizontal: 13,
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)', backgroundColor: Colors.stone3,
+    borderWidth: 1, borderColor: Colors.tint(0.2), backgroundColor: Colors.stone3,
   },
-  planOn: { borderColor: Colors.sand, backgroundColor: 'rgba(196,169,106,0.11)' },
+  planOn: { borderColor: Colors.sand, backgroundColor: Colors.tint(0.11) },
   planTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginBottom: 6 },
   planLabel: { fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 1, color: Colors.muted },
   planLabelOn: { color: Colors.sand2 },
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
   planSub: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 3 },
 
   frequency: { fontFamily: Fonts.jost, fontSize: 11.5, color: Colors.muted, textAlign: 'center', marginTop: 12, letterSpacing: 0.2 },
-  divider: { height: 1, backgroundColor: 'rgba(196,169,106,0.15)', marginVertical: 18 },
+  divider: { height: 1, backgroundColor: Colors.tint(0.15), marginVertical: 18 },
   body: { fontFamily: Fonts.jost, fontSize: 15, lineHeight: 23, color: Colors.text2, marginBottom: 18 },
 
   features: { gap: 11, marginBottom: 18 },
@@ -166,13 +168,13 @@ const styles = StyleSheet.create({
   featureText: { flex: 1, fontFamily: Fonts.jost, fontSize: 15, lineHeight: 22, color: Colors.text },
 
   freeNote: {
-    backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 12, padding: 13,
+    backgroundColor: Colors.tint(0.08), borderRadius: 12, padding: 13,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 12,
   },
   freeNoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 13, lineHeight: 20, color: Colors.sand3 },
 
   termsBox: {
-    backgroundColor: 'rgba(196,169,106,0.06)', borderRadius: 10, padding: 11,
+    backgroundColor: Colors.tint(0.06), borderRadius: 10, padding: 11,
     borderLeftWidth: 2, borderLeftColor: Colors.muted, marginBottom: 18,
   },
   termsText: { fontFamily: Fonts.jost, fontSize: 11, lineHeight: 16, color: Colors.muted, letterSpacing: 0.2 },
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent, borderRadius: 14,
     paddingVertical: 15, alignItems: 'center', marginBottom: 10,
   },
-  ctaDisabled: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)' },
+  ctaDisabled: { backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.tint(0.25) },
   ctaText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.stone, letterSpacing: 1 },
   ctaTextDisabled: { color: Colors.sand2 },
 

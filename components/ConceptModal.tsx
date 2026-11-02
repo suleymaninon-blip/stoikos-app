@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Pressable } from 'react-native';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
 import { Concept, conceptAudioKey } from '../constants/content';
 import { hasAudio, playAudio, stopAudio } from '../constants/audio';
@@ -22,6 +23,8 @@ export const TEXT_GLYPH = '︎';
  * yalnızca dinleme. Ses ve ödeme duvarı bu bileşenin içinde yönetiliyor.
  */
 export function ConceptModal({ concept, onClose }: { concept: Concept | null; onClose: () => void }) {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const { plus } = usePlus();
   // ⚠️ ENFORCE_PLUS_GATE geçici olarak false (bkz. constants/config.ts).
@@ -84,31 +87,31 @@ export function ConceptModal({ concept, onClose }: { concept: Concept | null; on
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   overlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.75)',
     justifyContent: 'center', alignItems: 'center', padding: 24,
   },
   card: {
     backgroundColor: Colors.stone2, borderRadius: 24, padding: 28, width: '100%', maxHeight: '85%',
-    borderWidth: 1, borderColor: 'rgba(196,169,106,0.2)',
+    borderWidth: 1, borderColor: Colors.tint(0.2),
   },
   icon: { fontSize: 32, color: Colors.sand2, marginBottom: 12, textAlign: 'center' },
   latin: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.sand2, textAlign: 'center', marginBottom: 4 },
   name: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', letterSpacing: 0.5, marginBottom: 16 },
-  listenBtn: { alignSelf: 'center', width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(196,169,106,0.12)', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(196,169,106,0.25)', marginTop: 4, marginBottom: 12 },
+  listenBtn: { alignSelf: 'center', width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.25), marginTop: 4, marginBottom: 12 },
   listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
   listenIcon: { width: 14, height: 14 },
-  divider: { height: 1, backgroundColor: 'rgba(196,169,106,0.15)', marginBottom: 16 },
+  divider: { height: 1, backgroundColor: Colors.tint(0.15), marginBottom: 16 },
   desc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 16 },
   exampleBox: {
-    backgroundColor: 'rgba(196,169,106,0.08)', borderRadius: 12, padding: 14,
+    backgroundColor: Colors.tint(0.08), borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
   },
   exampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
   example: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.sand3, lineHeight: 26 },
   practiceBox: {
-    backgroundColor: 'rgba(159,176,196,0.08)', borderRadius: 12, padding: 14,
+    backgroundColor: Colors.moonA(0.08), borderRadius: 12, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
   practiceLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
@@ -116,7 +119,7 @@ const styles = StyleSheet.create({
   closeBtn: {
     backgroundColor: Colors.stone3, borderRadius: 12, minHeight: 48,
     paddingVertical: 12, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)',
+    borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
   closeText: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.text2, letterSpacing: 1 },
 });

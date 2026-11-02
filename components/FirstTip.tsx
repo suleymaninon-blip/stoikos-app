@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, upper } from '../constants/i18n';
 import { ONBOARDED_KEY, TIP_KEY_PREFIX, onOnboardingDone } from '../constants/onboarding';
 
@@ -27,6 +28,7 @@ export function FirstTip({ id, text, target, container, enabled = true }: {
   container: React.RefObject<View | null>;
   enabled?: boolean;
 }) {
+  const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const [rect, setRect] = useState<Rect | null>(null);
   const pulse = useRef(new Animated.Value(0)).current;
@@ -101,12 +103,12 @@ export function FirstTip({ id, text, target, container, enabled = true }: {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   dim: { position: 'absolute', backgroundColor: 'rgba(10,8,6,0.68)' },
   ring: { position: 'absolute', borderRadius: 20, borderWidth: 2, borderColor: Colors.sand2 },
   card: {
     position: 'absolute', left: 20, right: 20, padding: 20, borderRadius: 22, gap: 10,
-    backgroundColor: Colors.stone3, borderWidth: 1, borderColor: 'rgba(194,168,120,0.4)',
+    backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.tint(0.4),
   },
   label: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
   text: { fontFamily: Fonts.jost, fontSize: 17, lineHeight: 25, color: Colors.text },

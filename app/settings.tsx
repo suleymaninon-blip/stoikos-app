@@ -7,7 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
-import { Colors, Fonts } from '../constants/theme';
+import { Fonts } from '../constants/theme';
+import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
 import { exportJournal } from '../constants/journal';
 import { isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind } from '../constants/notify';
@@ -17,10 +18,13 @@ import { replayOnboarding } from '../constants/onboarding';
 import { notify, confirmAction } from '../constants/dialog';
 import { HEALTH_SUPPORTED, isHealthSyncOn, setHealthSync, healthAppName } from '../constants/healthPrefs';
 import { LockIcon } from '../components/Icons';
+import { ThemePicker } from '../components/ThemePicker';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
 
 export default function SettingsScreen() {
+  const { C: Colors } = useTheme();
+  const styles = useStyles(makeStyles);
   const { t, lang, setLang } = useLang();
   const [notifyOn, setNotifyOn] = useState(false);
   const [healthOn, setHealthOn] = useState(false);
@@ -158,7 +162,7 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={['rgba(196,169,106,0.05)', 'transparent']}
+        colors={[Colors.tint(0.05), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -189,6 +193,12 @@ export default function SettingsScreen() {
               </TouchableOpacity>
             ))}
           </View>
+        </View>
+
+        {/* Görünüm (2 Kasım 2026): Otomatik / Ege / Zeytin / Gece mavisi / Klasik */}
+        <View style={styles.langWrap}>
+          <Text style={styles.langTitle}>{upper(t('theme.title'), lang)}</Text>
+          <ThemePicker />
         </View>
 
         {/* Günlük hatırlatıcılar */}
@@ -338,11 +348,11 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
   scroll: { padding: 24, paddingBottom: 48 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginTop: 4, marginBottom: 12 },
+  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 4, marginBottom: 12 },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
   header: { marginBottom: 26 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
@@ -352,8 +362,8 @@ const styles = StyleSheet.create({
   langWrap: { marginBottom: 20 },
   langTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.muted, marginBottom: 10 },
   langRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
-  langChipActive: { backgroundColor: 'rgba(212,146,74,0.18)', borderColor: Colors.accent },
+  langChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 7, borderWidth: 1, borderColor: Colors.overlay(0.08) },
+  langChipActive: { backgroundColor: Colors.tint(0.18), borderColor: Colors.accent },
   langFlag: { fontSize: 16 },
   langLabel: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.text2 },
   langLabelActive: { color: Colors.accent },
@@ -362,10 +372,10 @@ const styles = StyleSheet.create({
   notifyCard: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 20,
-    borderWidth: 1, borderColor: 'rgba(212,146,74,0.18)',
+    borderWidth: 1, borderColor: Colors.tint(0.18),
   },
   notifyCardOff: { opacity: 0.7 },
-  timesCard: { backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, marginTop: -10, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(212,146,74,0.12)' },
+  timesCard: { backgroundColor: Colors.stone2, borderRadius: 16, paddingHorizontal: 16, marginTop: -10, marginBottom: 20, borderWidth: 1, borderColor: Colors.tint(0.12) },
   timeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 },
   timeRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.stone4 },
   timeLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2 },
@@ -382,26 +392,26 @@ const styles = StyleSheet.create({
 
   // Reset / aksiyon butonları
   helpRow: { flexDirection: 'row', gap: 10 },
-  helpBtn: { flex: 1, borderColor: 'rgba(194,168,120,0.45)', backgroundColor: Colors.stone3 },
+  helpBtn: { flex: 1, borderColor: Colors.tint(0.45), backgroundColor: Colors.stone3 },
   helpText: { color: Colors.sand2 },
   resetBtn: {
     backgroundColor: Colors.stone2, borderRadius: 14,
     paddingVertical: 14, paddingHorizontal: 10, alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   resetText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text2, letterSpacing: 0.3, textAlign: 'center' },
   dangerBtn: {
     minHeight: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: 'rgba(214,120,100,0.35)', backgroundColor: 'rgba(214,120,100,0.06)',
   },
-  dangerText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: '#e3a08f', letterSpacing: 0.3 },
+  dangerText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.danger, letterSpacing: 0.3 },
 
   // Destek & Hakkında
   dataNote: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.text2, marginBottom: 14 },
   aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
-  aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', overflow: 'hidden' },
+  aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: Colors.overlay(0.05), overflow: 'hidden' },
   aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
-  aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
+  aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.overlay(0.05) },
   aboutIcon: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand, width: 22, textAlign: 'center' },
   aboutIconBox: { width: 22, alignItems: 'center' },
   aboutLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2 },
@@ -409,11 +419,11 @@ const styles = StyleSheet.create({
   versionText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 12 },
 
   // Yönetici
-  adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  adminWrap: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: Colors.overlay(0.05) },
   adminTitle: { fontFamily: Fonts.cinzel, fontSize: 13, color: Colors.text2, marginBottom: 4 },
   adminHint: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, lineHeight: 15, marginBottom: 10 },
   adminRow: { flexDirection: 'row', gap: 8 },
-  adminInput: { flex: 1, backgroundColor: Colors.stone3, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text, borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)' },
-  adminBtn: { backgroundColor: Colors.stone4, borderRadius: 10, paddingHorizontal: 12, justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
+  adminInput: { flex: 1, backgroundColor: Colors.stone3, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 9, fontFamily: Fonts.jost, fontSize: 12, color: Colors.text, borderWidth: 1, borderColor: Colors.overlay(0.07) },
+  adminBtn: { backgroundColor: Colors.stone4, borderRadius: 10, paddingHorizontal: 12, justifyContent: 'center', borderWidth: 1, borderColor: Colors.overlay(0.08) },
   adminBtnText: { fontFamily: Fonts.jostMedium, fontSize: 11, color: Colors.sand2 },
 });
