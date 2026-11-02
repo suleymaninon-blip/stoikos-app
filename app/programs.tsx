@@ -26,6 +26,8 @@ export default function ProgramsScreen() {
   const [dayIdx, setDayIdx] = useState<number | null>(null);
   const rootRef = useRef<View>(null);
   const daysRef = useRef<View>(null);
+  // Son gün işaretlenince artar; kaydırma alanı yeniden kurulur ve en baştan (kapanış kartından) başlar.
+  const [finishKey, setFinishKey] = useState(0);
   // Programlar Stoikos Plus'a dahil. Kilitliyken kart gizlenmiyor — ne olduğu
   // görünsün, dokununca ödeme duvarı açılsın; kapatmak yerine tanıtmak.
   const { plus } = usePlus();
@@ -79,7 +81,15 @@ export default function ProgramsScreen() {
     // Bir yolculuk baştan sona bitti — değerlendirme istemi için ikinci
     // hak edilmiş an. (Geri alma işaretlenirken tetiklenmesin diye !done.)
     const total = programs.find((p) => p.id === pid)?.dayCount;
-    if (!done && total != null && next.length === total) maybeAskForReview('programDone');
+    if (!done && total != null && next.length === total) {
+      maybeAskForReview('programDone');
+      // Kapanış kartı ("Bu hafta sende ne değişti?") listenin başında beliriyor; son günü
+      // işaretleyen kişi sayfanın altında kalıp onu görmeden geçiyordu (2 Kasım 2026,
+      // kullanıcı geri bildirimi). Gün penceresi kapanınca (320 ms) kaydırma alanını yeniden
+      // kurarak başa dön. (Web'de ScrollView ref'i burada boş geliyordu; yeniden kurmak her
+      // platformda aynı çalışıyor.)
+      setTimeout(() => setFinishKey((k) => k + 1), 380);
+    }
   }
 
   // Tamamlanmış gün her zaman açık kalır: önceki bir günün işareti geri alınınca sonraki
@@ -132,7 +142,7 @@ export default function ProgramsScreen() {
         <View style={styles.topBar}>
           <TouchableOpacity onPress={() => (fromHome ? (router.canGoBack() ? router.back() : router.replace('/')) : setOpenId(null))} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
         </View>
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <ScrollView key={finishKey} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <Text style={styles.detailIcon}>{open.icon}</Text>
           <Text style={styles.detailTitle}>{open.title}</Text>
           <Text style={styles.detailSub}>{open.subtitle}</Text>
