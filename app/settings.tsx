@@ -316,6 +316,9 @@ export default function SettingsScreen() {
         <Text style={styles.aboutSection}>{t('settings.dataSection')}</Text>
         {/* Hesap yok: veriler cihazda. Silinince kaybolacağını önceden söyle (rakiplerde "kaybolan günlük" 1★ sebebiydi). */}
         <Text style={styles.dataNote}>{t('settings.localDataNote')}</Text>
+        <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={() => router.push('/journal')} activeOpacity={0.8} accessibilityRole="button">
+          <Text style={styles.resetText}>{t('journal.title')}</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={exportMyJournal} activeOpacity={0.8}>
           <Text style={styles.resetText}>{t('data.export')}</Text>
         </TouchableOpacity>

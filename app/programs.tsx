@@ -184,7 +184,10 @@ export default function ProgramsScreen() {
                     </View>
                   </View>
                 ) : (
-                  <Text style={styles.reflectSaved}>{t('programs.reflectSaved')}</Text>
+                  // Dokunulabilir (2 Kasım 2026): yansımaların nerede durduğu belli değildi.
+                  <TouchableOpacity onPress={() => router.push('/journal')} hitSlop={8} activeOpacity={0.7} accessibilityRole="link">
+                    <Text style={styles.reflectSaved}>{t('programs.reflectSaved')} · <Text style={styles.reflectView}>{t('journal.view')}</Text></Text>
+                  </TouchableOpacity>
                 )}
 
                 {next ? (
@@ -412,7 +415,8 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   reflectBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 11, paddingHorizontal: 20 },
   reflectBtnOff: { opacity: 0.35 },
   reflectBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.bg, letterSpacing: 0.4 },
-  reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center' },
+  reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center', paddingVertical: 8 },
+  reflectView: { fontFamily: Fonts.jostMedium, textDecorationLine: 'underline' },
 
   nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: Colors.tint(0.22), gap: 4 },
   nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
