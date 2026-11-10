@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Platform,
   ActivityIndicator,
   Animated,
+  Easing,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Fonts } from '../../constants/theme';
@@ -23,6 +24,8 @@ import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
 import { Paywall } from '../../components/Paywall';
 import StoikosMark from '../../components/StoikosMark';
 import { confirmAction } from '../../constants/dialog';
+import { CoachWaiting, WAIT_CLOSE_MS } from '../../components/CoachWaiting';
+import { useReduceMotion } from '../../hooks/useReduceMotion';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -54,17 +57,58 @@ function parseResponse(text: string): { body: string; quote: string | null } {
 }
 
 // ─── MessageBubble ────────────────────────────────────────
-function MessageBubble({ message }: { message: Message }) {
+/**
+ * Yeni gelen koç cevabı kelime kelime belirir (10 Kasım 2026, bekleme animasyonu tasarımı):
+ * her kelime 6 px aşağıdan, 32 ms arayla; en geç 1,4 sn'de hepsi görünür. Paragraflar korunur.
+ * Ekran okuyucu metni tek seferde okur.
+ */
+function RevealText({ text, style }: { text: string; style: any }) {
+  const paras = useMemo(() => text.split('\n').map((p) => p.split(' ').filter(Boolean)), [text]);
+  const total = paras.reduce((n, p) => n + p.length, 0);
+  const vals = useRef(Array.from({ length: total }, () => new Animated.Value(0))).current;
+  useEffect(() => {
+    Animated.parallel(vals.map((v, i) => Animated.timing(v, {
+      toValue: 1, duration: 420, delay: Math.min(i * 32, 1400), easing: Easing.out(Easing.cubic), useNativeDriver: true,
+    }))).start();
+  }, []);
+  let k = 0;
+  return (
+    <View accessible accessibilityLabel={text}>
+      {paras.map((words, pi) => words.length === 0
+        ? <View key={pi} style={{ height: 12 }} />
+        : (
+          <View key={pi} style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {words.map((w, wi) => {
+              const v = vals[k++];
+              return (
+                <Animated.Text
+                  key={wi}
+                  style={[style, { marginRight: 4.5, opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [6, 0] }) }] }]}
+                >{w}</Animated.Text>
+              );
+            })}
+          </View>
+        ))}
+    </View>
+  );
+}
+
+function MessageBubble({ message, reveal }: { message: Message; reveal?: boolean }) {
   const { C: Colors } = useTheme();
   const styles = useStyles(makeStyles);
   const isUser = message.role === 'user';
+  const reduce = useReduceMotion();
+  const animate = !!reveal && !reduce;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(10)).current;
+  const slideAnim = useRef(new Animated.Value(animate ? 0 : 10)).current;
+  const scaleAnim = useRef(new Animated.Value(animate ? 0.86 : 1)).current;
 
   useEffect(() => {
+    const ease = Easing.bezier(0.2, 0.8, 0.2, 1);
     Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: animate ? 420 : 300, easing: animate ? ease : undefined, useNativeDriver: true }),
       Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.timing(scaleAnim, { toValue: 1, duration: 420, easing: ease, useNativeDriver: true }),
     ]).start();
   }, []);
 
@@ -83,13 +127,13 @@ function MessageBubble({ message }: { message: Message }) {
 
   const { body, quote } = parseResponse(message.content);
   return (
-    <Animated.View style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+    <Animated.View style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }, { scale: scaleAnim }], transformOrigin: 'left top' }]}>
       <View style={styles.aiLabelRow}>
         <StoikosMark size={12} variant="line" color={Colors.sand} />
         <Text style={styles.aiLabel}>STOIKOS</Text>
       </View>
       <View style={styles.aiBubble}>
-        <Text style={styles.aiText}>{body}</Text>
+        {animate ? <RevealText text={body} style={styles.aiText} /> : <Text style={styles.aiText}>{body}</Text>}
         {quote && (
           <View style={styles.quoteInline}>
             <Text style={styles.quoteInlineText}>{quote}</Text>
@@ -120,38 +164,6 @@ function PulseDot() {
   return <Animated.View style={[styles.statusDot, { opacity: pulse }]} />;
 }
 
-function TypingIndicator() {
-  const { C: Colors } = useTheme();
-  const styles = useStyles(makeStyles);
-  const dots = [useRef(new Animated.Value(0.3)).current, useRef(new Animated.Value(0.3)).current, useRef(new Animated.Value(0.3)).current];
-  useEffect(() => {
-    dots.forEach((dot, i) => {
-      Animated.loop(
-        Animated.sequence([
-          Animated.delay(i * 150),
-          Animated.timing(dot, { toValue: 1, duration: 400, useNativeDriver: true }),
-          Animated.timing(dot, { toValue: 0.3, duration: 400, useNativeDriver: true }),
-        ])
-      ).start();
-    });
-  }, []);
-  return (
-    <View style={styles.aiBubbleWrap}>
-      <View style={styles.aiLabelRow}>
-        <StoikosMark size={12} variant="line" color={Colors.sand} />
-        <Text style={styles.aiLabel}>STOIKOS</Text>
-      </View>
-      <View style={[styles.aiBubble, { paddingVertical: 16, paddingHorizontal: 20 }]}>
-        <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-          {dots.map((dot, i) => (
-            <Animated.View key={i} style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.sand, opacity: dot }} />
-          ))}
-        </View>
-      </View>
-    </View>
-  );
-}
-
 // ─── Main Screen ──────────────────────────────────────────
 export default function CoachScreen() {
   const { C: Colors } = useTheme();
@@ -162,6 +174,10 @@ export default function CoachScreen() {
   const [messages, setMessages] = useState<Message[]>(() => [{ id: '0', role: 'assistant', content: COACH_INITIAL[lang], timestamp: new Date() }]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  // Cevap gelince bekleme çiçeği içe toplanır (closing), sonra yeni balon kelime kelime açılır (revealId).
+  const [closing, setClosing] = useState(false);
+  const [revealId, setRevealId] = useState<string | null>(null);
+  const closeWait = () => { setClosing(true); return new Promise((r) => setTimeout(r, WAIT_CLOSE_MS)); };
   // Kota yalnızca arayüz içindir; asıl kapı backend'de. null = bilinmiyor (ağ hatası).
   const [quota, setQuota] = useState<CoachQuota | null>(null);
   const [paywallOpen, setPaywallOpen] = useState(false);
@@ -227,6 +243,8 @@ export default function CoachScreen() {
       const { reply, remaining, subscribed, ...rest } = await sendCoach(lang, payload);
       setQuota((q) => (q ? { ...q, remaining, subscribed, period: rest.period ?? q.period, resetsAt: rest.resetsAt ?? q.resetsAt } : q));
       const aiMsg: Message = { id: (Date.now() + 1).toString(), role: 'assistant', content: reply, timestamp: new Date() };
+      await closeWait();
+      setRevealId(aiMsg.id);
       const final = [...withUser, aiMsg];
       setMessages(final);
       saveMessages(final);
@@ -243,9 +261,11 @@ export default function CoachScreen() {
         e?.rateLimitScope === 'minute' ? t('coach.tooFast')
         : e?.rateLimitScope === 'day' ? t('coach.dailyLimit')
         : e?.userMessage || t('coach.connError');
+      await closeWait();
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content, timestamp: new Date() }]);
     } finally {
       setLoading(false);
+      setClosing(false);
     }
   }
 
@@ -310,8 +330,8 @@ export default function CoachScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          {messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)}
-          {loading && <TypingIndicator />}
+          {messages.map((msg) => <MessageBubble key={msg.id} message={msg} reveal={msg.id === revealId} />)}
+          {loading && <CoachWaiting closing={closing} />}
 
           {messages.length <= 1 && (
             <View style={styles.suggestions}>
