@@ -93,7 +93,7 @@ function RevealText({ text, style }: { text: string; style: any }) {
   );
 }
 
-function MessageBubble({ message, reveal }: { message: Message; reveal?: boolean }) {
+function MessageBubble({ message, reveal, onLayout }: { message: Message; reveal?: boolean; onLayout?: (y: number) => void }) {
   const { C: Colors } = useTheme();
   const styles = useStyles(makeStyles);
   const isUser = message.role === 'user';
@@ -127,7 +127,7 @@ function MessageBubble({ message, reveal }: { message: Message; reveal?: boolean
 
   const { body, quote } = parseResponse(message.content);
   return (
-    <Animated.View style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }, { scale: scaleAnim }], transformOrigin: 'left top' }]}>
+    <Animated.View onLayout={onLayout ? (e) => onLayout(e.nativeEvent.layout.y) : undefined} style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }, { scale: scaleAnim }], transformOrigin: 'left top' }]}>
       <View style={styles.aiLabelRow}>
         <StoikosMark size={12} variant="line" color={Colors.sand} />
         <Text style={styles.aiLabel}>STOIKOS</Text>
@@ -213,9 +213,20 @@ export default function CoachScreen() {
     setMessages((prev) => (prev.length === 1 && prev[0].id === '0' ? [makeInitial()] : prev));
   }, [lang, makeInitial]);
 
+  // Yeni mesajda sona kaydır — ama koçun yeni cevabında değil: uzun cevapta kişi metnin sonunda
+  // kalıyor, okumak için yukarı çıkması gerekiyordu (10 Kasım 2026, kullanıcı geri bildirimi).
+  // O cevap yerleşince başına kaydırılır (onRevealLayout); gerisini kişi kendi okur.
+  const revealScrolled = useRef<string | null>(null);
   useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (!loading && last?.role === 'assistant' && last.id === revealId) return;
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
   }, [messages, loading]);
+  const onRevealLayout = (id: string) => (y: number) => {
+    if (revealScrolled.current === id) return;
+    revealScrolled.current = id;
+    setTimeout(() => scrollRef.current?.scrollTo({ y: Math.max(0, y - 12), animated: true }), 60);
+  };
 
   const saveMessages = useCallback((msgs: Message[]) => {
     AsyncStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(msgs));
@@ -330,7 +341,7 @@ export default function CoachScreen() {
             <View style={styles.dividerLine} />
           </View>
 
-          {messages.map((msg) => <MessageBubble key={msg.id} message={msg} reveal={msg.id === revealId} />)}
+          {messages.map((msg) => <MessageBubble key={msg.id} message={msg} reveal={msg.id === revealId} onLayout={msg.id === revealId ? onRevealLayout(msg.id) : undefined} />)}
           {loading && <CoachWaiting closing={closing} />}
 
           {messages.length <= 1 && (
