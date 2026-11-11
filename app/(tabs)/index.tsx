@@ -74,33 +74,53 @@ function ResumeCard({ resume }: { resume: Resume }) {
   );
 }
 
-// ── Nasıl hissediyorsun? — duygu çipleri; seçilen temadan bugünün sözü ──
+// ── Bugün aklında ne var? — 3×3 duygu ızgarası; seçilen temadan bugünün sözü ──
+// (11 Kasım 2026, kullanıcı seçimi C; tasarım https://claude.ai/artifact/DJVJ7UFJbmBz8iXJc3J3RQ.)
+// Eski hâli 4-3-2 kırılan gri çiplerdi. Her temanın kendi rengi var: nokta o renkte, seçilen kutu o renkle dolar.
+// İlk satır zor gelenler (kaygı, öfke, yas), sonraki iki satır aranan şeyler: MOOD_THEMES sırası bunu veriyor.
+// [koyu temada, açık temada] — açık zeminde nokta ve dolu kutu için daha koyu ton (beyaz yazı okunsun).
+const MOOD_COLORS: Record<string, [string, string]> = {
+  kaygi: ['#B9B4E0', '#6F66BD'], ofke: ['#E89A72', '#B5532A'], yas: ['#8FAEDB', '#4A72B2'],
+  kabul: ['#9AD3B0', '#3F8A62'], kontrol: ['#86BDD0', '#32809A'], 'ic-huzur': ['#7CCFC4', '#258577'],
+  cesaret: ['#E8BE6A', '#A06C0C'], sukran: ['#E2B4C4', '#B25A7C'], sadelik: ['#C4CF96', '#74842F'],
+};
 function MoodPicker() {
   const styles = useStyles(makeStyles);
+  const { C: Colors } = useTheme();
   const { t, lang } = useLang();
   const [mood, setMood] = useState<string | null>(null);
   const picked = mood ? getMoodQuote(mood, lang) : null;
+  const colorOf = (m: string) => (MOOD_COLORS[m] ?? [Colors.sand, Colors.sand])[Colors.isDark ? 0 : 1];
+  const onColor = Colors.isDark ? '#0F1824' : '#FFFFFF';
   return (
     <View style={styles.moodCard}>
       <Text style={styles.moodTitle}>{t('mood.title')}</Text>
       <View style={styles.chips}>
         {MOOD_THEMES.map((m) => {
           const on = mood === m;
+          const c = colorOf(m);
           return (
             <Pressable
               key={m}
               onPress={() => setMood(on ? null : m)}
-              style={[styles.chip, on && styles.chipOn]}
+              style={({ pressed }) => [styles.chip, on && { backgroundColor: c, borderColor: c }, pressed && styles.chipPressed]}
               accessibilityRole="button"
               accessibilityState={{ selected: on }}
             >
-              <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(`mood.${m}`)}</Text>
+              <View style={[styles.chipDot, { backgroundColor: on ? onColor : c }]} />
+              <Text style={[styles.chipText, t(`mood.${m}`).length > 11 && styles.chipTextLong, on && { color: onColor }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+                {t(`mood.${m}`)}
+              </Text>
             </Pressable>
           );
         })}
       </View>
       {mood && picked && (
         <View style={styles.moodQuote}>
+          <View style={styles.moodTagRow}>
+            <View style={[styles.chipDot, { backgroundColor: colorOf(mood) }]} />
+            <Text style={styles.moodTag}>{upper(t(`mood.${mood}`), lang)}</Text>
+          </View>
           <Text style={styles.moodQuoteText}>{picked.quote.text}</Text>
           <Text style={styles.moodQuoteMeta}>
             — {picked.quote.author}
@@ -306,12 +326,16 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   moodTitle: { fontFamily: Fonts.cormorant, fontSize: 23, color: Colors.text, marginBottom: 14 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
-    minHeight: 40, paddingHorizontal: 15, borderRadius: 20, justifyContent: 'center',
-    borderWidth: 1, borderColor: Colors.tint(0.3),
+    flexBasis: '30%', flexGrow: 1, height: 66, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 8,
+    paddingHorizontal: 2, backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
-  chipOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
-  chipText: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2 },
-  chipTextOn: { fontFamily: Fonts.jostMedium, color: Colors.bg },
+  chipPressed: { opacity: 0.8, transform: [{ scale: 0.97 }] },
+  chipDot: { width: 10, height: 10, borderRadius: 5 },
+  chipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text },
+  // En uzun etiket (RU "Благодарность") 14 px'te kutuya sığmıyor; web'de adjustsFontSizeToFit yok.
+  chipTextLong: { fontSize: 12 },
+  moodTagRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  moodTag: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand },
   moodQuote: { borderTopWidth: 1, borderTopColor: Colors.tint(0.18), marginTop: 16, paddingTop: 14, gap: 8 },
   moodQuoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, lineHeight: 29, color: Colors.text },
   moodQuoteMeta: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
