@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "Geçit" — 60 sn'lik çizim animasyon (1080×1920), iki kahraman birlikte (11 Kasım 2026).
+     Kar fırtınasında kadın (bir nefes) → yolu kapatan kayanın üstüne basan erkek → geçitte "STOIKOS" oyulu taş sığınak
+     → şafakta bulut denizi + Marcus 5.20 → logo. Her şey tek bir canvas'a, kare kare ve deterministik çizilir (rastgelelik tohumlu).
+     Çekim: TEASER_TPL=scripts/teaser/gecit.html TEASER_MS=60000 TEASER_NAME=gecit node scripts/teaser/render-teaser.js tr,en <çıkış>
+     Ses ve birleştirme: bash scripts/social/gecit-build.sh -->
+<style>
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:500;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf') format('truetype'); }
+  * { margin:0; padding:0; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  canvas { display:block; }
+  .pre { position:absolute; left:-999px; top:0; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<span class="pre" style="font-family:Cinzel;font-weight:600">S</span>
+<span class="pre" style="font-family:Cormorant;font-style:italic">S</span>
+<span class="pre" style="font-family:Jost;font-weight:400">S</span>
+<span class="pre" style="font-family:Jost;font-weight:500">S</span>
+<script>
+const W = 1080, H = 1920, PI = Math.PI;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+
+const T = {
+  tr: { title:'Herkesin\nbir dağı var.',
+    a1:'Bazı günler rüzgâr\nhep karşıdan eser.', a2:'Dur.\nBir nefes al.',
+    b1:'Bazı günler\nyol kapanır.', b2:'Engel,\nbasamağın olur.',
+    c1:'Ve yukarıda bir ışık\nhep yanar.',
+    q:['Yola çıkan engel,', 'yolun kendisi olur.'], qa:'MARCUS AURELIUS',
+    tag:'Cebindeki sığınak.', sub:'NEFES  ·  PRATİK  ·  KOÇ', cta:'Ücretsiz başla · stoikos.app' },
+  en: { title:'Everyone has\na mountain.',
+    a1:'Some days the wind\nis always against you.', a2:'Pause.\nTake one breath.',
+    b1:'Some days\nthe road is blocked.', b2:'The obstacle\nbecomes your step.',
+    c1:'And above, a light\nis always on.',
+    q:['What stands in the way', 'becomes the way.'], qa:'MARCUS AURELIUS',
+    tag:'The refuge in your pocket.', sub:'BREATHE  ·  PRACTICE  ·  COACH', cta:'Start free · stoikos.app' },
+};
+let L = T.tr;
+
+// ── yardımcılar ─────────────────────────────────────────────
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = (x) => { x = clamp(x); return x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2; };
+const out = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const win = (t, a, b, fi = 500, fo = 500) => clamp((t - a) / fi) * (1 - clamp((t - (b - fo)) / fo));
+function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) | 0; let x = Math.imul(s ^ (s >>> 15), 1 | s);
+  x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
+const mix = (c1, c2, k) => { const p = (c) => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+  const a = p(c1), b = p(c2); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], clamp(k)))).join(',')})`; };
+const mod = (a, n) => ((a % n) + n) % n;
+
+// sahne sınırları (ms)
+const S = { A: 5000, B: 16500, C: 28500, D: 41000, E: 52000, END: 60000 };
+
+// ── önceden üretilenler ─────────────────────────────────────
+let flakes = [], stones = [], rocksA = [], rocksB = [], snowT = [], stars = [];
+// kar hızı: nefeste yavaşlar, kapı açılınca diner
+function snowSpeed(t) {
+  let v = 1;
+  v -= .8 * win(t, 10600, 14800, 700, 700);
+  v -= .72 * ease((t - 35200) / 2200);
+  return Math.max(.12, v);
+}
+function build() {
+  const r = rng(7);
+  flakes = Array.from({ length: 420 }, () => ({ x: r() * 1400, y: r() * 2100, z: .25 + r() * .75, w: r() * 6.28 }));
+  const r2 = rng(21);
+  stones = []; for (let row = 0; row < 9; row++) { let x = -20 - (row % 2) * 40; while (x < 620) { const w = 60 + r2() * 50;
+    stones.push({ x, y: row * 42, w, h: 40, c: r2() }); x += w + 3; } }
+  const r3 = rng(33); rocksA = Array.from({ length: 16 }, () => ({ s: r3() * 2600, w: 30 + r3() * 70, h: 14 + r3() * 26, d: r3() * 90 + 20 }));
+  const r4 = rng(44); rocksB = Array.from({ length: 22 }, () => ({ s: r4() * 2600, w: 30 + r4() * 90, h: 16 + r4() * 34, d: r4() * 90 + 16 }));
+  const r5 = rng(55); stars = Array.from({ length: 46 }, () => ({ x: r5() * W, y: r5() * 560, a: .3 + r5() * .6, p: r5() * 6 }));
+  snowT = [0]; for (let i = 1; i <= 3700; i++) snowT.push(snowT[i - 1] + snowSpeed(i * 1000 / 60) / 60);
+}
+const snowTime = (t) => { const f = clamp(t, 0, 61000) * 60 / 1000, i = Math.floor(f); return lerp(snowT[i], snowT[Math.min(i + 1, 3700)], f - i); };
+
+// ── ortak çizimler ──────────────────────────────────────────
+function sky(stops) { const g = ctx.createLinearGradient(0, 0, 0, H); stops.forEach(([o, c]) => g.addColorStop(o, c)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+function ridge(seed, base, amp, off, color, peak) {
+  ctx.beginPath(); ctx.moveTo(-10, H);
+  for (let x = -10; x <= W + 10; x += 12) { const u = x + off;
+    let y = base - amp * (.55 * Math.sin(u * .0031 + seed) + .3 * Math.sin(u * .0083 + seed * 2.1) + .15 * Math.sin(u * .021 + seed * 3.7));
+    if (peak) y -= peak.h * Math.exp(-Math.pow((x - peak.x) / peak.w, 2));
+    ctx.lineTo(x, y); }
+  ctx.lineTo(W + 10, H); ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+}
+function snow(t, amount, wind = 1, color = '255,255,255') {
+  if (amount <= 0) return;
+  const st = snowTime(t), n = Math.floor(flakes.length * clamp(amount));
+  ctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) { const f = flakes[i], sp = snowSpeed(t);
+    const x = W + 100 - mod(f.x + st * (520 + 260 * f.z) * wind, W + 300);
+    const y = mod(f.y + st * (300 + 240 * f.z) + Math.sin(st * 2 + f.w) * 14, H + 100) - 50;
+    const len = (6 + 22 * f.z) * wind * sp;
+    ctx.strokeStyle = `rgba(${color},${(.18 + .5 * f.z * f.z) * clamp(amount * 1.4)})`; ctx.lineWidth = 1.2 + 3.4 * f.z * f.z;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + len, y - len * .55); ctx.stroke(); }
+}
+function glow(x, y, r, color, a) { const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, `rgba(${color},${a})`); g.addColorStop(1, `rgba(${color},0)`); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
+function beacon(x, y, a, t) { if (a <= 0) return; const tw = .85 + .15 * Math.sin(t / 260);
+  glow(x, y, 190 * tw, '255,214,140', .5 * a); glow(x, y, 60, '255,236,190', .95 * a);
+  ctx.fillStyle = `rgba(255,246,220,${a})`; ctx.beginPath(); ctx.arc(x, y, 9, 0, 2 * PI); ctx.fill(); }
+function caption(text, a, y = 400, size = 74) {
+  if (a <= 0 || !text) return; const lines = text.split('\n');
+  ctx.save(); ctx.globalAlpha = clamp(a); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = `italic 400 ${size}px Cormorant`; ctx.shadowColor = 'rgba(16,22,36,.55)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 3;
+  ctx.fillStyle = '#fbf3e2'; lines.forEach((ln, i) => ctx.fillText(ln, W / 2, y + i * size * 1.16 + (1 - out(a)) * 22)); ctx.restore();
+}
+function vignette(a = .5) { const g = ctx.createRadialGradient(W / 2, H * .5, 500, W / 2, H * .5, 1250);
+  g.addColorStop(0, 'rgba(8,10,18,0)'); g.addColorStop(1, `rgba(8,10,18,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+
+// ── yürüyen kahraman (yandan) ───────────────────────────────
+const SKIN = '#c79c70', CLOAK = '#c9b086', CLOAK_D = '#a8906a', TUNIC = '#f1e9d8', BOOT = '#6f4a2e';
+function walker(o) {
+  const { x, y, s = 1, f = 1, ph = 0, amp = 1, lean = 0, wind = 1, t = 0, kind = 'w', closed = 0, up = 0, smile = 0 } = o;
+  const wv = t / 1000;
+  ctx.save(); ctx.translate(x, y); ctx.scale(s * f, s); ctx.rotate(lean);
+  const bob = -Math.abs(Math.sin(ph)) * 5 * amp; ctx.translate(0, bob);
+  const fl = Math.sin(wv * 7) * 12 * wind, fl2 = Math.sin(wv * 5 + 1) * 9 * wind;
+  // pelerin (arkada, rüzgârla savrulur)
+  ctx.fillStyle = CLOAK_D; ctx.beginPath(); ctx.moveTo(-24, -246);
+  ctx.quadraticCurveTo(-70 - 34 * wind, -196, -92 - 64 * wind + fl, -112 + fl2);
+  ctx.quadraticCurveTo(-100 - 74 * wind + fl2, -62, -66 - 54 * wind + fl, -26);
+  ctx.lineTo(-8, -34); ctx.lineTo(12, -240); ctx.closePath(); ctx.fill();
+  // çizmeler
+  for (let i = 0; i < 2; i++) { const p = ph + i * PI, fx = Math.sin(p) * 36 * amp, lift = Math.max(0, Math.cos(p)) * 13 * amp;
+    ctx.save(); ctx.translate(fx, -bob - lift); ctx.fillStyle = i ? BOOT : '#5e3e26';
+    ctx.beginPath(); ctx.roundRect(-13, -30, 24, 30, 6); ctx.fill(); ctx.beginPath(); ctx.roundRect(-13, -15, 36, 15, 7); ctx.fill();
+    ctx.strokeStyle = '#d9cdb4'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-13, -22); ctx.lineTo(11, -19); ctx.stroke(); ctx.restore(); }
+  // tunik
+  const sw = Math.sin(ph) * 8 * amp - 6 * wind;
+  ctx.fillStyle = TUNIC; ctx.beginPath(); ctx.moveTo(-30, -238); ctx.lineTo(30, -238);
+  ctx.quadraticCurveTo(44, -120, 46 + sw, -26); ctx.lineTo(-46 + sw, -26); ctx.quadraticCurveTo(-42, -120, -30, -238); ctx.fill();
+  ctx.fillStyle = '#e0d5be'; ctx.beginPath(); ctx.moveTo(-6, -150); ctx.quadraticCurveTo(-18, -80, -30 + sw, -26); ctx.lineTo(-46 + sw, -26);
+  ctx.quadraticCurveTo(-42, -120, -34, -200); ctx.fill();
+  ctx.fillStyle = '#7a4b2a'; ctx.beginPath(); ctx.roundRect(-38, -156, 78, 10, 4); ctx.fill();
+  // pelerin (omuzlarda)
+  ctx.fillStyle = CLOAK; ctx.beginPath(); ctx.moveTo(-38, -244); ctx.quadraticCurveTo(0, -262, 38, -244);
+  ctx.quadraticCurveTo(48, -200, 40, -168); ctx.quadraticCurveTo(14, -150, -12, -170); ctx.lineTo(-44, -148); ctx.quadraticCurveTo(-48, -200, -38, -244); ctx.fill();
+  // el (pelerini göğsünde tutar)
+  ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(18, -180, 10, 0, 2 * PI); ctx.fill();
+  // baş
+  ctx.save(); ctx.translate(4, -262); ctx.rotate(-up * .32 + lean * -.5); ctx.translate(-4, 262);
+  ctx.fillStyle = SKIN; ctx.beginPath(); ctx.roundRect(-6, -266, 20, 26, 6); ctx.fill();
+  const hair = kind === 'w' ? '#241a14' : '#bdb8ae';
+  ctx.fillStyle = hair; ctx.beginPath(); ctx.arc(-3, -287, 33, 0, 2 * PI); ctx.fill();
+  if (kind === 'w') for (let i = 0; i < 6; i++) { ctx.beginPath();
+    ctx.ellipse(-28 - i * (7 + 11 * wind) + Math.sin(wv * 6 + i) * 3 * wind, -262 + i * (19 - 9 * wind) + Math.sin(wv * 5 + i * .7) * 3 * wind, 11 - i, 12 - i, 0, 0, 2 * PI); ctx.fill(); }
+  ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(5, -283, 30, 0, 2 * PI); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(32, -284); ctx.lineTo(42, -275); ctx.lineTo(32, -270); ctx.fill();       // burun
+  ctx.fillStyle = hair; ctx.beginPath(); ctx.arc(5, -283, 31, PI * 1.02, PI * 1.74); ctx.closePath(); ctx.fill();   // saç önü
+  if (kind === 'm') { ctx.fillStyle = '#cfcabf'; ctx.beginPath(); ctx.arc(6, -280, 31, PI * .1, PI * .84); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(22, -262, 13, 9, .2, 0, 2 * PI); ctx.fill(); }
+  else { ctx.strokeStyle = '#9b938a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(5, -283, 27, PI * 1.25, PI * 1.5); ctx.stroke(); }
+  ctx.strokeStyle = '#2a1d14'; ctx.lineWidth = 3.4; ctx.lineCap = 'round';
+  if (closed > .5) { ctx.beginPath(); ctx.arc(21, -287, 6, PI * .1, PI * .9); ctx.stroke(); }
+  else { ctx.fillStyle = '#2a1d14'; ctx.beginPath(); ctx.ellipse(22, -285, 3.4, 4.4, 0, 0, 2 * PI); ctx.fill(); }
+  ctx.lineWidth = 3; ctx.strokeStyle = kind === 'w' ? '#241a14' : '#a39e94';
+  ctx.beginPath(); ctx.moveTo(14, -296); ctx.lineTo(28, -297 + 2 * (1 - smile)); ctx.stroke();           // kaş
+  if (kind === 'w' || smile) { ctx.strokeStyle = '#7a4a36'; ctx.lineWidth = 2.6; ctx.beginPath();
+    ctx.moveTo(22, -267); ctx.quadraticCurveTo(27, -267 + 5 * smile, 32, -269); ctx.stroke(); }
+  ctx.restore();
+  ctx.restore();
+}
+// nefes çiçeği (uygulamadaki gibi altı yaprak)
+function flower(x, y, br, a, size = 1) {
+  if (a <= 0) return; ctx.save(); ctx.globalAlpha = a;
+  glow(x, y, 250 * size * (.5 + .5 * br), '255,214,140', .3);
+  for (let i = 0; i < 6; i++) { const ang = i / 6 * 2 * PI + br * PI / 3, r = (8 + 62 * br) * size;
+    const px = x + Math.cos(ang) * r, py = y + Math.sin(ang) * r, rr = (44 + 34 * br) * size;
+    const g = ctx.createRadialGradient(px - rr * .2, py - rr * .25, 0, px, py, rr);
+    g.addColorStop(0, 'rgba(255,240,205,.5)'); g.addColorStop(.6, 'rgba(236,196,120,.36)'); g.addColorStop(1, 'rgba(214,160,80,.2)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, rr, 0, 2 * PI); ctx.fill(); }
+  ctx.restore();
+}
+
+// ── Sahne 0: açılış ─────────────────────────────────────────
+function scene0(t) {
+  sky([[0, '#1b2438'], [.5, '#44546f'], [1, '#8494ad']]);
+  ridge(1.3, 1420, 130, t * .004, '#6b7b96');
+  ridge(4.1, 1400, 150, 300, '#33415c', { x: 610, w: 300, h: 560 });
+  ctx.fillStyle = 'rgba(236,242,248,.5)'; ctx.beginPath(); ctx.moveTo(520, 930); ctx.lineTo(610, 842); ctx.lineTo(700, 940); ctx.lineTo(650, 910); ctx.lineTo(610, 960); ctx.lineTo(570, 905); ctx.fill();
+  ridge(2.2, 1720, 90, t * .012, '#222c44');
+  beacon(610, 826, win(t, 1400, 6000, 1400, 400), t);
+  snow(t, .75, 1);
+  caption(L.title, win(t, 700, 4600, 800, 600), 420, 92);
+}
+
+// ── Sahne A: kadın, kar fırtınası ───────────────────────────
+function slope(cx, gy, k, rocks, scroll, cTop, cBody, cRock) {
+  const yAt = (x) => gy - k * (x - cx);
+  ctx.fillStyle = cBody; ctx.beginPath(); ctx.moveTo(-20, yAt(-20));
+  for (let x = -20; x <= W + 20; x += 20) ctx.lineTo(x, yAt(x) + Math.sin((x + scroll) * .013) * 9 + Math.sin((x + scroll) * .041) * 4);
+  ctx.lineTo(W + 20, H); ctx.lineTo(-20, H); ctx.closePath(); ctx.fill();
+  const g = ctx.createLinearGradient(0, gy - 200, 0, gy + 700); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, cTop);
+  ctx.fillStyle = g; ctx.fill();
+  rocks.forEach((r) => { const x = mod(r.s - scroll, 2600) - 700, y = yAt(x) + r.d;
+    ctx.fillStyle = cRock; ctx.beginPath(); ctx.ellipse(x, y, r.w, r.h, -.15, PI, 2 * PI); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.beginPath(); ctx.ellipse(x - 4, y - r.h * .72, r.w * .8, r.h * .34, -.15, 0, 2 * PI); ctx.fill(); });
+  return yAt;
+}
+function sceneA(t) {
+  const u = t - S.A;                                    // 0 … 11500
+  const stop = win(t, 10400, 15000, 700, 700);          // nefes için durur
+  // yürünen mesafe (dururken ilerlemez)
+  let dist = 0; { const n = 60; for (let i = 0; i < n; i++) { const tt = S.A + u * (i + .5) / n; dist += (1 - win(tt, 10400, 15000, 700, 700)) * (u / n) * .17; } }
+  const tilt = ease((t - 15000) / 1400) * 170;          // sonda kamera yukarı bakar
+  sky([[0, '#2a3852'], [.5, '#566884'], [1, '#93a2b8']]);
+  ctx.save(); ctx.translate(0, tilt);
+  ridge(.7, 1130, 190, dist * .12, '#7f90a8'); ridge(3.3, 1290, 160, dist * .3 + 400, '#687a95');
+  beacon(850, 330 - tilt * .55, ease((t - 15000) / 1200), t);
+  const gy = 1400, cx = 500;
+  slope(cx, gy, .2, rocksA, dist, 'rgba(120,140,170,.55)', '#e9eef4', '#6b7688');
+  const ph = dist / 38;
+  walker({ x: cx, y: gy + 4, s: 1.75, ph, amp: 1 - stop, lean: lerp(.2, .02, stop), wind: lerp(1, .22, stop), t, kind: 'w',
+    closed: stop, up: ease((t - 15000) / 900), smile: stop });
+  // nefes: göğsünde açılıp kapanan çiçek
+  const br = Math.sin(clamp((t - 11000) / 3600) * PI);
+  flower(cx + 150, gy - 400, br, win(t, 10900, 14800, 600, 700), 1.1);
+  ctx.restore();
+  snow(t, 1, 1.15);
+  caption(L.a1, win(t, 6200, 10200, 700, 600));
+  caption(L.a2, win(t, 11200, 14900, 700, 600));
+}
+
+// ── Sahne B: erkek, yolu kapatan kaya ───────────────────────
+function boulder(x, y, a = 1) {
+  ctx.save(); ctx.translate(x, y); ctx.globalAlpha = a;
+  ctx.fillStyle = '#5d6676'; ctx.beginPath(); ctx.moveTo(-176, 24); ctx.lineTo(-150, -96); ctx.lineTo(-96, -172); ctx.lineTo(-20, -196); ctx.lineTo(74, -186);
+  ctx.lineTo(140, -120); ctx.lineTo(182, 24); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#4a5262'; ctx.beginPath(); ctx.moveTo(74, -186); ctx.lineTo(140, -120); ctx.lineTo(182, 24); ctx.lineTo(70, 24); ctx.lineTo(96, -80); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#6c7586'; ctx.beginPath(); ctx.moveTo(-150, -96); ctx.lineTo(-96, -172); ctx.lineTo(-60, -90); ctx.lineTo(-110, 24); ctx.lineTo(-176, 24); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(30,36,50,.3)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-20, -150); ctx.lineTo(10, -70); ctx.lineTo(-10, -10); ctx.stroke();
+  ctx.fillStyle = '#f4f7fa'; ctx.beginPath(); ctx.moveTo(-108, -164); ctx.lineTo(-20, -206); ctx.lineTo(80, -194); ctx.lineTo(120, -150); ctx.quadraticCurveTo(40, -176, -20, -172); ctx.quadraticCurveTo(-70, -170, -108, -164); ctx.fill();
+  ctx.restore();
+}
+function sceneB(t) {
+  const walkEnd = 20600, climbA = 22600, climbB = 25200;
+  const stop = ease((t - (walkEnd - 600)) / 600);
+  let dist = Math.min(t, walkEnd - 300) - S.B; dist = dist * .17 - (t > walkEnd - 900 ? Math.pow(clamp((t - (walkEnd - 900)) / 600), 2) * 51 : 0);
+  const DEND = (walkEnd - 300 - S.B) * .17 - 51;
+  dist = Math.min(dist, DEND + 0);
+  const tilt = ease((t - 26400) / 1500) * 190;
+  sky([[0, '#303a4c'], [.5, '#667284'], [1, '#a3adba']]);
+  ctx.save(); ctx.translate(0, tilt);
+  ridge(5.2, 1120, 210, dist * .12 + 900, '#8a95a6'); ridge(1.9, 1310, 170, dist * .3, '#727d90');
+  beacon(240, 340 - tilt * .55, ease((t - 26200) / 1300), t);
+  const gy = 1440, cx = 400, k = .16;
+  const yAt = slope(cx, gy, k, rocksB, dist, 'rgba(110,125,150,.6)', '#e4e9ef', '#5d6676');
+  const bx = cx + 250 + (DEND - dist), by = yAt(bx) + 14;       // kaya, adam durduğunda 250 px önünde
+  boulder(bx, by);
+  const c = ease((t - climbA) / (climbB - climbA));              // tırmanış 0…1
+  const px = lerp(cx, bx - 10, c), py = lerp(gy + 4, by - 196, c) - Math.sin(c * PI) * 46;
+  const moving = (1 - stop) + win(t, climbA, climbB, 300, 300);
+  const top = ease((t - climbB) / 700);
+  walker({ x: px, y: py, s: 1.75, ph: dist / 38 + c * 9, amp: clamp(moving), lean: lerp(.16, 0, stop) + Math.sin(c * PI) * .22, wind: lerp(1, .55, stop) + .5 * top, t, kind: 'm',
+    up: ease((t - 25600) / 900), smile: top });
+  ctx.restore();
+  snow(t, .9, 1.1);
+  // sis
+  const fg = ctx.createLinearGradient(0, 900, 0, H); fg.addColorStop(0, 'rgba(190,200,212,0)'); fg.addColorStop(1, 'rgba(190,200,212,.3)'); ctx.fillStyle = fg; ctx.fillRect(0, 900, W, H - 900);
+  caption(L.b1, win(t, 17600, 21800, 700, 600));
+  caption(L.b2, win(t, 23000, 27600, 700, 600));
+}
+
+// ── Sahne C: geçitteki sığınak ──────────────────────────────
+function refuge(t, open) {
+  const bx = 250, bw = 580, top = 940, base = 1300;
+  // baca + duman
+  for (let i = 0; i < 7; i++) { const p = mod(t / 2600 + i / 7, 1); ctx.fillStyle = `rgba(214,220,228,${.34 * (1 - p)})`;
+    ctx.beginPath(); ctx.arc(735 - p * 150 + Math.sin(i * 2 + t / 900) * 10, 815 - p * 230, 20 + p * 46, 0, 2 * PI); ctx.fill(); }
+  ctx.fillStyle = '#6e6a66'; ctx.fillRect(708, 800, 56, 120);
+  ctx.fillStyle = '#f6f8fa'; ctx.beginPath(); ctx.roundRect(700, 786, 72, 24, 12); ctx.fill();
+  // taş gövde
+  ctx.save(); ctx.beginPath(); ctx.rect(bx, top, bw, base - top); ctx.clip();
+  ctx.fillStyle = '#5f5b57'; ctx.fillRect(bx, top, bw, base - top);
+  stones.forEach((s) => { ctx.fillStyle = mix('#7d7974', '#9a9690', s.c); ctx.beginPath(); ctx.roundRect(bx + s.x, top + s.y, s.w, s.h, 7); ctx.fill(); });
+  const sh = ctx.createLinearGradient(0, top, 0, base); sh.addColorStop(0, 'rgba(30,36,52,.34)'); sh.addColorStop(.35, 'rgba(30,36,52,.05)'); sh.addColorStop(1, 'rgba(30,36,52,.25)');
+  ctx.fillStyle = sh; ctx.fillRect(bx, top, bw, base - top);
+  ctx.restore();
+  // çatı: taş saçak + kar
+  ctx.fillStyle = '#56524e'; ctx.beginPath(); ctx.moveTo(210, 960); ctx.quadraticCurveTo(540, 850, 870, 960); ctx.lineTo(870, 975); ctx.lineTo(210, 975); ctx.fill();
+  ctx.fillStyle = '#f6f8fb'; ctx.beginPath(); ctx.moveTo(196, 962); ctx.quadraticCurveTo(540, 800, 884, 962);
+  ctx.quadraticCurveTo(870, 944, 850, 950); ctx.quadraticCurveTo(540, 860, 230, 950); ctx.quadraticCurveTo(206, 944, 196, 962); ctx.fill();
+  ctx.fillStyle = '#dfe6ee'; ctx.beginPath(); ctx.moveTo(230, 950); ctx.quadraticCurveTo(540, 860, 850, 950); ctx.quadraticCurveTo(540, 884, 230, 950); ctx.fill();
+  // pencere
+  glow(365, 1158, 150, '255,200,120', .35 + .05 * Math.sin(t / 300));
+  ctx.fillStyle = '#3d3936'; ctx.beginPath(); ctx.roundRect(318, 1112, 94, 94, 8); ctx.fill();
+  const wg = ctx.createLinearGradient(0, 1120, 0, 1198); wg.addColorStop(0, '#ffe2a6'); wg.addColorStop(1, '#f0a850');
+  ctx.fillStyle = wg; ctx.fillRect(328, 1122, 74, 74);
+  ctx.fillStyle = '#3d3936'; ctx.fillRect(362, 1122, 6, 74); ctx.fillRect(328, 1156, 74, 6);
+  ctx.fillStyle = '#f6f8fb'; ctx.beginPath(); ctx.roundRect(312, 1200, 106, 14, 7); ctx.fill();
+  // kapı
+  const dcx = 540, dw = 164, dtop = 1132;
+  const door = new Path2D(); door.moveTo(dcx - dw / 2, base); door.lineTo(dcx - dw / 2, dtop); door.arc(dcx, dtop, dw / 2, PI, 0); door.lineTo(dcx + dw / 2, base); door.closePath();
+  ctx.lineWidth = 22; ctx.strokeStyle = '#b3aca0'; ctx.stroke(door);
+  ctx.fillStyle = '#463222'; ctx.fill(door);
+  ctx.save(); ctx.clip(door);
+  ctx.strokeStyle = 'rgba(0,0,0,.28)'; ctx.lineWidth = 3; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(dcx + i * 33, 1040); ctx.lineTo(dcx + i * 33, base); ctx.stroke(); }
+  ctx.fillStyle = '#1d1a18'; ctx.fillRect(dcx - dw / 2, 1120, 96, 9); ctx.fillRect(dcx - dw / 2, 1240, 96, 9);
+  ctx.beginPath(); ctx.arc(dcx + 50, 1196, 8, 0, 2 * PI); ctx.fill();
+  if (open > 0) { const og = ctx.createLinearGradient(0, 1050, 0, base); og.addColorStop(0, '#ffe9b8'); og.addColorStop(.6, '#ffc672'); og.addColorStop(1, '#ee9a3e');
+    ctx.globalAlpha = open; ctx.fillStyle = og; ctx.fillRect(dcx - dw / 2, 1040, dw, 270); ctx.globalAlpha = 1; }
+  ctx.restore();
+  // lento: STOIKOS
+  ctx.fillStyle = '#cfc8ba'; ctx.beginPath(); ctx.roundRect(340, 958, 400, 74, 8); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(344, 960, 392, 6);
+  ctx.fillStyle = 'rgba(40,40,50,.2)'; ctx.fillRect(344, 1024, 392, 6);
+  ctx.save(); ctx.font = '600 50px Cinzel'; ctx.letterSpacing = '12px'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillText('STOIKOS', 546 + 2, 997 + 2);
+  ctx.fillStyle = mix('#57503f', '#8a5a14', open); ctx.fillText('STOIKOS', 546, 997);
+  if (open > 0) { ctx.globalAlpha = open * .9; ctx.shadowColor = 'rgba(255,196,96,.95)'; ctx.shadowBlur = 26; ctx.fillStyle = '#b8791c'; ctx.fillText('STOIKOS', 546, 997); }
+  ctx.restore();
+  // sıra
+  ctx.fillStyle = '#6e6a66'; ctx.beginPath(); ctx.roundRect(660, 1252, 150, 20, 5); ctx.fill(); ctx.fillRect(672, 1270, 16, 30); ctx.fillRect(782, 1270, 16, 30);
+  ctx.fillStyle = '#f6f8fb'; ctx.beginPath(); ctx.roundRect(654, 1238, 162, 18, 9); ctx.fill();
+  // kapıdan taşan ışık
+  if (open > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = open;
+    glow(dcx, 1190, 420, '255,196,110', .5);
+    const lg = ctx.createLinearGradient(0, base, 0, base + 420); lg.addColorStop(0, 'rgba(255,206,130,.6)'); lg.addColorStop(1, 'rgba(255,206,130,0)');
+    ctx.fillStyle = lg; ctx.beginPath(); ctx.moveTo(dcx - dw / 2, base); ctx.lineTo(dcx + dw / 2, base); ctx.lineTo(dcx + 380, base + 420); ctx.lineTo(dcx - 380, base + 420); ctx.fill();
+    ctx.restore(); }
+}
+function sceneC(t) {
+  const open = ease((t - 35000) / 1500), calm = ease((t - 35200) / 3000);
+  const z = 1.14 + .2 * ease((t - S.C) / 12500);
+  sky([[0, mix('#2c3a54', '#46587a', calm)], [.5, mix('#5b6c88', '#8496b2', calm)], [1, mix('#97a6ba', '#c2cddb', calm)]]);
+  ctx.save(); ctx.translate(540, 1130); ctx.scale(z, z); ctx.translate(-540, -1130);
+  ridge(2.6, 1010, 120, 200, '#7b8ba4', { x: 160, w: 230, h: 260 }); ridge(.4, 1120, 110, 700, '#6a7a94', { x: 930, w: 260, h: 230 });
+  // kar zemini
+  ctx.fillStyle = '#eef2f7'; ctx.beginPath(); ctx.moveTo(-200, 1310);
+  for (let x = -200; x <= W + 200; x += 30) ctx.lineTo(x, 1300 + Math.sin(x * .011) * 10 + Math.pow((x - 540) / 540, 2) * 34);
+  ctx.lineTo(W + 200, H + 200); ctx.lineTo(-200, H + 200); ctx.fill();
+  const gg = ctx.createLinearGradient(0, 1300, 0, H); gg.addColorStop(0, 'rgba(120,140,175,0)'); gg.addColorStop(1, 'rgba(120,140,175,.6)'); ctx.fillStyle = gg; ctx.fillRect(-200, 1290, W + 400, 800);
+  refuge(t, open);
+  // iki yolcu: kenarlardan gelir, kapıda durur, içeri girer
+  const arrive = ease((t - S.C - 300) / 5600), enterW = ease((t - 36400) / 1700), enterM = ease((t - 37500) / 1700);
+  const wx = lerp(lerp(-80, 404, arrive), 540, enterW), mx = lerp(lerp(1160, 676, arrive), 540, enterM);
+  const wa = clamp(1 - arrive * 1.0 + (arrive >= 1 ? 0 : 0)) , walkW = (arrive < .98 ? 1 : 0) * 1 + win(t, 36400, 38100, 200, 300);
+  const walkM = (arrive < .98 ? 1 : 0) + win(t, 37500, 39200, 200, 300);
+  const wind = lerp(.9, .15, calm);
+  ctx.save(); ctx.globalAlpha = 1 - ease((enterM - .45) / .5);
+  walker({ x: mx, y: 1306, s: .86 * lerp(1, .9, enterM), f: -1, ph: (1160 - mx) / 30, amp: clamp(walkM), lean: .1 * (1 - calm), wind: wind * .8, t, kind: 'm', smile: calm }); ctx.restore();
+  ctx.save(); ctx.globalAlpha = 1 - ease((enterW - .45) / .5);
+  walker({ x: wx, y: 1306, s: .82 * lerp(1, .9, enterW), f: 1, ph: (wx + 80) / 30, amp: clamp(walkW), lean: .1 * (1 - calm), wind: -wind * .5, t, kind: 'w', smile: calm }); ctx.restore();
+  ctx.restore();
+  snow(t, lerp(.85, .16, calm), lerp(1.05, .5, calm));
+  caption(L.c1, win(t, 29800, 34400, 700, 600));
+  // altın ışık bütün ekranı kaplar → şafak
+  const bloom = ease((t - 39000) / 2000);
+  if (bloom > 0) { ctx.save(); ctx.globalAlpha = bloom; const g = ctx.createRadialGradient(540, 1190, 0, 540, 1190, 300 + 2200 * bloom);
+    g.addColorStop(0, '#fff4d6'); g.addColorStop(.6, '#ffd898'); g.addColorStop(1, '#f2b46a'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore(); }
+}
+
+// ── Sahne D: şafak, bulut denizi ────────────────────────────
+function cloudLayer(y, seed, drift, cTop, cBot, r0) {
+  const r = rng(seed); const p = new Path2D();
+  for (let i = 0; i < 16; i++) { const x = mod(r() * 1500 + drift, 1500) - 200, rr = r0 + r() * r0 * .9; p.moveTo(x + rr, y); p.ellipse(x, y + r() * 26, rr, rr * .5, 0, 0, 2 * PI); }
+  p.rect(-10, y + 10, W + 20, 700);
+  const g = ctx.createLinearGradient(0, y - r0, 0, y + 330); g.addColorStop(0, cTop); g.addColorStop(1, cBot); ctx.fillStyle = g; ctx.fill(p);
+}
+function seatedBack(x, y, kind, br) {
+  ctx.save(); ctx.translate(x, y);
+  const sy = 1 + br * .022;
+  ctx.fillStyle = '#b79f77'; ctx.beginPath(); ctx.moveTo(-108, 0); ctx.quadraticCurveTo(-124, -170 * sy, -70, -250 * sy); ctx.quadraticCurveTo(0, -282 * sy, 70, -250 * sy);
+  ctx.quadraticCurveTo(124, -170 * sy, 108, 0); ctx.closePath(); ctx.fill();
+  // şafak ışığı pelerinin kenarında
+  ctx.strokeStyle = 'rgba(255,226,170,.85)'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-104, -40); ctx.quadraticCurveTo(-120, -170 * sy, -70, -250 * sy); ctx.quadraticCurveTo(0, -282 * sy, 70, -250 * sy); ctx.quadraticCurveTo(120, -170 * sy, 104, -40); ctx.stroke();
+  ctx.fillStyle = 'rgba(80,60,40,.16)'; ctx.beginPath(); ctx.moveTo(-10, -260 * sy); ctx.quadraticCurveTo(-30, -120, -20, 0); ctx.lineTo(20, 0); ctx.quadraticCurveTo(30, -120, 10, -260 * sy); ctx.fill();
+  const hy = -306 * sy;
+  ctx.fillStyle = SKIN; ctx.beginPath(); ctx.roundRect(-14, hy + 24, 28, 34, 8); ctx.fill();
+  ctx.fillStyle = kind === 'w' ? '#241a14' : '#bdb8ae'; ctx.beginPath(); ctx.arc(0, hy, 46, 0, 2 * PI); ctx.fill();
+  if (kind === 'w') for (let i = 0; i < 7; i++) { ctx.beginPath(); ctx.ellipse(Math.sin(i * 1.3) * 2, hy + 50 + i * 25, 16 - i * 1.2, 16, 0, 0, 2 * PI); ctx.fill(); }
+  ctx.strokeStyle = 'rgba(255,226,170,.7)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(0, hy, 46, PI * 1.1, PI * 1.9); ctx.stroke();
+  ctx.restore();
+}
+function steam(x, y, t, a) {
+  ctx.save(); ctx.lineCap = 'round';
+  for (let i = 0; i < 3; i++) { const p = mod(t / 3200 + i / 3, 1); ctx.strokeStyle = `rgba(255,250,240,${a * .5 * Math.sin(p * PI)})`; ctx.lineWidth = 7;
+    ctx.beginPath(); for (let k = 0; k <= 10; k++) { const yy = y - p * 120 - k * 9, xx = x + Math.sin(k * .7 + t / 700 + i * 2) * (6 + k); k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); } ctx.stroke(); }
+  ctx.restore();
+}
+function sceneD(t) {
+  const u = clamp((t - S.D) / 11000);
+  sky([[0, '#2b3d68'], [.28, '#6f6f9e'], [.45, '#e3a488'], [.56, '#ffdca4'], [1, '#ffe9c4']]);
+  stars.forEach((s) => { ctx.fillStyle = `rgba(255,248,230,${s.a * (1 - u * 1.3) * (.6 + .4 * Math.sin(t / 500 + s.p))})`; ctx.beginPath(); ctx.arc(s.x, s.y * .8, 2.4, 0, 2 * PI); ctx.fill(); });
+  const sunY = lerp(1100, 930, ease(u * 1.15));
+  glow(540, sunY, 900, '255,220,160', .55); glow(540, sunY, 330, '255,240,205', .9);
+  ctx.fillStyle = '#fff8e6'; ctx.beginPath(); ctx.arc(540, sunY, 78, 0, 2 * PI); ctx.fill();
+  const rise = (1 - ease(u * 1.4)) * 40;      // kamera hafifçe yükselir
+  ctx.save(); ctx.translate(0, rise);
+  cloudLayer(1065, 3, t * .004, '#ffe6c0', '#f0b89a', 90);
+  // bulutların üstünde kalan uzak tepeler
+  [[150, 1090, 150, 120], [930, 1110, 190, 150], [700, 1080, 90, 70]].forEach(([x, y, w, h]) => { ctx.fillStyle = '#8f86a8'; ctx.beginPath(); ctx.moveTo(x - w, y + 40); ctx.lineTo(x - w * .1, y - h); ctx.lineTo(x + w, y + 40); ctx.fill();
+    ctx.fillStyle = '#ffe9d0'; ctx.beginPath(); ctx.moveTo(x - w * .36, y - h * .5); ctx.lineTo(x - w * .1, y - h); ctx.lineTo(x + w * .3, y - h * .55); ctx.lineTo(x + w * .05, y - h * .62); ctx.lineTo(x - w * .12, y - h * .45); ctx.fill(); });
+  cloudLayer(1150, 8, -t * .007, '#fff0d6', '#eab6a4', 120);
+  cloudLayer(1260, 5, t * .011, '#fff6e6', '#e2b4b0', 150);
+  ctx.restore();
+  // ön plan: karlı düzlük, taş sıra, iki kahraman (arkadan)
+  ctx.fillStyle = '#f6efe6'; ctx.beginPath(); ctx.moveTo(-10, 1560); ctx.quadraticCurveTo(300, 1490, 560, 1520); ctx.quadraticCurveTo(840, 1550, 1090, 1500); ctx.lineTo(1090, H); ctx.lineTo(-10, H); ctx.fill();
+  const fg = ctx.createLinearGradient(0, 1500, 0, H); fg.addColorStop(0, 'rgba(150,140,190,0)'); fg.addColorStop(1, 'rgba(120,112,170,.55)'); ctx.fillStyle = fg; ctx.fillRect(0, 1480, W, 440);
+  ctx.fillStyle = 'rgba(90,84,130,.25)'; ctx.beginPath(); ctx.ellipse(540, 1668, 360, 30, 0, 0, 2 * PI); ctx.fill();
+  ctx.fillStyle = '#8a8580'; ctx.beginPath(); ctx.roundRect(250, 1560, 580, 34, 8); ctx.fill(); ctx.fillStyle = '#6f6a66'; ctx.fillRect(290, 1594, 34, 70); ctx.fillRect(756, 1594, 34, 70);
+  ctx.fillStyle = '#fbf6ee'; ctx.beginPath(); ctx.roundRect(244, 1548, 110, 16, 8); ctx.fill(); ctx.beginPath(); ctx.roundRect(726, 1548, 110, 16, 8); ctx.fill();
+  const br = Math.sin(clamp((t - 45200) / 5200) * PI);          // birlikte tek derin nefes
+  steam(300, 1420, t, 1); steam(782, 1420, t + 900, 1);
+  seatedBack(420, 1568, 'w', br); seatedBack(662, 1568, 'm', br);
+  // söz
+  ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.shadowColor = 'rgba(20,26,56,.5)'; ctx.shadowBlur = 24;
+  ctx.font = 'italic 400 78px Cormorant'; ctx.fillStyle = '#fff6e4';
+  L.q.forEach((ln, i) => { const a = win(t, 43200 + i * 900, 51400, 900, 700); ctx.globalAlpha = a; ctx.fillText((i ? '' : '“') + ln + (i === L.q.length - 1 ? '”' : ''), W / 2, 330 + i * 94 + (1 - out(a)) * 20); });
+  const a2 = win(t, 45600, 51400, 800, 700); ctx.globalAlpha = a2; ctx.font = '500 28px Jost'; ctx.letterSpacing = '8px'; ctx.fillStyle = '#f3ddb0';
+  ctx.fillText('— ' + L.qa, W / 2, 330 + L.q.length * 94 + 26);
+  ctx.restore();
+  // C'den gelen altın ışık söner
+  const bl = 1 - ease((t - S.D) / 1800); if (bl > 0) { ctx.fillStyle = `rgba(255,220,160,${bl})`; ctx.fillRect(0, 0, W, H); }
+}
+
+// ── Kapanış ─────────────────────────────────────────────────
+const ARC = new Path2D('M296 688 H415 A232 232 0 1 1 609 688 H728');
+function sceneE(t) {
+  const g = ctx.createRadialGradient(540, 760, 0, 540, 760, 1300); g.addColorStop(0, '#4a3a22'); g.addColorStop(.5, '#241c12'); g.addColorStop(1, '#120f0a'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const m = out((t - 52500) / 900), sc = .5 * (.88 + .12 * m);
+  const pulse = 1 + .03 * Math.sin((t - 54000) / 4500 * 2 * PI);
+  ctx.save(); ctx.translate(540, 560); ctx.scale(sc, sc); ctx.translate(-512, -477); ctx.globalAlpha = m;
+  glow(512, 477, 330 * pulse, '226,184,116', .4);
+  const og = ctx.createRadialGradient(512 - 20, 477 - 36, 0, 512, 477, 128 * 1.4); og.addColorStop(0, '#f6e6c0'); og.addColorStop(.45, '#cfae6c'); og.addColorStop(1, '#6e5530');
+  ctx.globalAlpha = m * ease((t - 53500) / 700); ctx.fillStyle = og; ctx.beginPath(); ctx.arc(512, 477, 128 * pulse, 0, 2 * PI); ctx.fill();
+  ctx.globalAlpha = m; const lg = ctx.createLinearGradient(0, 250, 0, 760); lg.addColorStop(0, '#f4e2b8'); lg.addColorStop(.45, '#d4b376'); lg.addColorStop(1, '#9a7b44');
+  ctx.strokeStyle = lg; ctx.lineWidth = 34; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.setLineDash([1500, 1500]); ctx.lineDashOffset = 1500 * (1 - ease((t - 52600) / 1500)); ctx.stroke(ARC); ctx.setLineDash([]);
+  ctx.restore();
+  ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  let a = out((t - 53900) / 800); ctx.globalAlpha = a; ctx.font = '600 104px Cinzel'; ctx.letterSpacing = '16px'; ctx.fillStyle = '#f1e6cf'; ctx.fillText('STOIKOS', W / 2 + 8, 850 + (1 - a) * 18);
+  a = out((t - 54700) / 800); ctx.globalAlpha = a; ctx.font = 'italic 400 64px Cormorant'; ctx.letterSpacing = '0px'; ctx.fillStyle = '#d8c49a'; ctx.fillText(L.tag, W / 2, 970 + (1 - a) * 16);
+  a = out((t - 55500) / 800); ctx.globalAlpha = a * .9; ctx.font = '500 28px Jost'; ctx.letterSpacing = '6px'; ctx.fillStyle = '#b9a67e'; ctx.fillText(L.sub, W / 2, 1070);
+  a = out((t - 56300) / 800); ctx.globalAlpha = a; ctx.font = '500 36px Jost'; ctx.letterSpacing = '0px';
+  const tw = ctx.measureText(L.cta).width + 88; ctx.fillStyle = '#d4b376'; ctx.beginPath(); ctx.roundRect(W / 2 - tw / 2, 1160, tw, 76, 38); ctx.fill();
+  ctx.fillStyle = '#1a1610'; ctx.fillText(L.cta, W / 2, 1200);
+  ctx.restore();
+  // şafaktan geçiş
+  const fin = 1 - ease((t - S.E) / 900); if (fin > 0) { ctx.fillStyle = `rgba(36,28,18,${0})`; }
+}
+
+// ── kare ────────────────────────────────────────────────────
+function white(t, at, w = 520) { const a = 1 - clamp(Math.abs(t - at) / w); if (a > 0) { ctx.fillStyle = `rgba(226,232,240,${ease(a)})`; ctx.fillRect(0, 0, W, H); } }
+function renderFrame(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.letterSpacing = '0px';
+  if (t < S.A) scene0(t); else if (t < S.B) sceneA(t); else if (t < S.C) sceneB(t); else if (t < S.D) sceneC(t);
+  else if (t < S.E + 900) { sceneD(Math.min(t, S.E + 900)); }
+  if (t >= S.E) { ctx.save(); ctx.globalAlpha = ease((t - S.E) / 900); sceneE(t); ctx.restore(); }
+  if (t < S.D) { white(t, S.A); white(t, S.B); white(t, S.C); vignette(.5 * (1 - ease((t - 39000) / 2000))); }
+  else if (t < S.E) vignette(.22);
+  // açılış ve bitiş kararması
+  const fade = Math.max(1 - clamp(t / 600), clamp((t - 59300) / 700));
+  if (fade > 0) { ctx.fillStyle = `rgba(10,9,7,${fade})`; ctx.fillRect(0, 0, W, H); }
+}
+async function init(lang) {
+  L = T[lang] || T.en; build();
+  await Promise.all(['600 50px Cinzel', 'italic 400 70px Cormorant', '400 30px Jost', '500 30px Jost'].map((f) => document.fonts.load(f, 'STOIKOSğüşiöçĞÜŞİÖÇ')));
+  renderFrame(0);
+}
+window.init = init; window.renderFrame = renderFrame;
+</script>
+</body>
+</html>
