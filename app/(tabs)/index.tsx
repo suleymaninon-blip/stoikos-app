@@ -19,6 +19,7 @@ import { getTodaysQuote, getMoodQuote, MOOD_THEMES } from '../../constants/conte
 import { getPrograms, getProgress, Program } from '../../constants/programs';
 import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
+import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
@@ -88,33 +89,81 @@ function MoodPicker() {
   const styles = useStyles(makeStyles);
   const { C: Colors } = useTheme();
   const { t, lang } = useLang();
+  const reduce = useReduceMotion();
   const [mood, setMood] = useState<string | null>(null);
+  // Kapalı kutu (11 Kasım 2026, kullanıcı: "kutu olsun, tıklayınca dokuz durum şık bir şekilde açılsın; ekrandaki
+  // dağınıklığı önleriz"): kapalıyken yalnız başlık + dokuz renkli nokta; dokununca ızgara kutu kutu belirir,
+  // seçince kapanır ve söz kalır. Yalnız transform/opacity (native driver).
+  const [open, setOpen] = useState(false);
+  const turn = useRef(new Animated.Value(0)).current;
+  const cells = useRef(MOOD_THEMES.map(() => new Animated.Value(0))).current;
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
+  const toggle = (next: boolean) => {
+    setOpen(next);
+    Animated.timing(turn, { toValue: next ? 1 : 0, duration: 220, useNativeDriver: true }).start();
+    if (next) {
+      cells.forEach((v) => v.setValue(reduce ? 1 : 0));
+      if (!reduce) Animated.stagger(28, cells.map((v) => Animated.timing(v, { toValue: 1, duration: 260, useNativeDriver: true }))).start();
+    }
+  };
+  const choose = (m: string) => {
+    const on = mood === m;
+    setMood(on ? null : m);
+    if (!on) closeTimer.current = setTimeout(() => toggle(false), 320);   // seçim görünsün, sonra toplansın
+  };
   const picked = mood ? getMoodQuote(mood, lang) : null;
   const colorOf = (m: string) => (MOOD_COLORS[m] ?? [Colors.sand, Colors.sand])[Colors.isDark ? 0 : 1];
   const onColor = Colors.isDark ? '#0F1824' : '#FFFFFF';
   return (
     <View style={styles.moodCard}>
-      <Text style={styles.moodTitle}>{t('mood.title')}</Text>
-      <View style={styles.chips}>
-        {MOOD_THEMES.map((m) => {
-          const on = mood === m;
-          const c = colorOf(m);
-          return (
-            <Pressable
-              key={m}
-              onPress={() => setMood(on ? null : m)}
-              style={({ pressed }) => [styles.chip, on && { backgroundColor: c, borderColor: c }, pressed && styles.chipPressed]}
-              accessibilityRole="button"
-              accessibilityState={{ selected: on }}
-            >
-              <View style={[styles.chipDot, { backgroundColor: on ? onColor : c }]} />
-              <Text style={[styles.chipText, t(`mood.${m}`).length > 11 && styles.chipTextLong, on && { color: onColor }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
-                {t(`mood.${m}`)}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      <Pressable
+        onPress={() => toggle(!open)}
+        style={styles.moodHead}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={t('mood.title')}
+      >
+        <View style={styles.moodHeadText}>
+          <Text style={styles.moodTitle}>{t('mood.title')}</Text>
+          {!open && !mood && (
+            <View style={styles.moodHintRow}>
+              {MOOD_THEMES.map((m) => <View key={m} style={[styles.moodHintDot, { backgroundColor: colorOf(m) }]} />)}
+              <Text style={styles.moodHint}>{t('mood.hint')}</Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.moodChevBox}>
+          <Animated.View style={[styles.moodChev, { transform: [{ rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ['45deg', '225deg'] }) }] }]} />
+        </View>
+      </Pressable>
+      {open && (
+        <View style={styles.chips}>
+          {MOOD_THEMES.map((m, i) => {
+            const on = mood === m;
+            const c = colorOf(m);
+            const v = cells[i];
+            return (
+              <Animated.View
+                key={m}
+                style={[styles.chipWrap, { opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }, { scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.86, 1] }) }] }]}
+              >
+                <Pressable
+                  onPress={() => choose(m)}
+                  style={({ pressed }) => [styles.chip, on && { backgroundColor: c, borderColor: c }, pressed && styles.chipPressed]}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: on }}
+                >
+                  <View style={[styles.chipDot, { backgroundColor: on ? onColor : c }]} />
+                  <Text style={[styles.chipText, t(`mood.${m}`).length > 11 && styles.chipTextLong, on && { color: onColor }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
+                    {t(`mood.${m}`)}
+                  </Text>
+                </Pressable>
+              </Animated.View>
+            );
+          })}
+        </View>
+      )}
       {mood && picked && (
         <View style={styles.moodQuote}>
           <View style={styles.moodTagRow}>
@@ -323,10 +372,18 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 22, padding: 18, marginBottom: 16,
     borderWidth: 1, borderColor: Colors.overlay(0.05),
   },
-  moodTitle: { fontFamily: Fonts.cormorant, fontSize: 23, color: Colors.text, marginBottom: 14 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  moodHead: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 },
+  moodHeadText: { flex: 1, gap: 10 },
+  moodTitle: { fontFamily: Fonts.cormorant, fontSize: 23, color: Colors.text },
+  moodHintRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  moodHintDot: { width: 8, height: 8, borderRadius: 4 },
+  moodHint: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginLeft: 6 },
+  moodChevBox: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.tint(0.1) },
+  moodChev: { width: 10, height: 10, borderRightWidth: 2, borderBottomWidth: 2, borderColor: Colors.sand, marginTop: -3 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 },
+  chipWrap: { flexBasis: '30%', flexGrow: 1 },
   chip: {
-    flexBasis: '30%', flexGrow: 1, height: 66, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 8,
+    height: 66, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 8,
     paddingHorizontal: 2, backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
   chipPressed: { opacity: 0.8, transform: [{ scale: 0.97 }] },
