@@ -167,6 +167,8 @@
 - Her değişiklik: dal `claude/stoikosta-wnVG4` → PR → squash merge → dalı `origin/main`'e sıfırla → Cloudflare derlemesini bekle → kullanıcıya özet. Commit sonu: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` + `Claude-Session:` satırı.
 - Yerel doğrulama: `EXPO_OFFLINE=1 bash scripts/build-site.sh`, `site/`'ı bir statik sunucuyla açıp Playwright ile ekran görüntüsü (Chromium `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`). Canlı stoikos.app bu ortamdan açılamıyor; Cloudflare durumu GitHub check-runs API'sinden okunur.
 
+**Mağaza öncesi son kontrol (11 Kasım 2026):** tsc (uygulama + backend) temiz, 6 dilde 437 metin anahtarı tam ve kodda kullanılan her anahtar tanımlı, expo-doctor 16/18 (kalan 2'si bu ortamda ağ yok), web paketi ES2019, iOS + Android prebuild temiz (izinler, Sağlık, bildirim). Bulunup düzeltilen: (1) uygulama düzeyinde **`PrivacyInfo.xcprivacy` yoktu** → `app.json` `ios.privacyManifests` (UserDefaults CA92.1, FileTimestamp, SystemBootTime, DiskSpace; izleme yok) — Apple yoksa ITMS-91053 uyarısı gönderiyor; (2) `userInterfaceStyle: dark` yüzünden açık temalarda iOS klavyesi koyu çıkıyordu → bütün `TextInput`'larda `keyboardAppearance` temaya göre (yeni yazı alanı eklerken de koy). Sistem pencereleri (paylaşım, izin) koyu kalır; TestFlight'ta bakılacak. Kod tarafında yayına engel yalnız RevenueCat bağlantısı (+ geri yükle düğmesi, EULA bağlantısı, `ENFORCE_PLUS_GATE`, `WEEKLY_FREE_QUOTA`) — hesaplar açılmadan yapılamıyor.
+
 ## BEKLEYEN İŞLER (öncelik sırası)
 
 > 🚨 **0. GERİ ALINACAK — `ENFORCE_PLUS_GATE = false`** (24 Eylül 2026)

@@ -159,7 +159,7 @@ export default function ProgramsScreen() {
                   <View style={styles.reflectWrap}>
                     <Text style={styles.reflectPrompt}>{t('programs.reflectPrompt')}</Text>
                     <Text style={styles.reflectHint}>{t('programs.reflectHint')}</Text>
-                    <TextInput
+                    <TextInput keyboardAppearance={Colors.isDark ? 'dark' : 'light'}
                       style={styles.reflectInput}
                       value={reflection}
                       onChangeText={setReflection}
