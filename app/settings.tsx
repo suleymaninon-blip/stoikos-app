@@ -337,7 +337,7 @@ export default function SettingsScreen() {
             <Text style={styles.adminTitle}>{t('admin.title')}</Text>
             <Text style={styles.adminHint}>{t('admin.hint')}</Text>
             <View style={styles.adminRow}>
-              <TextInput
+              <TextInput keyboardAppearance={Colors.isDark ? 'dark' : 'light'}
                 style={styles.adminInput}
                 placeholder={t('admin.placeholder')}
                 placeholderTextColor={Colors.muted}

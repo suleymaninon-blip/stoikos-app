@@ -411,7 +411,7 @@ export default function PracticeScreen() {
               </TouchableOpacity>
             )}
             <Text style={styles.journalHint}>{getTodaysReflectionPrompt(lang)}</Text>
-            <TextInput
+            <TextInput keyboardAppearance={Colors.isDark ? 'dark' : 'light'}
               style={styles.journalInput}
               placeholder={t('practice.journalPlaceholder')}
               placeholderTextColor={Colors.muted}

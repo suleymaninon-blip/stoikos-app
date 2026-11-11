@@ -450,7 +450,7 @@ export default function CoachScreen() {
           ) : null}
           <Text style={styles.inputLabel}>{t('coach.inputLabel')}</Text>
           <View style={styles.inputRow}>
-            <TextInput
+            <TextInput keyboardAppearance={Colors.isDark ? 'dark' : 'light'}
               style={styles.input}
               placeholder={t('coach.placeholder')}
               placeholderTextColor={Colors.muted}
