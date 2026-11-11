@@ -54,7 +54,8 @@ const write = (stream, buf) =>
 (async () => {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const browser = await chromium.launch({
-    executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+    // Sabit sürüm yolu ortam yenilenince kayboluyordu; verilmezse Playwright kendi tarayıcısını bulur.
+    ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}),
     args: ['--no-sandbox', '--disable-dev-shm-usage', '--allow-file-access-from-files',
            '--force-color-profile=srgb', '--disable-lcd-text'],
   });
