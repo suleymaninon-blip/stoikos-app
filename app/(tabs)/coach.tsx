@@ -56,14 +56,67 @@ function parseResponse(text: string): { body: string; quote: string | null } {
   return { body: text, quote: null };
 }
 
+/**
+ * Koç bazen markdown yazıyor (11 Kasım 2026, kullanıcı ekran görüntüsü): "--" ayraç satırları,
+ * `*vurgu*`, `**kalın**`, `# başlık`, `- madde`. Ham işaret görünmesin: ayraçlar boş satıra döner,
+ * başlık işareti düşer, madde "•" olur; vurgu/kalın `inlineWords` ile biçime çevrilir.
+ */
+function cleanMarkdown(text: string): string {
+  return text
+    .split('\n')
+    .map((l) => {
+      if (/^\s*([-—–_*=]\s*){2,}$/.test(l)) return '';
+      return l.replace(/^\s*#{1,6}\s+/, '').replace(/^(\s*)[-*•]\s+/, '$1• ');
+    })
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+type Word = { w: string; em: boolean; strong: boolean };
+/** Paragrafı kelimelere böler; `**…**` kalın, `*…*` vurgu. Kapanmayan işaret düz yazı kalır. */
+function inlineWords(para: string): Word[] {
+  const out: Word[] = [];
+  // Lookbehind yok: eski iOS Safari onu ayrıştıramıyor (beyaz ekran dersi).
+  const re = /\*\*(.+?)\*\*|\*(?!\s)(.+?)\*/g;
+  const push = (s: string, em: boolean, strong: boolean) =>
+    s.split(' ').filter(Boolean).forEach((w) => out.push({ w, em, strong }));
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(para))) {
+    push(para.slice(last, m.index), false, false);
+    if (m[1] != null) push(m[1], false, true);
+    else push(m[2], true, false);
+    last = m.index + m[0].length;
+  }
+  push(para.slice(last), false, false);
+  return out;
+}
+
+function FormattedText({ text, style, em, strong }: { text: string; style: any; em: any; strong: any }) {
+  const paras = useMemo(() => text.split('\n').map(inlineWords), [text]);
+  return (
+    <Text style={style}>
+      {paras.map((words, pi) => (
+        <React.Fragment key={pi}>
+          {pi > 0 && '\n'}
+          {words.map((x, wi) => (
+            <Text key={wi} style={x.strong ? strong : x.em ? em : undefined}>{(wi > 0 ? ' ' : '') + x.w}</Text>
+          ))}
+        </React.Fragment>
+      ))}
+    </Text>
+  );
+}
+
 // ─── MessageBubble ────────────────────────────────────────
 /**
  * Yeni gelen koç cevabı kelime kelime belirir (10 Kasım 2026, bekleme animasyonu tasarımı):
  * her kelime 6 px aşağıdan, 32 ms arayla; en geç 1,4 sn'de hepsi görünür. Paragraflar korunur.
  * Ekran okuyucu metni tek seferde okur.
  */
-function RevealText({ text, style }: { text: string; style: any }) {
-  const paras = useMemo(() => text.split('\n').map((p) => p.split(' ').filter(Boolean)), [text]);
+function RevealText({ text, style, em, strong }: { text: string; style: any; em: any; strong: any }) {
+  const paras = useMemo(() => text.split('\n').map(inlineWords), [text]);
   const total = paras.reduce((n, p) => n + p.length, 0);
   const vals = useRef(Array.from({ length: total }, () => new Animated.Value(0))).current;
   useEffect(() => {
@@ -83,8 +136,8 @@ function RevealText({ text, style }: { text: string; style: any }) {
               return (
                 <Animated.Text
                   key={wi}
-                  style={[style, { marginRight: 4.5, opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [6, 0] }) }] }]}
-                >{w}</Animated.Text>
+                  style={[style, w.strong ? strong : w.em ? em : null, { marginRight: 4.5, opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [6, 0] }) }] }]}
+                >{w.w}</Animated.Text>
               );
             })}
           </View>
@@ -125,7 +178,9 @@ function MessageBubble({ message, reveal, onLayout }: { message: Message; reveal
     );
   }
 
-  const { body, quote } = parseResponse(message.content);
+  const parsed = parseResponse(message.content);
+  const body = cleanMarkdown(parsed.body);
+  const quote = parsed.quote && parsed.quote.replace(/\*\*|\*/g, '');
   return (
     <Animated.View onLayout={onLayout ? (e) => onLayout(e.nativeEvent.layout.y) : undefined} style={[styles.aiBubbleWrap, { opacity: fadeAnim, transform: [{ translateY: slideAnim }, { scale: scaleAnim }], transformOrigin: 'left top' }]}>
       <View style={styles.aiLabelRow}>
@@ -133,7 +188,9 @@ function MessageBubble({ message, reveal, onLayout }: { message: Message; reveal
         <Text style={styles.aiLabel}>STOIKOS</Text>
       </View>
       <View style={styles.aiBubble}>
-        {animate ? <RevealText text={body} style={styles.aiText} /> : <Text style={styles.aiText}>{body}</Text>}
+        {animate
+          ? <RevealText text={body} style={styles.aiText} em={styles.aiEm} strong={styles.aiStrong} />
+          : <FormattedText text={body} style={styles.aiText} em={styles.aiEm} strong={styles.aiStrong} />}
         {quote && (
           <View style={styles.quoteInline}>
             <Text style={styles.quoteInlineText}>{quote}</Text>
@@ -460,6 +517,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   aiLabel: { fontFamily: Fonts.cinzel, fontSize: 11, letterSpacing: 1.5, color: Colors.sand },
   aiBubble: { backgroundColor: Colors.tint(0.09), borderRadius: 18, borderBottomLeftRadius: 5, padding: 16, maxWidth: '90%', borderWidth: 1, borderColor: Colors.tint(0.18) },
   aiText: { fontFamily: Fonts.jost, fontSize: 16, lineHeight: 26, color: Colors.text },
+  // Jost'un italik dosyası yüklü değil; iOS özel yazı tipinde eğik üretmeyebilir → vurgu renkle de belli olsun.
+  aiEm: { fontStyle: 'italic', color: Colors.sand2 },
+  aiStrong: { fontFamily: Fonts.jostMedium },
   quoteInline: { marginTop: 12, paddingTop: 12, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: Colors.sand, borderTopWidth: 1, borderTopColor: Colors.tint(0.15) },
   quoteInlineText: { fontFamily: Fonts.cormorantItalic, fontSize: 17, lineHeight: 24, color: Colors.sand2 },
   timeMeta: { fontFamily: Fonts.jost, fontSize: 11, color: Colors.muted, marginTop: 4, letterSpacing: 0.3 },
