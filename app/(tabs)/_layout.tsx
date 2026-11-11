@@ -4,12 +4,17 @@ import { useAppDimensions } from '../../constants/layout';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { useLang, upper } from '../../constants/i18n';
+import { SunIcon } from '../../components/Icons';
 
 function TabIcon({ label, icon, focused, width }: { label: string; icon: string; focused: boolean; width: number }) {
   const styles = useStyles(makeStyles);
+  const { C: Colors } = useTheme();
   return (
     <View style={[styles.tabItem, { width }]}>
-      <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>{icon}</Text>
+      {/* ☀ iOS'ta renkli emoji olarak çiziliyordu (sarı güneş, diğer simgelerle uyumsuz) → çizim simge. */}
+      {icon === '☀'
+        ? <View style={styles.tabSvg}><SunIcon size={22} color={focused ? Colors.sand2 : Colors.muted} /></View>
+        : <Text style={[styles.tabIcon, focused && styles.tabIconActive]}>{icon}</Text>}
       <Text style={[styles.tabLabel, focused && styles.tabLabelActive]} numberOfLines={1}>{label}</Text>
       <View style={[styles.tabDot, focused && styles.tabDotActive]} />
     </View>
@@ -84,6 +89,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     fontSize: 22,
     color: Colors.muted,
   },
+  tabSvg: { height: 28, justifyContent: 'center' },
   tabIconActive: {
     color: Colors.sand2,
   },
