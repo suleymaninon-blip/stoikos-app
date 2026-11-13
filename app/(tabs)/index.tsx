@@ -19,7 +19,7 @@ import { getTodaysQuote, getMoodQuote, MOOD_THEMES } from '../../constants/conte
 import { getPrograms, getProgress, Program } from '../../constants/programs';
 import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
-import { useReduceMotion } from '../../hooks/useReduceMotion';
+import { MoodBloom, type MoodOrigin } from '../../components/MoodBloom';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
@@ -89,28 +89,17 @@ function MoodPicker() {
   const styles = useStyles(makeStyles);
   const { C: Colors } = useTheme();
   const { t, lang } = useLang();
-  const reduce = useReduceMotion();
   const [mood, setMood] = useState<string | null>(null);
-  // Kapalı kutu (11 Kasım 2026, kullanıcı: "kutu olsun, tıklayınca dokuz durum şık bir şekilde açılsın; ekrandaki
-  // dağınıklığı önleriz"): kapalıyken yalnız başlık + dokuz renkli nokta; dokununca ızgara kutu kutu belirir,
-  // seçince kapanır ve söz kalır. Yalnız transform/opacity (native driver).
+  // Kutu kapalı durur (yalnız başlık + dokuz renkli noktadan küçük bir çiçek). Dokununca seçenekler aşağı doğru
+  // açılmaz: ekranı kaplayan duygu çiçeği, dokunulan noktadan dönerek açılır (components/MoodBloom.tsx;
+  // 13 Kasım 2026, kullanıcı: "nefes orbu gibi genişleyerek açılsa"). Seçince çiçek toplanır, söz kartta kalır.
   const [open, setOpen] = useState(false);
-  const turn = useRef(new Animated.Value(0)).current;
-  const cells = useRef(MOOD_THEMES.map(() => new Animated.Value(0))).current;
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (closeTimer.current) clearTimeout(closeTimer.current); }, []);
-  const toggle = (next: boolean) => {
-    setOpen(next);
-    Animated.timing(turn, { toValue: next ? 1 : 0, duration: 220, useNativeDriver: true }).start();
-    if (next) {
-      cells.forEach((v) => v.setValue(reduce ? 1 : 0));
-      if (!reduce) Animated.stagger(28, cells.map((v) => Animated.timing(v, { toValue: 1, duration: 260, useNativeDriver: true }))).start();
-    }
-  };
-  const choose = (m: string) => {
-    const on = mood === m;
-    setMood(on ? null : m);
-    if (!on) closeTimer.current = setTimeout(() => toggle(false), 320);   // seçim görünsün, sonra toplansın
+  const [origin, setOrigin] = useState<MoodOrigin>(null);
+  const budRef = useRef<View>(null);
+  const openBloom = () => {
+    const show = (o: MoodOrigin) => { setOrigin(o); setOpen(true); };
+    if (!budRef.current) return show(null);
+    budRef.current.measureInWindow((x, y, w, h) => show(Number.isFinite(x) && w > 0 ? { x: x + w / 2, y: y + h / 2 } : null));
   };
   const picked = mood ? getMoodQuote(mood, lang) : null;
   const colorOf = (m: string) => (MOOD_COLORS[m] ?? [Colors.sand, Colors.sand])[Colors.isDark ? 0 : 1];
@@ -118,52 +107,35 @@ function MoodPicker() {
   return (
     <View style={styles.moodCard}>
       <Pressable
-        onPress={() => toggle(!open)}
-        style={styles.moodHead}
+        onPress={openBloom}
+        style={({ pressed }) => [styles.moodHead, pressed && styles.moodHeadPressed]}
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
         accessibilityLabel={t('mood.title')}
+        accessibilityHint={t('mood.hint')}
       >
         <View style={styles.moodHeadText}>
           <Text style={styles.moodTitle}>{t('mood.title')}</Text>
-          {!open && !mood && (
-            <View style={styles.moodHintRow}>
-              {MOOD_THEMES.map((m) => <View key={m} style={[styles.moodHintDot, { backgroundColor: colorOf(m) }]} />)}
-              <Text style={styles.moodHint}>{t('mood.hint')}</Text>
-            </View>
-          )}
+          {!mood && <Text style={styles.moodHint}>{t('mood.hint')}</Text>}
         </View>
-        <View style={styles.moodChevBox}>
-          <Animated.View style={[styles.moodChev, { transform: [{ rotate: turn.interpolate({ inputRange: [0, 1], outputRange: ['45deg', '225deg'] }) }] }]} />
-        </View>
-      </Pressable>
-      {open && (
-        <View style={styles.chips}>
+        {/* tomurcuk: dokuz renkli noktadan küçük bir çiçek; duygu çiçeği buradan açılır */}
+        <View ref={budRef} collapsable={false} style={styles.moodBud}>
           {MOOD_THEMES.map((m, i) => {
-            const on = mood === m;
-            const c = colorOf(m);
-            const v = cells[i];
-            return (
-              <Animated.View
-                key={m}
-                style={[styles.chipWrap, { opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }, { scale: v.interpolate({ inputRange: [0, 1], outputRange: [0.86, 1] }) }] }]}
-              >
-                <Pressable
-                  onPress={() => choose(m)}
-                  style={({ pressed }) => [styles.chip, on && { backgroundColor: c, borderColor: c }, pressed && styles.chipPressed]}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: on }}
-                >
-                  <View style={[styles.chipDot, { backgroundColor: on ? onColor : c }]} />
-                  <Text style={[styles.chipText, t(`mood.${m}`).length > 11 && styles.chipTextLong, on && { color: onColor }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
-                    {t(`mood.${m}`)}
-                  </Text>
-                </Pressable>
-              </Animated.View>
-            );
+            const a = -Math.PI / 2 + (i / MOOD_THEMES.length) * Math.PI * 2;
+            return <View key={m} style={[styles.moodBudDot, { backgroundColor: colorOf(m), transform: [{ translateX: Math.cos(a) * 15 }, { translateY: Math.sin(a) * 15 }] }]} />;
           })}
         </View>
-      )}
+      </Pressable>
+      <MoodBloom
+        visible={open}
+        origin={origin}
+        moods={MOOD_THEMES}
+        selected={mood}
+        colorOf={colorOf}
+        onColor={onColor}
+        onPick={(m) => setMood(mood === m ? null : m)}
+        onClose={() => setOpen(false)}
+      />
       {mood && picked && (
         <View style={styles.moodQuote}>
           <View style={styles.moodTagRow}>
@@ -372,25 +344,14 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 22, padding: 18, marginBottom: 16,
     borderWidth: 1, borderColor: Colors.overlay(0.05),
   },
-  moodHead: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 48 },
-  moodHeadText: { flex: 1, gap: 10 },
+  moodHead: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 52 },
+  moodHeadPressed: { opacity: 0.75 },
+  moodHeadText: { flex: 1, gap: 6 },
   moodTitle: { fontFamily: Fonts.cormorant, fontSize: 23, color: Colors.text },
-  moodHintRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  moodHintDot: { width: 8, height: 8, borderRadius: 4 },
-  moodHint: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginLeft: 6 },
-  moodChevBox: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.tint(0.1) },
-  moodChev: { width: 10, height: 10, borderRightWidth: 2, borderBottomWidth: 2, borderColor: Colors.sand, marginTop: -3 },
-  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 },
-  chipWrap: { flexBasis: '30%', flexGrow: 1 },
-  chip: {
-    height: 66, borderRadius: 16, alignItems: 'center', justifyContent: 'center', gap: 8,
-    paddingHorizontal: 2, backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.overlay(0.07),
-  },
-  chipPressed: { opacity: 0.8, transform: [{ scale: 0.97 }] },
+  moodHint: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
+  moodBud: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.tint(0.08) },
+  moodBudDot: { position: 'absolute', width: 9, height: 9, borderRadius: 4.5 },
   chipDot: { width: 10, height: 10, borderRadius: 5 },
-  chipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text },
-  // En uzun etiket (RU "Благодарность") 14 px'te kutuya sığmıyor; web'de adjustsFontSizeToFit yok.
-  chipTextLong: { fontSize: 12 },
   moodTagRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   moodTag: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand },
   moodQuote: { borderTopWidth: 1, borderTopColor: Colors.tint(0.18), marginTop: 16, paddingTop: 14, gap: 8 },
