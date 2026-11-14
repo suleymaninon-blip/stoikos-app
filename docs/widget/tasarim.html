@@ -1,0 +1,52 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><style>
+@font-face{font-family:Cinzel;font-weight:600;src:url('file:///home/user/stoikos-app/node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf')}
+@font-face{font-family:Corm;src:url('file:///home/user/stoikos-app/node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_500Medium.ttf')}
+@font-face{font-family:Corm;font-style:italic;src:url('file:///home/user/stoikos-app/node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_500Medium_Italic.ttf')}
+@font-face{font-family:Jost;font-weight:400;src:url('file:///home/user/stoikos-app/node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf')}
+@font-face{font-family:Jost;font-weight:500;src:url('file:///home/user/stoikos-app/node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf')}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:430px;font-family:Jost;background:#0c1118;color:#eef1f5}
+.head{padding:22px 24px 16px}.head h1{font:500 24px Jost}.head p{font:400 15px/21px Jost;color:#9fb0c2;margin-top:4px}
+.screen{position:relative;width:430px;padding:26px 33px 34px}
+.wall{position:absolute;inset:0}
+.w{position:relative;border-radius:24px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+.s{width:170px;height:170px}.m{width:364px;height:170px;margin-top:24px}
+.row{display:flex;gap:24px;position:relative}
+.ic{width:170px;display:grid;grid-template-columns:1fr 1fr;gap:24px 26px;align-content:start}
+.ic i{width:66px;height:66px;border-radius:16px;background:rgba(255,255,255,.22);display:block}
+.cap{position:relative;text-align:center;font:400 12px Jost;color:rgba(255,255,255,.9);margin-top:6px;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.tag{font:500 10.5px Jost;letter-spacing:2.2px}
+.q{font-family:Corm}.a{font:400 12px Jost}
+.pad{position:absolute;inset:0;padding:16px;display:flex;flex-direction:column}
+.sp{flex:1}
+/* kilit */
+.lock{position:relative;width:430px;height:560px;overflow:hidden;text-align:center;color:#fff}
+.lock .inl{margin-top:54px;font:500 16px Jost;opacity:.95}
+.lock .clk{font:500 104px/104px Jost;letter-spacing:-2px;margin-top:2px}
+.lock .wr{display:flex;gap:14px;justify-content:center;margin-top:18px}
+.lw{background:rgba(255,255,255,.2);backdrop-filter:blur(12px);border-radius:18px;height:76px;text-align:left}
+</style></head><body><div id="root"></div><script>
+const v=new URLSearchParams(location.search).get('v')||'A';
+const mark=(sz,arc,orbOnly)=>`<svg width="${sz}" height="${sz}" viewBox="192 162 640 640"><defs><radialGradient id="o" cx="42%" cy="36%" r="70%"><stop offset="0" stop-color="#f8ebc8"/><stop offset=".45" stop-color="#d2b06c"/><stop offset="1" stop-color="#8a6a34"/></radialGradient></defs><circle cx="512" cy="477" r="128" fill="url(#o)"/>${orbOnly?'':`<path d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="${arc}" stroke-width="34" stroke-linecap="round"/>`}</svg>`;
+const QS='Öfkenin en iyi ilacı ertelemektir.', AS='Seneca';
+const QM='İnsanın kendi ruhundan daha sakin bir sığınağı yoktur.', AM='Marcus Aurelius';
+const icons='<div class="ic"><i></i><i></i><i></i><i></i></div>';
+const V={
+A:{t:'A · Sade',d:'Uygulamanın temasıyla aynı zemin. Yalnız söz ve küçük logo.',wall:'linear-gradient(160deg,#6fa3a6,#2f5f6a 55%,#1d3a48)',
+ s:`<div class="w s" style="background:#F7F3EA"><div class="pad"><div class="tag" style="color:#2F7F7A">GÜNÜN SÖZÜ</div><div class="q" style="font-size:22px;line-height:25px;color:#1D2A2F;margin-top:10px">${QS}</div><div class="sp"></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="a" style="color:#5B6A70">${AS}</div>${mark(26,'#b8944f')}</div></div></div>`,
+ m:`<div class="w m" style="background:#F7F3EA"><div class="pad" style="padding:18px 20px"><div class="tag" style="color:#2F7F7A">GÜNÜN SÖZÜ</div><div class="q" style="font-size:25px;line-height:29px;color:#1D2A2F;margin-top:10px">${QM}</div><div class="sp"></div><div style="display:flex;align-items:center;justify-content:space-between"><div class="a" style="color:#5B6A70;font-size:13px">${AM}</div>${mark(28,'#b8944f')}</div></div></div>`},
+B:{t:'B · Şafak',d:'Açılış ekranındaki gün doğumu. Küre güneş gibi alttan doğar.',wall:'linear-gradient(160deg,#39445f,#1c2438 60%,#121826)',
+ s:`<div class="w s" style="background:linear-gradient(180deg,#27355c 0%,#75699a 42%,#e0a184 76%,#ffd9a0 100%)"><div style="position:absolute;left:50%;bottom:-46px;margin-left:-62px;width:124px;height:124px;border-radius:50%;background:radial-gradient(circle,rgba(255,236,190,.95) 0%,rgba(255,214,150,.55) 38%,rgba(255,214,150,0) 70%)"></div><div style="position:absolute;left:50%;bottom:-26px;margin-left:-30px">${mark(60,'',1)}</div><div class="pad"><div class="tag" style="color:rgba(255,255,255,.85)">GÜNÜN SÖZÜ</div><div class="q" style="font-size:22px;line-height:25px;color:#fff;margin-top:10px;text-shadow:0 1px 6px rgba(20,24,50,.35)">${QS}</div><div class="a" style="color:rgba(255,255,255,.9);margin-top:8px">${AS}</div></div></div>`,
+ m:`<div class="w m" style="background:linear-gradient(100deg,#27355c 0%,#6a6396 45%,#dc9f88 80%,#ffd9a0 100%)"><div style="position:absolute;right:-30px;bottom:-56px;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle,rgba(255,236,190,.95) 0%,rgba(255,214,150,.5) 38%,rgba(255,214,150,0) 70%)"></div><div style="position:absolute;right:28px;bottom:-22px">${mark(94,'',1)}</div><div class="pad" style="padding:18px 20px;width:290px"><div class="tag" style="color:rgba(255,255,255,.85)">GÜNÜN SÖZÜ</div><div class="q" style="font-size:25px;line-height:29px;color:#fff;margin-top:10px;text-shadow:0 1px 6px rgba(20,24,50,.35)">${QM}</div><div class="sp"></div><div class="a" style="color:rgba(255,255,255,.9);font-size:13px">${AM}</div></div></div>`},
+C:{t:'C · Gece ve küre',d:'Lacivert zemin, köşede büyük altın logo. Söz italik.',wall:'linear-gradient(160deg,#d9c9a8,#b99a6c 55%,#7d6444)',
+ s:`<div class="w s" style="background:radial-gradient(circle at 80% 95%,#24344a 0%,#141D2A 62%)"><div style="position:absolute;right:-34px;bottom:-40px;opacity:.9">${mark(128,'#d4b376')}</div><div class="pad"><div class="q" style="font-style:italic;font-size:22px;line-height:25px;color:#F1E9D6">${QS}</div><div class="a" style="color:#9AA9BA;margin-top:8px">${AS}</div></div></div>`,
+ m:`<div class="w m" style="background:radial-gradient(circle at 88% 90%,#26374e 0%,#141D2A 60%)"><div style="position:absolute;right:-22px;bottom:-44px;opacity:.92">${mark(178,'#d4b376')}</div><div class="pad" style="padding:18px 20px;width:262px"><div class="tag" style="color:#d4b376">GÜNÜN SÖZÜ</div><div class="q" style="font-style:italic;font-size:24px;line-height:28px;color:#F1E9D6;margin-top:10px">${QM}</div><div class="sp"></div><div class="a" style="color:#9AA9BA;font-size:13px">${AM}</div></div></div>`}};
+const R=document.getElementById('root');
+if(v==='L'){R.innerHTML=`<div class="head"><h1>Kilit ekranı</h1><p>Saatin üstünde tek satır, altında iki küçük kutu. Renkleri iPhone belirler; üç seçenekte de aynı görünür.</p></div>
+<div class="lock"><div class="wall" style="background:linear-gradient(180deg,#27355c 0%,#75699a 45%,#e0a184 80%,#ffd9a0 100%)"></div><div style="position:relative">
+<div class="inl">Öfkenin en iyi ilacı ertelemektir.</div><div class="clk">9:41</div>
+<div class="wr"><div class="lw" style="width:172px;padding:10px 12px"><div class="q" style="font-size:16.5px;line-height:18.5px">İnsanın kendi ruhundan daha sakin bir sığınağı yoktur.</div></div>
+<div class="lw" style="width:76px;border-radius:38px;display:flex;align-items:center;justify-content:center"><svg width="46" height="46" viewBox="192 162 640 640"><circle cx="512" cy="477" r="118" fill="#fff"/><path d="M296 688 H415 A232 232 0 1 1 609 688 H728" fill="none" stroke="#fff" stroke-width="38" stroke-linecap="round"/></svg></div></div>
+<div style="font:400 13px Jost;opacity:.85;margin-top:14px">Yuvarlak kutu: dokununca 1 dakikalık nefes açılır</div></div></div>`;}
+else{const d=V[v];R.innerHTML=`<div class="head"><h1>${d.t}</h1><p>${d.d}</p></div><div class="screen"><div class="wall" style="background:${d.wall}"></div><div class="row">${d.s}${icons}</div><div class="cap" style="width:170px">Stoikos</div>${d.m}<div class="cap">Stoikos</div></div>`;}
+</script></body></html>
