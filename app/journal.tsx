@@ -4,8 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
-import { loadJournalEntries, JournalEntry } from '../constants/journal';
-import { useLang, localeOf } from '../constants/i18n';
+import { loadJournalEntries, groupByMonth, JournalEntry } from '../constants/journal';
+import { useLang, localeOf, upper } from '../constants/i18n';
 
 type Entry = JournalEntry;
 
@@ -54,10 +54,29 @@ export default function JournalScreen() {
           </View>
         )}
 
-        {entries.map((e) => (
-          <View key={e.key} style={styles.entryCard}>
-            <Text style={styles.entryDate}>{fmt(e.date)}</Text>
-            <Text style={styles.entryText}>{e.text}</Text>
+        {/* Ay ay: her ayın başında küçük bir özet (yazılan gün, kelime, en çok geçen kelimeler). Cihazda hesaplanır. */}
+        {groupByMonth(entries, lang, localeOf(lang)).map((g) => (
+          <View key={g.key}>
+            <View style={styles.monthCard}>
+              <Text style={styles.monthTitle}>{upper(g.date.toLocaleDateString(localeOf(lang), { month: 'long', year: 'numeric' }), lang)}</Text>
+              <Text style={styles.monthStats}>
+                {t('journal.monthStats').replace('{d}', String(g.stats.days)).replace('{w}', String(g.stats.words))}
+              </Text>
+              {g.stats.top.length > 0 && (
+                <View style={styles.topRow}>
+                  <Text style={styles.topLabel}>{t('journal.topWords')}</Text>
+                  <View style={styles.topChips}>
+                    {g.stats.top.map((w) => <View key={w} style={styles.topChip}><Text style={styles.topChipText}>{w}</Text></View>)}
+                  </View>
+                </View>
+              )}
+            </View>
+            {g.entries.map((e) => (
+              <View key={e.key} style={styles.entryCard}>
+                <Text style={styles.entryDate}>{fmt(e.date)}</Text>
+                <Text style={styles.entryText}>{e.text}</Text>
+              </View>
+            ))}
           </View>
         ))}
       </ScrollView>
@@ -79,6 +98,17 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   emptyIcon: { fontSize: 36, color: Colors.muted, opacity: 0.5 },
   emptyText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.muted, textAlign: 'center', lineHeight: 26, paddingHorizontal: 20 },
 
+  monthCard: {
+    backgroundColor: Colors.tint(0.07), borderRadius: 16, padding: 16, marginBottom: 12, marginTop: 6,
+    borderWidth: 1, borderColor: Colors.tint(0.16),
+  },
+  monthTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand, marginBottom: 6 },
+  monthStats: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, lineHeight: 22 },
+  topRow: { marginTop: 12, gap: 8 },
+  topLabel: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
+  topChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  topChip: { backgroundColor: Colors.stone2, borderRadius: 14, paddingVertical: 5, paddingHorizontal: 12, borderWidth: 1, borderColor: Colors.overlay(0.08) },
+  topChipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text },
   entryCard: {
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 18, marginBottom: 12,
     borderWidth: 1, borderColor: Colors.moonA(0.12),

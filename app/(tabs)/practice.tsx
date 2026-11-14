@@ -11,9 +11,10 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { FirstTip } from '../../components/FirstTip';
-import { JOURNAL_KEY, journalKeyFor } from '../../constants/journal';
+import { JOURNAL_KEY, journalKeyFor, thisMonthStats, type MonthStats } from '../../constants/journal';
+import { DoneMark } from '../../components/DoneMark';
 import { DayPartIcon, DayPart } from '../../components/Icons';
-import { useLang } from '../../constants/i18n';
+import { useLang, localeOf } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
 import { getTodaysReflectionPrompt } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
@@ -147,6 +148,8 @@ export default function PracticeScreen() {
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
+  // Kaydetme onayı (14 Kasım 2026): altın küre + onay işareti, altında bu ayın özeti. Yazmaya devam edince kaybolur.
+  const [savedStats, setSavedStats] = useState<MonthStats | null>(null);
   // "Dünkü yansımana dönüş" (25 Ekim 2026, rekabet analizi: rakip kullanıcıları dünkü günlüğe
   // dönük bir takip istiyor). Dün yazılan not kartın başında kısaca gösterilir; yalnız cihazdan okunur.
   const [yesterdayNote, setYesterdayNote] = useState<string | null>(null);
@@ -269,6 +272,7 @@ export default function PracticeScreen() {
   function onJournalChange(txt: string) {
     setJournal(txt);
     setJournalSaved(false);
+    setSavedStats(null);
     draftRef.current = txt;
     if (draftTimer.current) clearTimeout(draftTimer.current);
     draftTimer.current = setTimeout(() => { persistDraft(); }, 800);
@@ -286,6 +290,7 @@ export default function PracticeScreen() {
     if (!txt) return;
     await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
     setJournalSaved(true);
+    thisMonthStats(lang, localeOf(lang)).then(setSavedStats).catch(() => setSavedStats({ days: 1, words: 0, top: [] }));
     // Yalnız kullanıcı açık rıza verdiyse koç hafızasına işlenir (KVKK).
     if (coachConsent) addReflectionToMemory(lang, txt);
   }
@@ -428,6 +433,18 @@ export default function PracticeScreen() {
             >
               <Text style={styles.journalSaveBtnText}>{journalSaved ? t('practice.saved') : t('practice.save')}</Text>
             </TouchableOpacity>
+            {savedStats && (
+              <TouchableOpacity style={styles.savedCard} onPress={() => router.push('/journal')} activeOpacity={0.8} accessibilityRole="button" accessibilityLiveRegion="polite">
+                <DoneMark size={46} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.savedTitle}>{t('journal.savedTitle')}</Text>
+                  <Text style={styles.savedSub}>
+                    {t('journal.thisMonth')} — {t('journal.monthStats').replace('{d}', String(savedStats.days)).replace('{w}', String(savedStats.words))}
+                  </Text>
+                </View>
+                <Text style={styles.savedArrow}>›</Text>
+              </TouchableOpacity>
+            )}
 
             {/* Açık rıza (KVKK) — varsayılan kapalı; yalnız açıkken yansıma koça iletilir */}
             <TouchableOpacity style={styles.consentRow} onPress={toggleCoachConsent} activeOpacity={0.7} accessibilityRole="checkbox" accessibilityState={{ checked: coachConsent }}>
@@ -622,6 +639,14 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     borderWidth: 1, borderColor: Colors.moonA(0.25),
   },
   journalSaveBtnDim: { opacity: 0.5 },
+  savedCard: {
+    flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12, minHeight: 64,
+    backgroundColor: Colors.tint(0.07), borderRadius: 16, paddingVertical: 10, paddingHorizontal: 12,
+    borderWidth: 1, borderColor: Colors.tint(0.16),
+  },
+  savedTitle: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text },
+  savedSub: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 3, lineHeight: 18 },
+  savedArrow: { fontFamily: Fonts.jostLight, fontSize: 24, color: Colors.sand },
   journalSaveBtnText: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.moon, letterSpacing: 0.5 },
 
   // Concept
