@@ -48,7 +48,7 @@ Yay: adını koy → hayal ile gerçeği ayır → umut-korku zincirini gör →
 
 ---
 
-## 13. Zor İnsanlar — "7 günde kimsenin elinde oyuncak olma"
+## 13. Zor İnsanlar — "7 günde zor insanlarla sakin kal"
 
 Simge **⋈** · renk bakır
 Farkı: *Öfkeyle Çalışmak* senin tepkine, *Eleştiriyi Kaldırmak* söylenen söze bakar; bu program sürekli hayatında olan zor bir kişiyle (aile, iş, komşu) ilişkiye.
