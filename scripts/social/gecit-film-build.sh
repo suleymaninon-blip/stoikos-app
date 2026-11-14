@@ -7,7 +7,7 @@
 #   cekim-3-genis:   0,8–3,7  ikisi kapıya varır (kapı kapalı, erkek elini uzatır)
 #   cekim-3b-el:     1,2–4,0  yakın plan: el demir halkayı tutup çeker, altın ışık sızar
 #   cekim-3-genis:   5,3–7,9  kapı açık, içeri girerler (sonra kapı kendi kendine kapanıyor: kesildi)
-#   cekim-4-safak:   0–8      şafak, bulut denizi, bankta iki kişi; söz altta
+#   cekim-4-safak:   0–8      şafak, bulut denizi, bankta iki kişi; söz bankın altında, karda (yazı katmanı 200 px aşağı: bankın üstünde okunmuyordu)
 # Gemini geniş planda kapıyı elle açtıramadı (iki deneme: el değmeden ve dışarı açıldı) → yakın plan ara çekimle çözüldü.
 # Hepsi düz kesme; içeri giriş → şafak 0,8 sn erime (gece geçti). Grieg "Sabah" el kapıya değince girer; logoda ses imzası.
 # Kullanım: bash scripts/social/gecit-film-build.sh
@@ -44,7 +44,7 @@ for LANG in tr en; do
 [a][b][c][d][e]concat=n=5:v=1:a=0,settb=1/30[AE];\
 [AE][f]xfade=transition=fade:duration=0.8:offset=$XF,settb=1/30[V];\
 [9:v]format=rgba,fade=in:st=$QIN:d=1.0:alpha=1,fade=out:st=$QOUT:d=0.5:alpha=1[sh];[V][sh]overlay=0:1020[vs];\
-[8:v]format=rgba,fade=in:st=$(echo "$QIN+0.2"|bc):d=0.8:alpha=1,fade=out:st=$QOUT:d=0.5:alpha=1[q];[vs][q]overlay=0:0,settb=1/30[vq];\
+[8:v]format=rgba,fade=in:st=$(echo "$QIN+0.2"|bc):d=0.8:alpha=1,fade=out:st=$QOUT:d=0.5:alpha=1[q];[vs][q]overlay=0:200,settb=1/30[vq];\
 [5:v]$P[k];[vq][k]xfade=transition=fadeblack:duration=0.6:offset=$XL[v];\
 [0:a]atrim=2.5:9.5,asetpts=PTS-STARTPTS,aresample=48000[a1];[1:a]atrim=2.0:9.6,asetpts=PTS-STARTPTS,aresample=48000[a2];\
 [2:a]atrim=0.8:3.7,asetpts=PTS-STARTPTS,aresample=48000[a3];[3:a]atrim=1.2:4.0,asetpts=PTS-STARTPTS,aresample=48000[a4];\
