@@ -6,7 +6,7 @@ const path = require('path');
 const [, , , OUT, ...TEXTS] = process.argv;
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+  const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   await page.goto('file://' + path.resolve(__dirname, 'overlay.html'));
   await page.evaluate(() => document.fonts.ready);
