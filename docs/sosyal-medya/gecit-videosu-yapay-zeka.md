@@ -66,22 +66,27 @@ AUDIO: a howling mountain wind, snow hissing against rock, slow footsteps in sno
 
 **Yeni sohbet. Hiçbir görsel yükleme.**
 
+> 14 Kasım 2026, ikinci sürüm. İlk denemede kemerli kapı açılırken dikdörtgene dönüştü, kemer taşları kapıya karıştı, kapı el değmeden ve dışarı doğru açıldı. Düzeltme: kapı baştan **dikdörtgen** (kemer yok), **demir halka** tutulur, kapı **içeri** açılır, kamera **sabit**, açılış iki adıma bölündü (önce el, sonra hareket).
+
 ```
-SETTING: the top of a high mountain pass in a daytime snowstorm, grey-white sky, wind-blown snow. In the centre of the frame stands a small, low, ancient mountain refuge built of rough grey stone blocks, with a snow-covered stone roof and one short chimney with a thin line of smoke. In the middle of its front wall is ONE arched door of dark, weathered oak planks with black iron hinges. Left of the door is ONE small square window glowing with warm golden firelight. Next to the door, against the wall, is a plain stone bench covered with snow.
+SETTING: the top of a high mountain pass in a daytime snowstorm, grey-white sky, wind-blown snow. In the centre of the frame stands a small, low, ancient mountain refuge built of rough grey stone blocks, with a snow-covered stone roof and one short chimney with a thin line of smoke. In the middle of its front wall is ONE plain RECTANGULAR door with a flat, straight top: dark, weathered vertical oak planks, two black iron strap hinges on its LEFT edge and one black iron ring handle on its RIGHT edge at hand height. The door sits inside a simple rectangular opening in the wall. There is NO arch and there are NO curved stones anywhere on the building. Left of the door is ONE small square window glowing with warm golden firelight. Next to the door, against the wall, is a plain stone bench covered with snow.
 
 THE WORD: directly above the door, a long single block of pale stone forms the lintel. Carved deep into it, in ONE straight horizontal line of large classical Roman capital letters, is exactly the word "STOIKOS": seven letters, S-T-O-I-K-O-S, evenly spaced, spanning almost the full width of the lintel. Warm light from the window catches the edges of the letters. The word is sharp, big and correctly spelled in every frame. There is no other text anywhere.
+
+THE DOOR IS A SEPARATE OBJECT: only the wooden door moves. The stone wall, the stone lintel with the word, the window and the roof are solid and NEVER move, bend, slide or change. The door keeps the same rectangular shape, the same size, the same dark colour, the same hinges and the same ring handle from the first frame to the last. The doorway is exactly the same rectangle when the door is closed and when it is open.
 
 THE TWO PEOPLE (seen only from behind and from a distance; their faces are never visible):
 - A woman about 40 years old: very dark brown hair in a long braid down her back, an ankle-length off-white linen tunic, a long heavy sand-coloured wool cloak over both shoulders, brown leather boots wrapped with wool. Hood down.
 - A man about 60 years old: short wavy grey hair, an ankle-length off-white linen tunic, an identical long heavy sand-coloured wool cloak over both shoulders, brown leather boots wrapped with wool. Hood down.
 Both have snow on their shoulders and empty hands.
 
-CAMERA: behind the two people at chest height, looking straight at the front of the refuge. The door and the word "STOIKOS" are centred in the upper half of the frame for the whole shot. The camera only drifts very slowly forward. No rotation, no cuts.
+CAMERA: behind the two people at chest height, looking straight at the front of the refuge. The door and the word "STOIKOS" are centred in the upper half of the frame for the whole shot. The camera is LOCKED on a tripod and does not move at all for the whole shot: no drift, no zoom, no rotation, no cuts.
 
 TIMELINE:
 0–3 s: the woman walks into the frame from the lower LEFT and the man from the lower RIGHT, each coming up their own snowy path, both seen from behind, both walking slowly towards the door. They arrive in front of it at the same moment and stop side by side, about one step apart. They turn their heads slightly towards each other and give one small nod.
-3–6 s: the man puts his hand on the door and pushes it inward. Warm golden firelight pours out of the doorway over the snow and over both of them, and the falling snow in front of the door glows gold. He steps aside and holds the door; the woman walks in first.
-6–8 s: the man follows her inside. The door stays open, golden light on the snow, "STOIKOS" glowing softly above it. The wind begins to drop and the snowfall thins. End on this frame.
+3–4 s: the door is still fully CLOSED. The man takes one step forward, reaches out his right arm and closes his right hand firmly around the iron ring handle. His hand is clearly touching the door. Nothing has moved yet.
+4–6 s: with his hand still on the door, he pushes. The door swings slowly INWARD, away from the camera, into the room, turning on its left hinges, and comes to rest inside the room against the inner wall. His hand stays on the door for the whole movement; the door moves only because he pushes it. Warm golden firelight pours out of the rectangular doorway over the snow and over both of them. He steps half a step to the right, still holding the door open; the woman walks in first.
+6–8 s: the man lets go of the door and follows her inside. The door stays open inside the room, golden light on the snow, "STOIKOS" glowing softly above it. The wind begins to drop and the snowfall thins. End on this frame.
 
 STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain. Cold white, grey and pale blue everywhere except the warm gold of the window, the doorway and the two sand-coloured cloaks. Real-time speed, smooth steady camera. Single continuous shot, no cuts, no transitions. Vertical 9:16.
 
@@ -89,6 +94,8 @@ STRICTLY FORBIDDEN (do NOT show any of this):
 - their faces from the front, a close-up, a third person, animals;
 - any text, letters or numbers other than "STOIKOS"; signs, flags, logos, numbers on the door;
 - "STOIKOS" misspelled (e.g. "STOIIKOS", "STOKOS", "STOIKOSS"), curved, small, blurred, covered by snow, cut off or missing; the word anywhere other than the lintel above the door;
+- the door opening by itself, opening before his hand touches it, or opening OUTWARD towards the camera; a sliding door, a double door;
+- an arched door, an arch of stones, the door changing shape, size, colour or planks; the lintel, the wall stones or the word moving, bending, or becoming part of the door; the doorway growing wider or taller;
 - a second door, a second building, a modern hut, a church, a castle, a ski lift, poles, cables, antennas, lamps, cars;
 - hoods up, modern clothes, backpacks, sticks, skis, sandals;
 - them hugging, talking, shaking hands, running;
