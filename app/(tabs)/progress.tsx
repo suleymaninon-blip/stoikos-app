@@ -41,6 +41,24 @@ function StatBox({ label, value, sub }: { label: string; value: string; sub?: st
 }
 
 // ─── Bar chart ─────────────────────────────────────────────
+// Çubuklar veri değişince yeniden büyür. 14 Kasım 2026'ya kadar animasyon yalnız ilk çizimde, o anki
+// değerle çalışıyordu: egzersiz dağılımı veriler yüklenmeden çizildiği için sayılar "2/7" yazarken
+// çubuklar hep boş kalıyordu (kullanıcının ekran görüntüsü), haftalık çubuklar da sekmeye dönünce güncellenmiyordu.
+function DayBar({ pct, index, isToday }: { pct: number; index: number; isToday: boolean }) {
+  const styles = useStyles(makeStyles);
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(anim, { toValue: pct, duration: 600, delay: index * 60, useNativeDriver: false }).start();
+  }, [pct]);
+  return (
+    <View style={styles.barTrack}>
+      <Animated.View
+        style={[styles.barFill, isToday && styles.barToday, { height: anim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) }]}
+      />
+    </View>
+  );
+}
+
 function WeekChart({ data }: { data: { day: string; count: number; isToday: boolean }[] }) {
   const styles = useStyles(makeStyles);
   const { t } = useLang();
@@ -49,39 +67,34 @@ function WeekChart({ data }: { data: { day: string; count: number; isToday: bool
     <View style={styles.chartWrap}>
       <Text style={styles.sectionLabel}>{t('progress.last7')}</Text>
       <View style={styles.bars}>
-        {data.map((d, i) => {
-          const heightPct = d.count / max;
-          const barAnim = useRef(new Animated.Value(0)).current;
-          useEffect(() => {
-            Animated.timing(barAnim, {
-              toValue: heightPct,
-              duration: 600,
-              delay: i * 60,
-              useNativeDriver: false,
-            }).start();
-          }, []);
-          return (
-            <View key={i} style={styles.barCol}>
-              <View style={styles.barTrack}>
-                <Animated.View
-                  style={[
-                    styles.barFill,
-                    d.isToday && styles.barToday,
-                    { height: barAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) },
-                  ]}
-                />
-              </View>
-              <Text style={[styles.barLabel, d.isToday && styles.barLabelToday]}>{d.day}</Text>
-              <Text style={styles.barCount}>{d.count}</Text>
-            </View>
-          );
-        })}
+        {data.map((d, i) => (
+          <View key={i} style={styles.barCol}>
+            <DayBar pct={d.count / max} index={i} isToday={d.isToday} />
+            <Text style={[styles.barLabel, d.isToday && styles.barLabelToday]}>{d.day}</Text>
+            <Text style={styles.barCount}>{d.count}</Text>
+          </View>
+        ))}
       </View>
     </View>
   );
 }
 
 // ─── Exercise breakdown ────────────────────────────────────
+function ExBar({ pct, evening }: { pct: number; evening: boolean }) {
+  const styles = useStyles(makeStyles);
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(anim, { toValue: pct, duration: 700, useNativeDriver: false }).start();
+  }, [pct]);
+  return (
+    <View style={styles.exTrack}>
+      <Animated.View
+        style={[styles.exFill, evening && styles.exFillEvening, { width: anim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) }]}
+      />
+    </View>
+  );
+}
+
 function ExBreakdown({ counts }: { counts: Record<string, number> }) {
   const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
@@ -95,27 +108,14 @@ function ExBreakdown({ counts }: { counts: Record<string, number> }) {
     <View style={styles.breakdownWrap}>
       <Text style={styles.sectionLabel}>{t('progress.exBreakdown')}</Text>
       {exercises.map((ex) => {
-        const count = counts[ex.id] || 0;
-        const pct = count / total7;
-        const barAnim = useRef(new Animated.Value(0)).current;
-        useEffect(() => {
-          Animated.timing(barAnim, { toValue: pct, duration: 700, useNativeDriver: false }).start();
-        }, []);
+        const count = Math.min(counts[ex.id] || 0, total7);
         return (
           <View key={ex.id} style={styles.exRow}>
             <View style={styles.exRowHeader}>
               <Text style={styles.exRowName}>{ex.name}</Text>
               <Text style={styles.exRowCount}>{count}/7</Text>
             </View>
-            <View style={styles.exTrack}>
-              <Animated.View
-                style={[
-                  styles.exFill,
-                  ex.category === 'evening' && styles.exFillEvening,
-                  { width: barAnim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) },
-                ]}
-              />
-            </View>
+            <ExBar pct={count / total7} evening={ex.category === 'evening'} />
           </View>
         );
       })}
