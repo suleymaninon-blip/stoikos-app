@@ -104,6 +104,39 @@ STRICTLY FORBIDDEN (do NOT show any of this):
 AUDIO: a strong mountain wind, two pairs of footsteps crunching in snow, the deep creak of a heavy wooden door, then the soft crackle of a fire from inside while the wind fades. No spoken words in any language, no music.
 ```
 
+## Çekim 3b: El kapıyı çeker — yakın plan ara çekim (kurguda ~1,5 sn)
+
+**Yeni sohbet. Hiçbir görsel yükleme.**
+
+> 14 Kasım 2026. Çekim 3'ün ikinci denemesinde bina, dikdörtgen kapı ve yazı tuttu ama kapı yine **el değmeden, dışarı** açıldı ve sonda **kapandı**: Gemini geniş planda kapı açmayı yapamıyor. Çözüm kurguda: ikinci denemenin 0–4 sn'si (varış, kapı kapalı) → bu yakın plan (el halkayı tutup **çeker**; geniş planda kapı dışarı açıldığı için itme değil çekme) → ikinci denemenin ~5,5–8 sn'si (kapı açık, içeri giriş), kapanmadan önce kesilir.
+
+```
+ONE SHOT, EXTREME CLOSE-UP: a man's hand opening an old wooden door. Nothing else.
+
+WHAT IS IN THE FRAME: the frame is completely filled by the surface of an old door made of dark, weathered vertical oak planks. In the centre of the frame, fixed to the door, hangs ONE black hand-forged iron ring handle, about the size of a palm. A few snowflakes stick to the wood and to the iron. No wall, no stone, no window, no sky and no ground are visible; only the door fills the frame.
+
+THE HAND: the right hand of a man about 60 years old comes into the frame from the lower right. Weathered skin, bare hand, no glove, no ring, no watch. Around the wrist is the cuff of an off-white linen sleeve and the edge of a heavy sand-coloured wool cloak, both dusted with snow. Only the hand, the wrist and part of the forearm are ever visible.
+
+CAMERA: locked on a tripod, perfectly still, at the height of the handle, looking straight at the door. No zoom, no drift, no rotation, no cuts.
+
+TIMELINE (one continuous 8-second shot):
+0–2 s: the door is closed and still. The hand comes in slowly and closes firmly around the iron ring. The fingers wrap fully around the iron.
+2–5 s: the hand PULLS the ring towards the camera. The door moves slowly towards the camera, only because the hand pulls it. Along the opening edge of the door a thin vertical line of warm golden firelight appears and grows wider. The golden light falls over the hand, the sleeve and the snowflakes in the air.
+5–8 s: the hand keeps holding the ring and keeps the door open. The golden light is steady and warm. End on this frame.
+
+STYLE: photorealistic, cinematic, shot on 35mm film, natural film grain, very shallow depth of field. Cold grey-blue daylight on the wood, warm gold only from the light inside. Real-time speed. Vertical 9:16.
+
+STRICTLY FORBIDDEN (do NOT show any of this):
+- a face, a head, a body, a second person, a second hand;
+- the door moving before the hand is holding the ring; the door moving by itself; the door closing again;
+- any text, letters, numbers, carvings or symbols on the door;
+- a modern door handle, a lock, a keyhole, a doorbell, glass, metal plates;
+- gloves, jewellery, a watch, extra fingers, a deformed hand;
+- the wall, the lintel, a window or the landscape; slow motion; a camera move.
+
+AUDIO: mountain wind, the clink of the iron ring, the deep creak of a heavy wooden door, then the soft crackle of a fire. No spoken words in any language, no music.
+```
+
 ## Çekim 4: Şafak, bulut denizi (8 sn)
 
 **Yeni sohbet. Hiçbir görsel yükleme.**
