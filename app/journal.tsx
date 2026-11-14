@@ -26,8 +26,13 @@ export default function JournalScreen() {
     })();
   }, []);
 
+  // Yalnız ilk harf büyür. Eskiden `textTransform: 'capitalize'` her kelimeyi büyütüyordu:
+  // İspanyolcada "14 De Noviembre De 2026", Rusçada "14 Ноября 2026 Г." çıkıyordu (14 Kasım 2026, beş dil kontrolü).
+  const cap = (x: string) => x.charAt(0).toLocaleUpperCase(localeOf(lang)) + x.slice(1);
   const fmt = (d: Date) =>
-    d.toLocaleDateString(localeOf(lang), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    cap(d.toLocaleDateString(localeOf(lang), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
+  // Ay başlığı: yalnız ay adı + yıl ("НОЯБРЬ 2026", "NOVIEMBRE 2026"); yerel biçim "2026 г." / "de 2026" ekliyordu.
+  const monthTitle = (d: Date) => upper(`${d.toLocaleDateString(localeOf(lang), { month: 'long' })} ${d.getFullYear()}`, lang);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,7 +63,7 @@ export default function JournalScreen() {
         {groupByMonth(entries, lang, localeOf(lang)).map((g) => (
           <View key={g.key}>
             <View style={styles.monthCard}>
-              <Text style={styles.monthTitle}>{upper(g.date.toLocaleDateString(localeOf(lang), { month: 'long', year: 'numeric' }), lang)}</Text>
+              <Text style={styles.monthTitle}>{monthTitle(g.date)}</Text>
               <Text style={styles.monthStats}>
                 {t('journal.monthStats').replace('{d}', String(g.stats.days)).replace('{w}', String(g.stats.words))}
               </Text>
@@ -113,6 +118,6 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     backgroundColor: Colors.stone2, borderRadius: 16, padding: 18, marginBottom: 12,
     borderWidth: 1, borderColor: Colors.moonA(0.12),
   },
-  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: Colors.moon, marginBottom: 8, textTransform: 'capitalize' },
+  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: Colors.moon, marginBottom: 8 },
   entryText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 25 },
 });
