@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Animated, Easing, View, Text, StyleSheet, Pressable, TouchableOpacity, AppState } from 'react-native';
+import { Animated, Easing, View, Text, StyleSheet, Pressable, TouchableOpacity, AppState, AccessibilityInfo } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, Defs, Path, RadialGradient, Stop } from 'react-native-svg';
 import { useFocusEffect } from 'expo-router';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
@@ -19,8 +19,10 @@ import {
   writeMindfulSession, healthAppName,
 } from '../constants/healthPrefs';
 import { useLang } from '../constants/i18n';
+import { useReduceMotion } from '../hooks/useReduceMotion';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 type Props = {
   idleTitle?: string;   // dururken başlık: "Bir an dur"
@@ -32,6 +34,7 @@ type Props = {
   soundLabel?: string;
   minuteLabel?: string;   // "{n} dk" — süre seçici ve özet
   noLimitLabel?: string;  // "Süresiz" — ∞ seçeneğinin erişilebilirlik adı
+  doneLabel?: string;     // "Tebrikler" — sayılan bir seans bitince
   onComplete?: () => void; // seans İlerleme'ye işlendiğinde (ana ekran sürekliliği yenilesin)
 };
 
@@ -55,6 +58,9 @@ const PETALS = 6;
 const SIZE = 210;    // çiçeğin kutusu
 const PETAL = 96;    // yaprak çapı
 const SPREAD = 48;   // tam açıkken yaprak merkezinin çiçek merkezine uzaklığı
+const DONE = 104;    // bitiş işaretinin (altın küre + onay) kutusu
+const CHECK_LEN = 56; // onay çizgisinin yaklaşık uzunluğu
+const DONE_MS = 5200; // tebrik ekranda bu kadar kalır
 
 export default function BreathOrb({
   idleTitle = 'Bir an dur',
@@ -65,6 +71,7 @@ export default function BreathOrb({
   soundLabel = 'Sakinleştirici ses',
   minuteLabel = '{n} dk',
   noLimitLabel = 'Süresiz',
+  doneLabel = 'Tebrikler',
   onComplete,
 }: Props) {
   const { C: Colors } = useTheme();
@@ -81,6 +88,15 @@ export default function BreathOrb({
   const [count, setCount] = useState(0);
   const countRef = useRef(0);
   const [summary, setSummary] = useState<string | null>(null);
+  // Tebrik (14 Kasım 2026, kullanıcı: "egzersiz bittiğinde tebrikler yazıp bir işaretle gösterelim, motive edici olur"):
+  // sayılan bir seans (≥1 dk ya da süresi dolan) bitince çiçeğin yerinde altın küre belirir, üstüne onay işareti
+  // çizilir, bir halka dışa doğru yayılır; başlık "Tebrikler", altında süre ve nefes sayısı. ~5 sn sonra söner.
+  // Bir dakikadan kısa, elle kesilen seansta tebrik yok (yalnız eski özet satırı).
+  const reduce = useReduceMotion();
+  const [celebrate, setCelebrate] = useState(false);
+  const cele = useRef(new Animated.Value(0)).current;    // küre: belirme / sönme
+  const check = useRef(new Animated.Value(0)).current;   // onay çizgisi (JS sürücüsü: strokeDashoffset)
+  const pulse = useRef(new Animated.Value(0)).current;   // dışa yayılan halka
   // Sağlık uygulamasına yazma izni: ilk ≥1 dk'lık seanstan sonra bir kez, tek dokunuşla sorulur.
   const { t, lang } = useLang();
   const [healthAsk, setHealthAsk] = useState(false);
@@ -132,6 +148,7 @@ export default function BreathOrb({
     activeRef.current = true;
     setActive(true);
     setSummary(null);
+    setCelebrate(false); cele.setValue(0); check.setValue(0); pulse.setValue(0);
     setCount(0);
     countRef.current = 0;
     setPhase('out'); // hazırlık: çiçek önce kapanır
@@ -207,10 +224,24 @@ export default function BreathOrb({
       if (countRef.current > 0) parts.push(countLabel.replace('{n}', String(countRef.current)));
       if (parts.length) {
         setSummary(`✦ ${parts.join(' · ')}`);
-        timers.current.push(setTimeout(() => setSummary(null), 5000));
+        timers.current.push(setTimeout(() => setSummary(null), DONE_MS));
+      }
+      const dur = durationRef.current;
+      if (elapsed >= MIN_LOGGED_SECONDS || (dur > 0 && elapsed >= dur - 1)) {
+        setCelebrate(true);
+        AccessibilityInfo.announceForAccessibility?.([doneLabel, ...parts].join('. '));
+        if (reduce) { cele.setValue(1); check.setValue(1); }
+        else {
+          Animated.spring(cele, { toValue: 1, friction: 6, tension: 70, useNativeDriver: true }).start();
+          Animated.timing(check, { toValue: 1, delay: 320, duration: 520, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+          Animated.timing(pulse, { toValue: 1, delay: 200, duration: 1500, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
+        }
+        timers.current.push(setTimeout(() => {
+          Animated.timing(cele, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => { setCelebrate(false); check.setValue(0); pulse.setValue(0); });
+        }, DONE_MS - 500));
       }
     }
-  }, [breath, live, ring, startIdle, onComplete, minuteLabel, countLabel]);
+  }, [breath, live, ring, startIdle, onComplete, minuteLabel, countLabel, doneLabel, reduce, cele, check, pulse]);
   const stopRef = useRef(stop);
   stopRef.current = stop;
 
@@ -246,7 +277,8 @@ export default function BreathOrb({
   const rotate = breath.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '60deg'] });
   const flowerScale = breath.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1.06] });
   const petalScale = breath.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] });
-  const flowerOpacity = live.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] });
+  // Tebrik sırasında çiçek geri çekilir, altın küre öne çıkar.
+  const flowerOpacity = Animated.multiply(live.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] }), cele.interpolate({ inputRange: [0, 1], outputRange: [1, 0.22] }));
   const haloOpacity = Animated.multiply(live, breath.interpolate({ inputRange: [0, 1], outputRange: [0.12, 0.42] }));
 
   const petals = Array.from({ length: PETALS }, (_, i) => {
@@ -270,7 +302,7 @@ export default function BreathOrb({
     );
   });
 
-  const title = active ? (phase === 'in' ? inhaleLabel : exhaleLabel) : idleTitle;
+  const title = active ? (phase === 'in' ? inhaleLabel : exhaleLabel) : celebrate ? doneLabel : idleTitle;
   const countText = count > 0 ? countLabel.replace('{n}', String(count)) : '';
   const clock = `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`;
   const sub = active
@@ -310,6 +342,39 @@ export default function BreathOrb({
           <Animated.View style={[styles.flower, { opacity: flowerOpacity, transform: [{ rotate }, { scale: flowerScale }] }]}>
             {petals}
           </Animated.View>
+          {celebrate && (
+            <View style={styles.doneBox} pointerEvents="none">
+              <Animated.View
+                style={[styles.donePulse, {
+                  opacity: pulse.interpolate({ inputRange: [0, 0.15, 1], outputRange: [0, 0.55, 0] }),
+                  transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.9] }) }],
+                }]}
+              />
+              <Animated.View style={{ opacity: cele, transform: [{ scale: cele.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }] }}>
+                <Svg width={DONE} height={DONE} viewBox="0 0 104 104">
+                  <Defs>
+                    <RadialGradient id="breathDoneH" cx="50%" cy="50%" r="50%">
+                      <Stop offset="0.6" stopColor="#e2b874" stopOpacity="0.45" />
+                      <Stop offset="1" stopColor="#e2b874" stopOpacity="0" />
+                    </RadialGradient>
+                    <RadialGradient id="breathDone" cx="42%" cy="36%" r="70%">
+                      <Stop offset="0" stopColor="#f8ebc8" />
+                      <Stop offset="0.45" stopColor="#d2b06c" />
+                      <Stop offset="1" stopColor="#8a6a34" />
+                    </RadialGradient>
+                  </Defs>
+                  <Circle cx="52" cy="52" r="52" fill="url(#breathDoneH)" />
+                  <Circle cx="52" cy="52" r="36" fill="url(#breathDone)" />
+                  <AnimatedPath
+                    d="M36 53 L47.5 64 L68 41"
+                    fill="none" stroke="#3a2c12" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round"
+                    strokeDasharray={CHECK_LEN}
+                    strokeDashoffset={check.interpolate({ inputRange: [0, 1], outputRange: [CHECK_LEN, 0] })}
+                  />
+                </Svg>
+              </Animated.View>
+            </View>
+          )}
         </View>
 
         <Animated.Text style={[styles.title, { opacity: textFade }]}>{title}</Animated.Text>
@@ -425,6 +490,8 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   },
   petalFill: { flex: 1 },
   ring: { position: 'absolute', top: 0, left: 0 },
+  doneBox: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center' },
+  donePulse: { position: 'absolute', width: 76, height: 76, borderRadius: 38, borderWidth: 2, borderColor: '#d4b376' },
   durRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
   durRowHidden: { opacity: 0 },
   durChip: {

@@ -242,6 +242,7 @@ export default function HomeScreen() {
             countLabel={t('home.breathCount')}
             minuteLabel={t('home.breathMin')}
             noLimitLabel={t('home.breathNoLimit')}
+            doneLabel={t('home.breathDone')}
             onComplete={refresh}
             inhaleLabel={t('home.breathIn')}
             exhaleLabel={t('home.breathOut')}
