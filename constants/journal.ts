@@ -40,7 +40,10 @@ export async function loadJournalEntries(): Promise<JournalEntry[]> {
     const text = (v || '').trim();
     if (!text) continue;
     const date = new Date(k.slice(JOURNAL_KEY.length));
-    list.push({ key: k, date: isNaN(date.getTime()) ? new Date(0) : date, text });
+    // Aynı önekle başlayan ama günlük olmayan anahtarlar var (ör. koç rızası `stoikos_journal_coach_consent` = '1').
+    // 14 Kasım 2026'ya kadar bunlar "1 Ocak 1970 — 1" diye bir yansıma gibi listeleniyor ve dışa aktarılıyordu.
+    if (isNaN(date.getTime())) continue;
+    list.push({ key: k, date, text });
   }
   list.sort((a, b) => b.date.getTime() - a.date.getTime());
   return list;
