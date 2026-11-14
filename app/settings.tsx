@@ -178,6 +178,11 @@ export default function SettingsScreen() {
           <Text style={styles.subtitle}>{t('settings.subtitle')}</Text>
         </View>
 
+        <View style={styles.secRow} accessibilityRole="header">
+          <Text style={styles.secText}>{t('settings.secLook')}</Text>
+          <View style={styles.secLine} />
+        </View>
+
         {/* Dil seçici */}
         <View style={styles.langWrap}>
           <Text style={styles.langTitle}>{upper(t('progress.langLabel'), lang)}</Text>
@@ -206,6 +211,11 @@ export default function SettingsScreen() {
         <View style={styles.langWrap}>
           <Text style={styles.langTitle}>{upper(t('font.title'), lang)}</Text>
           <TypePicker />
+        </View>
+
+        <View style={styles.secRow} accessibilityRole="header">
+          <Text style={styles.secText}>{t('settings.secRemind')}</Text>
+          <View style={styles.secLine} />
         </View>
 
         {/* Günlük hatırlatıcılar */}
@@ -250,6 +260,38 @@ export default function SettingsScreen() {
           </View>
         )}
 
+        <View style={styles.secRow} accessibilityRole="header">
+          <Text style={styles.secText}>{t('settings.secExplore')}</Text>
+          <View style={styles.secLine} />
+        </View>
+
+        {/* Nasıl kullanılır? (6 hareketli kart) + tanıtımı tekrar göster — yan yana (30 Ekim 2026) */}
+        <View style={styles.helpRow}>
+          <TouchableOpacity style={[styles.resetBtn, styles.helpBtn]} onPress={() => router.push('/help')} activeOpacity={0.8} accessibilityRole="button">
+            <Text style={[styles.resetText, styles.helpText]}>{t('help.title')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.resetBtn, { flex: 1 }]} onPress={showOnboardingAgain} activeOpacity={0.8} accessibilityRole="button">
+            <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Hayat haftaları — memento mori duvar kağıdı (30 Ekim 2026) */}
+        <TouchableOpacity style={styles.notifyCard} onPress={() => router.push('/wallpaper')} activeOpacity={0.85} accessibilityRole="button">
+          <View style={{ flex: 1 }}>
+            <Text style={styles.notifyTitle}>{t('wp.title')}</Text>
+            <Text style={styles.notifyHint}>{t('wp.rowHint')}</Text>
+          </View>
+          <Text style={styles.aboutArrow}>›</Text>
+        </TouchableOpacity>
+
+        {/* Verilerin — geri alınamayan işlem ayrı bölümde ve uyarı renginde
+            (22 Ekim 2026'ya kadar "Tanıtımı tekrar göster" ile aynı görünüyordu). */}
+        <View style={styles.secRow} accessibilityRole="header">
+          <Text style={styles.secText}>{t('settings.dataSection')}</Text>
+          <View style={styles.secLine} />
+        </View>
+        {/* Hesap yok: veriler cihazda. Silinince kaybolacağını önceden söyle (rakiplerde "kaybolan günlük" 1★ sebebiydi). */}
+        <Text style={styles.dataNote}>{t('settings.localDataNote')}</Text>
         {/* Sağlık uygulamasına farkındalık dakikası yazma — yalnız iPhone/Android'de */}
         {HEALTH_SUPPORTED && (
           <TouchableOpacity style={styles.notifyCard} onPress={toggleHealth} activeOpacity={0.85} accessibilityRole="switch" accessibilityState={{ checked: healthOn }}>
@@ -262,29 +304,24 @@ export default function SettingsScreen() {
             </View>
           </TouchableOpacity>
         )}
-
-        {/* Hayat haftaları — memento mori duvar kağıdı (30 Ekim 2026) */}
-        <TouchableOpacity style={styles.notifyCard} onPress={() => router.push('/wallpaper')} activeOpacity={0.85} accessibilityRole="button">
-          <View style={{ flex: 1 }}>
-            <Text style={styles.notifyTitle}>{t('wp.title')}</Text>
-            <Text style={styles.notifyHint}>{t('wp.rowHint')}</Text>
-          </View>
-          <Text style={styles.aboutArrow}>›</Text>
+        <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={() => router.push('/journal')} activeOpacity={0.8} accessibilityRole="button">
+          <Text style={styles.resetText}>{t('journal.title')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={exportMyJournal} activeOpacity={0.8}>
+          <Text style={styles.resetText}>{t('data.export')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.dangerBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
+          <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.dangerBtn, { marginTop: 10 }]} onPress={deleteAllData} activeOpacity={0.8}>
+          <Text style={styles.dangerText}>{t('data.deleteAll')}</Text>
         </TouchableOpacity>
 
-        {/* Nasıl kullanılır? (6 hareketli kart) + tanıtımı tekrar göster — yan yana (30 Ekim 2026) */}
-        <View style={styles.helpRow}>
-          <TouchableOpacity style={[styles.resetBtn, styles.helpBtn]} onPress={() => router.push('/help')} activeOpacity={0.8} accessibilityRole="button">
-            <Text style={[styles.resetText, styles.helpText]}>{t('help.title')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.resetBtn, { flex: 1 }]} onPress={showOnboardingAgain} activeOpacity={0.8} accessibilityRole="button">
-            <Text style={styles.resetText}>{t('onboarding.replayBtn')}</Text>
-          </TouchableOpacity>
-        </View>
-
-
         {/* Destek & Hakkında */}
-        <Text style={styles.aboutSection}>{t('about.section')}</Text>
+        <View style={styles.secRow} accessibilityRole="header">
+          <Text style={styles.secText}>{t('about.section')}</Text>
+          <View style={styles.secLine} />
+        </View>
         <View style={styles.aboutCard}>
           {[
             { icon: '↗', label: t('about.share'), onPress: shareApp },
@@ -310,24 +347,6 @@ export default function SettingsScreen() {
             </TouchableOpacity>
           ))}
         </View>
-
-        {/* Verilerin — geri alınamayan işlem ayrı bölümde ve uyarı renginde
-            (22 Ekim 2026'ya kadar "Tanıtımı tekrar göster" ile aynı görünüyordu). */}
-        <Text style={styles.aboutSection}>{t('settings.dataSection')}</Text>
-        {/* Hesap yok: veriler cihazda. Silinince kaybolacağını önceden söyle (rakiplerde "kaybolan günlük" 1★ sebebiydi). */}
-        <Text style={styles.dataNote}>{t('settings.localDataNote')}</Text>
-        <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={() => router.push('/journal')} activeOpacity={0.8} accessibilityRole="button">
-          <Text style={styles.resetText}>{t('journal.title')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.resetBtn, { marginBottom: 10 }]} onPress={exportMyJournal} activeOpacity={0.8}>
-          <Text style={styles.resetText}>{t('data.export')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.dangerBtn} onPress={resetCoachMemory} activeOpacity={0.8}>
-          <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.dangerBtn, { marginTop: 10 }]} onPress={deleteAllData} activeOpacity={0.8}>
-          <Text style={styles.dangerText}>{t('data.deleteAll')}</Text>
-        </TouchableOpacity>
 
         <Text style={styles.versionText}>{t('about.version')} {APP_VERSION}</Text>
 
@@ -364,7 +383,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   scroll: { padding: 24, paddingBottom: 48 },
   backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 4, marginBottom: 12 },
   backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
-  header: { marginBottom: 26 },
+  header: { marginBottom: 6 },
   title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted, letterSpacing: 0.2, lineHeight: 21 },
 
@@ -401,7 +420,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   toggleKnobOn: { alignSelf: 'flex-end' },
 
   // Reset / aksiyon butonları
-  helpRow: { flexDirection: 'row', gap: 10 },
+  helpRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
   helpBtn: { flex: 1, borderColor: Colors.tint(0.45), backgroundColor: Colors.stone3 },
   helpText: { color: Colors.sand2 },
   resetBtn: {
@@ -416,9 +435,13 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   },
   dangerText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.danger, letterSpacing: 0.3 },
 
+  // Bölüm başlığı (14 Kasım 2026): vurgu renginde etiket + sağa uzanan ince çizgi; alt etiketler (Dil, Görünüm…) soluk kalır
+  secRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 22, marginBottom: 16 },
+  secText: { fontFamily: Fonts.jostMedium, fontSize: 13, letterSpacing: 2.5, color: Colors.sand2 },
+  secLine: { flex: 1, height: 1, backgroundColor: Colors.tint(0.28) },
+
   // Destek & Hakkında
   dataNote: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.text2, marginBottom: 14 },
-  aboutSection: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.muted, marginTop: 24, marginBottom: 12 },
   aboutCard: { backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: Colors.overlay(0.05), overflow: 'hidden' },
   aboutRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 15, gap: 14 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.overlay(0.05) },
