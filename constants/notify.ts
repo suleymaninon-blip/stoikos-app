@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Lang } from './i18n';
 import { getMorningNudge, getReflectionPromptFor } from './content';
 import { loadActiveDays } from './lifeWeeks';
+import { getReleaseOn } from './programs';
 
 export const NOTIFY_STORAGE = 'stoikos_notify_enabled';
 
@@ -54,42 +55,54 @@ export const formatTime = (minutes: number): string =>
 export const REMINDERS_SUPPORTED = Platform.OS !== 'web';
 
 // Bildirim metinleri (4 dil)
-const TEXTS: Record<Lang, { morningT: string; morningB: string; eveningT: string; eveningB: string }> = {
+const TEXTS: Record<Lang, { morningT: string; morningB: string; eveningT: string; eveningB: string; newProgT: string }> = {
   tr: {
     morningT: 'Sabah Niyeti 🌅',
     morningB: 'Bugün yalnızca kontrolündekine odaklan. Birkaç dakikanı ayır.',
     eveningT: 'Akşamın Yansıması 🌙',
     eveningB: 'Günü değerlendir: nerede iyiydin, nerede daha iyi olabilirdin?',
+
+    newProgT: 'Yeni program açıldı',
   },
   en: {
     morningT: 'Morning Intention 🌅',
     morningB: 'Focus only on what is in your control today. Take a few minutes.',
     eveningT: 'Evening Reflection 🌙',
     eveningB: 'Review your day: where were you good, where could you improve?',
+
+    newProgT: 'A new program is here',
   },
   de: {
     morningT: 'Morgenvorsatz 🌅',
     morningB: 'Konzentriere dich heute nur auf das, was in deiner Macht steht.',
     eveningT: 'Abendreflexion 🌙',
     eveningB: 'Lass den Tag Revue passieren: Wo warst du gut, wo könntest du besser sein?',
+
+    newProgT: 'Ein neues Programm ist da',
   },
   ru: {
     morningT: 'Утренний настрой 🌅',
     morningB: 'Сегодня сосредоточься только на том, что в твоей власти.',
     eveningT: 'Вечернее размышление 🌙',
     eveningB: 'Подведи итоги дня: где был хорош, где можно лучше?',
+
+    newProgT: 'Новая программа открыта',
   },
   fr: {
     morningT: 'Intention du matin 🌅',
     morningB: "Concentre-toi aujourd'hui sur ce qui est en ton pouvoir. Prends quelques minutes.",
     eveningT: 'Réflexion du soir 🌙',
     eveningB: 'Repense à ta journée : où as-tu bien agi, où aurais-tu pu mieux faire ?',
+
+    newProgT: 'Un nouveau programme est là',
   },
   es: {
     morningT: 'Intención de la mañana 🌅',
     morningB: 'Hoy concéntrate solo en lo que está en tu poder. Tómate unos minutos.',
     eveningT: 'Reflexión de la tarde 🌙',
     eveningB: 'Repasa tu día: ¿dónde estuviste bien, dónde podrías mejorar?',
+
+    newProgT: 'Hay un programa nuevo',
   },
 };
 
@@ -152,9 +165,13 @@ async function scheduleDays(lang: Lang): Promise<void> {
     const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
     const morning = new Date(day.getFullYear(), day.getMonth(), day.getDate(), Math.floor(times.morning / 60), times.morning % 60);
     const evening = new Date(day.getFullYear(), day.getMonth(), day.getDate(), Math.floor(times.evening / 60), times.evening % 60);
+    // Yeni programın açıldığı sabah, günün sözü yerine program duyurusu (15 Kasım 2026); dokununca program açılır.
+    const release = getReleaseOn(day, lang);
     if (morning > now) {
       await Notifications.scheduleNotificationAsync({
-        content: { title: tx.morningT, body: getMorningNudge(lang, day) },
+        content: release
+          ? { title: tx.newProgT, body: `${release.title} · ${release.subtitle}`, data: { url: `/programs?open=${release.id}` } }
+          : { title: tx.morningT, body: getMorningNudge(lang, day) },
         trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: morning },
       });
     }

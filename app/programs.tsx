@@ -6,8 +6,8 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
-import { useLang, upper } from '../constants/i18n';
-import { getPrograms, getProgress, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
+import { useLang, upper, localeOf } from '../constants/i18n';
+import { getPrograms, getUpcoming, getProgress, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
 import { appendToJournalToday } from '../constants/journal';
 import { usePlus } from '../constants/entitlement';
 import { ENFORCE_PLUS_GATE } from '../constants/config';
@@ -21,6 +21,7 @@ export default function ProgramsScreen() {
   const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const programs = getPrograms(lang);
+  const upcoming = getUpcoming(lang);
   const [progress, setProgress] = useState<Record<string, number[]>>({});
   const [openId, setOpenId] = useState<string | null>(null);
   const [dayIdx, setDayIdx] = useState<number | null>(null);
@@ -347,6 +348,7 @@ export default function ProgramsScreen() {
                     <Text style={styles.cardTitle}>{p.title}</Text>
                     <Text style={styles.cardSub}>{p.subtitle}</Text>
                   </View>
+                  {p.isNew && done === 0 && <Text style={styles.newBadge}>{upper(t('programs.newTag'), lang)}</Text>}
                   {!plusOk && <Text style={styles.cardBadge}>{t('plus.badge')}</Text>}
                 </View>
                 <View style={styles.cardTrack}><View style={[styles.cardFill, { width: `${pct * 100}%` }]} /></View>
@@ -357,6 +359,25 @@ export default function ProgramsScreen() {
               </TouchableOpacity>
             );
           })}
+
+          {/* Sıradaki program (15 Kasım 2026): abone devamın geldiğini görsün. Dokunulmaz; tarih yoksa "her ay" sözü. */}
+          {upcoming && (
+            <View style={styles.soonCard} accessible accessibilityLabel={`${t('programs.soonTag')}: ${upcoming.title}`}>
+              <View style={styles.cardHead}>
+                <Text style={[styles.cardIcon, styles.soonIcon]}>{upcoming.icon}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.soonTag}>{upper(t('programs.soonTag'), lang)}</Text>
+                  <Text style={styles.cardTitle}>{upcoming.title}</Text>
+                  <Text style={styles.cardSub}>{upcoming.subtitle}</Text>
+                </View>
+              </View>
+              <Text style={styles.soonFoot}>
+                {upcoming.releaseAt
+                  ? t('programs.soonOn', { date: upcoming.releaseAt.toLocaleDateString(localeOf(lang), { day: 'numeric', month: 'long' }) })
+                  : t('programs.monthly')}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
       <Paywall visible={paywallOpen} onClose={() => setPaywallOpen(false)} />
@@ -365,6 +386,14 @@ export default function ProgramsScreen() {
 }
 
 const makeStyles = (Colors: Palette) => StyleSheet.create({
+  newBadge: {
+    fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.4, color: Colors.onAccent,
+    backgroundColor: Colors.accent, borderRadius: 4, paddingHorizontal: 7, paddingVertical: 3, overflow: 'hidden',
+  },
+  soonCard: { borderRadius: 20, padding: 20, borderWidth: 1.5, borderStyle: 'dashed', borderColor: Colors.tint(0.35), backgroundColor: Colors.tint(0.04) },
+  soonIcon: { opacity: 0.6 },
+  soonTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 4 },
+  soonFoot: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   cardBadge: {
     fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 1.4, color: Colors.sand,
     borderWidth: 1, borderColor: Colors.tint(0.4), borderRadius: 4,
