@@ -267,10 +267,11 @@ export default function WisdomScreen() {
   const concepts = getConcepts(lang);
   const philosophers = getPhilosophers(lang);
 
-  // Alıntıdaki yazar adına dokununca → filozof sekmesine geç + kartını aç.
+  // Alıntıdaki yazar adına dokununca → filozof kartını aç, sekmeyi DEĞİŞTİRME (15 Kasım 2026, kullanıcı:
+  // "kapat dediğimde Filozoflar'da kalıyor"). Kapatınca kişi aynı filtreli alıntı listesine, aynı yere döner.
   const openPhilosopher = useCallback((authorId: string) => {
     const p = philosophers.find((x) => x.id === authorId);
-    if (p) { setTab('philosophers'); setSelectedPhilo(p); }
+    if (p) setSelectedPhilo(p);
   }, [philosophers]);
 
   useEffect(() => { getFavorites().then(setFavorites); }, []);
