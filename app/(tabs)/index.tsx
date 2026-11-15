@@ -131,7 +131,7 @@ function MoodPicker() {
         origin={origin}
         moods={MOOD_THEMES}
         selected={mood}
-        colorOf={(m) => (MOOD_COLORS[m] ?? [Colors.sand, Colors.sand])[1]}  // taşlar her temada aynı tondan (deniz camı)
+        colorOf={colorOf}
         onColor={onColor}
         onPick={(m) => setMood(mood === m ? null : m)}
         onClose={() => setOpen(false)}

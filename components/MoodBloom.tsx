@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet, Image } from 'react-native';
-import Svg, { Circle, Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
+import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet } from 'react-native';
+
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
@@ -19,54 +19,16 @@ import { useReduceMotion } from '../hooks/useReduceMotion';
  *
  * İlk sürümde yapraklar düz renkli dairelerdi ve 0,6 sn'de açılıp 0,4 sn'de kapanıyordu; kullanıcı aynı gün:
  * "daha yavaş ve akıcı açılsın, kapanırken de aynı hızda; daireler çok basit duruyor". Şimdi açılış ve kapanış
- * aynı süre ve eğri (`BLOOM_MS`), yapraklar cam boncuk gibi: ışık vuran yüzey, yumuşak hale, ince parlak kenar;
- * arkada ince bir yörünge halkası ve ortada logodaki altın küre.
+ * aynı süre ve eğri (`BLOOM_MS`); arkada ince bir yörünge halkası, ortada kapatma düğmesi (düz vurgu rengi).
  */
 const BLOOM_MS = 1150;
 const BLOOM_EASE = Easing.inOut(Easing.cubic);
 
-/** '#rrggbb' iki rengin karışımı (k: 0 → a, 1 → b). */
-function mixHex(a: string, b: string, k: number): string {
-  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
-  const ch = (sh: number) => {
-    const x = (pa >> sh) & 255, y = (pb >> sh) & 255;
-    return Math.round(x + (y - x) * k).toString(16).padStart(2, '0');
-  };
-  return `#${ch(16)}${ch(8)}${ch(0)}`;
-}
-
-/** Duygu başına buzlu cam disk görseli (Gemini'nin ürettiği 3x3 görselden kesildi; scripts/brand/cut-mood-discs.py). */
-const DISCS: Record<string, any> = {
-  kaygi: require('../assets/mood/kaygi.webp'), ofke: require('../assets/mood/ofke.webp'), yas: require('../assets/mood/yas.webp'),
-  kabul: require('../assets/mood/kabul.webp'), kontrol: require('../assets/mood/kontrol.webp'), 'ic-huzur': require('../assets/mood/ic-huzur.webp'),
-  cesaret: require('../assets/mood/cesaret.webp'), sukran: require('../assets/mood/sukran.webp'), sadelik: require('../assets/mood/sadelik.webp'),
-};
-
 /**
- * Tek taş — buzlu deniz camı disk (15 Kasım 2026). Kodla çizilen camlar kullanıcının istediği gibi olmadı;
- * kullanıcının gönderdiği buzlu cam fotoğraflarıyla Gemini'ye dokuz disk ürettirildi (yazısız, beyaz zemin, 3x3),
- * diskler kesilip `assets/mood/` altına kondu. Gölge görselde değil, burada çizilir: camın kendi renginde, ışığın
- * camdan geçip zemine düşürdüğü yumuşak gölge (açık ve koyu temada doğru dursun diye). Yazı kodla, oyma gibi (`petalText`).
+ * Düz (flat) yaprak — 15 Kasım 2026, kullanıcı: "tekrar flat design yapsak olur mu". Cam boncuk denemeleri
+ * (kodla çizilen ve Gemini görselleri) bırakıldı; yaprak temanın kendi tonunda düz renkli bir daire, yazı
+ * üstünde düz ve okunur (`onColor`). Gölge, degrade, görsel yok. Cam görselleri `docs/mood-cam/` altında duruyor.
  */
-function Petal({ id, mood, color, S, D, dark }: { id: string; mood: string; color: string; S: number; D: number; dark: boolean }) {
-  const r = D / 2, c = S / 2;
-  return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      <Svg width={S} height={S} style={StyleSheet.absoluteFill}>
-        <Defs>
-          <RadialGradient id={`${id}s`} cx="50%" cy="50%" r="50%">
-            <Stop offset="0" stopColor={color} stopOpacity={dark ? 0.45 : 0.36} />
-            <Stop offset="0.7" stopColor={color} stopOpacity={dark ? 0.16 : 0.12} />
-            <Stop offset="1" stopColor={color} stopOpacity="0" />
-          </RadialGradient>
-        </Defs>
-        <Ellipse cx={c + r * 0.12} cy={c + r * 0.2} rx={r * 1.02} ry={r * 0.95} fill={`url(#${id}s)`} />
-      </Svg>
-      {DISCS[mood] && <Image source={DISCS[mood]} style={{ position: 'absolute', left: c - r, top: c - r, width: D, height: D }} resizeMode="contain" />}
-    </View>
-  );
-}
-
 export type MoodOrigin = { x: number; y: number } | null;
 
 export function MoodBloom({
@@ -158,7 +120,6 @@ export function MoodBloom({
             const lo = i * 0.035, hi = Math.min(1, 0.66 + i * 0.035);
             const k = bloom.interpolate({ inputRange: [lo, hi], outputRange: [0, 1], extrapolate: 'clamp' });
             const c = colorOf(m);
-            const ink = mixHex(c, '#ffffff', 0.72);   // oyma: kumlanmış kesik camdan açık görünür (Gemini örneği); üstünde ince koyu kenar
             const on = selected === m;
             const label = t(`mood.${m}`);
             return (
@@ -175,18 +136,16 @@ export function MoodBloom({
                   ],
                 }}
               >
-                {/* Hale yaprağın dışına taşar; dokunma alanı yalnız yaprağın kendisi olmalı, yoksa komşunun halesi dokunuşu yutar. */}
-                <Petal id={`mb${i}`} mood={m} color={c} S={S} D={D} dark={Colors.isDark} />
                 <Pressable
                   onPress={() => { onPick(m); close(); }}
-                  style={({ pressed }) => [styles.petal, { left: (S - D) / 2, top: (S - D) / 2, width: D, height: D, borderRadius: D / 2 }, pressed && styles.petalPressed]}
+                  style={({ pressed }) => [styles.petal, { left: (S - D) / 2, top: (S - D) / 2, width: D, height: D, borderRadius: D / 2, backgroundColor: c }, pressed && styles.petalPressed]}
                   accessibilityRole="button"
                   accessibilityState={{ selected: on }}
                   accessibilityLabel={label}
                 >
                   {on && <View pointerEvents="none" style={[styles.ring, { width: D + 8, height: D + 8, borderRadius: (D + 8) / 2, borderColor: c }]} />}
                   <Text
-                    style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: ink, maxWidth: D - 6 }]}
+                    style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: onColor, maxWidth: D - 6 }]}
                     numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
                   >
                     {label}
@@ -209,21 +168,7 @@ export function MoodBloom({
               accessibilityRole="button"
               accessibilityLabel={t('practice.close')}
             >
-              <Svg width={CORE} height={CORE} style={StyleSheet.absoluteFill} pointerEvents="none">
-                <Defs>
-                  <RadialGradient id="mbCoreH" cx="50%" cy="50%" r="50%">
-                    <Stop offset="0.55" stopColor="#e2b874" stopOpacity="0.4" />
-                    <Stop offset="1" stopColor="#e2b874" stopOpacity="0" />
-                  </RadialGradient>
-                  <RadialGradient id="mbCore" cx="42%" cy="36%" r="70%">
-                    <Stop offset="0" stopColor="#f8ebc8" />
-                    <Stop offset="0.45" stopColor="#d2b06c" />
-                    <Stop offset="1" stopColor="#8a6a34" />
-                  </RadialGradient>
-                </Defs>
-                <Circle cx={CORE / 2} cy={CORE / 2} r={CORE / 2} fill="url(#mbCoreH)" />
-                <Circle cx={CORE / 2} cy={CORE / 2} r={CORE * 0.34} fill="url(#mbCore)" />
-              </Svg>
+              <View pointerEvents="none" style={[styles.coreDot, { width: CORE * 0.62, height: CORE * 0.62, borderRadius: CORE * 0.31 }]} />
               <View style={[styles.x, { transform: [{ rotate: '45deg' }] }]} />
               <View style={[styles.x, { transform: [{ rotate: '-45deg' }] }]} />
             </Pressable>
@@ -243,13 +188,11 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   petalPressed: { opacity: 0.88, transform: [{ scale: 0.95 }] },
   ring: { position: 'absolute', borderWidth: 2 },
   petalText: {
-    // Oyma yazı (Gemini örneği, 15 Kasım 2026): parlak camda kumlanmış harfler açık ve mat görünür; kesiğin
-    // gölgede kalan üst kenarı ince koyu bir çizgi.
-    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.4, opacity: 0.95,
-    textShadowColor: 'rgba(0,0,0,0.35)', textShadowOffset: { width: 0, height: -0.75 }, textShadowRadius: 0.5,
+    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.4,
   },
   // En uzun etiketler (RU "Благодарность", DE "Dankbarkeit") yaprağa sığsın; web'de adjustsFontSizeToFit yok.
   petalTextLong: { fontSize: 11, letterSpacing: 0 },
   core: { alignItems: 'center', justifyContent: 'center' },
-  x: { position: 'absolute', width: 16, height: 2, borderRadius: 1, backgroundColor: '#4a3a1c' },
+  coreDot: { position: 'absolute', backgroundColor: Colors.sand },
+  x: { position: 'absolute', width: 16, height: 2, borderRadius: 1, backgroundColor: Colors.onAccent },
 });
