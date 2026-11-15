@@ -43,3 +43,31 @@ export async function logBreathSession(): Promise<void> {
     await AsyncStorage.setItem(key, JSON.stringify([...done, BREATH_ID]));
   } catch {}
 }
+
+/**
+ * Nefes ritmi (15 Kasım 2026, kullanıcı seçimi B: kartın sol üst köşesinde "Sakin ▾" düğmesi).
+ * Çiçek aynı kalır, yalnız temposu değişir. `in` açar, `out` kapatır, `hold` açık bekler,
+ * `holdOut` kapalı bekler. Süreler milisaniye.
+ */
+export type BreathRhythm = 'calm' | 'sleep' | 'box';
+export type BreathPhaseKind = 'in' | 'out' | 'hold' | 'holdOut';
+export const BREATH_RHYTHMS: Record<BreathRhythm, [BreathPhaseKind, number][]> = {
+  calm: [['in', 4500], ['out', 4500]],                              // ~6,7 nefes/dk — eski tek ritim
+  sleep: [['in', 4000], ['hold', 7000], ['out', 8000]],               // 4-7-8: uzun veriş yatıştırır
+  box: [['in', 4000], ['hold', 4000], ['out', 4000], ['holdOut', 4000]], // kutu nefesi
+};
+export const RHYTHM_IDS: BreathRhythm[] = ['calm', 'sleep', 'box'];
+const RHYTHM_KEY = 'stoikos_breath_rhythm';
+
+export async function getBreathRhythm(): Promise<BreathRhythm> {
+  try {
+    const raw = await AsyncStorage.getItem(RHYTHM_KEY);
+    return raw && (RHYTHM_IDS as string[]).includes(raw) ? (raw as BreathRhythm) : 'calm';
+  } catch {
+    return 'calm';
+  }
+}
+
+export async function setBreathRhythm(r: BreathRhythm): Promise<void> {
+  try { await AsyncStorage.setItem(RHYTHM_KEY, r); } catch {}
+}

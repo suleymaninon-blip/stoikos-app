@@ -84,7 +84,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p2t': 'Stoacı Koç', 'onb.p2d': "İçinden geçeni yaz; Stoacı bakışla düşünen bir yapay zekâ koç seni yargılamadan dinler. Birkaç soruyu ücretsiz dene, sınırsızı Plus'ta.",
     'onb.p3t': 'Bilgelik & Nefes', 'onb.p3d': '164 alıntı (filozofa ya da ruh haline göre), 12 kavram ve dokununca açılan nefes çiçeğiyle bir an dur.',
     'onb.p4t': 'Nazik hatırlatıcılar', 'onb.remind': 'Hatırlatıcıları aç', 'onb.remindOn': '✓ Açık',
-    'home.breathTap': 'Başlamak için dokun', 'home.breathStop': 'Bitirmek için dokun', 'home.breathCount': '{n} nefes', 'home.breathMin': '{n} dk', 'home.breathNoLimit': 'Süresiz', 'home.breathIn': 'Nefes al', 'home.breathOut': 'Nefes ver',
+    'home.breathHold': "Tut", 'breath.rhythm': "Nefes ritmi", 'breath.calm': "Sakin", 'breath.sleep': "Uykuya", 'breath.box': "Kutu", 'breath.calmD': "4,5 al · 4,5 ver", 'breath.sleepD': "4 al · 7 tut · 8 ver", 'breath.boxD': "4 al · 4 tut · 4 ver · 4 tut", 'home.breathTap': 'Başlamak için dokun', 'home.breathStop': 'Bitirmek için dokun', 'home.breathCount': '{n} nefes', 'home.breathMin': '{n} dk', 'home.breathNoLimit': 'Süresiz', 'home.breathIn': 'Nefes al', 'home.breathOut': 'Nefes ver',
 
     'practice.title': 'Günlük Pratik', 'practice.morningSub': 'Sabah egzersizleri', 'practice.eveningSub': 'Akşam yansıması',
     'practice.todayProgress': 'BUGÜNKÜ YOLCULUK', 'practice.allDone': '✦ Tüm pratikler tamamlandı — iyi iş!',
@@ -292,7 +292,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p2t': 'Stoic Coach', 'onb.p2d': "Write what's on your mind; an AI coach that thinks like the Stoics listens without judgment. Try a few questions free, unlimited with Plus.",
     'onb.p3t': 'Wisdom & Breath', 'onb.p3d': '164 quotes (by philosopher or mood), 12 concepts and a breathing flower that opens with a tap — pause a moment.',
     'onb.p4t': 'Gentle reminders', 'onb.remind': 'Turn on reminders', 'onb.remindOn': '✓ On',
-    'home.breathTap': 'Tap to begin', 'home.breathStop': 'Tap to finish', 'home.breathCount': '{n} breaths', 'home.breathMin': '{n} min', 'home.breathNoLimit': 'No limit', 'home.breathIn': 'Breathe in', 'home.breathOut': 'Breathe out',
+    'home.breathHold': "Hold", 'breath.rhythm': "Breathing rhythm", 'breath.calm': "Calm", 'breath.sleep': "Sleep", 'breath.box': "Box", 'breath.calmD': "In 4.5 · out 4.5", 'breath.sleepD': "In 4 · hold 7 · out 8", 'breath.boxD': "In 4 · hold 4 · out 4 · hold 4", 'home.breathTap': 'Tap to begin', 'home.breathStop': 'Tap to finish', 'home.breathCount': '{n} breaths', 'home.breathMin': '{n} min', 'home.breathNoLimit': 'No limit', 'home.breathIn': 'Breathe in', 'home.breathOut': 'Breathe out',
 
     'practice.title': 'Daily Practice', 'practice.morningSub': 'Morning exercises', 'practice.eveningSub': 'Evening reflection',
     'practice.todayProgress': "TODAY'S JOURNEY", 'practice.allDone': '✦ All practices complete — well done!',
@@ -500,7 +500,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p2t': 'Stoischer Coach', 'onb.p2d': "Schreib, was dich bewegt; ein KI-Coach, der wie die Stoiker denkt, hört dir ohne Urteil zu. Ein paar Fragen kostenlos, unbegrenzt mit Plus.",
     'onb.p3t': 'Weisheit & Atem', 'onb.p3d': '164 Zitate (nach Philosoph oder Stimmung), 12 Begriffe und eine Atemblume, die sich mit einem Tippen öffnet — halte inne.',
     'onb.p4t': 'Sanfte Erinnerungen', 'onb.remind': 'Erinnerungen aktivieren', 'onb.remindOn': '✓ An',
-    'home.breathTap': 'Zum Starten tippen', 'home.breathStop': 'Zum Beenden tippen', 'home.breathCount': '{n} Atemzüge', 'home.breathMin': '{n} Min', 'home.breathNoLimit': 'Ohne Limit', 'home.breathIn': 'Einatmen', 'home.breathOut': 'Ausatmen',
+    'home.breathHold': "Halten", 'breath.rhythm': "Atemrhythmus", 'breath.calm': "Ruhig", 'breath.sleep': "Zum Schlafen", 'breath.box': "Box", 'breath.calmD': "Ein 4,5 · aus 4,5", 'breath.sleepD': "Ein 4 · halten 7 · aus 8", 'breath.boxD': "Ein 4 · halten 4 · aus 4 · halten 4", 'home.breathTap': 'Zum Starten tippen', 'home.breathStop': 'Zum Beenden tippen', 'home.breathCount': '{n} Atemzüge', 'home.breathMin': '{n} Min', 'home.breathNoLimit': 'Ohne Limit', 'home.breathIn': 'Einatmen', 'home.breathOut': 'Ausatmen',
 
     'practice.title': 'Tägliche Praxis', 'practice.morningSub': 'Morgenübungen', 'practice.eveningSub': 'Abendreflexion',
     'practice.todayProgress': 'HEUTIGE REISE', 'practice.allDone': '✦ Alle Übungen abgeschlossen — gut gemacht!',
@@ -708,7 +708,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p2t': 'Стоический коуч', 'onb.p2d': "Напиши, что у тебя на душе; ИИ-коуч, мыслящий как стоики, выслушает без осуждения. Несколько вопросов бесплатно, без ограничений — в Plus.",
     'onb.p3t': 'Мудрость и дыхание', 'onb.p3d': '164 цитаты (по философу или настроению), 12 понятий и дыхательный цветок, который раскрывается по нажатию, — остановись на миг.',
     'onb.p4t': 'Мягкие напоминания', 'onb.remind': 'Включить напоминания', 'onb.remindOn': '✓ Вкл',
-    'home.breathTap': 'Нажми, чтобы начать', 'home.breathStop': 'Нажми, чтобы закончить', 'home.breathCount': 'Вдохов: {n}', 'home.breathMin': '{n} мин', 'home.breathNoLimit': 'Без лимита', 'home.breathIn': 'Вдох', 'home.breathOut': 'Выдох',
+    'home.breathHold': "Задержка", 'breath.rhythm': "Ритм дыхания", 'breath.calm': "Спокойно", 'breath.sleep': "Ко сну", 'breath.box': "Квадрат", 'breath.calmD': "Вдох 4,5 · выдох 4,5", 'breath.sleepD': "Вдох 4 · пауза 7 · выдох 8", 'breath.boxD': "Вдох 4 · пауза 4 · выдох 4 · пауза 4", 'home.breathTap': 'Нажми, чтобы начать', 'home.breathStop': 'Нажми, чтобы закончить', 'home.breathCount': 'Вдохов: {n}', 'home.breathMin': '{n} мин', 'home.breathNoLimit': 'Без лимита', 'home.breathIn': 'Вдох', 'home.breathOut': 'Выдох',
 
     'practice.title': 'Ежедневная практика', 'practice.morningSub': 'Утренние упражнения', 'practice.eveningSub': 'Вечернее размышление',
     'practice.todayProgress': 'ПУТЬ НА СЕГОДНЯ', 'practice.allDone': '✦ Все практики выполнены — отличная работа!',
@@ -916,7 +916,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p2t': 'Coach stoïcien', 'onb.p2d': "Écris ce que tu as en tête ; un coach IA qui pense comme les stoïciens t'écoute sans juger. Quelques questions gratuites, illimité avec Plus.",
     'onb.p3t': 'Sagesse & Souffle', 'onb.p3d': '164 citations (par philosophe ou humeur), 12 concepts et une fleur de respiration qui s’ouvre d’une touche — fais une pause.',
     'onb.p4t': 'Rappels en douceur', 'onb.remind': 'Activer les rappels', 'onb.remindOn': '✓ Activé',
-    'home.breathTap': 'Touche pour commencer', 'home.breathStop': 'Touche pour terminer', 'home.breathCount': '{n} respirations', 'home.breathMin': '{n} min', 'home.breathNoLimit': 'Sans limite', 'home.breathIn': 'Inspire', 'home.breathOut': 'Expire',
+    'home.breathHold': "Retiens", 'breath.rhythm': "Rythme respiratoire", 'breath.calm': "Calme", 'breath.sleep': "Sommeil", 'breath.box': "Carré", 'breath.calmD': "Inspire 4,5 · expire 4,5", 'breath.sleepD': "Inspire 4 · retiens 7 · expire 8", 'breath.boxD': "Inspire 4 · retiens 4 · expire 4 · retiens 4", 'home.breathTap': 'Touche pour commencer', 'home.breathStop': 'Touche pour terminer', 'home.breathCount': '{n} respirations', 'home.breathMin': '{n} min', 'home.breathNoLimit': 'Sans limite', 'home.breathIn': 'Inspire', 'home.breathOut': 'Expire',
 
     'practice.title': 'Pratique quotidienne', 'practice.morningSub': 'Exercices du matin', 'practice.eveningSub': 'Réflexion du soir',
     'practice.todayProgress': "PARCOURS DU JOUR", 'practice.allDone': '✦ Toutes les pratiques terminées — bravo !',
@@ -1124,7 +1124,7 @@ const UI: Record<Lang, Dict> = {
     'onb.p2t': 'Coach estoico', 'onb.p2d': "Escribe lo que llevas dentro; un coach de IA que piensa como los estoicos te escucha sin juzgar. Algunas preguntas gratis, ilimitado con Plus.",
     'onb.p3t': 'Sabiduría y Respiración', 'onb.p3d': '164 citas (por filósofo o ánimo), 12 conceptos y una flor de respiración que se abre con un toque — detente un momento.',
     'onb.p4t': 'Recordatorios suaves', 'onb.remind': 'Activar recordatorios', 'onb.remindOn': '✓ Activado',
-    'home.breathTap': 'Toca para empezar', 'home.breathStop': 'Toca para terminar', 'home.breathCount': '{n} respiraciones', 'home.breathMin': '{n} min', 'home.breathNoLimit': 'Sin límite', 'home.breathIn': 'Inhala', 'home.breathOut': 'Exhala',
+    'home.breathHold': "Sostén", 'breath.rhythm': "Ritmo de respiración", 'breath.calm': "Calma", 'breath.sleep': "Dormir", 'breath.box': "Caja", 'breath.calmD': "Inhala 4,5 · exhala 4,5", 'breath.sleepD': "Inhala 4 · sostén 7 · exhala 8", 'breath.boxD': "Inhala 4 · sostén 4 · exhala 4 · sostén 4", 'home.breathTap': 'Toca para empezar', 'home.breathStop': 'Toca para terminar', 'home.breathCount': '{n} respiraciones', 'home.breathMin': '{n} min', 'home.breathNoLimit': 'Sin límite', 'home.breathIn': 'Inhala', 'home.breathOut': 'Exhala',
 
     'practice.title': 'Práctica diaria', 'practice.morningSub': 'Ejercicios de la mañana', 'practice.eveningSub': 'Reflexión de la tarde',
     'practice.todayProgress': "CAMINO DE HOY", 'practice.allDone': '✦ Todas las prácticas completadas — ¡bien hecho!',
