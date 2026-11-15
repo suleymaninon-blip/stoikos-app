@@ -114,6 +114,46 @@ export function LockIcon({ size = 24, color: colorProp }: IconProps) {
 /** Pratik ekranında sabah/akşam ayrımı tek yerden gelsin diye. */
 export type DayPart = 'morning' | 'evening';
 
+/** Paylaş (sağ üst ok) ve zarf: `↗` ve `✉` glifleri iOS'ta renkli emoji çiziliyordu (15 Kasım 2026, Ayarlar ekran görüntüsü). */
+export function ShareArrowIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M 7 17 L 17 7" {...base(color)} />
+      <Path d="M 9 7 H 17 V 15" {...base(color)} />
+    </Svg>
+  );
+}
+
+export function MailIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M 4 6.5 H 20 V 17.5 H 4 Z" {...base(color)} />
+      <Path d="M 4.5 7 L 12 13 L 19.5 7" {...base(color)} />
+    </Svg>
+  );
+}
+
+/** Kalp: `♥` iOS'ta kırmızı emoji çizilebiliyor; dolu/boş SVG. */
+export function HeartIcon({ size = 24, color: colorProp, filled = false }: IconProps & { filled?: boolean }) {
+  const color = colorProp ?? useTheme().C.sand;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M 12 19.5 C 6 15.5 4 12.5 4 9.6 A 4.1 4.1 0 0 1 12 8 A 4.1 4.1 0 0 1 20 9.6 C 20 12.5 18 15.5 12 19.5 Z" {...base(color)} fill={filled ? color : 'none'} />
+    </Svg>
+  );
+}
+
+export function StarIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M 12 4 L 14.4 9.2 L 20 9.9 L 15.9 13.7 L 17 19.3 L 12 16.5 L 7 19.3 L 8.1 13.7 L 4 9.9 L 9.6 9.2 Z" {...base(color)} />
+    </Svg>
+  );
+}
+
 export function DayPartIcon({ part, size, color }: { part: DayPart } & IconProps) {
   return part === 'morning'
     ? <SunIcon size={size} color={color} />
