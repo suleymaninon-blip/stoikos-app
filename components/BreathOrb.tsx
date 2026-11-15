@@ -13,6 +13,7 @@ import {
 import {
   BREATH_DURATIONS, BreathDuration, MIN_LOGGED_SECONDS,
   getBreathDuration, setBreathDuration, logBreathSession,
+  BREATH_RHYTHMS, RHYTHM_IDS, BreathRhythm, BreathPhaseKind, getBreathRhythm, setBreathRhythm,
 } from '../constants/breathLog';
 import {
   isHealthSyncOn, shouldAskHealth, markHealthAsked, setHealthSync,
@@ -52,7 +53,6 @@ type Props = {
  * ⚠️ Ses: startBreathSound() dokunma işleyicisinin İÇİNDE, araya await
  * girmeden çağrılmalı — iOS Safari kuralı (bkz. constants/breathSound.ts).
  */
-const HALF = 4500;   // ms — nefes al / ver yarı döngüsü (~6,7 nefes/dk)
 const PREP = 900;    // ms — başlarken çiçeğin önce kapandığı hazırlık
 const PETALS = 6;
 const SIZE = 210;    // çiçeğin kutusu
@@ -84,7 +84,9 @@ export default function BreathOrb({
   const timers = useRef<any[]>([]);
   const [active, setActive] = useState(false);
   const activeRef = useRef(false);
-  const [phase, setPhase] = useState<'in' | 'out'>('in');
+  const [phase, setPhase] = useState<BreathPhaseKind>('in');
+  const [phaseLeft, setPhaseLeft] = useState(0);   // tutmalı ritimlerde aşamanın kalan saniyesi
+  const phaseEnd = useRef(0);
   const [count, setCount] = useState(0);
   const countRef = useRef(0);
   const [summary, setSummary] = useState<string | null>(null);
@@ -111,6 +113,15 @@ export default function BreathOrb({
   useEffect(() => { getBreathDuration().then((d) => { setDuration(d); durationRef.current = d; }); }, []);
   const chooseDuration = useCallback((d: BreathDuration) => {
     setDuration(d); durationRef.current = d; setBreathDuration(d);
+  }, []);
+
+  // Ritim (15 Kasım 2026): sol üstteki "Sakin ▾" düğmesi; seçim hatırlanır.
+  const [rhythm, setRhythm] = useState<BreathRhythm>('calm');
+  const rhythmRef = useRef<BreathRhythm>('calm');
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => { getBreathRhythm().then((r) => { setRhythm(r); rhythmRef.current = r; }); }, []);
+  const chooseRhythm = useCallback((r: BreathRhythm) => {
+    setRhythm(r); rhythmRef.current = r; setBreathRhythm(r); setMenuOpen(false);
   }, []);
 
   const soundSupported = isBreathSoundSupported();
@@ -156,11 +167,12 @@ export default function BreathOrb({
 
     loopRef.current?.stop();
     Animated.timing(live, { toValue: 1, duration: 600, useNativeDriver: true }).start();
-    // Önce kısaca tamamen kapan (PREP), sonra döngü: al (HALF) → ver (HALF).
-    const cycle = Animated.loop(Animated.sequence([
-      Animated.timing(breath, { toValue: 1, duration: HALF, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      Animated.timing(breath, { toValue: 0, duration: HALF, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-    ]));
+    // Önce kısaca tamamen kapan (PREP), sonra seçilen ritmin döngüsü: al → (tut) → ver → (tut).
+    const seq = BREATH_RHYTHMS[rhythmRef.current];
+    const cycle = Animated.loop(Animated.sequence(seq.map(([k, d]) =>
+      k === 'in' ? Animated.timing(breath, { toValue: 1, duration: d, easing: Easing.inOut(Easing.sin), useNativeDriver: true })
+      : k === 'out' ? Animated.timing(breath, { toValue: 0, duration: d, easing: Easing.inOut(Easing.sin), useNativeDriver: true })
+      : Animated.delay(d))));
     loopRef.current = Animated.sequence([
       Animated.timing(breath, { toValue: 0, duration: PREP, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
       cycle,
@@ -170,13 +182,24 @@ export default function BreathOrb({
     clearTimers();
     timers.current.push(setTimeout(() => {
       if (!activeRef.current) return;
-      setPhase('in');
-      let half = 0;
+      // Aşama yazısı ve kalan saniye; döngü her başa döndüğünde bir nefes sayılır.
+      let i = 0;
+      const step = () => {
+        if (!activeRef.current) return;
+        const [k, d] = seq[i];
+        setPhase(k);
+        phaseEnd.current = Date.now() + d;
+        setPhaseLeft(Math.ceil(d / 1000));
+        timers.current.push(setTimeout(() => {
+          i = (i + 1) % seq.length;
+          if (i === 0) { countRef.current += 1; setCount(countRef.current); }
+          step();
+        }, d));
+      };
+      step();
       timers.current.push(setInterval(() => {
-        half += 1;
-        setPhase(half % 2 === 0 ? 'in' : 'out');
-        if (half % 2 === 0) { countRef.current += 1; setCount(countRef.current); } // her tam ver bittiğinde bir nefes
-      }, HALF));
+        setPhaseLeft(Math.max(1, Math.ceil((phaseEnd.current - Date.now()) / 1000)));
+      }, 250));
     }, PREP));
 
     // Süre: kalan saniye, halka ve otomatik bitiş.
@@ -246,8 +269,9 @@ export default function BreathOrb({
   stopRef.current = stop;
 
   const onPress = useCallback(() => {
+    if (menuOpen) { setMenuOpen(false); return; } // menü açıkken karta dokunmak yalnız menüyü kapatır
     if (activeRef.current) stop(); else start();
-  }, [start, stop]);
+  }, [start, stop, menuOpen]);
 
   const toggleSound = useCallback(() => {
     const next = !soundOnRef.current;
@@ -302,7 +326,11 @@ export default function BreathOrb({
     );
   });
 
-  const title = active ? (phase === 'in' ? inhaleLabel : exhaleLabel) : celebrate ? doneLabel : idleTitle;
+  const phaseLabel = phase === 'in' ? inhaleLabel : phase === 'out' ? exhaleLabel : t('home.breathHold');
+  // Tutmalı ritimlerde (Uykuya, Kutu) aşamanın kalan saniyesi yazının yanında; Sakin'de sayı yok (eskisi gibi).
+  const title = active
+    ? (rhythm === 'calm' ? phaseLabel : `${phaseLabel}  ${phaseLeft}`)
+    : celebrate ? doneLabel : idleTitle;
   const countText = count > 0 ? countLabel.replace('{n}', String(count)) : '';
   const clock = `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, '0')}`;
   const sub = active
@@ -434,6 +462,40 @@ export default function BreathOrb({
         </View>
       )}
 
+      {/* Ritim seçici — ses düğmesinin karşısında. Egzersizde soluklaşır ve dokunulmaz. */}
+      <View style={styles.rhythmWrap} pointerEvents={active ? 'none' : 'box-none'}>
+        <TouchableOpacity
+          style={[styles.rhythmBtn, active && styles.rhythmBtnDim]}
+          onPress={() => setMenuOpen((o) => !o)}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: menuOpen }}
+          accessibilityLabel={`${t('breath.rhythm')}: ${t(`breath.${rhythm}`)}`}
+        >
+          <Text style={styles.rhythmText}>{t(`breath.${rhythm}`)}</Text>
+          <Text style={[styles.rhythmCaret, menuOpen && styles.rhythmCaretOpen]}>▾</Text>
+        </TouchableOpacity>
+        {menuOpen && !active && (
+          <View style={styles.menu}>
+            {RHYTHM_IDS.map((r) => {
+              const on = r === rhythm;
+              return (
+                <TouchableOpacity
+                  key={r}
+                  style={[styles.menuRow, on && styles.menuRowOn]}
+                  onPress={() => chooseRhythm(r)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: on }}
+                >
+                  <Text style={[styles.menuName, on && styles.menuNameOn]}>{t(`breath.${r}`)}</Text>
+                  <Text style={styles.menuTime}>{t(`breath.${r}D`)}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
+      </View>
+
       {soundSupported && (
         <TouchableOpacity
           style={styles.soundBtn}
@@ -476,6 +538,25 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.tint(0.08),
   },
+  rhythmWrap: { position: 'absolute', top: 14, left: 16, zIndex: 8 },
+  rhythmBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 6, height: 40, paddingHorizontal: 14, borderRadius: 20,
+    backgroundColor: Colors.tint(0.08),
+  },
+  rhythmBtnDim: { opacity: 0.35 },
+  rhythmText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand2, letterSpacing: 0.3 },
+  rhythmCaret: { fontSize: 11, color: Colors.sand2, marginTop: 1 },
+  rhythmCaretOpen: { transform: [{ rotate: '180deg' }] },
+  menu: {
+    marginTop: 6, minWidth: 230, backgroundColor: Colors.stone2, borderRadius: 16, paddingVertical: 6,
+    borderWidth: 1, borderColor: Colors.tint(0.22),
+    shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 14, shadowOffset: { width: 0, height: 6 }, elevation: 6,
+  },
+  menuRow: { paddingVertical: 10, paddingHorizontal: 16, minHeight: 52, justifyContent: 'center' },
+  menuRowOn: { backgroundColor: Colors.tint(0.12) },
+  menuName: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text },
+  menuNameOn: { color: Colors.sand2 },
+  menuTime: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 2 },
   soundIcon: { opacity: 0.55 },
   soundIconOn: { opacity: 1 },
   flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
