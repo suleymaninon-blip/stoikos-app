@@ -8,6 +8,7 @@ import { useAppDimensions } from '../../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
+import { HeartIcon, ShareArrowIcon } from '../../components/Icons';
 import { FirstTip } from '../../components/FirstTip';
 import { useLocalSearchParams } from 'expo-router';
 import { useLang, Lang } from '../../constants/i18n';
@@ -25,6 +26,7 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
   onAuthor?: (authorId: string) => void; // filozof kartı varsa dokunulabilir
 }) {
   const styles = useStyles(makeStyles);
+  const { C: Colors } = useTheme();
   const { t } = useLang();
   const favAddLabel = t('a11y.favAdd'), favRemoveLabel = t('a11y.favRemove'), shareLabel = t('a11y.share');
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -55,10 +57,10 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
         </View>
         <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]} hitSlop={4}
           accessibilityRole="button" accessibilityState={{ selected: isFav }} accessibilityLabel={isFav ? favRemoveLabel : favAddLabel}>
-          <Text style={[styles.glyphIcon, isFav && styles.favIconActive]}>{isFav ? '♥' : '♡'}</Text>
+          <HeartIcon size={19} filled={isFav} color={isFav ? Colors.accent : Colors.sand2} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn} hitSlop={4} accessibilityRole="button" accessibilityLabel={shareLabel}>
-          <Text style={styles.glyphIcon}>↗</Text>
+          <ShareArrowIcon size={19} color={Colors.sand2} />
         </TouchableOpacity>
       </View>
     </Animated.View>
@@ -412,7 +414,7 @@ export default function WisdomScreen() {
               activeOpacity={0.8}
               onPress={() => setFilter('fav')}
             >
-              <Text style={[styles.heartIcon, filter === 'fav' && styles.heartIconOn]}>♥</Text>
+              <HeartIcon size={20} filled color={filter === 'fav' ? Colors.accent : Colors.muted} />
             </TouchableOpacity>
           </View>
       )}

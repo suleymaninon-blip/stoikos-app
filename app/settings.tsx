@@ -17,11 +17,14 @@ import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
 import { notify, confirmAction } from '../constants/dialog';
 import { HEALTH_SUPPORTED, isHealthSyncOn, setHealthSync, healthAppName } from '../constants/healthPrefs';
-import { LockIcon } from '../components/Icons';
+import { LockIcon, ShareArrowIcon, MailIcon, StarIcon } from '../components/Icons';
 import { ThemePicker } from '../components/ThemePicker';
 import { TypePicker } from '../components/TypePicker';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '1.0.0';
+
+// Emoji karşılığı olan glifler (↗ ✉ ★) iOS'ta renkli çiziliyor; onlar SVG.
+const SVG_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = { lock: LockIcon, share: ShareArrowIcon, mail: MailIcon, star: StarIcon };
 
 export default function SettingsScreen() {
   const { C: Colors } = useTheme();
@@ -324,9 +327,9 @@ export default function SettingsScreen() {
         </View>
         <View style={styles.aboutCard}>
           {[
-            { icon: '↗', label: t('about.share'), onPress: shareApp },
-            ...(storeUrl ? [{ icon: '★', label: t('about.rate'), onPress: rateApp }] : []),
-            { icon: '✉', label: t('about.support'), onPress: contactSupport },
+            { icon: 'share', label: t('about.share'), onPress: shareApp },
+            ...(storeUrl ? [{ icon: 'star', label: t('about.rate'), onPress: rateApp }] : []),
+            { icon: 'mail', label: t('about.support'), onPress: contactSupport },
             { icon: '◎', label: t('about.instagram'), onPress: () => Linking.openURL(APP_INFO.instagramUrl).catch(() => {}) },
             { icon: 'lock', label: t('about.privacy'), onPress: openPrivacy },
             { icon: '§', label: t('about.terms'), onPress: openTerms },
@@ -339,8 +342,8 @@ export default function SettingsScreen() {
               onPress={r.onPress}
               activeOpacity={0.7}
             >
-              {r.icon === 'lock'
-                ? <View style={styles.aboutIconBox}><LockIcon size={18} color={Colors.sand} /></View>
+              {SVG_ICONS[r.icon]
+                ? <View style={styles.aboutIconBox}>{React.createElement(SVG_ICONS[r.icon], { size: 18, color: Colors.sand })}</View>
                 : <Text style={styles.aboutIcon}>{r.icon}</Text>}
               <Text style={styles.aboutLabel}>{r.label}</Text>
               <Text style={styles.aboutArrow}>›</Text>
