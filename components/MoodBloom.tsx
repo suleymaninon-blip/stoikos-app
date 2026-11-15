@@ -41,12 +41,12 @@ function seeded(seed: number) {
   return () => (s = (s * 16807) % 2147483647) / 2147483647;
 }
 
-/** Düzensiz çakıl taşı biçimi: 8 noktadan geçen yumuşak kapalı eğri (merkez 0,0). */
+/** Neredeyse yuvarlak cam disk biçimi: 10 noktadan geçen yumuşak kapalı eğri (merkez 0,0). */
 function pebblePath(r: number, rnd: () => number): string {
-  const n = 8;
+  const n = 10;
   const pts = Array.from({ length: n }, (_, i) => {
-    const a = (i / n) * Math.PI * 2, rr = r * (1 + (rnd() - 0.5) * 0.16) * (i % 2 ? 1 : 0.97);
-    return [Math.cos(a) * rr * 1.06, Math.sin(a) * rr * 0.93];
+    const a = (i / n) * Math.PI * 2, rr = r * (1 + (rnd() - 0.5) * 0.05);   // neredeyse daire; elde dökülmüş cam gibi çok hafif
+    return [Math.cos(a) * rr, Math.sin(a) * rr];
   });
   const mid = (p: number[], q: number[]) => `${((p[0] + q[0]) / 2).toFixed(1)},${((p[1] + q[1]) / 2).toFixed(1)}`;
   let d = `M${mid(pts[0], pts[n - 1])}`;
@@ -55,49 +55,52 @@ function pebblePath(r: number, rnd: () => number): string {
 }
 
 /**
- * Tek taş — "deniz camı" (15 Kasım 2026, kullanıcı: deniz camı / cilalı taş görselleri, "çok rahatlatıcı olmaz mı";
- * üç yönden A seçildi). Buzlu, süte yakın pastel gövde; içten hafif ışık; minik kabarcıklar; yumuşak parlama;
- * altında gölge. Biçim her duygu için ayrı ama sabit (tohumlu). Yalnız react-native-svg'nin çizebildiği öğeler.
+ * Tek taş — buzlu deniz camı disk (15 Kasım 2026). Önce düzensiz çakıl + kabarcık + parlama denendi (seçenek A);
+ * kullanıcı gerçek buzlu cam disk fotoğrafı gönderdi: "gerçek bir cam gibi aynı boyda, yazı da üstüne kazınmış gibi".
+ * Şimdi: hepsi aynı boyda, neredeyse yuvarlak; mat (parlama yok), yüzeyde ince kumlama dokusu, kenarı ortasından
+ * biraz açık (ışık camın kenarından geçer); altında camın kendi renginde, ışığın içinden geçtiği yumuşak gölge.
+ * Yazı `petalText` + oyma gölgesi ile (aşağıda). Yalnız react-native-svg öğeleri.
  */
 function Petal({ id, seed, color, S, D, dark }: { id: string; seed: number; color: string; S: number; D: number; dark: boolean }) {
   const r = D / 2, c = S / 2;
   const rnd = seeded(seed);
-  const rot = (rnd() - 0.5) * 50;
   const d = pebblePath(r, rnd);
-  const core = mixHex(color, '#ffffff', 0.75), base = mixHex(color, '#ffffff', 0.45), edge = mixHex(color, '#ffffff', 0.2);
-  const dots = Array.from({ length: 14 }, () => ({ x: (rnd() - 0.5) * r * 1.3, y: (rnd() - 0.4) * r * 1.2, r: 0.8 + rnd() * 1.4, o: 0.25 + rnd() * 0.35 }));
+  const body = mixHex(color, '#ffffff', 0.3), center = mixHex(color, '#ffffff', 0.14), rim = mixHex(color, '#ffffff', 0.58);
+  const grain = Array.from({ length: 70 }, () => {
+    const a = rnd() * Math.PI * 2, q = Math.sqrt(rnd()) * r * 0.94;
+    const w = rnd() > 0.35;
+    return { x: Math.cos(a) * q, y: Math.sin(a) * q, w, o: w ? 0.08 + rnd() * 0.12 : 0.03 + rnd() * 0.04 };
+  });
   return (
     <Svg width={S} height={S} style={StyleSheet.absoluteFill} pointerEvents="none">
       <Defs>
         <RadialGradient id={`${id}s`} cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor="#000000" stopOpacity={dark ? 0.32 : 0.22} />
-          <Stop offset="1" stopColor="#000000" stopOpacity="0" />
+          <Stop offset="0" stopColor={color} stopOpacity={dark ? 0.45 : 0.38} />
+          <Stop offset="0.7" stopColor={color} stopOpacity={dark ? 0.16 : 0.12} />
+          <Stop offset="1" stopColor={color} stopOpacity="0" />
         </RadialGradient>
-        <RadialGradient id={`${id}f`} cx="45%" cy="40%" r="70%">
-          <Stop offset="0" stopColor={core} />
-          <Stop offset="0.6" stopColor={base} />
-          <Stop offset="1" stopColor={edge} />
+        <RadialGradient id={`${id}f`} cx="48%" cy="46%" r="54%">
+          <Stop offset="0" stopColor={center} />
+          <Stop offset="0.72" stopColor={body} />
+          <Stop offset="1" stopColor={rim} />
         </RadialGradient>
-        <RadialGradient id={`${id}g`} cx="62%" cy="70%" r="45%">
-          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
-          <Stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-        </RadialGradient>
-        <RadialGradient id={`${id}h`} cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.7" />
+        <RadialGradient id={`${id}l`} cx="32%" cy="26%" r="60%">
+          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.22" />
           <Stop offset="1" stopColor="#ffffff" stopOpacity="0" />
         </RadialGradient>
       </Defs>
-      <Ellipse cx={c + 3} cy={c + r * 0.82} rx={r * 0.9} ry={r * 0.22} fill={`url(#${id}s)`} />
-      <G transform={`translate(${c} ${c}) rotate(${rot.toFixed(1)})`}>
-        <Path d={d} fill={`url(#${id}f)`} opacity={0.94} />
-        <Path d={d} fill={`url(#${id}g)`} />
-        {dots.map((p, i) => <Circle key={i} cx={p.x} cy={p.y} r={p.r} fill="#ffffff" opacity={p.o} />)}
-        <Ellipse cx={-r * 0.32} cy={-r * 0.42} rx={r * 0.42} ry={r * 0.16} fill={`url(#${id}h)`} transform={`rotate(-24 ${(-r * 0.32).toFixed(1)} ${(-r * 0.42).toFixed(1)})`} />
-        <Path d={d} fill="none" stroke="#ffffff" strokeOpacity={0.35} strokeWidth={1.2} />
+      {/* ışığın camdan geçip kâğıda düşürdüğü renkli gölge */}
+      <Ellipse cx={c + r * 0.14} cy={c + r * 0.2} rx={r * 1.02} ry={r * 0.95} fill={`url(#${id}s)`} />
+      <G transform={`translate(${c} ${c})`}>
+        <Path d={d} fill={`url(#${id}f)`} opacity={0.96} />
+        <Path d={d} fill={`url(#${id}l)`} />
+        {grain.map((g, i) => <Circle key={i} cx={g.x} cy={g.y} r={0.6} fill={g.w ? '#ffffff' : '#000000'} opacity={g.o} />)}
+        <Path d={d} fill="none" stroke="#ffffff" strokeOpacity={0.28} strokeWidth={1} />
       </G>
     </Svg>
   );
 }
+
 export type MoodOrigin = { x: number; y: number } | null;
 
 export function MoodBloom({
@@ -189,7 +192,7 @@ export function MoodBloom({
             const lo = i * 0.035, hi = Math.min(1, 0.66 + i * 0.035);
             const k = bloom.interpolate({ inputRange: [lo, hi], outputRange: [0, 1], extrapolate: 'clamp' });
             const c = colorOf(m);
-            const ink = mixHex(c, '#14161c', 0.55);   // taş açık renkli; yazı her temada koyu
+            const ink = mixHex(c, '#14161c', 0.5);    // oyma: camın koyu tonu; altındaki açık çizgi kesiğin kenarı
             const on = selected === m;
             const label = t(`mood.${m}`);
             return (
@@ -274,8 +277,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   petalPressed: { opacity: 0.88, transform: [{ scale: 0.95 }] },
   ring: { position: 'absolute', borderWidth: 2 },
   petalText: {
-    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.2,
-    textShadowColor: 'rgba(255,255,255,0.45)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2,
+    // Oyma yazı: camın koyu tonu biraz saydam + altında keskin açık çizgi (kesiğin ışık alan alt kenarı).
+    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.4, opacity: 0.82,
+    textShadowColor: 'rgba(255,255,255,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 0,
   },
   // En uzun etiketler (RU "Благодарность", DE "Dankbarkeit") yaprağa sığsın; web'de adjustsFontSizeToFit yok.
   petalTextLong: { fontSize: 11, letterSpacing: 0 },
