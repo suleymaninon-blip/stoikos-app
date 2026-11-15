@@ -18,3 +18,8 @@ CREATE TABLE IF NOT EXISTS likes (
   user_id  TEXT NOT NULL,
   PRIMARY KEY (quote_id, user_id)
 );
+
+-- Birlikte nefes (15 Kasım 2026): yalnız toplam sayılar, kişi verisi yok.
+-- Worker ilk istekte kendisi de oluşturur (ensureTogether).
+CREATE TABLE IF NOT EXISTS together_min (minute INTEGER PRIMARY KEY, n INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS together_day (day TEXT PRIMARY KEY, n INTEGER NOT NULL);

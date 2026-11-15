@@ -243,17 +243,60 @@ export async function setWeeksReminder(on: boolean, lang: Lang): Promise<boolean
   return true;
 }
 
+/**
+ * Birlikte nefes hatırlatması (15 Kasım 2026): isteğe bağlı, önümüzdeki 14 akşam 20:58.
+ * 21:00 değil, çünkü akşam yansıması varsayılan olarak 21:00'de; iki bildirim üst üste gelmesin.
+ * Dokununca ana ekran birlikte nefes penceresini açar.
+ */
+export const TOGETHER_REMINDER_KEY = 'stoikos_together_remind';
+export const TOGETHER_URL = '/?together=1';
+const TOGETHER_TEXT: Record<Lang, { t: string; b: string }> = {
+  tr: { t: 'Birlikte nefes', b: 'İki dakika sonra herkesle birlikte bir dakika nefes.' },
+  en: { t: 'Breathe together', b: 'In two minutes: one minute of breathing, together with everyone.' },
+  de: { t: 'Gemeinsam atmen', b: 'In zwei Minuten: eine Minute atmen, gemeinsam mit allen.' },
+  ru: { t: 'Дышим вместе', b: 'Через две минуты — минута дыхания вместе со всеми.' },
+  fr: { t: 'Respirer ensemble', b: 'Dans deux minutes : une minute de respiration, avec tout le monde.' },
+  es: { t: 'Respirar juntos', b: 'En dos minutos: un minuto de respiración, junto a todos.' },
+};
+
+async function scheduleTogether(lang: Lang): Promise<void> {
+  const tx = TOGETHER_TEXT[lang] ?? TOGETHER_TEXT.en;
+  const now = new Date();
+  for (let i = 0; i < SCHEDULE_DAYS; i++) {
+    const at = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, 20, 58);
+    if (at <= now) continue;
+    await Notifications.scheduleNotificationAsync({
+      content: { title: tx.t, body: tx.b, data: { url: TOGETHER_URL } },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: at },
+    });
+  }
+}
+
+export async function isTogetherReminderOn(): Promise<boolean> {
+  return (await AsyncStorage.getItem(TOGETHER_REMINDER_KEY)) === '1';
+}
+
+/** Birlikte nefes hatırlatmasını açar/kapatır. Açarken izin ister; verilmezse false döner. */
+export async function setTogetherReminder(on: boolean, lang: Lang): Promise<boolean> {
+  if (!REMINDERS_SUPPORTED) return false;
+  if (on && !(await ensurePermission())) return false;
+  await AsyncStorage.setItem(TOGETHER_REMINDER_KEY, on ? '1' : '0');
+  await scheduleAll(lang);
+  return true;
+}
+
 /** Bütün takvimi baştan kurar: açıksa 14 günlük sabah/akşam + açıksa pazar hatırlatması. */
 async function scheduleAll(lang: Lang): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (await isNotifyEnabled()) await scheduleDays(lang);
   if (await isWeeksReminderOn()) await scheduleWeeks(lang);
+  if (await isTogetherReminderOn()) await scheduleTogether(lang);
 }
 
 /** Açıksa takvimi bugünden itibaren yeniden kurar (uygulama öne gelince ve dil değişince). İzin istemez. */
 export async function topUpReminders(lang: Lang): Promise<void> {
   if (!REMINDERS_SUPPORTED) return;
-  if (!(await isNotifyEnabled()) && !(await isWeeksReminderOn())) return;
+  if (!(await isNotifyEnabled()) && !(await isWeeksReminderOn()) && !(await isTogetherReminderOn())) return;
   try {
     const perm = await Notifications.getPermissionsAsync();
     if (perm.granted) await scheduleAll(lang);
@@ -262,7 +305,7 @@ export async function topUpReminders(lang: Lang): Promise<void> {
 
 /** Tüm verileri silerken: günlük ve pazar hatırlatmalarının hepsini kaldırır. */
 export async function cancelAllReminders(): Promise<void> {
-  await AsyncStorage.multiSet([[NOTIFY_STORAGE, '0'], [WEEKS_REMINDER_KEY, '0']]);
+  await AsyncStorage.multiSet([[NOTIFY_STORAGE, '0'], [WEEKS_REMINDER_KEY, '0'], [TOGETHER_REMINDER_KEY, '0']]);
   if (REMINDERS_SUPPORTED) await Notifications.cancelAllScheduledNotificationsAsync();
 }
 
