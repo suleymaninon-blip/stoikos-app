@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet } from 'react-native';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import Svg, { Circle, Defs, Ellipse, G, Path, RadialGradient, Stop } from 'react-native-svg';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
@@ -25,47 +25,76 @@ import { useReduceMotion } from '../hooks/useReduceMotion';
 const BLOOM_MS = 1150;
 const BLOOM_EASE = Easing.inOut(Easing.cubic);
 
-/** '#rrggbb' rengi beyaza (k > 0) ya da siyaha (k < 0) doğru karıştırır. */
-function shade(hex: string, k: number): string {
-  const n = parseInt(hex.slice(1), 16), t = k < 0 ? 0 : 255, a = Math.abs(k);
-  const ch = (v: number) => Math.round(v + (t - v) * a).toString(16).padStart(2, '0');
-  return `#${ch((n >> 16) & 255)}${ch((n >> 8) & 255)}${ch(n & 255)}`;
+/** '#rrggbb' iki rengin karışımı (k: 0 → a, 1 → b). */
+function mixHex(a: string, b: string, k: number): string {
+  const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+  const ch = (sh: number) => {
+    const x = (pa >> sh) & 255, y = (pb >> sh) & 255;
+    return Math.round(x + (y - x) * k).toString(16).padStart(2, '0');
+  };
+  return `#${ch(16)}${ch(8)}${ch(0)}`;
 }
 
-/** Rengin doygunluğunu düşürür: kendi gri tonuna doğru `k` oranında karıştırır (15 Kasım 2026, kullanıcı videosu:
- *  canlı renkler yan yana "şeker topu" gibi duruyordu; ton aynı kalır, parlaklık söner). */
-function mute(hex: string, k: number): string {
-  const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-  const y = 0.299 * r + 0.587 * g + 0.114 * b;
-  const ch = (v: number) => Math.round(v + (y - v) * k).toString(16).padStart(2, '0');
-  return `#${ch(r)}${ch(g)}${ch(b)}`;
+/** Tohumlu sözde rastgele: her taş her açılışta aynı biçimde çizilsin. */
+function seeded(seed: number) {
+  let s = seed * 97 + 13;
+  return () => (s = (s * 16807) % 2147483647) / 2147483647;
 }
-const MUTE = 0.28;
 
-/** Tek yaprak: hale + ışık vuran yüzey + ince parlak kenar. `S` hale dahil kare, `D` yaprağın çapı. */
-function Petal({ id, color, S, D, dark }: { id: string; color: string; S: number; D: number; dark: boolean }) {
+/** Düzensiz çakıl taşı biçimi: 8 noktadan geçen yumuşak kapalı eğri (merkez 0,0). */
+function pebblePath(r: number, rnd: () => number): string {
+  const n = 8;
+  const pts = Array.from({ length: n }, (_, i) => {
+    const a = (i / n) * Math.PI * 2, rr = r * (1 + (rnd() - 0.5) * 0.16) * (i % 2 ? 1 : 0.97);
+    return [Math.cos(a) * rr * 1.06, Math.sin(a) * rr * 0.93];
+  });
+  const mid = (p: number[], q: number[]) => `${((p[0] + q[0]) / 2).toFixed(1)},${((p[1] + q[1]) / 2).toFixed(1)}`;
+  let d = `M${mid(pts[0], pts[n - 1])}`;
+  for (let i = 0; i < n; i++) d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mid(pts[i], pts[(i + 1) % n])}`;
+  return d + 'Z';
+}
+
+/**
+ * Tek taş — "deniz camı" (15 Kasım 2026, kullanıcı: deniz camı / cilalı taş görselleri, "çok rahatlatıcı olmaz mı";
+ * üç yönden A seçildi). Buzlu, süte yakın pastel gövde; içten hafif ışık; minik kabarcıklar; yumuşak parlama;
+ * altında gölge. Biçim her duygu için ayrı ama sabit (tohumlu). Yalnız react-native-svg'nin çizebildiği öğeler.
+ */
+function Petal({ id, seed, color, S, D, dark }: { id: string; seed: number; color: string; S: number; D: number; dark: boolean }) {
   const r = D / 2, c = S / 2;
+  const rnd = seeded(seed);
+  const rot = (rnd() - 0.5) * 50;
+  const d = pebblePath(r, rnd);
+  const core = mixHex(color, '#ffffff', 0.75), base = mixHex(color, '#ffffff', 0.45), edge = mixHex(color, '#ffffff', 0.2);
+  const dots = Array.from({ length: 14 }, () => ({ x: (rnd() - 0.5) * r * 1.3, y: (rnd() - 0.4) * r * 1.2, r: 0.8 + rnd() * 1.4, o: 0.25 + rnd() * 0.35 }));
   return (
     <Svg width={S} height={S} style={StyleSheet.absoluteFill} pointerEvents="none">
       <Defs>
+        <RadialGradient id={`${id}s`} cx="50%" cy="50%" r="50%">
+          <Stop offset="0" stopColor="#000000" stopOpacity={dark ? 0.32 : 0.22} />
+          <Stop offset="1" stopColor="#000000" stopOpacity="0" />
+        </RadialGradient>
+        <RadialGradient id={`${id}f`} cx="45%" cy="40%" r="70%">
+          <Stop offset="0" stopColor={core} />
+          <Stop offset="0.6" stopColor={base} />
+          <Stop offset="1" stopColor={edge} />
+        </RadialGradient>
+        <RadialGradient id={`${id}g`} cx="62%" cy="70%" r="45%">
+          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
+          <Stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </RadialGradient>
         <RadialGradient id={`${id}h`} cx="50%" cy="50%" r="50%">
-          <Stop offset="0.62" stopColor={color} stopOpacity={dark ? 0.34 : 0.26} />
-          <Stop offset="1" stopColor={color} stopOpacity="0" />
-        </RadialGradient>
-        <RadialGradient id={`${id}f`} cx="36%" cy="28%" r="78%">
-          <Stop offset="0" stopColor={shade(color, 0.32)} />
-          <Stop offset="0.5" stopColor={color} />
-          <Stop offset="1" stopColor={shade(color, -0.2)} />
-        </RadialGradient>
-        <RadialGradient id={`${id}g`} cx="38%" cy="24%" r="46%">
-          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.28" />
+          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.7" />
           <Stop offset="1" stopColor="#ffffff" stopOpacity="0" />
         </RadialGradient>
       </Defs>
-      <Circle cx={c} cy={c} r={c} fill={`url(#${id}h)`} />
-      <Circle cx={c} cy={c} r={r} fill={`url(#${id}f)`} opacity={0.94} />
-      <Circle cx={c} cy={c} r={r} fill={`url(#${id}g)`} />
-      <Circle cx={c} cy={c} r={r - 0.75} fill="none" stroke="#ffffff" strokeOpacity={dark ? 0.22 : 0.32} strokeWidth={1.5} />
+      <Ellipse cx={c + 3} cy={c + r * 0.82} rx={r * 0.9} ry={r * 0.22} fill={`url(#${id}s)`} />
+      <G transform={`translate(${c} ${c}) rotate(${rot.toFixed(1)})`}>
+        <Path d={d} fill={`url(#${id}f)`} opacity={0.94} />
+        <Path d={d} fill={`url(#${id}g)`} />
+        {dots.map((p, i) => <Circle key={i} cx={p.x} cy={p.y} r={p.r} fill="#ffffff" opacity={p.o} />)}
+        <Ellipse cx={-r * 0.32} cy={-r * 0.42} rx={r * 0.42} ry={r * 0.16} fill={`url(#${id}h)`} transform={`rotate(-24 ${(-r * 0.32).toFixed(1)} ${(-r * 0.42).toFixed(1)})`} />
+        <Path d={d} fill="none" stroke="#ffffff" strokeOpacity={0.35} strokeWidth={1.2} />
+      </G>
     </Svg>
   );
 }
@@ -159,7 +188,8 @@ export function MoodBloom({
             const a = -Math.PI / 2 + (i / n) * Math.PI * 2;      // ilki tepede, saat yönünde
             const lo = i * 0.035, hi = Math.min(1, 0.66 + i * 0.035);
             const k = bloom.interpolate({ inputRange: [lo, hi], outputRange: [0, 1], extrapolate: 'clamp' });
-            const c = mute(colorOf(m), MUTE);
+            const c = colorOf(m);
+            const ink = mixHex(c, '#14161c', 0.55);   // taş açık renkli; yazı her temada koyu
             const on = selected === m;
             const label = t(`mood.${m}`);
             return (
@@ -177,7 +207,7 @@ export function MoodBloom({
                 }}
               >
                 {/* Hale yaprağın dışına taşar; dokunma alanı yalnız yaprağın kendisi olmalı, yoksa komşunun halesi dokunuşu yutar. */}
-                <Petal id={`mb${i}`} color={c} S={S} D={D} dark={Colors.isDark} />
+                <Petal id={`mb${i}`} seed={i + 1} color={c} S={S} D={D} dark={Colors.isDark} />
                 <Pressable
                   onPress={() => { onPick(m); close(); }}
                   style={({ pressed }) => [styles.petal, { left: (S - D) / 2, top: (S - D) / 2, width: D, height: D, borderRadius: D / 2 }, pressed && styles.petalPressed]}
@@ -187,7 +217,7 @@ export function MoodBloom({
                 >
                   {on && <View pointerEvents="none" style={[styles.ring, { width: D + 8, height: D + 8, borderRadius: (D + 8) / 2, borderColor: c }]} />}
                   <Text
-                    style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: onColor, maxWidth: D - 6 }]}
+                    style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: ink, maxWidth: D - 6 }]}
                     numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
                   >
                     {label}
@@ -245,7 +275,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   ring: { position: 'absolute', borderWidth: 2 },
   petalText: {
     fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.2,
-    textShadowColor: Colors.isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.22)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3,
+    textShadowColor: 'rgba(255,255,255,0.45)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2,
   },
   // En uzun etiketler (RU "Благодарность", DE "Dankbarkeit") yaprağa sığsın; web'de adjustsFontSizeToFit yok.
   petalTextLong: { fontSize: 11, letterSpacing: 0 },
