@@ -261,7 +261,7 @@ function sceneK(t) {
   glow(CX, cy, Ri * 1.7, th.accA.join(','), .18 * ia);
   ctx.fillStyle = rgba(th.accA, .16 * ia); ctx.beginPath(); ctx.arc(CX, cy, Ri * pulse, 0, 2 * PI); ctx.fill();
   ctx.strokeStyle = rgba(th.accA, ia); ctx.lineWidth = 4; ctx.stroke();
-  label(L.kIn, ease((p - 1500) / 600), cy - Ri + 52, th, 24, null, CX, 'center', 5);
+  label(L.kIn, ease((p - 1500) / 600), cy - Ri + 76, th, 22, null, CX, 'center', 4);
   label(L.kOut, ease((p - 1800) / 600), cy - Ro + 56, th, 24, th.muted, CX, 'center', 5);
   // kelimeler dağınıkken yerlerine süzülür
   kWords.forEach((kw) => { const k = ease((p - 1700 - kw.d) / 1500), wa = clamp((p - 1200 - kw.d) / 500);
