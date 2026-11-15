@@ -158,7 +158,7 @@ export function MoodBloom({
             const lo = i * 0.035, hi = Math.min(1, 0.66 + i * 0.035);
             const k = bloom.interpolate({ inputRange: [lo, hi], outputRange: [0, 1], extrapolate: 'clamp' });
             const c = colorOf(m);
-            const ink = mixHex(c, '#14161c', 0.42);   // oyma: camın koyu tonu; altındaki açık çizgi kesiğin kenarı
+            const ink = mixHex(c, '#ffffff', 0.72);   // oyma: kumlanmış kesik camdan açık görünür (Gemini örneği); üstünde ince koyu kenar
             const on = selected === m;
             const label = t(`mood.${m}`);
             return (
@@ -243,9 +243,10 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   petalPressed: { opacity: 0.88, transform: [{ scale: 0.95 }] },
   ring: { position: 'absolute', borderWidth: 2 },
   petalText: {
-    // Oyma yazı: camın koyu tonu biraz saydam + altında keskin açık çizgi (kesiğin ışık alan alt kenarı).
-    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.4, opacity: 0.82,
-    textShadowColor: 'rgba(255,255,255,0.6)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 0,
+    // Oyma yazı (Gemini örneği, 15 Kasım 2026): parlak camda kumlanmış harfler açık ve mat görünür; kesiğin
+    // gölgede kalan üst kenarı ince koyu bir çizgi.
+    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.4, opacity: 0.95,
+    textShadowColor: 'rgba(0,0,0,0.35)', textShadowOffset: { width: 0, height: -0.75 }, textShadowRadius: 0.5,
   },
   // En uzun etiketler (RU "Благодарность", DE "Dankbarkeit") yaprağa sığsın; web'de adjustsFontSizeToFit yok.
   petalTextLong: { fontSize: 11, letterSpacing: 0 },
