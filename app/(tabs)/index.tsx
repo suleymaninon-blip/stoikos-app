@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Fonts } from '../../constants/theme';
@@ -24,6 +24,8 @@ import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
 import { FirstTip } from '../../components/FirstTip';
+import { TogetherCard, TogetherModal } from '../../components/TogetherBreath';
+import { inCardWindow, localDay } from '../../constants/together';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitude'];
@@ -164,6 +166,29 @@ export default function HomeScreen() {
   const [practiceDone, setPracticeDone] = useState(0);
   const [resume, setResume] = useState<Resume | null>(null);
 
+  // Birlikte nefes (15 Kasım 2026): kart 20:45–21:15 arası; "Bu akşam değil" o günlük gizler.
+  // Bildirime dokununca `/?together=1` ile pencere doğrudan açılır.
+  const [togetherOpen, setTogetherOpen] = useState(false);
+  const [togetherCard, setTogetherCard] = useState(false);
+  const params = useLocalSearchParams<{ together?: string }>();
+  const checkTogether = useCallback(async () => {
+    if (!inCardWindow()) { setTogetherCard(false); return; }
+    const skipped = await AsyncStorage.getItem('stoikos_together_skip_' + localDay()).catch(() => null);
+    setTogetherCard(!skipped);
+  }, []);
+  useEffect(() => {
+    checkTogether();
+    const id = setInterval(checkTogether, 30_000);
+    return () => clearInterval(id);
+  }, [checkTogether]);
+  useEffect(() => {
+    if (params.together) { setTogetherOpen(true); router.setParams({ together: undefined } as any); }
+  }, [params.together]);
+  const skipTogether = () => {
+    setTogetherCard(false);
+    AsyncStorage.setItem('stoikos_together_skip_' + localDay(), '1').catch(() => {});
+  };
+
   useFocusEffect(
     useCallback(() => {
       refresh();
@@ -250,6 +275,8 @@ export default function HomeScreen() {
           />
           </View>
 
+          {togetherCard && <TogetherCard onOpen={() => setTogetherOpen(true)} onDismiss={skipTogether} />}
+
           {/* Kaldığın yer — program (alt menüde olmayan tek bölüm) */}
           {resume && <ResumeCard resume={resume} />}
           {/* Program listesine tek giriş (kart doğrudan programı açıyor; hepsi bitince kart da yok) */}
@@ -308,6 +335,7 @@ export default function HomeScreen() {
 
         </Animated.View>
       </ScrollView>
+      <TogetherModal visible={togetherOpen} onClose={() => setTogetherOpen(false)} onComplete={refresh} />
       <FirstTip id="home" text={t('tip.home')} target={orbRef} container={rootRef} />
     </SafeAreaView>
   );

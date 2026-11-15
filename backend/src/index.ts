@@ -257,6 +257,37 @@ async function coachRateLimited(env: Env, userId: string, ip: string): Promise<R
   return null;
 }
 
+
+// ─── Birlikte nefes (15 Kasım 2026) ───────────────────────
+// Her akşam 21:00'de (kişinin kendi saatiyle) herkes aynı anda bir dakika nefes alır.
+// Sunucu yalnız TOPLAM sayar: kim olduğu, kimlik, IP saklanmaz (IP yalnız mevcut 24 saatlik
+// kötüye kullanım sınırında, `rl:ip:*`). "Şu an" = son iki dakikada katılanlar (UTC dakikası);
+// "bu akşam" = katılanın kendi yerel tarihine göre toplam.
+let togetherReady = false;
+async function ensureTogether(env: Env): Promise<void> {
+  if (togetherReady) return;
+  await env.DB.batch([
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS together_min (minute INTEGER PRIMARY KEY, n INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS together_day (day TEXT PRIMARY KEY, n INTEGER NOT NULL)'),
+  ]);
+  togetherReady = true;
+}
+const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
+/** Yerel tarih UTC'den en çok bir gün sapabilir; başka değer kabul edilmez. */
+function validDay(d: unknown): d is string {
+  if (typeof d !== 'string' || !DAY_RE.test(d)) return false;
+  const t = Date.parse(d + 'T12:00:00Z');
+  return Number.isFinite(t) && Math.abs(t - Date.now()) < 2 * 86400_000;
+}
+async function togetherCounts(env: Env, day: string | null, prev: string | null) {
+  const minute = Math.floor(Date.now() / 60000);
+  const nowRow = await env.DB.prepare('SELECT COALESCE(SUM(n),0) AS c FROM together_min WHERE minute >= ?').bind(minute - 1).first<{ c: number }>();
+  const dayN = async (d: string | null) => d
+    ? ((await env.DB.prepare('SELECT n FROM together_day WHERE day=?').bind(d).first<{ n: number }>())?.n ?? 0)
+    : 0;
+  return { now: nowRow?.c ?? 0, today: await dayN(day), yesterday: await dayN(prev) };
+}
+
 async function callClaude(env: Env, body: object): Promise<any> {
   const res = await fetch(API, {
     method: 'POST',
@@ -321,6 +352,31 @@ export default {
     if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
     const url = new URL(req.url);
     const path = url.pathname;
+
+
+    // ════════ BİRLİKTE NEFES ════════
+    if (req.method === 'GET' && path === '/together') {
+      await ensureTogether(env);
+      const day = url.searchParams.get('day'), prev = url.searchParams.get('prev');
+      return json(await togetherCounts(env, validDay(day) ? day : null, validDay(prev) ? prev : null));
+    }
+    if (req.method === 'POST' && path === '/together/join') {
+      const { day, prev } = await req.json<any>().catch(() => ({}));
+      if (!validDay(day)) return json({ error: 'bad_request' }, 400);
+      await ensureTogether(env);
+      const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+      // Aynı ağdan art arda katılım sayıyı şişirmesin: IP başına 10 dakikada 3.
+      if (!(await hitLimit(env, `tg:ip:${ip}`, 3, 600))) {
+        const minute = Math.floor(Date.now() / 60000);
+        await env.DB.batch([
+          env.DB.prepare('INSERT INTO together_min (minute,n) VALUES (?,1) ON CONFLICT(minute) DO UPDATE SET n=n+1').bind(minute),
+          env.DB.prepare('INSERT INTO together_day (day,n) VALUES (?,1) ON CONFLICT(day) DO UPDATE SET n=n+1').bind(day),
+        ]);
+        // Eski dakika satırlarını ara sıra temizle (bir günden eski).
+        if (Math.random() < 0.02) ctx.waitUntil(env.DB.prepare('DELETE FROM together_min WHERE minute < ?').bind(minute - 1440).run().then(() => {}));
+      }
+      return json(await togetherCounts(env, day, validDay(prev) ? prev : null));
+    }
 
     // ════════ MEYDAN OKUMA ════════
     // Söz gönder

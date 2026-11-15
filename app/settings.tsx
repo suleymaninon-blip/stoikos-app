@@ -11,7 +11,7 @@ import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
 import { exportJournal } from '../constants/journal';
-import { isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind } from '../constants/notify';
+import { isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind, isTogetherReminderOn, setTogetherReminder } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
 import { replayOnboarding } from '../constants/onboarding';
@@ -31,6 +31,8 @@ export default function SettingsScreen() {
   const styles = useStyles(makeStyles);
   const { t, lang, setLang } = useLang();
   const [notifyOn, setNotifyOn] = useState(false);
+  const [togetherOn, setTogetherOn] = useState(false);
+  useEffect(() => { if (REMINDERS_SUPPORTED) isTogetherReminderOn().then(setTogetherOn).catch(() => {}); }, []);
   const [healthOn, setHealthOn] = useState(false);
   const [adminKey, setAdminKey] = useState('');
   // Katlanır bölümler (15 Kasım 2026): sayfa beş kısa satırla açılır, aynı anda tek bölüm açık.
@@ -59,6 +61,13 @@ export default function SettingsScreen() {
     if (!ok) notify('Stoikos', t('health.denied').replace('{app}', healthAppName(lang)));
   }
   useEffect(() => { AsyncStorage.getItem(ADMIN_KEY_STORAGE).then((k) => k && setAdminKey(k)); }, []);
+
+  // Birlikte nefes hatırlatması (15 Kasım 2026): her akşam 20:58, günlük hatırlatıcılardan bağımsız.
+  async function toggleTogether() {
+    const ok = await setTogetherReminder(!togetherOn, lang).catch(() => false);
+    if (ok) setTogetherOn(!togetherOn);
+    else notify('Stoikos', t('notify.denied'));
+  }
 
   async function toggleNotify() {
     if (!REMINDERS_SUPPORTED) return;   // web: kart zaten açıklama gösteriyor
@@ -277,6 +286,18 @@ export default function SettingsScreen() {
               );
             })}
           </View>
+        )}
+
+        {REMINDERS_SUPPORTED && (
+          <TouchableOpacity style={[styles.notifyCard, { marginTop: 12 }]} onPress={toggleTogether} activeOpacity={0.85} accessibilityRole="switch" accessibilityState={{ checked: togetherOn }}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.notifyTitle}>{t('together.setTitle')}</Text>
+              <Text style={styles.notifyHint}>{t('together.setHint')}</Text>
+            </View>
+            <View style={[styles.toggle, togetherOn && styles.toggleOn]}>
+              <View style={[styles.toggleKnob, togetherOn && styles.toggleKnobOn]} />
+            </View>
+          </TouchableOpacity>
         )}
 
           </View>
