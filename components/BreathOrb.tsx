@@ -538,7 +538,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.tint(0.08),
   },
-  rhythmWrap: { position: 'absolute', top: 14, left: 16, zIndex: 8 },
+  rhythmWrap: { position: 'absolute', top: 14, left: 16, zIndex: 8, alignItems: 'flex-start' },
   rhythmBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6, height: 40, paddingHorizontal: 14, borderRadius: 20,
     backgroundColor: Colors.tint(0.08),
