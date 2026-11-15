@@ -32,6 +32,16 @@ function shade(hex: string, k: number): string {
   return `#${ch((n >> 16) & 255)}${ch((n >> 8) & 255)}${ch(n & 255)}`;
 }
 
+/** Rengin doygunluğunu düşürür: kendi gri tonuna doğru `k` oranında karıştırır (15 Kasım 2026, kullanıcı videosu:
+ *  canlı renkler yan yana "şeker topu" gibi duruyordu; ton aynı kalır, parlaklık söner). */
+function mute(hex: string, k: number): string {
+  const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const y = 0.299 * r + 0.587 * g + 0.114 * b;
+  const ch = (v: number) => Math.round(v + (y - v) * k).toString(16).padStart(2, '0');
+  return `#${ch(r)}${ch(g)}${ch(b)}`;
+}
+const MUTE = 0.28;
+
 /** Tek yaprak: hale + ışık vuran yüzey + ince parlak kenar. `S` hale dahil kare, `D` yaprağın çapı. */
 function Petal({ id, color, S, D, dark }: { id: string; color: string; S: number; D: number; dark: boolean }) {
   const r = D / 2, c = S / 2;
@@ -43,19 +53,19 @@ function Petal({ id, color, S, D, dark }: { id: string; color: string; S: number
           <Stop offset="1" stopColor={color} stopOpacity="0" />
         </RadialGradient>
         <RadialGradient id={`${id}f`} cx="36%" cy="28%" r="78%">
-          <Stop offset="0" stopColor={shade(color, 0.42)} />
+          <Stop offset="0" stopColor={shade(color, 0.32)} />
           <Stop offset="0.5" stopColor={color} />
           <Stop offset="1" stopColor={shade(color, -0.2)} />
         </RadialGradient>
         <RadialGradient id={`${id}g`} cx="38%" cy="24%" r="46%">
-          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.42" />
+          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.28" />
           <Stop offset="1" stopColor="#ffffff" stopOpacity="0" />
         </RadialGradient>
       </Defs>
       <Circle cx={c} cy={c} r={c} fill={`url(#${id}h)`} />
       <Circle cx={c} cy={c} r={r} fill={`url(#${id}f)`} opacity={0.94} />
       <Circle cx={c} cy={c} r={r} fill={`url(#${id}g)`} />
-      <Circle cx={c} cy={c} r={r - 0.75} fill="none" stroke="#ffffff" strokeOpacity={dark ? 0.3 : 0.45} strokeWidth={1.5} />
+      <Circle cx={c} cy={c} r={r - 0.75} fill="none" stroke="#ffffff" strokeOpacity={dark ? 0.22 : 0.32} strokeWidth={1.5} />
     </Svg>
   );
 }
@@ -82,10 +92,11 @@ export function MoodBloom({
   const [shown, setShown] = useState(false);
   const closing = useRef(false);
 
-  // Ölçüler ekrana göre: dokuz yaprak tek halkada, komşular hafifçe üst üste biner.
+  // Ölçüler ekrana göre: dokuz yaprak tek halkada, aralarında küçük bir boşluk var (15 Kasım 2026'ya kadar
+  // komşular üst üste biniyordu; telefonda kalabalık göründü). Halka çevresi 2πR/9 ≈ 0,234W > D.
   const W = Math.min(width, 430);
-  const R = Math.round(W * 0.31);          // halkanın yarıçapı
-  const D = Math.round(W * 0.275);         // yaprak çapı
+  const R = Math.round(W * 0.335);         // halkanın yarıçapı
+  const D = Math.round(W * 0.215);         // yaprak çapı
   const CORE = Math.round(W * 0.26);       // ortadaki altın küre (halesiyle); kapatır
   const S = Math.round(D * 1.36);          // yaprağın halesiyle birlikte kapladığı kare
   const BOX = 2 * R + S;                   // çiçeğin kapladığı kare
@@ -148,7 +159,7 @@ export function MoodBloom({
             const a = -Math.PI / 2 + (i / n) * Math.PI * 2;      // ilki tepede, saat yönünde
             const lo = i * 0.035, hi = Math.min(1, 0.66 + i * 0.035);
             const k = bloom.interpolate({ inputRange: [lo, hi], outputRange: [0, 1], extrapolate: 'clamp' });
-            const c = colorOf(m);
+            const c = mute(colorOf(m), MUTE);
             const on = selected === m;
             const label = t(`mood.${m}`);
             return (
@@ -174,9 +185,9 @@ export function MoodBloom({
                   accessibilityState={{ selected: on }}
                   accessibilityLabel={label}
                 >
-                  {on && <View pointerEvents="none" style={[styles.ring, { width: D + 10, height: D + 10, borderRadius: (D + 10) / 2, borderColor: c }]} />}
+                  {on && <View pointerEvents="none" style={[styles.ring, { width: D + 8, height: D + 8, borderRadius: (D + 8) / 2, borderColor: c }]} />}
                   <Text
-                    style={[styles.petalText, label.length > 9 && styles.petalTextLong, { color: onColor, maxWidth: D - 10 }]}
+                    style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: onColor, maxWidth: D - 6 }]}
                     numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
                   >
                     {label}
@@ -233,11 +244,11 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   petalPressed: { opacity: 0.88, transform: [{ scale: 0.95 }] },
   ring: { position: 'absolute', borderWidth: 2 },
   petalText: {
-    fontFamily: Fonts.jostMedium, fontSize: 15, textAlign: 'center', letterSpacing: 0.3,
+    fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.2,
     textShadowColor: Colors.isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.22)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3,
   },
   // En uzun etiketler (RU "Благодарность", DE "Dankbarkeit") yaprağa sığsın; web'de adjustsFontSizeToFit yok.
-  petalTextLong: { fontSize: 12 },
+  petalTextLong: { fontSize: 11, letterSpacing: 0 },
   core: { alignItems: 'center', justifyContent: 'center' },
   x: { position: 'absolute', width: 16, height: 2, borderRadius: 1, backgroundColor: '#4a3a1c' },
 });
