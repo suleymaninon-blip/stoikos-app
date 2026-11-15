@@ -1,0 +1,148 @@
+{
+ "programs": {
+  "mortality": {
+   "title": "Notre mortalité",
+   "subtitle": "Faire de la fin une amie en 7 jours"
+  },
+  "uncertainty": {
+   "title": "Vivre avec l’incertitude",
+   "subtitle": "Faire la paix avec l’inconnu en 7 jours"
+  },
+  "people": {
+   "title": "Les personnes difficiles",
+   "subtitle": "Rester calme face aux personnes difficiles en 7 jours"
+  }
+ },
+ "mortality": [
+  {
+   "title": "Le garder sous les yeux",
+   "read": "Tu reviens d’un enterrement. Dans la voiture, personne ne parle. Ce soir-là, tout paraît un peu différent : l’appel que tu repoussais, ton frère ou ta sœur avec qui tu es en froid, cet e-mail qui t’a contrarié·e hier. Le matin venu, le sentiment est parti, tout a repris sa place.\n\nÉpictète conseillait à ses élèves de ne pas perdre ce sentiment : garde chaque jour la mort sous les yeux ; alors tu n’auras aucune pensée basse et tu ne désireras rien avec excès.\n\nCe n’est pas du pessimisme. Penser à la mort n’assombrit pas la vie, cela lui rend sa mesure. Celui qui remet vraiment à plus tard, c’est celui qui ne pense jamais à la mort ; car il vit comme s’il avait un temps infini.\n\nLe cadre ne rapetisse pas le tableau ; il montre où regarder.\n\nTe rappeler qu’il y a une fin ne te prend pas aujourd’hui. Cela te le rend.\n\nCe programme invite à penser à la mort. Si ces pensées t’accablent, ou si tu ressens l’envie de ne plus vivre, arrête le programme ; tourne-toi vers un proche ou vers un·e spécialiste.",
+   "body": "Aujourd’hui, arrête-toi une fois et dis-toi intérieurement : « Moi aussi, je suis mortel·le. » Puis reviens à la première tâche de ta journée et regarde ce qui a changé.",
+   "ask": "En te rappelant que tu es mortel·le, qu’est-ce qui a perdu de son importance, et qu’est-ce qui en a gagné ?"
+  },
+  {
+   "title": "Ce qui fait peur : la mort, ou l’idée de la mort ?",
+   "read": "Tu t’es réveillé·e au milieu de la nuit. Dans le noir, cette pensée est venue : un jour, je ne serai plus là. Ta poitrine s’est serrée, tu as pris ton téléphone, tu as regardé autre chose.\n\nÉpictète dit : ce ne sont pas les choses qui troublent les hommes, mais les jugements qu’ils portent sur elles. La mort n’a rien de terrible ; sinon, elle aurait paru terrible à Socrate aussi. Socrate avait passé son dernier jour à parler avec ses amis.\n\nCela ne veut pas dire « n’aie pas peur » ; la peur ne s’en va pas sur ordre. Ce qui est dit, c’est : regarde à l’intérieur de ta peur. Bien souvent, il n’y a pas là une seule peur, mais plusieurs : souffrir, laisser les choses inachevées, quitter ceux qu’on aime, être oublié·e. Chacune a sa propre réponse, et pour certaines, il y a des choses que tu peux faire dès aujourd’hui.\n\nL’ombre dans la chambre obscure, quand on allume la lumière, n’est que le manteau sur la patère.\n\nLa peur que tu as nommée ne rapetisse peut-être pas. Mais désormais, tu peux lui parler.",
+   "body": "Écris en une phrase ce qui te fait le plus peur dans la mort : la souffrance, l’inachevé, ceux que tu laisses derrière toi, l’oubli ?",
+   "ask": "En nommant ta peur, en est-il sorti une chose que tu peux faire aujourd’hui ?"
+  },
+  {
+   "title": "Un peu chaque jour",
+   "read": "Tu regardes une vieille photo : tu as dix ans, c’est l’été, tes genoux sont couverts d’écorchures. Où est cet enfant aujourd’hui ? Il n’est pas mort, mais il n’est plus là. Cette maison, cette voix, cet été ne reviendront pas.\n\nSénèque écrit à son ami Lucilius : nous nous trompons en croyant la mort devant nous ; une grande partie est déjà passée, les années derrière nous lui appartiennent désormais. Nous ne mourons pas d’un coup ; nous mourons un peu chaque jour.\n\nCela sonne sombre, et pourtant cela dit le contraire : tu n’es pas novice en matière de fins. Ton enfance s’est terminée, l’école s’est terminée, peut-être aussi une ville, un travail, un amour. Tu as traversé tout cela et tu es là.\n\nPour reprendre l’image de Sénèque : ce n’est pas la dernière goutte qui vide la clepsydre, mais toutes celles qui ont coulé avant elle.\n\nLe dernier jour sera le dernier d’une chose que tu connais déjà.",
+   "body": "Rappelle-toi une période que tu as laissée derrière toi : l’enfance, une ville, un travail. Souviens-toi de la façon dont tu as traversé cette fin.",
+   "ask": "Qu’est-ce que la fin de cette période t’avait appris ?"
+  },
+  {
+   "title": "Alexandre et son muletier",
+   "read": "Tu es à un mariage, ou à une réunion. On discute de qui s’assiéra où, de qui sera nommé en premier. Toi aussi, tu calcules intérieurement : mon titre, mon rang.\n\nMarc Aurèle, alors l’homme le plus puissant de son temps, a écrit dans son carnet : Alexandre le Grand et son muletier, une fois morts, en sont arrivés au même point.\n\nCela ne veut pas dire « rien n’a de sens ». L’homme qui a écrit cela était de nouveau à sa tâche le lendemain matin. Ce qu’il dit, c’est : la gloire et les titres ne passent pas cette porte, alors ne t’épuise pas pour eux. La seule chose qui te reste entre les mains, c’est la personne que tu es aujourd’hui.\n\nQuand la partie est finie, le roi et le pion retournent dans la même boîte.\n\nLe savoir ne te rapetisse pas. Cela t’ôte un poids des épaules.",
+   "body": "Aujourd’hui, demande à une chose après laquelle tu cours : le dernier jour, aura-t-elle encore de l’importance ? Si ce n’est pas le cas, donne à autre chose une partie du temps que tu lui consacres.",
+   "ask": "De quelle course t’es-tu retiré·e aujourd’hui, et pour quoi as-tu trouvé du temps à la place ?"
+  },
+  {
+   "title": "Solder les comptes chaque soir",
+   "read": "Il y a quelqu’un que tu « appelleras un de ces jours » ; cela fait des mois. Un professeur que tu n’as pas remercié, un ami à qui tu n’as pas demandé pardon. Tous attendent « le bon moment ».\n\nSénèque raconte la mort soudaine d’un homme qu’il connaissait : il planifiait ses affaires, ses navires, ses gains pour des années ; un soir, il tomba malade et ne vit pas le matin. La leçon qu’en tire Sénèque : soldons chaque jour les comptes de la vie. Celui qui met chaque jour la dernière touche à sa vie ne manque jamais de temps.\n\nCela ne veut pas dire ne pas faire de projets. Fais-en de longs. Mais ne suspends pas à un projet la parole qui doit être dite.\n\nLe bon commerçant compte sa caisse le soir avant de fermer. Pas parce qu’il pense ne pas pouvoir rouvrir demain ; il dort tranquille parce qu’il laisse son affaire en ordre.\n\nS’endormir à la fin d’une journée aux comptes soldés, c’est un autre sommeil.",
+   "body": "Termine aujourd’hui une seule chose laissée en suspens : un merci, une excuse, un coup de fil.",
+   "ask": "Quel compte as-tu soldé aujourd’hui ? Une fois fait, qu’est-ce qui s’est allégé en toi ?"
+  },
+  {
+   "title": "L’olive mûre",
+   "read": "En automne, tu es sous un arbre, les feuilles tombent. Personne n’appelle cela une catastrophe. Mais quand nous pensons à notre propre fin, il nous semble qu’il y a là une erreur, une injustice.\n\nMarc Aurèle se rappelle : ne méprise pas la mort ; elle aussi fait partie de ce que veut la nature, tout comme grandir, mûrir, voir ses cheveux blanchir. Passe ce court temps en accord avec la nature et achève ta route le cœur en paix : comme l’olive mûre qui tombe en bénissant la terre qui la porte et en remerciant l’arbre qui l’a fait naître.\n\nCe n’est pas désirer la mort, ni l’aimer. L’olive ne se presse pas de tomber ; tant qu’elle reste sur sa branche, elle mûrit. Accepter, ce n’est pas renoncer, c’est cesser de lutter.\n\nL’olive qui tombe n’a pas perdu. Elle a mûri.",
+   "body": "Sors et regarde une chose que la saison a menée à sa fin : une feuille qui tombe, une fleur qui fane, un jour qui raccourcit. Ne commente pas, regarde seulement.",
+   "ask": "Dans ce que tu as regardé, qu’y avait-il qui n’était pas triste ?"
+  },
+  {
+   "title": "Compter le reste comme un cadeau",
+   "read": "Un accident évité de justesse, une analyse revenue normale. Pendant quelques jours, tout ressemble à un cadeau : l’odeur du café, le bruit de la rue, rentrer chez soi. Puis tu t’y habitues.\n\nMarc Aurèle conseille de créer cet état volontairement : considère-toi comme mort, tiens ta vie pour achevée jusqu’à cet instant ; ce qui vient ensuite, sache que c’est un supplément, et vis selon la nature.\n\nCela ne veut pas dire « vis chaque jour follement comme si c’était le dernier ». Ce n’est pas le calendrier qui change, c’est le regard. Tu vas au même travail, tu t’assieds à la même table ; simplement avec plus d’attention.\n\nLe bon invité ne cherche pas ce qui manque sur la table dressée pour lui.\n\nPendant sept jours, tu as regardé la fin. Maintenant, tourne la tête : devant toi, il y a un jour offert en plus.",
+   "body": "Demain matin, au réveil, que ta première pensée soit : ce jour m’est donné en plus. Écris maintenant à quoi tu vas le consacrer.",
+   "ask": "Quel moment as-tu vécu aujourd’hui comme s’il t’était offert en plus ?"
+  }
+ ],
+ "uncertainty": [
+  {
+   "title": "Qu’attends-tu ?",
+   "read": "Les résultats de l’analyse tombent jeudi, on est lundi. Tu cuisines, tu parles avec quelqu’un, mais la moitié de ton esprit est toujours là-bas.\n\nÉpictète dit : quand je vois quelqu’un d’anxieux, je me demande : que veut cette personne ? Si elle ne voulait pas une chose qui ne dépend pas d’elle, elle ne serait pas anxieuse. Son exemple est un musicien : quand il joue seul, il est détendu ; quand il monte sur scène, sa main tremble. Car désormais, il ne veut plus seulement bien jouer, il veut aussi les applaudissements.\n\nCela ne veut pas dire « ne veux rien » ; vouloir est humain. Mais au cœur de l’anxiété se tient souvent un désir sans nom, et un désir sans nom envahit tout.\n\nSavoir ce que tu attends ne raccourcit pas l’attente. Mais désormais, tu sais ce qui t’accompagne.",
+   "body": "Écris en une phrase l’incertitude qui te tient en attente. Ajoute en dessous : quel résultat est-ce que je veux, exactement ?",
+   "ask": "En écrivant le résultat que tu veux, ton anxiété a-t-elle changé : a-t-elle grandi, ou est-elle devenue plus claire ?"
+  },
+  {
+   "title": "La douleur imaginée",
+   "read": "Ton manager t’a écrit le soir : « Parlons demain. » Toute la nuit, tu as été licencié·e, tu as pensé au loyer, tu as préparé la façon de l’annoncer à ta famille. Au matin, il voulait simplement te demander tes dates de congés.\n\nSénèque écrit à son ami : les choses qui nous effraient sont plus nombreuses que celles qui nous écrasent ; nous souffrons plus souvent en imagination que dans la réalité. Certaines choses nous tourmentent plus qu’elles ne le devraient, d’autres avant qu’elles ne le devraient, d’autres encore alors qu’elles ne devraient pas nous tourmenter du tout.\n\nSénèque ne dit pas « rien de mal n’arrive » ; cela arrive. Mais si cela arrive, tu souffres une fois. Si tu souffres dès maintenant, deux fois.\n\nTu paies les intérêts d’une dette que tu n’as pas encore contractée.\n\nLa plupart des scénarios que tu construis cette nuit ne passeront pas le matin. S’il en reste un, c’est toi, au matin, qui l’accueilleras.",
+   "body": "Aujourd’hui, compte les mauvais scénarios qui te viennent à l’esprit ; fais une encoche sur une feuille. Le soir, regarde : combien se sont réellement produits ?",
+   "ask": "Combien de scénarios as-tu construits, et combien sont devenus réels ?"
+  },
+  {
+   "title": "La même chaîne",
+   "read": "Tu attends la réponse à ta candidature. Tu ouvres ton téléphone, tu rafraîchis tes e-mails : peut-être qu’elle est arrivée. Un petit espoir, puis une petite chute. Cinquante fois par jour.\n\nSénèque rapporte une parole du philosophe Hécaton : cesse d’espérer, et tu cesseras de craindre. L’espoir et la peur semblent opposés, mais ils sont attachés à la même chaîne, comme le prisonnier et le soldat qui le garde. Tous deux envoient ton esprit vers un jour qui n’est pas encore venu.\n\nCela ne veut pas dire désespérer. Tu préfères la bonne issue, tu travailles pour elle. Ce qu’il faut lâcher, c’est l’habitude de mettre ta paix d’aujourd’hui en gage contre la nouvelle de demain.\n\nQuand tu lâches un bout de la chaîne, l’autre bout se détend aussi.",
+   "body": "Aujourd’hui, compte combien de fois tu vérifies le résultat : téléphone, e-mail, compte. Puis saute volontairement une vérification.",
+   "ask": "Comment s’est passé ce moment où tu n’as pas vérifié ? As-tu manqué quelque chose ?"
+  },
+  {
+   "title": "Ôter le masque",
+   "read": "La question « Et si ça ne marche pas ? » tourne toute la journée sans jamais finir. La phrase s’arrête toujours au même endroit ; tu ne regardes pas la suite.\n\nSénèque conseille de regarder précisément là : ce que tu crains, imagine que cela va arriver, mesure ce mal et pèse ta peur. Tu verras que soit il n’est pas si grand, soit il ne dure pas si longtemps. Les enfants ont peur même des gens qu’ils connaissent quand ils les voient masqués ; il faut ôter le masque non seulement aux gens, mais aussi aux choses.\n\nCe n’est pas du pessimisme. Le pessimiste attend le pire et y reste. Toi, tu regardes une fois, et tu prévois le lendemain matin.\n\nUne peur regardée jusqu’au bout prend moins de place qu’une peur laissée à moitié.",
+   "body": "Écris le pire résultat possible. Ajoute trois lignes en dessous : que ferais-je le lendemain matin ?",
+   "ask": "En écrivant le pire, l’as-tu trouvé aussi grand que dans ton imagination ?"
+  },
+  {
+   "title": "Non pas la balle, mais le jeu",
+   "read": "Tu sors de l’entretien. Dans le bus, tu rejoues chacune de tes réponses, comme si tu pouvais changer le résultat.\n\nÉpictète montre les joueurs de balle : aucun ne se demande si la balle est bonne ou mauvaise ; chacun regarde seulement comment la lancer et la rattraper. Socrate, dit-il, a joué ainsi au tribunal : la balle en jeu, c’était sa propre vie, et il a joué sa partie avec maîtrise.\n\nCe n’est pas se désintéresser du résultat. Le joueur veut gagner. Mais celui qui garde les yeux sur le tableau des scores rate la balle qui arrive.\n\nTon affaire, c’est le jeu. Où que la balle retombe, une partie bien jouée t’appartient.",
+   "body": "Sur ce que tu attends, fais aujourd’hui un seul geste qui dépend de toi : une préparation, une question, un message. Puis lâche prise.",
+   "ask": "Quel a été ton geste aujourd’hui ? Après l’avoir fait, as-tu pu lâcher prise ?"
+  },
+  {
+   "title": "« Si rien ne s’y oppose »",
+   "read": "Ton projet de vacances était parfait : billets, hôtel, météo. Le matin, un message est arrivé : vol annulé. Tu as eu l’impression que le monde était injuste avec toi.\n\nSénèque raconte que le sage commence toute entreprise avec une réserve : « si rien ne s’y oppose ». C’est pourquoi rien ne lui arrive contre son attente ; car il a compté dès le départ que quelque chose pourrait s’interposer.\n\nCe n’est pas agir à moitié. Fais ton plan entièrement, travaille entièrement. La réserve n’est pas du relâchement, c’est de la souplesse.\n\nLe marin trace sa route, mais il ne négocie pas avec le vent.\n\nQuand ton plan tombe à l’eau, ce que tu perds, c’est le plan. Toi, tu es toujours là.",
+   "body": "Énonce l’un de tes projets d’aujourd’hui avec cette réserve : « Je ferai ceci, si rien ne s’y oppose. » À voix haute ou intérieurement.",
+   "ask": "Un obstacle est-il survenu aujourd’hui ? Si oui, qu’est-ce que la réserve a changé ?"
+  },
+  {
+   "title": "Le seul poids d’aujourd’hui",
+   "read": "Le résultat n’est toujours pas arrivé. Tu penses : « Si cela dure des mois, comment vais-je tenir ? » et tous ces mois viennent peser aujourd’hui sur tes épaules.\n\nMarc Aurèle s’écrit : ne te laisse pas accabler en pensant à toute ta vie à la fois. Ne te représente pas en bloc toutes les épreuves qui pourraient t’arriver ; devant chacune, demande-toi : qu’y a-t-il d’insupportable là-dedans, maintenant ? Que l’avenir ne te trouble pas ; s’il le faut, tu l’aborderas avec la même raison que celle dont tu te sers aujourd’hui.\n\nCela ne veut pas dire ne pas penser à l’avenir ; on fait des projets. Mais on ne porte que le poids d’aujourd’hui.\n\nSi tu regardes toutes les marches de l’escalier à la fois, tu te fatigues. Ton pied, lui, ne se pose que sur une seule.\n\nDepuis sept jours, tu restes avec l’inconnu. Il est toujours inconnu. Mais tu n’es plus seulement quelqu’un qui attend.\n\nSi l’anxiété perturbe depuis des semaines ton sommeil, ton travail ou ton appétit, te faire aider par un·e spécialiste est aussi un choix stoïcien.",
+   "body": "Tant que l’incertitude dure, choisis une seule chose pour vivre pleinement aujourd’hui, et fais-la : une promenade, un repas partagé, une tâche restée en suspens.",
+   "ask": "Y a-t-il eu aujourd’hui un moment où tu as oublié ce que tu attends ? Que faisais-tu à ce moment-là ?"
+  }
+ ],
+ "people": [
+  {
+   "title": "Se préparer le matin",
+   "read": "Lundi matin. Avant même de franchir la porte, tu as entendu sa voix et ton estomac s’est noué. Tu connais cette personne depuis des années, mais chaque fois tu es surpris·e comme si c’était la première fois.\n\nMarc Aurèle se disait le matin : aujourd’hui, je rencontrerai des gens indiscrets, ingrats, insolents, fourbes, envieux, insociables. Ils agissent ainsi parce qu’ils ne savent pas distinguer le bien du mal. Aucun d’eux ne peut me nuire ; car personne ne peut me forcer à une action laide. Je ne peux pas non plus me mettre en colère contre eux ; nous sommes nés pour œuvrer ensemble, comme les mains et les pieds d’un même corps.\n\nIl ne s’agit pas d’attendre le pire des gens, ni de leur en vouloir d’avance. C’est une préparation pour ne pas être surpris·e, pour ne pas te mettre en colère.\n\nQui sait qu’il va pleuvoir prend son parapluie ; il n’en veut pas aux nuages.\n\nCe qui ne te surprend pas te fatigue moitié moins.",
+   "body": "Écris le nom de la personne difficile à laquelle tu penses. Le matin, dis-toi : « Je la croiserai peut-être aujourd’hui ; je ne serai pas surpris·e. »",
+   "ask": "Aujourd’hui, en quoi le fait d’être préparé·e a-t-il changé ce moment ?"
+  },
+  {
+   "title": "« C’est ce qui lui a semblé »",
+   "read": "Ton collègue t’a encore coupé la parole en réunion. La première phrase qui te traverse : il le fait exprès.\n\nÉpictète propose une autre phrase : quand quelqu’un te traite mal ou dit du mal de toi, rappelle-toi qu’il le fait parce qu’il croit que c’est juste. Il suit sa propre opinion, pas la tienne. Si son opinion est fausse, c’est lui qui se trompe avant tout. En pensant ainsi, tu seras indulgent·e envers celui qui t’insulte, et chaque fois tu diras : « C’est ce qui lui a semblé. »\n\nCe n’est pas lui donner raison. Comprendre n’est pas approuver ; l’erreur reste une erreur. Mais l’histoire « il le fait exprès » ne nourrit que ta colère ; l’histoire « il voit mal » te laisse des options.\n\nCelui qui part avec une mauvaise carte se perd ; pas pour te contrarier.\n\nTu ne pourras peut-être pas corriger sa carte. Mais maintenant, tu sais où il va.",
+   "body": "Écris son dernier comportement de son point de vue, en un paragraphe. Pas pour lui donner raison, pour comprendre.",
+   "ask": "En écrivant de son point de vue, ce que tu as vu t’a-t-il surpris·e ?"
+  },
+  {
+   "title": "Les deux anses",
+   "read": "Ton frère et toi vous êtes disputés au sujet des soins de votre mère. Maintenant, quand son nom te vient à l’esprit, seule te revient la phrase qu’il a dite ce jour-là.\n\nÉpictète dit : toute chose a deux anses ; par l’une, on peut la porter, par l’autre, non. Si ton frère est injuste envers toi, ne le prends pas par l’anse « il a été injuste » ; par là, on ne peut pas le porter. Prends-le par l’anse « c’est mon frère, nous avons grandi ensemble ».\n\nCe n’est pas nier l’injustice ; il y a eu injustice. Mais l’anse que tu saisis décide de ce que tu portes. Par l’une, il ne te reste en main que l’injustice ; par l’autre, une relation.\n\nLa seconde anse est toujours là. Simplement, on ne la voit pas quand on est en colère.",
+   "body": "Trouve et écris l’anse par laquelle ta relation avec cette personne peut se porter : qu’est-ce qui vous lie ? Un passé, un enfant, un travail commun, un bienfait.",
+   "ask": "En saisissant l’autre anse, comment la même personne t’est-elle apparue ?"
+  },
+  {
+   "title": "Regarde dans le miroir",
+   "read": "Qu’il parle toujours de lui te met hors de toi. Le soir, tu as retrouvé un ami et tu as parlé de lui pendant une heure.\n\nMarc Aurèle conseille : quand la faute de quelqu’un t’accroche, retourne-toi aussitôt vers toi-même et cherche quelle faute semblable tu commets. En la voyant, ta colère s’éteint vite ; car tu comprends que lui aussi agit ainsi sous la contrainte de quelque chose.\n\nCe n’est pas dire « le vrai coupable, c’est toi » ; sa faute reste une faute. Le but n’est pas de te malmener, mais de baisser le doigt.\n\nQuand tu pointes quelqu’un du doigt, trois doigts se tournent vers toi.\n\nEn trouvant le même travers en toi, tu ne lui as peut-être pas pardonné. Mais tu ne peux plus le regarder de haut.",
+   "body": "Écris le trait qui t’agace le plus chez lui. Puis cherche honnêtement un moment où ce même trait est apparu chez toi.",
+   "ask": "Qu’as-tu trouvé en toi ? Le voir, comment cela a-t-il agi sur ta colère ?"
+  },
+  {
+   "title": "Joue ton rôle",
+   "read": "Ton père n’a encore pas appelé. Pour les fêtes, c’est toi qui as appelé, pour son anniversaire aussi. Tu te demandes : c’est toujours à moi de le faire ?\n\nLa réponse d’Épictète est dure, mais elle libère : les devoirs se mesurent aux relations. « Mais mon père est un mauvais père. » La nature ne t’a pas lié·e à un bon père, mais à un père. Ne regarde pas ce qu’il fait, mais ce que tu feras, toi, pour ta part.\n\nCe n’est pas dire oui à tout. Jouer ton rôle, ce n’est pas endosser aussi le sien ; tu n’es pas obligé·e de compenser ce qu’il ne fait pas. Seulement ta part, à ta mesure.\n\nMême si son partenaire oublie sa réplique, le bon acteur ne sort pas de son rôle.\n\nQuand tu as fait ta part, le reste cesse d’être ton fardeau.",
+   "body": "Aujourd’hui, fais une seule chose qui relève de ta part dans cette relation, et n’attends rien en retour.",
+   "ask": "Qu’as-tu ressenti en agissant sans rien attendre en retour ?"
+  },
+  {
+   "title": "Enseigner ou supporter",
+   "read": "Ton voisin fait du bruit tous les soirs jusque tard. Depuis des mois, tu ronchonnes intérieurement, tu t’en plains à ton ou ta partenaire ; mais à lui, tu n’as pas dit un mot.\n\nMarc Aurèle montre deux voies en une phrase brève : les hommes existent les uns pour les autres ; alors, enseigne ou supporte. Ailleurs, il ajoute : si tu le peux, corrige en montrant ; sinon, rappelle-toi que la bienveillance t’a été donnée pour cela.\n\nL’ordre compte : d’abord enseigner. Et supporter, ce n’est pas non plus tout garder pour soi en silence. Dire ta limite d’une voix calme, c’est cela même, enseigner. La troisième voie, se taire et en vouloir à la fois, n’appartient à aucune des deux.\n\nLe panneau indicateur ne crie pas, mais il ne bouge pas non plus.\n\nQuand tu le diras, il ne changera peut-être pas. Mais tu ne seras plus quelqu’un qui ronchonne en silence.\n\n« Supporter » ne vaut pas pour la violence, les menaces ou l’humiliation constante. Si tu vis une telle relation, ta sécurité passe d’abord ; tourne-toi vers un proche ou vers un·e spécialiste.",
+   "body": "Écris la seule phrase que tu dois dire à cette personne : sans reproche, calme, claire. La dire ou non, c’est à toi de voir.",
+   "ask": "As-tu écrit ta phrase ? L’as-tu dite ? Sinon, qu’est-ce qui t’a retenu·e ?"
+  },
+  {
+   "title": "La meilleure réponse",
+   "read": "On t’a lancé une pique. Tu en as une plus acérée au bout de la langue ; si tu la dis, tu te sentiras très bien, un instant.\n\nDans le carnet de Marc Aurèle, il y a une note d’une seule ligne : la meilleure façon de se venger, c’est de ne pas lui ressembler.\n\nCe n’est pas t’écraser ni tout avaler. Tu peux répondre, mais avec ta propre voix. La vraie force de la personne difficile, c’est de te rendre semblable à elle : tu cries avec celui qui crie, tu boudes celui qui boude, tu piques celui qui pique.\n\nQuand on lutte dans la boue, les deux lutteurs en sortent couverts.\n\nIl y a sept jours, tu avais écrit un nom. Cette personne n’a peut-être pas changé du tout. Ce qui a changé, c’est qui tu es face à elle.",
+   "body": "Remarque le moment où tu as envie de répondre comme elle le ferait, et réponds à ta manière.",
+   "ask": "Quel a été aujourd’hui le moment où tu as su répondre sans lui ressembler ?"
+  }
+ ]
+}

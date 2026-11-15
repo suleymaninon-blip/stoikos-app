@@ -1,0 +1,148 @@
+{
+ "programs": {
+  "mortality": {
+   "title": "Ölümlülük",
+   "subtitle": "7 günde sonu dost edin"
+  },
+  "uncertainty": {
+   "title": "Belirsizlikle Yaşamak",
+   "subtitle": "7 günde bilinmeyenle barış"
+  },
+  "people": {
+   "title": "Zor İnsanlar",
+   "subtitle": "7 günde zor insanlarla sakin kal"
+  }
+ },
+ "mortality": [
+  {
+   "title": "Göz önünde tut",
+   "read": "Bir cenazeden dönüyorsun. Arabada kimse konuşmuyor. O akşam her şey biraz farklı görünüyor: ertelediğin telefon, küs olduğun kardeşin, dün canını sıkan o e-posta. Sabah olunca his gitmiş, her şey eski yerine dönmüş.\n\nEpiktetos öğrencilerine o hissi kaybetmemeyi öğütlerdi: ölümü her gün göz önünde tut; o zaman ne bayağı bir şey düşünürsün ne de bir şeyi ölçüsüzce istersin.\n\nBu karamsarlık değildir. Ölümü düşünmek hayatı karartmaz, ona ölçüsünü geri verir. Asıl erteleyen, ölümü hiç düşünmeyendir; çünkü sonsuz vakti varmış gibi yaşar.\n\nÇerçeve resmi küçültmez; nereye bakacağını gösterir.\n\nBir sonun olduğunu hatırlamak bugünü senden almaz. Onu sana geri verir.\n\nBu program ölümü düşünmek içindir. Ölüm düşünceleri seni bunaltıyorsa ya da içinde yaşamak istememe hissi varsa programı bırak; bir yakınına ya da bir uzmana ulaş.",
+   "body": "Bugün bir kez dur ve içinden söyle: \"Ben de ölümlüyüm.\" Sonra günün ilk işine dön ve ne değiştiğine bak.",
+   "ask": "Ölümlü olduğunu hatırladığında hangi şey önemini yitirdi, hangisi önem kazandı?"
+  },
+  {
+   "title": "Korkutan ölüm mü, düşüncesi mi?",
+   "read": "Gece yarısı uyandın. Karanlıkta o düşünce geldi: bir gün olmayacağım. Göğsün sıkıştı, telefonu aldın, başka bir şeye baktın.\n\nEpiktetos şöyle der: insanları sarsan şeyler değil, şeyler hakkındaki yargılarıdır. Ölüm korkunç değildir; öyle olsaydı Sokrates'e de korkunç görünürdü. Sokrates son gününü dostlarıyla konuşarak geçirmişti.\n\nBu \"korkma\" demek değil; korku buyrukla gitmez. Söylenen şu: korkunun içine bak. Çoğu zaman orada tek bir korku değil, birkaç ayrı korku durur: acı çekmek, yarım bırakmak, sevdiklerini bırakmak, unutulmak. Her birinin cevabı ayrıdır ve bazıları için bugün yapabileceğin şeyler vardır.\n\nKaranlık odadaki gölge, ışığı yakınca askıdaki paltodur.\n\nAdını koyduğun korku belki küçülmez. Ama artık onunla konuşabilirsin.",
+   "body": "Ölümde seni en çok korkutan şeyi tek cümleyle yaz: acı mı, yarım kalmak mı, geride bıraktıkların mı, unutulmak mı?",
+   "ask": "Korkunun adını koyunca, içinden bugün yapabileceğin bir şey çıktı mı?"
+  },
+  {
+   "title": "Her gün biraz",
+   "read": "Eski bir fotoğrafa bakıyorsun: on yaşındasın, yaz, dizlerin yara içinde. O çocuk nerede şimdi? Ölmedi ama yok. O ev, o ses, o yaz geri gelmeyecek.\n\nSeneca dostu Lucilius'a şunu yazar: ölümü ileride bir yerde sanmakla yanılıyoruz; büyük kısmı çoktan geçti, geride kalan yıllar artık onun elinde. Bir anda ölmüyoruz; her gün biraz ölüyoruz.\n\nKulağa kasvetli gelir, oysa tersini söyler: sen bitişlerin acemisi değilsin. Çocukluğun bitti, okul bitti, belki bir şehir, bir iş, bir aşk bitti. Hepsinden geçtin ve buradasın.\n\nSeneca'nın benzetmesiyle: su saatini boşaltan son damla değildir, ondan önce akanların hepsidir.\n\nSon gün, zaten bildiğin bir şeyin sonuncusu olacak.",
+   "body": "Geride bıraktığın bir dönemi an: çocukluk, bir şehir, bir iş. O bitişi nasıl atlattığını hatırla.",
+   "ask": "O dönemin bitişi sana ne öğretmişti?"
+  },
+  {
+   "title": "İskender ve katırcısı",
+   "read": "Bir düğündesin ya da bir toplantıda. Kim nereye oturacak, kimin adı önce anılacak, konuşuluyor. Sen de içinden hesaplıyorsun: benim unvanım, benim sıram.\n\nMarcus Aurelius, çağının en güçlü adamıyken defterine şunu yazdı: Makedonyalı İskender de katırcısı da ölünce aynı yere vardılar.\n\nBu \"hiçbir şeyin anlamı yok\" demek değil. Bunu yazan adam ertesi sabah yine işinin başındaydı. Söylediği şu: ün ve unvan o kapıdan geçmiyor, öyleyse kendini onlar için harcama. Elinde kalan tek şey, bugün nasıl biri olduğun.\n\nOyun bitince şah da piyon da aynı kutuya girer.\n\nBunu bilmek seni küçültmez. Omzundan bir yük alır.",
+   "body": "Bugün peşinden koştuğun bir şeye sor: son gün bunun bir önemi kalır mı? Kalmıyorsa ona ayırdığın vaktin bir kısmını başka bir şeye ver.",
+   "ask": "Bugün hangi yarıştan çekildin, yerine neye vakit kaldı?"
+  },
+  {
+   "title": "Hesabı her akşam kapat",
+   "read": "\"Bir ara arayacağım\" dediğin biri var; aylar oldu. Teşekkür etmediğin bir öğretmen, özür dilemediğin bir arkadaş. Hepsi \"uygun bir zamanı\" bekliyor.\n\nSeneca bir tanıdığının ansızın ölümünü anlatır: adam yıllar sonrasının işlerini, gemilerini, kazançlarını planlıyordu; bir akşam hastalandı ve sabaha çıkmadı. Seneca'nın çıkardığı ders şudur: hayatın hesabını her gün kapatalım. Her gününe son rötuşu yapan, zamana muhtaç kalmaz.\n\nBu plan yapma demek değil. Uzun planlar yap. Ama söylenmesi gereken sözü plana bağlama.\n\nİyi esnaf akşam kasayı sayıp öyle kapatır. Yarın açamayacağını düşündüğü için değil; işini temiz bıraktığı için rahat uyur.\n\nHesabı kapalı bir günün sonunda uyumak başka bir uykudur.",
+   "body": "Yarım bıraktığın tek bir şeyi bugün bitir: bir teşekkür, bir özür, bir telefon.",
+   "ask": "Bugün kapattığın hesap hangisiydi? Kapatınca içinde ne hafifledi?"
+  },
+  {
+   "title": "Olgun zeytin",
+   "read": "Sonbaharda bir ağacın altındasın, yapraklar dökülüyor. Kimse buna felaket demiyor. Ama kendi sonumuzu düşününce sanki ortada bir yanlışlık, bir haksızlık varmış gibi geliyor.\n\nMarcus Aurelius kendine şunu hatırlatır: ölümü küçümseme; o da doğanın istediği şeylerden biri, tıpkı büyümek, olgunlaşmak, saçın ağarması gibi. Şu kısa zamanı doğaya uygun geçir ve yolunu gönül rahatlığıyla bitir: olgunlaşan zeytinin, kendisini taşıyan toprağı överek ve yetiştiren ağaca şükrederek düşmesi gibi.\n\nBu ölümü istemek ya da sevmek değildir. Zeytin düşmek için acele etmez; dalında kaldığı sürece olgunlaşır. Kabul etmek vazgeçmek değil, kavgayı bırakmaktır.\n\nDüşen zeytin kaybetmiş değildir. Zeytin olmuştur.",
+   "body": "Dışarı çık ve mevsimin bitirdiği bir şeye bak: dökülen bir yaprak, solan bir çiçek, kısalan gün. Yorum yapma, yalnızca bak.",
+   "ask": "Baktığın o şeyde üzücü olmayan ne vardı?"
+  },
+  {
+   "title": "Kalanı armağan say",
+   "read": "Ucuz atlatılmış bir kaza, temiz çıkan bir tahlil. Birkaç gün her şey hediye gibi görünür: kahvenin kokusu, sokaktaki ses, eve dönmek. Sonra alışırsın.\n\nMarcus Aurelius o hâli bilerek kurmayı öğütler: kendini ölmüş say, hayatını bu ana kadar tamamlanmış kabul et; bundan sonrasını fazladan verilmiş bil ve doğaya uygun yaşa.\n\nBu \"her günü son günmüş gibi çılgınca yaşa\" demek değil. Değişen takvimin değil, bakışın. Aynı işe gidersin, aynı sofraya oturursun; yalnızca daha dikkatle.\n\nİyi misafir, kendisine kurulan sofrada eksik aramaz.\n\nYedi gündür sona baktın. Şimdi başını çevir: önünde fazladan verilmiş bir gün var.",
+   "body": "Yarın sabah uyanınca ilk düşüncen şu olsun: bu gün fazladan verildi. Onu neye harcayacağını şimdi yaz.",
+   "ask": "Bugün fazladan verilmiş gibi yaşadığın an hangisiydi?"
+  }
+ ],
+ "uncertainty": [
+  {
+   "title": "Neyi bekliyorsun?",
+   "read": "Tahlil sonucu perşembe çıkacak, bugün pazartesi. Yemek yapıyorsun, biriyle konuşuyorsun ama aklının yarısı hep orada.\n\nEpiktetos şöyle der: kaygılı birini görünce sorarım, bu insan ne istiyor? Elinde olmayan bir şeyi istemeseydi kaygılanmazdı. Örneği bir çalgıcıdır: tek başına çalarken rahattır, sahneye çıkınca eli titrer. Çünkü artık yalnız iyi çalmak değil, alkış da istiyordur.\n\nBu \"hiçbir şey isteme\" demek değil; istemek insanca. Ama kaygının içinde çoğu zaman adı konmamış bir istek durur ve adı konmamış istek her şeyi kaplar.\n\nNeyi beklediğini bilmek beklemeyi kısaltmaz. Ama artık neyle oturduğunu bilirsin.",
+   "body": "Seni bekleten belirsizliği tek cümleyle yaz. Altına ekle: tam olarak hangi sonucu istiyorum?",
+   "ask": "İstediğin sonucu yazınca kaygın değişti mi: büyüdü mü, netleşti mi?"
+  },
+  {
+   "title": "Hayalde çekilen acı",
+   "read": "Yöneticin akşam yazdı: \"Yarın bir konuşalım.\" Gece boyunca işten çıkarıldın, kirayı düşündün, ailene nasıl söyleyeceğini kurdun. Sabah meğer izin tarihlerini soracakmış.\n\nSeneca dostuna şunu yazar: bizi korkutan şeyler bizi ezenlerden çoktur; gerçekte olduğundan çok hayalimizde acı çekeriz. Bazı şeyler bizi gereğinden çok üzer, bazıları gereğinden önce, bazıları da hiç üzmemesi gerekirken.\n\nSeneca \"kötü şey olmaz\" demiyor; olur. Ama olursa bir kez çekersin. Şimdiden çekersen iki kez.\n\nHenüz almadığın bir borcun faizini ödüyorsun.\n\nBu gece kurduğun senaryoların çoğu sabaha kalmayacak. Kalan olursa, onu sabahki sen karşılar.",
+   "body": "Bugün aklına gelen kötü senaryoları say; bir kâğıda çentik at. Akşam bak: kaçı gerçekten oldu?",
+   "ask": "Kaç senaryo kurdun, kaçı gerçek oldu?"
+  },
+  {
+   "title": "Aynı zincir",
+   "read": "Başvurunun cevabını bekliyorsun. Telefonu açıyorsun, e-postayı yeniliyorsun: belki gelmiştir. Küçük bir umut, sonra küçük bir düşüş. Günde elli kez.\n\nSeneca, filozof Hekaton'un bir sözünü aktarır: ummayı bırakırsan korkmayı da bırakırsın. Umut ile korku zıt görünür ama mahkûm ile başındaki asker gibi aynı zincire bağlıdır. İkisi de aklını henüz gelmemiş bir güne gönderir.\n\nBu umutsuz ol demek değil. İyi sonucu tercih edersin, onun için çalışırsın. Bırakılacak olan, bugünkü huzurunu yarınki habere rehin vermektir.\n\nZincirin bir ucunu bırakınca öteki uç da gevşer.",
+   "body": "Bugün sonucu kaç kez kontrol ettiğini say: telefon, e-posta, hesap. Sonra bir kontrolü bilerek atla.",
+   "ask": "Kontrol etmediğin o an nasıl geçti? Bir şey kaçırdın mı?"
+  },
+  {
+   "title": "Maskeyi çıkar",
+   "read": "\"Ya olmazsa?\" sorusu gün boyu dönüyor ama hiç bitmiyor. Cümle hep aynı yerde kesiliyor; gerisine bakmıyorsun.\n\nSeneca tam oraya bakmayı öğütler: korktuğun şey ne ise olacakmış gibi düşün, o kötülüğü ölç ve korkunu tart. Göreceksin ki ya çok büyük değildir ya çok uzun sürmez. Çocuklar tanıdıkları insanı bile maskeyle görünce korkar; yalnız insanların değil, şeylerin de maskesini çıkarmalı.\n\nBu kötümserlik değil. Kötümser en kötüyü bekler ve orada kalır. Sen bir kez bakıyorsun ve ertesi sabahı planlıyorsun.\n\nSonuna kadar bakılmış bir korku, yarım bırakılmış olandan daha az yer tutar.",
+   "body": "En kötü sonucu yaz. Altına üç satır ekle: ertesi sabah ne yapardım?",
+   "ask": "En kötüsünü yazınca, hayalindeki kadar büyük müydü?"
+  },
+  {
+   "title": "Top değil, oyun",
+   "read": "Mülakattan çıktın. Otobüste her cevabını yeniden oynatıyorsun, sanki sonucu değiştirebilirmiş gibi.\n\nEpiktetos top oynayanları gösterir: hiçbiri topun iyi mi kötü mü olduğuna bakmaz; yalnız onu nasıl atıp tutacağına bakar. Sokrates de mahkemede böyle oynadı, der: ortadaki top kendi hayatıydı, o ise oyununu ustaca oynadı.\n\nBu sonucu umursamamak değil. Oyuncu kazanmak ister. Ama gözü skor tabelasında olan, gelen topu kaçırır.\n\nSenin işin oyun. Top nereye düşerse düşsün, iyi oynanmış bir oyun senindir.",
+   "body": "Beklediğin konuda bugün elinden gelen tek bir hamleyi yap: bir hazırlık, bir soru, bir mesaj. Sonra bırak.",
+   "ask": "Bugünkü hamlen neydi? Yaptıktan sonra bırakabildin mi?"
+  },
+  {
+   "title": "\"Bir engel çıkmazsa\"",
+   "read": "Tatil planın kusursuzdu: bilet, otel, hava durumu. Sabah bir mesaj geldi, uçuş iptal. Sanki dünya sana haksızlık etmiş gibi hissettin.\n\nSeneca şunu anlatır: bilge her işe bir kayıtla başlar: \"bir engel çıkmazsa\". Bu yüzden hiçbir şey beklentisinin dışında başına gelmez; çünkü araya bir şeyin girebileceğini baştan hesaba katmıştır.\n\nBu yarım gönülle iş yapmak değil. Planını tam yap, tam çalış. Kayıt gevşeklik değil, esnekliktir. Türkçede eski bir karşılığı da var: \"kısmetse\".\n\nDenizci rotasını çizer ama rüzgârla pazarlık etmez.\n\nPlanın bozulduğunda kaybettiğin şey plandır. Sen yerindesin.",
+   "body": "Bugünkü bir planını bu kayıtla söyle: \"Şunu yapacağım, bir engel çıkmazsa.\" Sesli ya da içinden.",
+   "ask": "Bugün bir engel çıktı mı? Çıktıysa, kayıt koymuş olmak neyi değiştirdi?"
+  },
+  {
+   "title": "Yalnız bugünün yükü",
+   "read": "Sonuç hâlâ gelmedi. \"Bu aylarca sürerse nasıl dayanırım?\" diye düşünüyorsun ve bütün o aylar bugün omzuna biniyor.\n\nMarcus Aurelius kendine şunu yazar: hayatının bütününü birden düşünüp bunalma. Başına gelebilecek sıkıntıları toptan gözünün önüne getirme; her birinde kendine sor: şu anda bunda dayanılmaz olan ne? Gelecek seni tedirgin etmesin; gerekirse ona, bugün kullandığın aynı akılla varacaksın.\n\nBu geleceği düşünme demek değil; plan yapılır. Ama yük yalnız bugünkü kadar taşınır.\n\nMerdivenin bütün basamaklarına birden bakarsan yorulursun. Ayağın ise yalnız birine basar.\n\nYedi gündür bilinmeyenle oturuyorsun. O hâlâ bilinmiyor. Ama sen artık yalnızca bekleyen biri değilsin.\n\nKaygı haftalardır uykunu, işini ya da iştahını bozuyorsa bir uzmandan destek almak da Stoacı bir seçimdir.",
+   "body": "Belirsizlik sürerken bugünü dolu yaşamak için tek bir şey seç ve yap: bir yürüyüş, bir sofra, yarım kalmış bir iş.",
+   "ask": "Bugün, beklediğin şeyi unuttuğun bir an oldu mu? O anda ne yapıyordun?"
+  }
+ ],
+ "people": [
+  {
+   "title": "Sabah hazırlığı",
+   "read": "Pazartesi sabahı. Daha kapıdan girmeden onun sesini duydun ve miden kasıldı. Yıllardır tanıyorsun ama her seferinde ilk kez oluyormuş gibi şaşırıyorsun.\n\nMarcus Aurelius sabahları kendine şunu söylerdi: bugün işgüzar, nankör, küstah, hilekâr, kıskanç, geçimsiz insanlarla karşılaşacağım. Bunları, iyiyi kötüden ayıramadıkları için yapıyorlar. Hiçbiri bana zarar veremez; çünkü kimse beni çirkin bir işe zorlayamaz. Onlara kızamam da; aynı bedenin elleri, ayakları gibi birlikte çalışmak için doğduk.\n\nBu insanlardan kötülük beklemek ya da onlara baştan küsmek değil. Şaşırmamak, kızmamak için yapılan bir hazırlık.\n\nYağmur yağacağını bilen şemsiyesini alır; bulutlara küsmez.\n\nŞaşırmadığın şey seni yarı yarıya daha az yorar.",
+   "body": "Aklındaki zor kişinin adını yaz. Sabah kendine söyle: \"Bugün onunla karşılaşabilirim; şaşırmayacağım.\"",
+   "ask": "Bugün hazırlıklı olmak, o anı nasıl değiştirdi?"
+  },
+  {
+   "title": "\"Ona öyle göründü\"",
+   "read": "İş arkadaşın toplantıda yine sözünü kesti. İçinden geçen ilk cümle şu: bunu bile bile yapıyor.\n\nEpiktetos başka bir cümle önerir: biri sana kötü davrandığında ya da hakkında kötü konuştuğunda, bunu doğru sandığı için yaptığını hatırla. O senin görüşünün değil, kendi görüşünün peşinden gider. Görüşü yanlışsa asıl aldanan odur. Böyle düşünürsen sana kötü söz söyleyene yumuşak davranırsın ve her seferinde şunu dersin: \"Ona öyle göründü.\"\n\nBu onu haklı çıkarmak değil. Anlamak onaylamak değildir; yanlış yine yanlıştır. Ama \"bile bile yapıyor\" hikâyesi yalnız öfkeni besler; \"yanlış görüyor\" hikâyesi ise sana seçenek bırakır.\n\nYanlış haritayla yola çıkan kaybolur; sana inat olsun diye değil.\n\nOnun haritasını düzeltemeyebilirsin. Ama artık nereye gittiğini biliyorsun.",
+   "body": "Onun son davranışını, onun gözünden tek paragraf yaz. Haklı çıkarmak için değil, anlamak için.",
+   "ask": "Onun gözünden yazınca, gördüğün şey seni şaşırttı mı?"
+  },
+  {
+   "title": "İki kulp",
+   "read": "Annenizin bakımı yüzünden kardeşinle tartıştınız. Şimdi adı aklına gelince yalnızca o gün söylediği cümle geliyor.\n\nEpiktetos şöyle der: her şeyin iki kulpu vardır; birinden tutarsan taşınır, ötekinden taşınmaz. Kardeşin sana haksızlık ederse, onu \"haksızlık etti\" kulpundan tutma; oradan taşınmaz. \"O benim kardeşim, birlikte büyüdük\" kulpundan tut.\n\nBu haksızlığı yok saymak değil; haksızlık oldu. Ama hangi kulptan tutarsan onu taşırsın. Birinden tutarsan elinde yalnız haksızlık kalır, ötekinden tutarsan bir ilişki.\n\nİkinci kulp her zaman oradadır. Yalnızca kızgınken görünmez.",
+   "body": "Bu kişiyle aranızdaki taşınabilir kulpu bul ve yaz: sizi bağlayan ne? Bir geçmiş, bir çocuk, ortak bir iş, bir iyilik.",
+   "ask": "Öteki kulptan tutunca, aynı kişi sana nasıl göründü?"
+  },
+  {
+   "title": "Aynaya bak",
+   "read": "Onun hep kendinden bahsetmesi seni çileden çıkarıyor. Akşam bir arkadaşınla buluştun ve bir saat boyunca onu anlattın.\n\nMarcus Aurelius şunu öğütler: birinin hatasına takıldığında hemen kendine dön ve benzer hangi hatayı yaptığına bak. Bunu görünce öfken çabuk söner; çünkü onun da bir şeyin zoruyla böyle davrandığını anlarsın.\n\nBu \"asıl suçlu sensin\" demek değil; onun hatası yine hata. Amaç kendini hırpalamak değil, parmağını indirmek.\n\nBaşkasını gösteren elin üç parmağı sana bakar.\n\nAynı huyu kendinde bulduğunda onu affetmiş olmazsın belki. Ama artık ona yukarıdan bakamazsın.",
+   "body": "Onda en çok kızdığın huyu yaz. Sonra aynı huyun sende göründüğü bir anı dürüstçe ara.",
+   "ask": "Kendinde bulduğun şey neydi? Bunu görmek öfkeni nasıl etkiledi?"
+  },
+  {
+   "title": "Sen rolünü oyna",
+   "read": "Baban yine aramadı. Bayramda da sen aradın, doğum gününde de. İçinden soruyorsun: hep ben mi?\n\nEpiktetos'un cevabı serttir ama özgürleştirir: görevler ilişkilerle ölçülür. \"Ama babam kötü bir baba.\" Doğa seni iyi bir babaya değil, bir babaya bağladı. Onun ne yaptığına değil, senin kendi payına ne yapacağına bak.\n\nBu her şeye evet demek değil. Kendi rolünü oynamak onun rolünü de üstlenmek değildir; onun yapmadığını telafi etmek zorunda değilsin. Yalnız kendi kısmın, kendi ölçünde.\n\nKarşısındaki repliğini unutsa da iyi oyuncu kendi rolünü bozmaz.\n\nKendi payını yaptığında, gerisi senin yükün olmaktan çıkar.",
+   "body": "Bugün bu ilişkide kendi payına düşen tek bir şeyi yap ve karşılık bekleme.",
+   "ask": "Karşılık beklemeden yapmak nasıl bir histi?"
+  },
+  {
+   "title": "Öğret ya da katlan",
+   "read": "Komşun her gece geç saate kadar gürültü yapıyor. Aylardır içinden söyleniyorsun, eşine dert yanıyorsun; ona ise tek kelime etmedin.\n\nMarcus Aurelius kısa bir cümleyle iki yol gösterir: insanlar birbirleri için var oldular; öyleyse ya öğret ya katlan. Bir başka yerde ekler: elinden geliyorsa göstererek düzelt; gelmiyorsa hoşgörünün sana bunun için verildiğini hatırla.\n\nSıra önemli: önce öğret. Katlanmak da sessizce içine atmak değildir. Sınırını sakin bir sesle söylemek, öğretmenin ta kendisidir. Üçüncü yol, yani hem söylememek hem kızmak, ikisinin de dışında kalır.\n\nYol tabelası bağırmaz ama yerinden de oynamaz.\n\nSöylediğinde değişmeyebilir. Ama sen artık içinden söylenen biri değilsin.\n\n\"Katlan\" sözü şiddet, tehdit ya da sürekli aşağılanma için geçerli değildir. Böyle bir ilişkideysen önce güvenliğin gelir; bir yakınına ya da bir uzmana ulaş.",
+   "body": "Bu kişiye söylemen gereken tek cümleyi yaz: suçlamasız, sakin, net. Söyleyip söylememek sana kalmış.",
+   "ask": "Cümleni yazdın mı? Söyledin mi? Söylemediysen seni ne tuttu?"
+  },
+  {
+   "title": "En iyi karşılık",
+   "read": "Sana iğneli bir söz söyledi. Dilinin ucunda daha iğnelisi var; söylersen bir an çok iyi hissedeceksin.\n\nMarcus Aurelius'un defterinde tek satırlık bir not durur: öç almanın en iyi yolu, ona benzememektir.\n\nBu alttan almak ya da yutmak değil. Cevap verebilirsin, ama kendi sesinle. Zor insanın asıl gücü seni kendine benzetmesidir: bağırana bağırırsın, küsene küsersin, iğneleyene iğne batırırsın.\n\nÇamurda güreşenin ikisi de çamura bulanır.\n\nYedi gün önce bir isim yazmıştın. O belki hiç değişmedi. Değişen, onun karşısında kim olduğun.",
+   "body": "Onun yapacağı gibi karşılık vermek istediğin anı fark et ve kendi tarzınla cevap ver.",
+   "ask": "Bugün ona benzemeden cevap verebildiğin an hangisiydi?"
+  }
+ ]
+}
