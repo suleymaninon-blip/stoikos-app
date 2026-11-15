@@ -6,6 +6,7 @@
 // "Toplam an" (app/(tabs)/progress.tsx) nefesi kendiliğinden sayar.
 // Liste bir küme gibi tutulur: günde kaç seans yapılırsa yapılsın bir kez sayılır.
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { reportPulse } from './stoa';
 
 export const BREATH_ID = 'breath';
 const COMPLETED_KEY = 'stoikos_completed_';
@@ -35,6 +36,7 @@ export async function setBreathDuration(d: BreathDuration): Promise<void> {
 
 /** Bugünün tamamlananlarına nefesi ekle (zaten varsa dokunma). */
 export async function logBreathSession(): Promise<void> {
+  reportPulse('breath');   // Stoa'nın nabzı: günde bir kez sayılır
   try {
     const key = COMPLETED_KEY + new Date().toDateString();
     const raw = await AsyncStorage.getItem(key);
