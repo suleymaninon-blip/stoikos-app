@@ -1,0 +1,139 @@
+<title>Stoacı Rakipler Tablosu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Jost:wght@400;500;600&display=swap">
+<style>
+/* Düzen: tek sütun rapor; önce dört bulgu, sonra yatay kayan karşılaştırma tablosu, sonra fiyat şeridi. Renkler STOIKOS'un Ege teması. */
+:root{
+  --bg:#F6F2EA; --surface:#FFFDF8; --ink:#1E2A2B; --muted:#5E6B6A; --line:#E2DBCD;
+  --accent:#2F7F7A; --accent-soft:#DCEDEA; --us:#FFF4DC; --warn:#A8642A; --no:#B9B2A4;
+  --display:"Cormorant Garamond", Georgia, serif; --body:"Jost", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1824; --surface:#16222F; --ink:#E7EEF0; --muted:#9AAAB2; --line:#26364A;
+  --accent:#6CC4BC; --accent-soft:#1B3438; --us:#2A2A1E; --warn:#E0A56A; --no:#4A5868; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F1824; --surface:#16222F; --ink:#E7EEF0; --muted:#9AAAB2; --line:#26364A;
+  --accent:#6CC4BC; --accent-soft:#1B3438; --us:#2A2A1E; --warn:#E0A56A; --no:#4A5868; color-scheme:dark }
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-block:32px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:26px;margin:0 0 10px}
+.lede{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.meta{font-size:13px;color:var(--muted);letter-spacing:.02em}
+.findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.f{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:6px;align-content:start}
+.f b{font-weight:600}
+.f .k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600}
+.f p{margin:0;color:var(--muted);font-size:14px}
+.tablebox{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600;background:var(--surface);position:sticky;top:0}
+td.c,th.c{text-align:center}
+tr.us td{background:var(--us)}
+tr.us td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.name{font-weight:600}
+.sub{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.y{color:var(--accent);font-weight:600}
+.p{color:var(--warn);font-weight:600}
+.n{color:var(--no)}
+.stars{white-space:nowrap}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--muted)}
+.price{display:grid;gap:8px}
+.bar{position:relative;height:72px;border-bottom:1px solid var(--line)}
+.tick{position:absolute;bottom:0;transform:translateX(-50%);display:grid;justify-items:center;gap:2px;font-size:11.5px;color:var(--muted);white-space:nowrap}
+.tick i{display:block;width:10px;height:10px;border-radius:50%;background:var(--muted);opacity:.55}
+.tick.us i{background:var(--accent);opacity:1;width:14px;height:14px}
+.tick.us{color:var(--ink);font-weight:600}
+.axis{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted)}
+.notes{font-size:13px;color:var(--muted);display:grid;gap:4px}
+.notes p{margin:0}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="meta">App Store · ABD mağazası · 15 Kasım 2026</div>
+    <h1>Stoacılık uygulamaları ve STOIKOS</h1>
+    <p class="lede">Değerlendirmeleri en çok olan 10 Stoacılık uygulaması, STOIKOS'un planlanan hâliyle yan yana. Puan, değerlendirme sayısı, diller ve fiyatlar Apple'ın kendi verisinden; özellikler her uygulamanın mağaza açıklamasından okundu.</p>
+  </header>
+
+  <section class="findings" aria-label="Bulgular">
+    <div class="f"><span class="k">Dil</span><b>Türkçe neredeyse boş</b><p>Yalnız Stoiq Türkçe; o da sadece söz ve widget uygulaması. En büyük rakip stoic. 8 dilde, Türkçe yok.</p></div>
+    <div class="f"><span class="k">Pazar</span><b>Tek büyük oyuncu var</b><p>stoic. 36.304 değerlendirmeyle tek başına; ikinci Stoa 1.003. Diğerlerinin çoğu 2025–26'da çıktı ve 110'un altında değerlendirmede.</p></div>
+    <div class="f"><span class="k">Özellik</span><b>Yapay zekâ koçu artık sıradan</b><p>10 uygulamanın 7'sinde var. Nefes, program ve Apple Sağlık'ı birlikte sunan başka uygulama yok.</p></div>
+    <div class="f"><span class="k">Fiyat</span><b>Yıllıkta yaygın fiyat $39,99</b><p>Yıllık planlar $19,99–$79,99 arası. STOIKOS'un $49,99'u ortanın biraz üstünde; deneme süresi bunu taşıyabilir.</p></div>
+  </section>
+
+  <section>
+    <h2>Karşılaştırma</h2>
+    <div class="legend" style="margin-bottom:10px"><span><span class="y">✓</span> var</span><span><span class="p">◐</span> kısmen</span><span><span class="n">—</span> açıklamada geçmiyor</span><span>Tablo yatay kayar.</span></div>
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>Uygulama</th><th>Puan (ABD)</th><th>Türkiye</th><th>Diller</th>
+          <th class="c">Türkçe</th><th class="c">Yapay zekâ koç</th><th class="c">Nefes</th><th class="c">Ses / meditasyon</th><th class="c">Programlar</th><th class="c">Günlük</th><th class="c">Widget</th><th class="c">Apple Sağlık</th>
+          <th>Fiyat</th>
+        </tr></thead>
+        <tbody>
+          <tr class="us"><td><span class="name">STOIKOS</span><span class="sub">planlanan · yayında değil</span></td><td>—</td><td>—</td><td>6</td>
+            <td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c p" title="Kavram anlatımı var, rehberli meditasyon yok">◐</td><td class="c y" title="10 program × 7 gün, her ay yenisi">✓</td><td class="c y">✓</td><td class="c p" title="Tasarlandı, ilk TestFlight sonrası">◐</td><td class="c y">✓</td>
+            <td>$6,99/ay · $49,99/yıl<span class="sub">14 gün deneme</span></td></tr>
+          <tr><td><span class="name">stoic.</span><span class="sub">Stoic app inc. · 2017</span></td><td class="stars">4,8 · 36.304</td><td>4,8 · 1.105</td><td>8</td>
+            <td class="c n">—</td><td class="c y" title="Ayrı AI paketi">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c p" title="Uyku vb. dersler">◐</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td>
+            <td>Premium $6,99–39,99 · AI $12,99–99,99<span class="sub">Ömür boyu $299</span></td></tr>
+          <tr><td><span class="name">Daily Stoic Philosophy: Stoa</span><span class="sub">Zeno Apps · 2019</span></td><td class="stars">4,8 · 1.003</td><td>4,5 · 11</td><td>1</td>
+            <td class="c n">—</td><td class="c n" title="Uzmanlarla kayıtlı söyleşiler, yapay zekâ değil">—</td><td class="c n">—</td><td class="c y">✓</td><td class="c y" title="Giriş kursu">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c y">✓</td>
+            <td>$3,99/hf · $9,99–13,99/ay · $39,99–79,99/yıl</td></tr>
+          <tr><td><span class="name">Stoicism – Praxis</span><span class="sub">Gareth Harte · 2024</span></td><td class="stars">4,9 · 107</td><td>listede yok</td><td>2</td>
+            <td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">—</td>
+            <td>$2,99–6,99/hf · $12,99/ay · $39,99/yıl</td></tr>
+          <tr><td><span class="name">StoicMentor</span><span class="sub">StoicMentor LLC · 2024</span></td><td class="stars">4,8 · 102</td><td>listede yok</td><td>1</td>
+            <td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c p" title="Günlük kısa ders">◐</td><td class="c p" title="Yansıma">◐</td><td class="c n">—</td><td class="c n">—</td>
+            <td>Pro $3,99 · Pro+AI $9,99<span class="sub">Son güncelleme Temmuz 2025</span></td></tr>
+          <tr><td><span class="name">Stoiq</span><span class="sub">Juste Apps · 2024</span></td><td class="stars">4,7 · 71</td><td>5,0 · 1</td><td>32</td>
+            <td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td>
+            <td>$6,99/ay · $19,99/yıl · $59,99 ömür</td></tr>
+          <tr><td><span class="name">Stoic App</span><span class="sub">Luke Bresler · 2019</span></td><td class="stars">4,8 · 59</td><td>4,7 · 3</td><td>1</td>
+            <td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c p" title="Olumsuz görselleştirme">◐</td><td class="c y" title="3 günlük kurs">✓</td><td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td>
+            <td>$2,99/ay · $29,99/yıl · $59,99 ömür</td></tr>
+          <tr><td><span class="name">Daily Stoic: Quotes &amp; Widgets</span><span class="sub">Philosophia · 2025</span></td><td class="stars">5,0 · 4</td><td>—</td><td>1</td>
+            <td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c y">✓</td><td class="c n">—</td>
+            <td>$3,99/hf · $3,99/ay · $19,99–29,99/yıl</td></tr>
+          <tr><td><span class="name">Daily Stoic: Stoicism</span><span class="sub">Jeff Cedilla · 2026</span></td><td class="stars">5,0 · 3</td><td>—</td><td>5</td>
+            <td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td>
+            <td>$1,99/hf · $39,99/yıl</td></tr>
+          <tr><td><span class="name">Stoa: Chat with Stoic masters</span><span class="sub">Les Nants · 2025</span></td><td class="stars">1,0 · 2</td><td>—</td><td>1</td>
+            <td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c y" title="Öğrenme yolu">✓</td><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td>
+            <td>$7,99/hf · $9,99–14,99/ay · $39,99–49,99/yıl</td></tr>
+          <tr><td><span class="name">Stoic Journal AI</span><span class="sub">Verselingo · 2026</span></td><td class="stars">5,0 · 1</td><td>—</td><td>11</td>
+            <td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c y">✓</td><td class="c n">—</td><td class="c n">—</td>
+            <td>$6,99/ay · $39,99/yıl</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="price" aria-label="Yıllık fiyat">
+    <h2>Yıllık plan fiyatları</h2>
+    <div class="bar" id="bar"></div>
+    <div class="axis"><span>$0</span><span>$40</span><span>$80</span></div>
+  </section>
+
+  <section class="notes">
+    <p>Kaynak: Apple'ın açık uygulama verisi (puan, değerlendirme sayısı, diller, güncelleme tarihi) ve her uygulamanın App Store sayfası (uygulama içi satın alma fiyatları). "Türkiye" sütunu Türkiye mağazasındaki puan ve değerlendirme sayısı.</p>
+    <p>Bir uygulama birden çok fiyat gösteriyorsa (deneme, indirimli eski plan) hepsi aralık olarak yazıldı. Özellikler mağaza açıklamasından; açıklamada geçmeyen bir özellik uygulamada yine de olabilir.</p>
+    <p>Listede olmayanlar: Stoica (2 değerlendirme, Aralık 2024'ten beri güncellenmedi), Stoic Mindset (değerlendirme yok), Stoic Bible, Stoic Space, The Stoic Year ve küçük söz uygulamaları.</p>
+  </section>
+</div>
+
+<script>
+// Yıllık plan fiyatları; bir uygulamanın birden çok fiyatı varsa en düşüğü (yeni kullanıcının göreceği) alındı.
+const P=[['STOIKOS',49.99,1],['stoic.',39.99],['Stoa',39.99],['Praxis',39.99],['Stoiq',19.99],['Stoic App',29.99],['Philosophia',19.99],['Daily Stoic',39.99],['Stoa Chat',39.99],['Journal AI',39.99]];
+const bar=document.getElementById('bar'), seen={};
+P.forEach(([n,v,us])=>{const k=v;seen[k]=(seen[k]||0)+1;
+  const t=document.createElement('div');t.className='tick'+(us?' us':'');t.style.left=(v/80*100)+'%';
+  t.innerHTML='<span>'+(us||seen[k]===1?'$'+v.toFixed(2).replace('.',','):'')+'</span><i></i>';
+  t.title=n+': $'+v;if(!us&&seen[k]>1)t.style.bottom=(seen[k]-1)*0+'px';bar.appendChild(t);});
+const c={};P.forEach(([n,v])=>c[v]=(c[v]||[]).concat(n));
+Object.entries(c).forEach(([v,ns])=>{if(ns.length>1){const l=document.createElement('div');l.className='tick';l.style.left=(v/80*100)+'%';l.style.bottom='30px';l.textContent=ns.length+' uygulama';bar.appendChild(l);}});
+</script>
