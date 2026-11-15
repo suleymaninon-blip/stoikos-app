@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet } from 'react-native';
-import Svg, { Circle, Defs, Ellipse, G, Path, RadialGradient, Stop } from 'react-native-svg';
+import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet, Image } from 'react-native';
+import Svg, { Circle, Defs, Ellipse, RadialGradient, Stop } from 'react-native-svg';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
@@ -35,69 +35,35 @@ function mixHex(a: string, b: string, k: number): string {
   return `#${ch(16)}${ch(8)}${ch(0)}`;
 }
 
-/** Tohumlu sözde rastgele: her taş her açılışta aynı biçimde çizilsin. */
-function seeded(seed: number) {
-  let s = seed * 97 + 13;
-  return () => (s = (s * 16807) % 2147483647) / 2147483647;
-}
-
-/** Neredeyse yuvarlak cam disk biçimi: 10 noktadan geçen yumuşak kapalı eğri (merkez 0,0). */
-function pebblePath(r: number, rnd: () => number): string {
-  const n = 10;
-  const pts = Array.from({ length: n }, (_, i) => {
-    const a = (i / n) * Math.PI * 2, rr = r * (1 + (rnd() - 0.5) * 0.05);   // neredeyse daire; elde dökülmüş cam gibi çok hafif
-    return [Math.cos(a) * rr, Math.sin(a) * rr];
-  });
-  const mid = (p: number[], q: number[]) => `${((p[0] + q[0]) / 2).toFixed(1)},${((p[1] + q[1]) / 2).toFixed(1)}`;
-  let d = `M${mid(pts[0], pts[n - 1])}`;
-  for (let i = 0; i < n; i++) d += ` Q${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)} ${mid(pts[i], pts[(i + 1) % n])}`;
-  return d + 'Z';
-}
+/** Duygu başına buzlu cam disk görseli (Gemini'nin ürettiği 3x3 görselden kesildi; scripts/brand/cut-mood-discs.py). */
+const DISCS: Record<string, any> = {
+  kaygi: require('../assets/mood/kaygi.webp'), ofke: require('../assets/mood/ofke.webp'), yas: require('../assets/mood/yas.webp'),
+  kabul: require('../assets/mood/kabul.webp'), kontrol: require('../assets/mood/kontrol.webp'), 'ic-huzur': require('../assets/mood/ic-huzur.webp'),
+  cesaret: require('../assets/mood/cesaret.webp'), sukran: require('../assets/mood/sukran.webp'), sadelik: require('../assets/mood/sadelik.webp'),
+};
 
 /**
- * Tek taş — buzlu deniz camı disk (15 Kasım 2026). Önce düzensiz çakıl + kabarcık + parlama denendi (seçenek A);
- * kullanıcı gerçek buzlu cam disk fotoğrafı gönderdi: "gerçek bir cam gibi aynı boyda, yazı da üstüne kazınmış gibi".
- * Şimdi: hepsi aynı boyda, neredeyse yuvarlak; mat (parlama yok), yüzeyde ince kumlama dokusu, kenarı ortasından
- * biraz açık (ışık camın kenarından geçer); altında camın kendi renginde, ışığın içinden geçtiği yumuşak gölge.
- * Yazı `petalText` + oyma gölgesi ile (aşağıda). Yalnız react-native-svg öğeleri.
+ * Tek taş — buzlu deniz camı disk (15 Kasım 2026). Kodla çizilen camlar kullanıcının istediği gibi olmadı;
+ * kullanıcının gönderdiği buzlu cam fotoğraflarıyla Gemini'ye dokuz disk ürettirildi (yazısız, beyaz zemin, 3x3),
+ * diskler kesilip `assets/mood/` altına kondu. Gölge görselde değil, burada çizilir: camın kendi renginde, ışığın
+ * camdan geçip zemine düşürdüğü yumuşak gölge (açık ve koyu temada doğru dursun diye). Yazı kodla, oyma gibi (`petalText`).
  */
-function Petal({ id, seed, color, S, D, dark }: { id: string; seed: number; color: string; S: number; D: number; dark: boolean }) {
+function Petal({ id, mood, color, S, D, dark }: { id: string; mood: string; color: string; S: number; D: number; dark: boolean }) {
   const r = D / 2, c = S / 2;
-  const rnd = seeded(seed);
-  const d = pebblePath(r, rnd);
-  const body = mixHex(color, '#ffffff', 0.3), center = mixHex(color, '#ffffff', 0.14), rim = mixHex(color, '#ffffff', 0.58);
-  const grain = Array.from({ length: 70 }, () => {
-    const a = rnd() * Math.PI * 2, q = Math.sqrt(rnd()) * r * 0.94;
-    const w = rnd() > 0.35;
-    return { x: Math.cos(a) * q, y: Math.sin(a) * q, w, o: w ? 0.08 + rnd() * 0.12 : 0.03 + rnd() * 0.04 };
-  });
   return (
-    <Svg width={S} height={S} style={StyleSheet.absoluteFill} pointerEvents="none">
-      <Defs>
-        <RadialGradient id={`${id}s`} cx="50%" cy="50%" r="50%">
-          <Stop offset="0" stopColor={color} stopOpacity={dark ? 0.45 : 0.38} />
-          <Stop offset="0.7" stopColor={color} stopOpacity={dark ? 0.16 : 0.12} />
-          <Stop offset="1" stopColor={color} stopOpacity="0" />
-        </RadialGradient>
-        <RadialGradient id={`${id}f`} cx="48%" cy="46%" r="54%">
-          <Stop offset="0" stopColor={center} />
-          <Stop offset="0.72" stopColor={body} />
-          <Stop offset="1" stopColor={rim} />
-        </RadialGradient>
-        <RadialGradient id={`${id}l`} cx="32%" cy="26%" r="60%">
-          <Stop offset="0" stopColor="#ffffff" stopOpacity="0.22" />
-          <Stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-        </RadialGradient>
-      </Defs>
-      {/* ışığın camdan geçip kâğıda düşürdüğü renkli gölge */}
-      <Ellipse cx={c + r * 0.14} cy={c + r * 0.2} rx={r * 1.02} ry={r * 0.95} fill={`url(#${id}s)`} />
-      <G transform={`translate(${c} ${c})`}>
-        <Path d={d} fill={`url(#${id}f)`} opacity={0.96} />
-        <Path d={d} fill={`url(#${id}l)`} />
-        {grain.map((g, i) => <Circle key={i} cx={g.x} cy={g.y} r={0.6} fill={g.w ? '#ffffff' : '#000000'} opacity={g.o} />)}
-        <Path d={d} fill="none" stroke="#ffffff" strokeOpacity={0.28} strokeWidth={1} />
-      </G>
-    </Svg>
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      <Svg width={S} height={S} style={StyleSheet.absoluteFill}>
+        <Defs>
+          <RadialGradient id={`${id}s`} cx="50%" cy="50%" r="50%">
+            <Stop offset="0" stopColor={color} stopOpacity={dark ? 0.45 : 0.36} />
+            <Stop offset="0.7" stopColor={color} stopOpacity={dark ? 0.16 : 0.12} />
+            <Stop offset="1" stopColor={color} stopOpacity="0" />
+          </RadialGradient>
+        </Defs>
+        <Ellipse cx={c + r * 0.12} cy={c + r * 0.2} rx={r * 1.02} ry={r * 0.95} fill={`url(#${id}s)`} />
+      </Svg>
+      {DISCS[mood] && <Image source={DISCS[mood]} style={{ position: 'absolute', left: c - r, top: c - r, width: D, height: D }} resizeMode="contain" />}
+    </View>
   );
 }
 
@@ -192,7 +158,7 @@ export function MoodBloom({
             const lo = i * 0.035, hi = Math.min(1, 0.66 + i * 0.035);
             const k = bloom.interpolate({ inputRange: [lo, hi], outputRange: [0, 1], extrapolate: 'clamp' });
             const c = colorOf(m);
-            const ink = mixHex(c, '#14161c', 0.5);    // oyma: camın koyu tonu; altındaki açık çizgi kesiğin kenarı
+            const ink = mixHex(c, '#14161c', 0.42);   // oyma: camın koyu tonu; altındaki açık çizgi kesiğin kenarı
             const on = selected === m;
             const label = t(`mood.${m}`);
             return (
@@ -210,7 +176,7 @@ export function MoodBloom({
                 }}
               >
                 {/* Hale yaprağın dışına taşar; dokunma alanı yalnız yaprağın kendisi olmalı, yoksa komşunun halesi dokunuşu yutar. */}
-                <Petal id={`mb${i}`} seed={i + 1} color={c} S={S} D={D} dark={Colors.isDark} />
+                <Petal id={`mb${i}`} mood={m} color={c} S={S} D={D} dark={Colors.isDark} />
                 <Pressable
                   onPress={() => { onPick(m); close(); }}
                   style={({ pressed }) => [styles.petal, { left: (S - D) / 2, top: (S - D) / 2, width: D, height: D, borderRadius: D / 2 }, pressed && styles.petalPressed]}
