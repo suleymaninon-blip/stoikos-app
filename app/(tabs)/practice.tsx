@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
+import { reportPulse } from '../../constants/stoa';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Fonts } from '../../constants/theme';
@@ -238,7 +239,7 @@ export default function PracticeScreen() {
 
   async function setExerciseDone(id: string, done: boolean) {
     const next = new Set(completed);
-    if (done) next.add(id);
+    if (done) { next.add(id); reportPulse('practice'); }
     else next.delete(id);
     setCompleted(next);
     await AsyncStorage.setItem(COMPLETED_KEY + today, JSON.stringify([...next]));
@@ -289,6 +290,7 @@ export default function PracticeScreen() {
     const txt = journal.trim();
     if (!txt) return;
     await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
+    reportPulse('journal');
     setJournalSaved(true);
     thisMonthStats(lang, localeOf(lang)).then(setSavedStats).catch(() => setSavedStats({ days: 1, words: 0, top: [] }));
     // Yalnız kullanıcı açık rıza verdiyse koç hafızasına işlenir (KVKK).

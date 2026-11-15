@@ -1,5 +1,6 @@
 import type { Lang } from './i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { reportPulse } from './stoa';
 
 type L = Partial<Record<Lang, string>>;
 const pick = (l: L, lang: Lang): string => l[lang] ?? l.en ?? l.tr ?? '';
@@ -744,7 +745,7 @@ export async function getProgress(id: string): Promise<number[]> {
 
 export async function setDayDone(id: string, day: number, done: boolean): Promise<number[]> {
   const cur = new Set(await getProgress(id));
-  if (done) cur.add(day);
+  if (done) { cur.add(day); reportPulse('program'); }
   else cur.delete(day);
   const arr = [...cur].sort((a, b) => a - b);
   await AsyncStorage.setItem(KEY(id), JSON.stringify(arr));

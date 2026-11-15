@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform, Share } from 'react-native';
+import { reportPulse } from './stoa';
 
 /**
  * Günlük yansıma deposu — tek yetki kaynağı.
@@ -22,6 +23,7 @@ export const journalKeyFor = (d: Date = new Date()): string => JOURNAL_KEY + d.t
  * metni sessizce silerdi.
  */
 export async function appendToJournalToday(text: string): Promise<void> {
+  if (text.trim()) reportPulse('journal');
   const body = text.trim();
   if (!body) return;
   const key = journalKeyFor();

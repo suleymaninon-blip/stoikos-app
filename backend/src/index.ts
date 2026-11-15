@@ -288,6 +288,32 @@ async function togetherCounts(env: Env, day: string | null, prev: string | null)
   return { now: nowRow?.c ?? 0, today: await dayN(day), yesterday: await dayN(prev) };
 }
 
+
+// ─── Stoa'nın nabzı (15 Kasım 2026) ───────────────────────
+// Topluluk 1. aşama: üyelik numarası, günün nabzı, sözlerde kalp sayısı.
+// Hepsi yalnız TOPLAM: kimlik, IP, ülke kişiye bağlanmaz. Ülke Cloudflare'in istek
+// başlığından (`CF-IPCountry`) gelir ve yalnız o günün ülke sayacına eklenir.
+let stoaReady = false;
+async function ensureStoa(env: Env): Promise<void> {
+  if (stoaReady) return;
+  await env.DB.batch([
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS stoa_members (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS stoa_day (day TEXT NOT NULL, kind TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (day, kind))'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS stoa_country (day TEXT NOT NULL, cc TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (day, cc))'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS quote_hearts (quote_id TEXT PRIMARY KEY, n INTEGER NOT NULL)'),
+    env.DB.prepare('CREATE TABLE IF NOT EXISTS quote_hearts_week (week TEXT NOT NULL, quote_id TEXT NOT NULL, n INTEGER NOT NULL, PRIMARY KEY (week, quote_id))'),
+  ]);
+  stoaReady = true;
+}
+const PULSE_KINDS = new Set(['active', 'breath', 'program', 'journal', 'practice']);
+const QUOTE_ID_RE = /^[a-z0-9_-]{1,24}$/i;
+/** Pazartesi başlayan haftanın ilk günü (UTC), YYYY-MM-DD. */
+function weekKey(d = new Date()): string {
+  const day = (d.getUTCDay() + 6) % 7;
+  const m = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() - day));
+  return m.toISOString().slice(0, 10);
+}
+
 async function callClaude(env: Env, body: object): Promise<any> {
   const res = await fetch(API, {
     method: 'POST',
@@ -353,6 +379,69 @@ export default {
     const url = new URL(req.url);
     const path = url.pathname;
 
+
+
+    // ════════ STOA'NIN NABZI ════════
+    // Üyelik numarası: cihaz bir kez ister, numarayı kendisi saklar.
+    if (req.method === 'POST' && path === '/stoa/member') {
+      await ensureStoa(env);
+      const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+      if (await hitLimit(env, `st:m:${ip}`, 5, 3600)) return json({ error: 'rate_limited' }, 429);
+      const r = await env.DB.prepare('INSERT INTO stoa_members (created_at) VALUES (?) RETURNING id').bind(Date.now()).first<{ id: number }>();
+      return json({ no: r?.id ?? null });
+    }
+    // Olay: { day, kinds: ['active','breath',...] } — cihaz her türü günde bir kez gönderir.
+    if (req.method === 'POST' && path === '/stoa/event') {
+      const { day, kinds } = await req.json<any>().catch(() => ({}));
+      const list: string[] = Array.isArray(kinds) ? [...new Set(kinds.filter((k: any) => PULSE_KINDS.has(k)))] as string[] : [];
+      if (!validDay(day) || !list.length) return json({ error: 'bad_request' }, 400);
+      await ensureStoa(env);
+      const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+      if (await hitLimit(env, `st:e:${ip}`, 30, 3600)) return json({ ok: true });
+      const stmts = list.map((k) => env.DB.prepare('INSERT INTO stoa_day (day,kind,n) VALUES (?,?,1) ON CONFLICT(day,kind) DO UPDATE SET n=n+1').bind(day, k));
+      const cc = (req.headers.get('CF-IPCountry') || '').toUpperCase();
+      if (list.includes('active') && /^[A-Z]{2}$/.test(cc) && cc !== 'XX' && cc !== 'T1') {
+        stmts.push(env.DB.prepare('INSERT INTO stoa_country (day,cc,n) VALUES (?,?,1) ON CONFLICT(day,cc) DO UPDATE SET n=n+1').bind(day, cc));
+      }
+      await env.DB.batch(stmts);
+      return json({ ok: true });
+    }
+    if (req.method === 'GET' && path === '/stoa/pulse') {
+      const day = url.searchParams.get('day');
+      if (!validDay(day)) return json({ error: 'bad_request' }, 400);
+      await ensureStoa(env);
+      const rows = await env.DB.prepare('SELECT kind, n FROM stoa_day WHERE day=?').bind(day).all<{ kind: string; n: number }>();
+      const by: Record<string, number> = {};
+      for (const r of rows.results ?? []) by[r.kind] = r.n;
+      const cs = await env.DB.prepare('SELECT cc FROM stoa_country WHERE day=? ORDER BY n DESC').bind(day).all<{ cc: string }>();
+      const ccs = (cs.results ?? []).map((r) => r.cc);
+      return json({ active: by.active ?? 0, breath: by.breath ?? 0, program: by.program ?? 0, journal: by.journal ?? 0, countries: ccs.length, top: ccs.slice(0, 40) });
+    }
+    // Kalp: { quoteId, on } — +1 / −1 (sıfırın altına inmez); haftalık sayaç da.
+    if (req.method === 'POST' && path === '/stoa/heart') {
+      const { quoteId, on } = await req.json<any>().catch(() => ({}));
+      if (typeof quoteId !== 'string' || !QUOTE_ID_RE.test(quoteId)) return json({ error: 'bad_request' }, 400);
+      await ensureStoa(env);
+      const ip = req.headers.get('CF-Connecting-IP') || 'unknown';
+      if (await hitLimit(env, `st:h:${ip}`, 60, 3600)) return json({ ok: true });
+      const wk = weekKey();
+      await env.DB.batch(on ? [
+        env.DB.prepare('INSERT INTO quote_hearts (quote_id,n) VALUES (?,1) ON CONFLICT(quote_id) DO UPDATE SET n=n+1').bind(quoteId),
+        env.DB.prepare('INSERT INTO quote_hearts_week (week,quote_id,n) VALUES (?,?,1) ON CONFLICT(week,quote_id) DO UPDATE SET n=n+1').bind(wk, quoteId),
+      ] : [
+        env.DB.prepare('UPDATE quote_hearts SET n=n-1 WHERE quote_id=? AND n>0').bind(quoteId),
+        env.DB.prepare('UPDATE quote_hearts_week SET n=n-1 WHERE week=? AND quote_id=? AND n>0').bind(wk, quoteId),
+      ]);
+      return json({ ok: true });
+    }
+    if (req.method === 'GET' && path === '/stoa/hearts') {
+      await ensureStoa(env);
+      const all = await env.DB.prepare('SELECT quote_id, n FROM quote_hearts WHERE n>0').all<{ quote_id: string; n: number }>();
+      const counts: Record<string, number> = {};
+      for (const r of all.results ?? []) counts[r.quote_id] = r.n;
+      const top = await env.DB.prepare('SELECT quote_id, n FROM quote_hearts_week WHERE week=? ORDER BY n DESC LIMIT 1').bind(weekKey()).first<{ quote_id: string; n: number }>();
+      return json({ counts, weekTop: top ? { id: top.quote_id, n: top.n } : null });
+    }
 
     // ════════ BİRLİKTE NEFES ════════
     if (req.method === 'GET' && path === '/together') {

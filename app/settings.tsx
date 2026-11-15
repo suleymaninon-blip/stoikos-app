@@ -11,6 +11,7 @@ import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
 import { exportJournal } from '../constants/journal';
+import { getMemberNo, isFounder } from '../constants/stoa';
 import { isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders, REMINDERS_SUPPORTED, getReminderTimes, setReminderTime, formatTime, TIME_RANGE, TIME_STEP, ReminderKind, isTogetherReminderOn, setTogetherReminder } from '../constants/notify';
 import { resetMemory, ADMIN_KEY_STORAGE } from '../constants/api';
 import { APP_INFO, FEATURES } from '../constants/config';
@@ -32,6 +33,8 @@ export default function SettingsScreen() {
   const { t, lang, setLang } = useLang();
   const [notifyOn, setNotifyOn] = useState(false);
   const [togetherOn, setTogetherOn] = useState(false);
+  const [memberNo, setMemberNo] = useState<number | null>(null);
+  useEffect(() => { getMemberNo().then(setMemberNo); }, []);
   useEffect(() => { if (REMINDERS_SUPPORTED) isTogetherReminderOn().then(setTogetherOn).catch(() => {}); }, []);
   const [healthOn, setHealthOn] = useState(false);
   const [adminKey, setAdminKey] = useState('');
@@ -386,6 +389,13 @@ export default function SettingsScreen() {
         </TouchableOpacity>
         {open === 'about' && (
           <View style={styles.accBody}>
+        {/* Stoa üyeliği (15 Kasım 2026): numara ilk açılışta sunucudan bir kez alınır */}
+        {memberNo != null && (
+          <View style={styles.memberCard}>
+            <Text style={styles.memberLabel}>{t('stoa.memberRow')}</Text>
+            <Text style={styles.memberNo}>{`${t('stoa.memberNo')} ${memberNo.toLocaleString(localeOf(lang))}`}{isFounder(memberNo) ? ` · ${t('stoa.founder')}` : ''}</Text>
+          </View>
+        )}
         <View style={styles.aboutCard}>
           {[
             { icon: 'share', label: t('about.share'), onPress: shareApp },
@@ -520,6 +530,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   aboutIconBox: { width: 22, alignItems: 'center' },
   aboutLabel: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2 },
   aboutArrow: { fontFamily: Fonts.jostLight, fontSize: 20, color: Colors.muted },
+  memberCard: { backgroundColor: Colors.tint(0.08), borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12, marginBottom: 12 },
+  memberLabel: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
+  memberNo: { fontFamily: Fonts.cormorant, fontSize: 21, color: Colors.text, marginTop: 2 },
   versionText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 12 },
 
   // Yönetici

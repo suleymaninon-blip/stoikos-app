@@ -11,23 +11,25 @@ import { useTheme, useStyles, type Palette } from '../../constants/themeContext'
 import { HeartIcon, ShareArrowIcon } from '../../components/Icons';
 import { FirstTip } from '../../components/FirstTip';
 import { useLocalSearchParams } from 'expo-router';
-import { useLang, Lang } from '../../constants/i18n';
+import { useLang, Lang, upper, localeOf } from '../../constants/i18n';
 import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD_THEMES, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
+import { fetchHearts, HEART_MIN, type Hearts } from '../../constants/stoa';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
 import { ConceptModal, TEXT_GLYPH } from '../../components/ConceptModal';
 
 
 // ─── QuoteCard ─────────────────────────────────────────────
-function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
+function QuoteItem({ quote, onShare, isFav, onFav, onAuthor, hearts, weekTop }: {
   quote: Quote; onShare: (q: Quote) => void;
+  hearts?: number; weekTop?: boolean;   // Stoa'nın nabzı: toplam kalp (HEART_MIN altında gösterilmez)
   isFav: boolean; onFav: (id: string) => void;
   onAuthor?: (authorId: string) => void; // filozof kartı varsa dokunulabilir
 }) {
   const styles = useStyles(makeStyles);
   const { C: Colors } = useTheme();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const favAddLabel = t('a11y.favAdd'), favRemoveLabel = t('a11y.favRemove'), shareLabel = t('a11y.share');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(10)).current;
@@ -39,7 +41,8 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
   }, []);
 
   return (
-    <Animated.View style={[styles.quoteCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+    <Animated.View style={[styles.quoteCard, weekTop && styles.weekCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+      {weekTop && <Text style={styles.weekLabel}>{upper(t('stoa.weekTop'), lang)}</Text>}
       <Text style={styles.quoteMark}>“</Text>
       <Text style={styles.quoteText}>{quote.text}</Text>
       <View style={styles.quoteMeta}>
@@ -63,6 +66,11 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor }: {
           <ShareArrowIcon size={19} color={Colors.sand2} />
         </TouchableOpacity>
       </View>
+      {hearts !== undefined && hearts >= HEART_MIN && (
+        <Text style={styles.savedLine}>
+          {isFav ? t('stoa.savedYou', { n: (hearts - 1).toLocaleString(localeOf(lang)) }) : t('stoa.savedBy', { n: hearts.toLocaleString(localeOf(lang)) })}
+        </Text>
+      )}
     </Animated.View>
   );
 }
@@ -262,6 +270,8 @@ export default function WisdomScreen() {
   const [selectedPhilo, setSelectedPhilo] = useState<Philosopher | null>(null);
   const [shareQuote, setShareQuote] = useState<Quote | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [hearts, setHearts] = useState<Hearts | null>(null);
+  useEffect(() => { fetchHearts().then(setHearts); }, []);
 
   const quotes = getQuotes(lang);
   const concepts = getConcepts(lang);
@@ -285,6 +295,7 @@ export default function WisdomScreen() {
 
   async function onFav(id: string) {
     setFavorites(await toggleFavorite(id));
+    fetchHearts().then(setHearts);   // önbellek toggle'da güncellendi
   }
 
   // Tekerlek seçenekleri (referans kararlılığı için memoize) — WheelSelector bunu bekler.
@@ -349,6 +360,7 @@ export default function WisdomScreen() {
     filter === 'fav' ? quotes.filter((q) => favorites.includes(q.id)) :
     filter.startsWith('mood:') ? quotes.filter((q) => q.theme === filter.slice(5)) :
     quotes.filter((q) => q.authorId === filter);
+  const weekQuote = hearts?.weekTop && hearts.weekTop.n >= HEART_MIN ? quotes.find((q) => q.id === hearts.weekTop!.id) ?? null : null;
 
   return (
     <SafeAreaView ref={rootRef} style={styles.container}>
@@ -442,8 +454,16 @@ export default function WisdomScreen() {
             onScroll={onListScroll}
             scrollEventThrottle={16}
             // Seçili filtrede gösterilen alıntı sayısı — listeyle birlikte kayar
-            ListHeaderComponent={<Text style={styles.wheelCount}>{filteredQuotes.length} {t('wisdom.countLabel')}</Text>}
-            renderItem={({ item }) => <QuoteItem quote={item} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} onAuthor={PHILOSOPHER_IDS.has(item.authorId) ? openPhilosopher : undefined} />}
+            ListHeaderComponent={
+              <View>
+                <Text style={styles.wheelCount}>{filteredQuotes.length} {t('wisdom.countLabel')}</Text>
+                {/* Haftanın en sevilen sözü: yalnız "Tümü"nde ve yeterince kalp varsa */}
+                {filter === 'all' && weekQuote && (
+                  <QuoteItem quote={weekQuote} weekTop hearts={hearts?.counts[weekQuote.id]} onShare={setShareQuote} isFav={favorites.includes(weekQuote.id)} onFav={onFav} onAuthor={PHILOSOPHER_IDS.has(weekQuote.authorId) ? openPhilosopher : undefined} />
+                )}
+              </View>
+            }
+            renderItem={({ item }) => <QuoteItem quote={item} hearts={hearts?.counts[item.id]} onShare={setShareQuote} isFav={favorites.includes(item.id)} onFav={onFav} onAuthor={PHILOSOPHER_IDS.has(item.authorId) ? openPhilosopher : undefined} />}
             contentContainerStyle={filteredQuotes.length ? styles.listContent : styles.listEmpty}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
@@ -542,6 +562,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   },
   moodItem: { height: 48, alignItems: 'center', justifyContent: 'center' },
   moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 16, letterSpacing: 0.5, color: Colors.sand2 },
+  weekCard: { borderWidth: 1.5, borderColor: Colors.sand },
+  weekLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.4, color: Colors.sand, marginBottom: 2 },
+  savedLine: { fontFamily: Fonts.jost, fontSize: 12.5, color: Colors.muted, marginTop: 8 },
   wheelCount: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 2, marginBottom: 10 },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },

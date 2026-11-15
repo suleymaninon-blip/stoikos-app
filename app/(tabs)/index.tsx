@@ -25,6 +25,7 @@ import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
 import { FirstTip } from '../../components/FirstTip';
 import { TogetherCard, TogetherModal } from '../../components/TogetherBreath';
+import { PulseRow, MemberWelcome } from '../../components/StoaPulse';
 import { inCardWindow, localDay } from '../../constants/together';
 
 const COMPLETED_KEY = 'stoikos_completed_';
@@ -168,6 +169,7 @@ export default function HomeScreen() {
 
   // Birlikte nefes (15 Kasım 2026): kart 20:45–21:15 arası; "Bu akşam değil" o günlük gizler.
   // Bildirime dokununca `/?together=1` ile pencere doğrudan açılır.
+  const [pulseKey, setPulseKey] = useState(0);
   const [togetherOpen, setTogetherOpen] = useState(false);
   const [togetherCard, setTogetherCard] = useState(false);
   const params = useLocalSearchParams<{ together?: string }>();
@@ -192,6 +194,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       refresh();
+      setPulseKey((k) => k + 1);
       AsyncStorage.getItem(COMPLETED_KEY + new Date().toDateString()).then((raw) => {
         const done: string[] = raw ? JSON.parse(raw) : [];
         setPracticeDone(done.filter((id) => ALL_EXERCISE_IDS.includes(id)).length);
@@ -257,6 +260,9 @@ export default function HomeScreen() {
               <Text style={styles.gearIcon}>⚙</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Stoa'nın nabzı: bugün kaç kişi, kaç ülkeden (sayı küçükse gizli) */}
+          <PulseRow refreshKey={pulseKey} />
 
           {/* Nefes çiçeği — bir dokunuşla başlar, bir dokunuşla biter (yeni ekran açmaz) */}
           <View ref={orbRef} collapsable={false}>
@@ -335,6 +341,7 @@ export default function HomeScreen() {
 
         </Animated.View>
       </ScrollView>
+      <MemberWelcome />
       <TogetherModal visible={togetherOpen} onClose={() => setTogetherOpen(false)} onComplete={refresh} />
       <FirstTip id="home" text={t('tip.home')} target={orbRef} container={rootRef} />
     </SafeAreaView>
