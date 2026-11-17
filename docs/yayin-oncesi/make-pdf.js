@@ -1,6 +1,6 @@
 // Yayın öncesi eksikler listesi → PDF (A4, yazdırmalık).
 // Fontlar uygulamanın kendi dosyalarından; ağ gerekmiyor.
-const { chromium } = require('/opt/node22/lib/node_modules/playwright');
+const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
 
@@ -13,14 +13,14 @@ const FOOT = footArg || 'Stoikos — Yayın öncesi eksikler';
 
 (async () => {
   const browser = await chromium.launch({
-    executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+    ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {}),
     args: ['--no-sandbox', '--allow-file-access-from-files'],
   });
   const page = await (await browser.newContext()).newPage();
   await page.goto(SRC, { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);
   await page.pdf({
-    path: OUT, format: 'A4', printBackground: true,
+    path: OUT, format: 'A4', printBackground: true, scale: Number(process.env.PDF_SCALE || 1),
     margin: { top: '16mm', bottom: '15mm', left: '16mm', right: '16mm' },
     displayHeaderFooter: true, headerTemplate: '<div></div>',
     footerTemplate: '<div style="width:100%;font-family:sans-serif;font-size:7pt;color:#a09884;padding:0 16mm;display:flex;justify-content:space-between;"><span>' + FOOT + '</span><span><span class="pageNumber"></span>/<span class="totalPages"></span></span></div>',
