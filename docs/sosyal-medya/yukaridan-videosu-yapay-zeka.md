@@ -22,6 +22,8 @@
 
 - **Çekim 3** (`cekim-3.mp4`, 10 sn): 3A fotoğrafı (`cekim-3a-ilk-kare.jpg`, Gemini'de iki kez düzenlendi) + 3B komutuyla. **Tam tepeden düz yükseliş tuttu**, kadın kıpırdamıyor, kalabalık etrafından akıyor. Video ilk kareye birebir bağlı kalmadı ama sorun değil. Işık gündüz gibi aydınlık → kurguda koyulaştırıp maviye çek. Son kare aynı renk düzeltmesiyle `cekim-3-son-kare.png` (ffmpeg `eq=brightness=-0.07:gamma=0.9,colorbalance=…bs=0.07`) → 4. çekimin ilk karesi; böylece 4. çekim akşam ışığında başlar.
 
+- **Çekim 4** (`cekim-4.mp4`, 10 sn): tuttu. Tam tepeden yükseliş, köprü → akşam ışığında şehir ızgarası. Köprü ortadan sola kayıyor (sorun değil). Yükseliş ~6. sn'de yavaşlıyor → kurguda 0–6 sn, gerekirse hafif hızlandır. Son kare `cekim-4-son-kare.png` (renk düzeltmesi gerekmedi) → 5. çekim.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
