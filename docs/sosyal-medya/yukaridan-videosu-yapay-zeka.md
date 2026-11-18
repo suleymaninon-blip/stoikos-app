@@ -135,6 +135,8 @@ DO NOT SHOW: her face; any readable text, letters or numbers; signs, billboards,
 
 ### Çekim 3 — 2. sürüm (1. deneme tutmadı)
 
+**2. deneme (kullanıcının önceki üretimi):** kadın ilk ~4 sn kıpırdamadan duruyor, kalabalık etrafından akıyor (güzel); ama pantolon yerine etek/çıplak bacak, kamera yine ufka dönüyor, ışık gri-bulutlu gündüz, köprü farklı (askılı). Yedek olarak saklanıyor (ilk ~4 sn, renk düzeltmesiyle). Bu yüzden 3A/3B'ye "etek değil, pantolon" eklendi.
+
 **1. denemede olanlar (18 Kasım 2026):** kamera tam tepeden bakmadı, arkadan yükselip ufka döndü. Kadın da durmak yerine baştan sona yürüdü. Bu yüzden "kalabalığın ortasında kıpırdamayan bir nokta" görüntüsü oluşmadı.
 
 **Bu sürüm iki adımlı.** Önce Gemini'ye tepeden bir **fotoğraf** çizdiriyoruz; sonra o fotoğrafı ilk kare yapıp videoyu ürettiriyoruz. Gemini fotoğrafta açıyı çok daha iyi tutuyor, video da ilk kareye bağlı kalıyor.
@@ -146,13 +148,13 @@ Create a photorealistic still image, vertical 9:16.
 
 A perfectly top-down, 90-degree bird's-eye photograph looking straight down at the ground from about 4 meters above. The ground is the pale concrete walkway of a wide pedestrian footbridge with plain grey steel railings along both the left and the right edges of the frame. Blue hour just after sunset: soft, cool, even light; no hard shadows.
 
-In the exact center of the frame stands one woman, seen from directly above: the top of her head with dark brown hair tied in a low, loose bun; the shoulders of a knee-length charcoal-grey wool coat; a long sand-beige knit scarf wrapped once around the neck with both ends hanging down her back; the toes of black leather ankle boots just visible. She stands perfectly still, arms relaxed at her sides.
+In the exact center of the frame stands one woman, seen from directly above: the top of her head with dark brown hair tied in a low, loose bun; the shoulders of a knee-length charcoal-grey wool coat; a long sand-beige knit scarf wrapped once around the neck with both ends hanging down her back; dark grey trousers (she wears trousers, NOT a skirt or a dress, and her legs are not bare); the toes of black leather ankle boots just visible. She stands perfectly still, arms relaxed at her sides.
 
 Around her, about fifteen commuters in dark coats are walking past her on both sides in both directions, slightly motion-blurred, seen from directly above (tops of heads and shoulders).
 
 The sky, the horizon and any buildings are NOT visible — only the bridge walkway and its two railings fill the frame.
 
-Do not show: her face; any text, letters, numbers, signs or logos; road markings with words; the sky; the horizon; buildings; a drone or camera; a cartoon, painterly or CGI look.
+Do not show: her face; a skirt, a dress or bare legs; any text, letters, numbers, signs or logos; road markings with words; the sky; the horizon; buildings; a drone or camera; a cartoon, painterly or CGI look.
 ```
 
 **3B — Video** (yeni sohbet; **3A'daki fotoğrafı ilk kare olarak yükle**):
@@ -173,7 +175,7 @@ TIMELINE:
 
 SOUND: Soft wind and the distant, low hum of a city below. No music. No spoken words in any language, no voices.
 
-DO NOT SHOW: the woman walking, stepping or turning; the camera tilting up; the sky; the horizon; buildings; her face; any text, letters, numbers, signs, logos or road markings with words; any drone, helicopter or camera in the frame; cuts or scene changes within the shot; rain or snow; a cartoon, painterly or CGI look.
+DO NOT SHOW: the woman walking, stepping or turning; a skirt, a dress or bare legs (she wears dark grey trousers); the camera tilting up; the sky; the horizon; buildings; her face; any text, letters, numbers, signs, logos or road markings with words; any drone, helicopter or camera in the frame; cuts or scene changes within the shot; rain or snow; a cartoon, painterly or CGI look.
 ```
 
 Tutarsa 4. çekim bu videonun son karesiyle başlar (4. çekimin komutu değişmiyor).
