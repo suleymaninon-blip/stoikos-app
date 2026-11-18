@@ -57,11 +57,13 @@ Gruba iki abonelik ekle:
 | Referans adı | Stoikos Plus Yıllık | Stoikos Plus Aylık |
 | **Ürün kimliği** | **`com.stoikos.app.plus.annual`** | **`com.stoikos.app.plus.monthly`** |
 | Süre | 1 yıl | 1 ay |
-| Fiyat | **49,99 USD** (diğer ülkeler Apple'ın eşdeğeriyle otomatik) | **6,99 USD** |
+| Fiyat | **49,99 USD** (diğer ülkeler Apple'ın eşdeğeriyle otomatik, **Türkiye hariç** — aşağıya bak) | **6,99 USD** |
 | Grup içi sıra (Level) | 1 (üstte) | 2 |
 | Görünen ad TR / EN | Yıllık · Annual | Aylık · Monthly |
 | Açıklama TR | Koç, tüm programlar ve sesli anlatım — yıllık | Koç, tüm programlar ve sesli anlatım — aylık |
 | Açıklama EN | Coach, all programs and audio — yearly | Coach, all programs and audio — monthly |
+
+**Türkiye fiyatı — elle ayarla** (karar 18 Kasım 2026): Apple'ın otomatik çevirisi 49,99 USD'yi ~2.100 TL yapar, Türkiye için çok yüksek. Her iki üründe fiyat ekranında **Türkiye**'yi seç, eşdeğeri elle değiştir: yıllık **999–1.199 TL**, aylık **129–149 TL** aralığından Apple'ın sunduğu bir basamak (o gün Türkiye mağazasındaki rakip fiyatlarına bakıp kesinleştir). Uygulamadaki fiyat RevenueCat'ten yerel para birimiyle gelir; kodda iş yok.
 
 **Giriş teklifi (Introductory Offer)** — her iki üründe: **Ücretsiz deneme, 2 hafta**, tüm ülkeler.
 
