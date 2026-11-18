@@ -26,6 +26,8 @@
 
 - **Çekim 5** (`cekim-5.mp4`, 10 sn): tuttu. Şehir ızgarası → kamera ufka döner, kıyı ve deniz, gün batımı şeridi, altından bulutlar geçer. Son kare `cekim-5-son-kare.png` → 6. çekim.
 
+- **Çekim 6** (`cekim-6.mp4`, 10 sn): tuttu. Bulutların içinden geçiş → gün batımında bulut denizi → gökyüzü koyulaşır, yıldızlar belirir. Son kare `cekim-6-son-kare.png` → 7. çekim.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
