@@ -20,6 +20,8 @@
 - **Çekim 1** (`yukaridan-videosu/cekim-1.mp4`, 10 sn, 720×1280): kullanılabilir. İlk ~1,5 sn'de yüz yandan görünüyor → kurguda **4–10 sn** kullanılacak. Arka planda küçük mavi yol levhaları (okunmuyor), gerekirse bulanıklaştır.
 - **Çekim 2** (`cekim-2.mp4`, 10 sn): kullanılabilir, başlangıç 1. çekimin son karesine oturuyor. ~6–9 sn'de yan profil + nefes buharı görünüyor; **kullanıcı kararı (18 Kasım 2026): profil kalsın**, 0–9 sn kullanılacak. Bu yüzden diğer çekimlerden toplam ~2 sn kısılacak. Son kare `cekim-2-son-kare.png` → 10. çekimin ilk karesi.
 
+- **Çekim 3** (`cekim-3.mp4`, 10 sn): 3A fotoğrafı (`cekim-3a-ilk-kare.jpg`, Gemini'de iki kez düzenlendi) + 3B komutuyla. **Tam tepeden düz yükseliş tuttu**, kadın kıpırdamıyor, kalabalık etrafından akıyor. Video ilk kareye birebir bağlı kalmadı ama sorun değil. Işık gündüz gibi aydınlık → kurguda koyulaştırıp maviye çek. Son kare aynı renk düzeltmesiyle `cekim-3-son-kare.png` (ffmpeg `eq=brightness=-0.07:gamma=0.9,colorbalance=…bs=0.07`) → 4. çekimin ilk karesi; böylece 4. çekim akşam ışığında başlar.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
