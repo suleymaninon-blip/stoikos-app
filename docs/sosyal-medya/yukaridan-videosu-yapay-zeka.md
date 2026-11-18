@@ -15,12 +15,17 @@
 7. **Ses:** yalnız ortam sesi, konuşma yok. Müzik kurguda eklenecek.
 8. Bütün denemeleri bana gönder; kurguyu, yazıları, müziği ve logoyu ben yaparım (önceki videolardaki gibi bir `scripts/social/yukaridan-build.sh`).
 
+## Gelen çekimler ve kurgu notları
+
+- **Çekim 1** (`yukaridan-videosu/cekim-1.mp4`, 10 sn, 720×1280): kullanılabilir. İlk ~1,5 sn'de yüz yandan görünüyor → kurguda **4–10 sn** kullanılacak. Arka planda küçük mavi yol levhaları (okunmuyor), gerekirse bulanıklaştır.
+- **Çekim 2** (`cekim-2.mp4`, 10 sn): kullanılabilir, başlangıç 1. çekimin son karesine oturuyor. ~6–9 sn'de yan profil + nefes buharı görünüyor; **kullanıcı kararı (18 Kasım 2026): profil kalsın**, 0–9 sn kullanılacak. Bu yüzden diğer çekimlerden toplam ~2 sn kısılacak. Son kare `cekim-2-son-kare.png` → 10. çekimin ilk karesi.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
 |---|---|---|---|
 | 1 | Köprüde kalabalık, kadın durur | 6 sn | Her şey aynı anda. / *Everything, all at once.* |
-| 2 | Telefonu cebe koyar, nefes alır, zaman yavaşlar | 7 sn | Bir an dur. / *Stop for a moment.* |
+| 2 | Telefonu cebe koyar, nefes alır, zaman yavaşlar | 9 sn (0–9; yan profil + nefes buharı bilerek kaldı) | Bir an dur. / *Stop for a moment.* |
 | 3 | Tam tepeden yükseliş: kalabalık onun etrafından akar | 6 sn | — |
 | 4 | Köprü ince bir çizgi, şehir ışıktan bir ağ | 5 sn | Yukarı çık. / *Rise above it.* |
 | 5 | Bütün şehir ve kıyı, bulutlar altta | 5 sn | — |
