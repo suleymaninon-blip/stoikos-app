@@ -24,6 +24,8 @@
 
 - **Çekim 4** (`cekim-4.mp4`, 10 sn): tuttu. Tam tepeden yükseliş, köprü → akşam ışığında şehir ızgarası. Köprü ortadan sola kayıyor (sorun değil). Yükseliş ~6. sn'de yavaşlıyor → kurguda 0–6 sn, gerekirse hafif hızlandır. Son kare `cekim-4-son-kare.png` (renk düzeltmesi gerekmedi) → 5. çekim.
 
+- **Çekim 5** (`cekim-5.mp4`, 10 sn): tuttu. Şehir ızgarası → kamera ufka döner, kıyı ve deniz, gün batımı şeridi, altından bulutlar geçer. Son kare `cekim-5-son-kare.png` → 6. çekim.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
