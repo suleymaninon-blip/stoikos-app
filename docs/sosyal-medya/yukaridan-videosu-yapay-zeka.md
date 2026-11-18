@@ -133,6 +133,53 @@ DO NOT SHOW: her face; any readable text, letters or numbers; signs, billboards,
 
 ---
 
+### Çekim 3 — 2. sürüm (1. deneme tutmadı)
+
+**1. denemede olanlar (18 Kasım 2026):** kamera tam tepeden bakmadı, arkadan yükselip ufka döndü. Kadın da durmak yerine baştan sona yürüdü. Bu yüzden "kalabalığın ortasında kıpırdamayan bir nokta" görüntüsü oluşmadı.
+
+**Bu sürüm iki adımlı.** Önce Gemini'ye tepeden bir **fotoğraf** çizdiriyoruz; sonra o fotoğrafı ilk kare yapıp videoyu ürettiriyoruz. Gemini fotoğrafta açıyı çok daha iyi tutuyor, video da ilk kareye bağlı kalıyor.
+
+**3A — Fotoğraf** (yeni sohbet, görsel yükleme yok; video değil, **görsel** üret):
+
+```
+Create a photorealistic still image, vertical 9:16.
+
+A perfectly top-down, 90-degree bird's-eye photograph looking straight down at the ground from about 4 meters above. The ground is the pale concrete walkway of a wide pedestrian footbridge with plain grey steel railings along both the left and the right edges of the frame. Blue hour just after sunset: soft, cool, even light; no hard shadows.
+
+In the exact center of the frame stands one woman, seen from directly above: the top of her head with dark brown hair tied in a low, loose bun; the shoulders of a knee-length charcoal-grey wool coat; a long sand-beige knit scarf wrapped once around the neck with both ends hanging down her back; the toes of black leather ankle boots just visible. She stands perfectly still, arms relaxed at her sides.
+
+Around her, about fifteen commuters in dark coats are walking past her on both sides in both directions, slightly motion-blurred, seen from directly above (tops of heads and shoulders).
+
+The sky, the horizon and any buildings are NOT visible — only the bridge walkway and its two railings fill the frame.
+
+Do not show: her face; any text, letters, numbers, signs or logos; road markings with words; the sky; the horizon; buildings; a drone or camera; a cartoon, painterly or CGI look.
+```
+
+**3B — Video** (yeni sohbet; **3A'daki fotoğrafı ilk kare olarak yükle**):
+
+```
+Use the uploaded image as the exact first frame of the video. Create an 8-second photorealistic video, vertical 9:16.
+
+STYLE: Photorealistic cinematic live-action film, aerial drone cinematography, soft natural film grain, muted teal-and-amber color grade, 24 fps, real-world physics. No visual effects overlays, no stylization.
+
+CAMERA — THE MOST IMPORTANT RULE: The camera points straight down at the ground (90 degrees) for the entire shot and NEVER tilts up. The sky, the horizon and the buildings are never visible. The camera rises vertically, smoothly and steadily, from about 4 meters to about 30 meters above the woman, without rotating and without moving sideways. The woman stays at the exact center of the frame for the entire shot.
+
+THE WOMAN — SECOND MOST IMPORTANT RULE: She stands completely still like a statue for all 8 seconds. She does not walk, does not take a single step, does not turn, does not move her arms. Only the ends of her sand-beige scarf move very slightly in the wind.
+
+TIMELINE:
+- 0–3 s: Close above her: her bun, her shoulders and the sand-beige scarf fill the center. Commuters in dark coats stream past her on both sides at normal walking speed.
+- 3–6 s: As the camera rises, the people become smaller and the crowd looks like two rivers flowing in opposite directions around one still point — her.
+- 6–8 s: The full width of the bridge walkway is visible, edged by its two railings; along the outer edges of the frame the tops of moving cars with glowing headlights and taillights appear on the highway below. She is a small, still figure in the exact center, the sand-beige scarf a tiny light mark.
+
+SOUND: Soft wind and the distant, low hum of a city below. No music. No spoken words in any language, no voices.
+
+DO NOT SHOW: the woman walking, stepping or turning; the camera tilting up; the sky; the horizon; buildings; her face; any text, letters, numbers, signs, logos or road markings with words; any drone, helicopter or camera in the frame; cuts or scene changes within the shot; rain or snow; a cartoon, painterly or CGI look.
+```
+
+Tutarsa 4. çekim bu videonun son karesiyle başlar (4. çekimin komutu değişmiyor).
+
+---
+
 ## ÇEKİM 4 — Köprü bir çizgi, şehir bir ağ (yeni sohbet)
 
 **İLK KARE:** Çekim 3'ün son karesini yükle.
