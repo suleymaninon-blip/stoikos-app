@@ -24,7 +24,7 @@ import { getPrograms, getProgress, Program } from '../../constants/programs';
 import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
-import { onIntroDone } from '../../constants/introSignal';
+import { StaggerSection } from '../../components/StaggerSection';
 import { MoodBloom, type MoodOrigin } from '../../components/MoodBloom';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
@@ -92,53 +92,6 @@ function CalmPressable({
         {children}
       </Animated.View>
     </Pressable>
-  );
-}
-
-// ── Bölümlerin ekrana su gibi kademeli yerleşmesi (yalnız ilk açılışta; "Hareketi Azalt"ta hemen yerinde) ──
-function StaggerSection({
-  delay,
-  children,
-  style,
-}: {
-  delay: number;
-  children: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
-}) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(14)).current;
-  const reduce = useReduceMotion();
-
-  useEffect(() => {
-    if (reduce) { opacity.setValue(1); translateY.setValue(0); return; }
-    // Açılış animasyonunun bitmesini bekle; yoksa bu giriş onun arkasında oynayıp görünmeden biter.
-    let anim: Animated.CompositeAnimation | null = null;
-    const off = onIntroDone(() => {
-      anim = Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 550,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 600,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      ]);
-      anim.start();
-    });
-    return () => { off(); anim?.stop(); };
-  }, [delay, opacity, translateY, reduce]);
-
-  return (
-    <Animated.View style={[style, { opacity, transform: [{ translateY }] }]}>
-      {children}
-    </Animated.View>
   );
 }
 
