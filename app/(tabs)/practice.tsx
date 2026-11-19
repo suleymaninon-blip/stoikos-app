@@ -811,7 +811,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   conceptTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.5, marginBottom: 14 },
   conceptDivider: { height: 1, backgroundColor: Colors.tint(0.12), marginBottom: 14 },
   conceptDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26 },
-  conceptMoreBtn: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center', marginTop: 4 },
+  conceptMoreBtn: { alignSelf: 'flex-start', minHeight: 44, justifyContent: 'center', marginTop: 6 },
   conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.sand2 },
 
   // Shared
