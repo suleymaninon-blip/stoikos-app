@@ -121,7 +121,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   tabSvg: { height: 26, justifyContent: 'center' },
   tabIconActive: { color: Colors.sand2 },
   tabDot: { width: 4, height: 4, borderRadius: 2, marginTop: 1, backgroundColor: Colors.sand },
-  // En küçük yazı 11 px (UX denetimi kuralı); öneri 10,5 idi.
-  tabLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 0.6, color: Colors.muted, textAlign: 'center' },
+  // En küçük yazı 11 px (UX denetimi kuralı); öneri 10,5 idi. Harf aralığı 0,5: Almanca "FORTSCHRITT" ancak sığıyor.
+  tabLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 0.5, color: Colors.muted, textAlign: 'center' },
   tabLabelActive: { color: Colors.sand2 },
 });
