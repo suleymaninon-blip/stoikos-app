@@ -24,6 +24,7 @@ import { getPrograms, getProgress, Program } from '../../constants/programs';
 import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
+import { onIntroDone } from '../../constants/introSignal';
 import { MoodBloom, type MoodOrigin } from '../../components/MoodBloom';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
@@ -110,7 +111,10 @@ function StaggerSection({
 
   useEffect(() => {
     if (reduce) { opacity.setValue(1); translateY.setValue(0); return; }
-    Animated.parallel([
+    // Açılış animasyonunun bitmesini bekle; yoksa bu giriş onun arkasında oynayıp görünmeden biter.
+    let anim: Animated.CompositeAnimation | null = null;
+    const off = onIntroDone(() => {
+      anim = Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
         duration: 550,
@@ -125,7 +129,10 @@ function StaggerSection({
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
-    ]).start();
+      ]);
+      anim.start();
+    });
+    return () => { off(); anim?.stop(); };
   }, [delay, opacity, translateY, reduce]);
 
   return (

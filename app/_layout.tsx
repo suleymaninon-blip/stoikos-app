@@ -11,6 +11,7 @@ import { LanguageProvider } from '../constants/i18n';
 import { ThemeProvider, useTheme } from '../constants/themeContext';
 import { EntitlementProvider } from '../constants/entitlement';
 import { BrandIntro } from '../components/BrandIntro';
+import { markIntroDone } from '../constants/introSignal';
 import { Onboarding } from '../components/Onboarding';
 import { ReminderSync } from '../components/ReminderSync';
 import { registerServiceWorker } from '../constants/registerSW';
@@ -60,7 +61,7 @@ export default function RootLayout() {
           <ThemedStack />
           <ReminderSync />
           {showOnboarding && <Onboarding onDone={finishOnboarding} />}
-          {!introDone && <BrandIntro onFinish={() => setIntroDone(true)} />}
+          {!introDone && <BrandIntro onFinish={() => { setIntroDone(true); markIntroDone(); }} />}
         </EntitlementProvider>
       </LanguageProvider>
     </ThemeProvider>
