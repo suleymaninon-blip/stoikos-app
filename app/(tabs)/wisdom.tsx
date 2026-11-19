@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, FlatList,
-  StyleSheet, SafeAreaView, Animated, Modal, Pressable,
+  StyleSheet, SafeAreaView, Animated, Easing, Modal, Pressable, Platform,
   NativeSyntheticEvent, NativeScrollEvent,
 } from 'react-native';
 import { useAppDimensions } from '../../constants/layout';
@@ -11,13 +11,16 @@ import { useTheme, useStyles, type Palette } from '../../constants/themeContext'
 import { HeartIcon, ShareArrowIcon } from '../../components/Icons';
 import { FirstTip } from '../../components/FirstTip';
 import { useLocalSearchParams } from 'expo-router';
-import { useLang, Lang, upper, localeOf } from '../../constants/i18n';
-import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD_THEMES, Quote, Concept, Philosopher, conceptAudioKey } from '../../constants/content';
+import { useLang, upper, localeOf } from '../../constants/i18n';
+import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD_THEMES, Quote, Concept, Philosopher } from '../../constants/content';
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import { fetchHearts, HEART_MIN, type Hearts } from '../../constants/stoa';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
 import { ConceptModal, TEXT_GLYPH } from '../../components/ConceptModal';
+import { CalmPressable } from '../../components/CalmPressable';
+import { StaggerSection } from '../../components/StaggerSection';
+import { useReduceMotion } from '../../hooks/useReduceMotion';
 
 
 // ─── QuoteCard ─────────────────────────────────────────────
@@ -33,15 +36,29 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor, hearts, weekTop }: 
   const favAddLabel = t('a11y.favAdd'), favRemoveLabel = t('a11y.favRemove'), shareLabel = t('a11y.share');
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(10)).current;
+  const heartScale = useRef(new Animated.Value(1)).current;
+  const isFirstFav = useRef(true);
+  const reduce = useReduceMotion();
   useEffect(() => {
+    if (reduce) { fadeAnim.setValue(1); slideAnim.setValue(0); return; }
     Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 500, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 500, useNativeDriver: true }),
+      Animated.timing(fadeAnim, { toValue: 1, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 480, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
     ]).start();
   }, []);
 
+  // Kalbe dokununca kalp bir kez hafifçe yaylanır ("Hareketi Azalt"ta yok).
+  useEffect(() => {
+    if (isFirstFav.current) { isFirstFav.current = false; return; }
+    if (reduce) return;
+    Animated.sequence([
+      Animated.spring(heartScale, { toValue: 1.22, speed: 40, bounciness: 10, useNativeDriver: true }),
+      Animated.spring(heartScale, { toValue: 1, speed: 28, bounciness: 6, useNativeDriver: true }),
+    ]).start();
+  }, [isFav, heartScale, reduce]);
+
   return (
-    <Animated.View style={[styles.quoteCard, weekTop && styles.weekCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+    <Animated.View style={[styles.quoteCard, styles.cardShadow, weekTop && styles.weekCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
       {weekTop && <Text style={styles.weekLabel}>{upper(t('stoa.weekTop'), lang)}</Text>}
       <Text style={styles.quoteMark}>“</Text>
       <Text style={styles.quoteText}>{quote.text}</Text>
@@ -58,10 +75,12 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor, hearts, weekTop }: 
             ? <Text style={styles.quoteSource}>{quote.source}</Text>
             : null}
         </View>
-        <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]} hitSlop={4}
-          accessibilityRole="button" accessibilityState={{ selected: isFav }} accessibilityLabel={isFav ? favRemoveLabel : favAddLabel}>
-          <HeartIcon size={19} filled={isFav} color={isFav ? Colors.accent : Colors.sand2} />
-        </TouchableOpacity>
+        <Animated.View style={{ transform: [{ scale: heartScale }] }}>
+          <TouchableOpacity onPress={() => onFav(quote.id)} style={[styles.listenBtn, isFav && styles.favBtnActive]} hitSlop={4}
+            accessibilityRole="button" accessibilityState={{ selected: isFav }} accessibilityLabel={isFav ? favRemoveLabel : favAddLabel}>
+            <HeartIcon size={19} filled={isFav} color={isFav ? Colors.accent : Colors.sand2} />
+          </TouchableOpacity>
+        </Animated.View>
         <TouchableOpacity onPress={() => onShare(quote)} style={styles.listenBtn} hitSlop={4} accessibilityRole="button" accessibilityLabel={shareLabel}>
           <ShareArrowIcon size={19} color={Colors.sand2} />
         </TouchableOpacity>
@@ -79,13 +98,14 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor, hearts, weekTop }: 
 function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPress: () => void; moreLabel: string }) {
   const styles = useStyles(makeStyles);
   return (
-    <TouchableOpacity style={[styles.conceptCard, { backgroundColor: concept.color }]} onPress={onPress} activeOpacity={0.8}>
+    <CalmPressable style={[styles.conceptCard, styles.cardShadow, { backgroundColor: concept.color }]} onPress={onPress}>
       <Text style={styles.conceptIcon}>{concept.icon + TEXT_GLYPH}</Text>
       <Text style={styles.conceptLatin}>{concept.latin}</Text>
       <Text style={styles.conceptTr}>{concept.name}</Text>
       <Text style={styles.conceptPreview} numberOfLines={2}>{concept.desc}</Text>
+      {/* moreLabel metninde ok (→) zaten var */}
       <Text style={styles.conceptMore}>{moreLabel}</Text>
-    </TouchableOpacity>
+    </CalmPressable>
   );
 }
 
@@ -93,14 +113,14 @@ function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPres
 function PhilosopherCard({ philo, onPress }: { philo: Philosopher; onPress: () => void }) {
   const styles = useStyles(makeStyles);
   return (
-    <TouchableOpacity style={[styles.philoCard, { backgroundColor: philo.color }]} onPress={onPress} activeOpacity={0.8}>
+    <CalmPressable style={[styles.philoCard, styles.cardShadow, { backgroundColor: philo.color }]} onPress={onPress}>
       <View style={styles.philoSymbolBox}><PhilosopherSymbol id={philo.id} size={24} /></View>
       <View style={{ flex: 1 }}>
         <Text style={styles.philoName}>{philo.name}</Text>
         <Text style={styles.philoEra}>{philo.era}</Text>
         <Text style={styles.philoOneLiner} numberOfLines={3}>{philo.oneLiner}</Text>
       </View>
-    </TouchableOpacity>
+    </CalmPressable>
   );
 }
 
@@ -126,7 +146,7 @@ function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
                 <Text style={styles.modalPractice}>{philo.contribution}</Text>
               </View>
             ) : null}
-            <TouchableOpacity style={styles.modalClose} onPress={onClose}>
+            <TouchableOpacity style={styles.modalClose} onPress={onClose} activeOpacity={0.8}>
               <Text style={styles.modalCloseText}>{closeLabel}</Text>
             </TouchableOpacity>
           </ScrollView>
@@ -213,7 +233,7 @@ function WheelSelector({ opts, value, onChange, itemW = 132 }: {
   const step = (d: number) => onChange(opts[Math.min(n - 1, Math.max(0, idx + d))].id);
   return (
     <View
-      style={[styles.moodBar, { width: BAR_W }]}
+      style={[styles.moodBar, styles.cardShadow, { width: BAR_W }]}
       accessible
       accessibilityRole="adjustable"
       accessibilityLabel={t('a11y.wheel', { v: opts[idx]?.label ?? '' })}
@@ -365,7 +385,7 @@ export default function WisdomScreen() {
   return (
     <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
-        colors={[Colors.tint(0.05), 'transparent']}
+        colors={[Colors.tint(Colors.isDark ? 0.07 : 0.08), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -391,14 +411,14 @@ export default function WisdomScreen() {
       </View>
 
       {/* Tab switcher */}
-      <View style={styles.tabs}>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'quotes' && styles.tabBtnActive]} onPress={() => setTab('quotes')}>
+      <View style={[styles.tabs, styles.cardShadow]}>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'quotes' && styles.tabBtnActive]} onPress={() => setTab('quotes')} activeOpacity={0.75}>
           <Text style={[styles.tabBtnText, tab === 'quotes' && styles.tabBtnTextActive]}>{t('wisdom.tabQuotes')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'concepts' && styles.tabBtnActive]} onPress={() => setTab('concepts')}>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'concepts' && styles.tabBtnActive]} onPress={() => setTab('concepts')} activeOpacity={0.75}>
           <Text style={[styles.tabBtnText, tab === 'concepts' && styles.tabBtnTextActive]}>{t('wisdom.tabConcepts')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.tabBtn, tab === 'philosophers' && styles.tabBtnActive]} onPress={() => setTab('philosophers')}>
+        <TouchableOpacity style={[styles.tabBtn, tab === 'philosophers' && styles.tabBtnActive]} onPress={() => setTab('philosophers')} activeOpacity={0.75}>
           <Text style={[styles.tabBtnText, tab === 'philosophers' && styles.tabBtnTextActive]}>{t('wisdom.tabPhilosophers')}</Text>
         </TouchableOpacity>
       </View>
@@ -406,7 +426,7 @@ export default function WisdomScreen() {
       {tab === 'quotes' && (
           /* Filtre: mod anahtarı (Filozof | Ruh Hali) + ♥ favoriler */
           <View style={styles.filterRow}>
-            <View style={styles.segment}>
+            <View style={[styles.segment, styles.cardShadow]}>
               <TouchableOpacity
                 style={[styles.segBtn, mode === 'author' && styles.segBtnOn]}
                 activeOpacity={0.8}
@@ -423,7 +443,10 @@ export default function WisdomScreen() {
               </TouchableOpacity>
             </View>
             <TouchableOpacity
-              style={[styles.heartBtn, filter === 'fav' && styles.heartBtnOn]}
+              style={[styles.heartBtn, styles.cardShadow, filter === 'fav' && styles.heartBtnOn]}
+              accessibilityRole="button"
+              accessibilityState={{ selected: filter === 'fav' }}
+              accessibilityLabel={t('wisdom.favorites')}
               activeOpacity={0.8}
               onPress={() => setFilter('fav')}
             >
@@ -477,14 +500,18 @@ export default function WisdomScreen() {
         </>
       ) : tab === 'concepts' ? (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid} onScroll={onListScroll} scrollEventThrottle={16}>
-          {concepts.map((c) => (
-            <ConceptCard key={c.latin} concept={c} onPress={() => setSelectedConcept(c)} moreLabel={t('wisdom.more')} />
+          {concepts.map((c, i) => (
+            <StaggerSection key={c.latin} delay={Math.min(i * 55, 330)}>
+              <ConceptCard concept={c} onPress={() => setSelectedConcept(c)} moreLabel={t('wisdom.more')} />
+            </StaggerSection>
           ))}
         </ScrollView>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.conceptsGrid} onScroll={onListScroll} scrollEventThrottle={16}>
-          {philosophers.map((p) => (
-            <PhilosopherCard key={p.id} philo={p} onPress={() => setSelectedPhilo(p)} />
+          {philosophers.map((p, i) => (
+            <StaggerSection key={p.id} delay={Math.min(i * 55, 330)}>
+              <PhilosopherCard philo={p} onPress={() => setSelectedPhilo(p)} />
+            </StaggerSection>
           ))}
           <Text style={styles.attribution}>{t('wisdom.attribution')}</Text>
         </ScrollView>
@@ -515,90 +542,86 @@ export default function WisdomScreen() {
 // ─── Styles ───────────────────────────────────────────────
 const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
-  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
+  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 220 },
+
+  cardShadow: !Colors.isDark
+    ? Platform.select({
+        ios: {
+          shadowColor: '#1D2A2F',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 10,
+        },
+        android: { elevation: 2 },
+        default: {},
+      })
+    : {},
+
   header: { paddingHorizontal: 24, paddingTop: 10, paddingBottom: 12 },
   title: { fontFamily: Fonts.cormorant, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 34, marginBottom: 2 },
   subtitle: { fontFamily: Fonts.cormorantItalic, fontSize: 17, color: Colors.muted, letterSpacing: 0.2, lineHeight: 22 },
 
   tabs: {
     flexDirection: 'row', marginHorizontal: 24, marginBottom: 12,
-    backgroundColor: Colors.stone2, borderRadius: 12,
-    padding: 4, borderWidth: 1, borderColor: Colors.overlay(0.05),
+    backgroundColor: Colors.stone2, borderRadius: 14,
+    padding: 4, borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
-  tabBtn: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 10 },
+  tabBtn: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: 11 },
   tabBtnActive: { backgroundColor: Colors.stone3 },
   tabBtnText: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.muted, letterSpacing: 0.5 },
   tabBtnTextActive: { color: Colors.sand2 },
 
-  filterScroll: { maxHeight: 44, marginBottom: 12 },
-  filterContent: { paddingHorizontal: 24, gap: 8, alignItems: 'center' },
-  filterChip: {
-    paddingHorizontal: 14, paddingVertical: 6,
-    borderRadius: 20, backgroundColor: Colors.stone2,
-    borderWidth: 1, borderColor: Colors.overlay(0.06),
-  },
-  filterChipActive: { backgroundColor: Colors.tint(0.15), borderColor: Colors.tint(0.3) },
-  filterChipText: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted },
-  filterChipTextActive: { color: Colors.sand2 },
-
-
-  // Ruh hali (mood) seçici barı
-  moodTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.5, color: Colors.muted, paddingHorizontal: 24, marginBottom: 8, textTransform: 'uppercase' },
-  // Mod anahtarı (Filozof | Ruh Hali) + favori
   filterRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 24, marginBottom: 12 },
-  segment: { flex: 1, flexDirection: 'row', backgroundColor: Colors.stone2, borderRadius: 13, padding: 4 },
-  segBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 9, borderRadius: 10 },
+  segment: { flex: 1, flexDirection: 'row', backgroundColor: Colors.stone2, borderRadius: 14, padding: 4, borderWidth: 1, borderColor: Colors.overlay(0.05) },
+  segBtn: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 9, borderRadius: 11 },
   segBtnOn: { backgroundColor: Colors.tint(0.16) },
   segTxt: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
   segTxtOn: { color: Colors.sand2 },
-  heartBtn: { width: 46, height: 46, borderRadius: 13, borderWidth: 1, borderColor: Colors.tint(0.22), alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2 },
+  heartBtn: {
+    width: 46, height: 46, borderRadius: 14, borderWidth: 1, borderColor: Colors.tint(0.22),
+    alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2,
+  },
   heartBtnOn: { backgroundColor: Colors.tint(0.2), borderColor: Colors.accent },
-  heartIcon: { fontSize: 18, color: Colors.muted },
-  heartIconOn: { color: Colors.accent },
+
   moodBar: {
     alignSelf: 'center', marginTop: 4, marginBottom: 10,
-    backgroundColor: Colors.stone2, borderRadius: 14, borderWidth: 1, borderColor: Colors.moonA(0.22),
+    backgroundColor: Colors.stone2, borderRadius: 16, borderWidth: 1, borderColor: Colors.moonA(0.22),
     height: 48, overflow: 'hidden',
   },
   moodItem: { height: 48, alignItems: 'center', justifyContent: 'center' },
   moodCurrent: { fontFamily: Fonts.cinzel, fontSize: 16, letterSpacing: 0.5, color: Colors.sand2 },
+
   weekCard: { borderWidth: 1.5, borderColor: Colors.sand },
   weekLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.4, color: Colors.sand, marginBottom: 2 },
   savedLine: { fontFamily: Fonts.jost, fontSize: 12.5, color: Colors.muted, marginTop: 8 },
   wheelCount: { fontFamily: Fonts.jostMedium, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 2, marginBottom: 10 },
 
-  listContent: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
+  listContent: { paddingHorizontal: 20, paddingBottom: 48, gap: 14 },
   listEmpty: { flexGrow: 1, paddingHorizontal: 20 },
   emptyWrap: { alignItems: 'center', justifyContent: 'center', paddingTop: 60, paddingHorizontal: 30, gap: 14 },
   emptyIcon: { fontFamily: Fonts.jost, fontSize: 40, color: Colors.muted, opacity: 0.5 },
   emptyText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.muted, textAlign: 'center', lineHeight: 26 },
   attribution: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
+
   quoteCard: {
-    backgroundColor: Colors.stone2, borderRadius: 20, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 18,
-    borderWidth: 1, borderColor: Colors.tint(0.10), overflow: 'hidden',
+    backgroundColor: Colors.stone2, borderRadius: 24, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 20,
+    borderWidth: 1, borderColor: Colors.tint(0.11), overflow: 'hidden',
   },
-  quoteMark: { fontFamily: Fonts.cormorant, fontSize: 64, color: Colors.sand, opacity: 0.25, height: 48, marginBottom: -4 },
-  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 16 },
+  quoteMark: { fontFamily: Fonts.cormorant, fontSize: 64, color: Colors.sand, opacity: 0.24, height: 48, marginBottom: -4 },
+  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 18 },
   quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, letterSpacing: 0.3 },
   quoteAuthorLink: { color: Colors.accent },
   quoteSource: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, fontStyle: 'italic' },
-  listenBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.38) },
-  listenBtnActive: { backgroundColor: 'rgba(220,80,80,0.15)', borderColor: 'rgba(220,80,80,0.35)' },
-  // SVG sarmalayıcı (kavram hoparlörü, satır ~96) — View'e uygulanıyor, boyut doğru.
-  listenIcon: { width: 14, height: 14 },
-  // Metin glifi (♡ ♥ ↗) — Text'e uygulanıyor. Bir glif için width/height
-  // neredeyse hiçbir şey yapmaz; fontSize ve color şart. Önceden ikisi AYNI
-  // stili paylaşıyordu, bu yüzden glifler renksiz kalıp varsayılan koyu renge
-  // düşüyordu ve paylaş düğmesi karanlıkta kayboluyordu.
-  glyphIcon: { fontSize: 15, lineHeight: 18, color: Colors.sand2 },
-  favBtnActive: { backgroundColor: Colors.tint(0.2), borderColor: Colors.accent },
-  favIconActive: { color: Colors.accent },
-  modalListenBtn: { alignSelf: 'center', width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.25), marginTop: 4, marginBottom: 4 },
+  listenBtn: {
+    width: 42, height: 42, borderRadius: 21, backgroundColor: Colors.tint(0.12),
+    alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.35),
+  },
+  favBtnActive: { backgroundColor: Colors.tint(0.22), borderColor: Colors.accent },
 
-  conceptsGrid: { paddingHorizontal: 20, paddingBottom: 40, gap: 12 },
+  conceptsGrid: { paddingHorizontal: 20, paddingBottom: 48, gap: 14 },
   conceptCard: {
-    borderRadius: 18, padding: 20,
+    borderRadius: 22, padding: 20,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   conceptIcon: { fontSize: 22, color: Colors.sand2, marginBottom: 10 },
@@ -607,10 +630,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   conceptPreview: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21, marginBottom: 10 },
   conceptMore: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.accent, letterSpacing: 0.3 },
 
-  // Filozof kartı
   philoCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: 16,
-    borderRadius: 18, padding: 18,
+    borderRadius: 22, padding: 18,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   philoSymbolBox: {
@@ -618,18 +640,15 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.18)', borderWidth: 1, borderColor: Colors.tint(0.25),
   },
-  philoSymbol: { fontFamily: Fonts.cinzel, fontSize: 20, color: Colors.sand2 },
   philoName: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.sand2, marginBottom: 2 },
   philoEra: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, marginBottom: 8 },
   philoOneLiner: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21 },
 
-  // Filozof modal
   philoModalSymbolBox: {
     alignSelf: 'center', width: 56, height: 56, borderRadius: 28,
     alignItems: 'center', justifyContent: 'center', marginBottom: 12,
     backgroundColor: Colors.tint(0.10), borderWidth: 1, borderColor: Colors.tint(0.28),
   },
-  philoModalSymbol: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.sand2 },
   philoModalEra: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, textAlign: 'center', letterSpacing: 0.3, marginTop: -10, marginBottom: 16 },
 
   modalOverlay: {
@@ -637,29 +656,21 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     justifyContent: 'center', alignItems: 'center', padding: 24,
   },
   modalCard: {
-    backgroundColor: Colors.stone2, borderRadius: 24, padding: 28, width: '100%', maxHeight: '85%',
-    borderWidth: 1, borderColor: Colors.tint(0.2),
+    backgroundColor: Colors.stone2, borderRadius: 26, padding: 28, width: '100%', maxHeight: '85%',
+    borderWidth: 1, borderColor: Colors.tint(0.22),
   },
-  modalIcon: { fontSize: 32, color: Colors.sand2, marginBottom: 12, textAlign: 'center' },
-  modalLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.sand2, textAlign: 'center', marginBottom: 4 },
   modalTr: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', letterSpacing: 0.5, marginBottom: 16 },
   modalDivider: { height: 1, backgroundColor: Colors.tint(0.15), marginBottom: 16 },
   modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 16 },
-  modalExampleBox: {
-    backgroundColor: Colors.tint(0.08), borderRadius: 12, padding: 14,
-    borderLeftWidth: 2, borderLeftColor: Colors.sand, marginBottom: 20,
-  },
-  modalExampleLabel: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 6 },
-  modalExample: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.sand3, lineHeight: 25 },
   modalPracticeBox: {
-    backgroundColor: Colors.moonA(0.08), borderRadius: 12, padding: 14,
+    backgroundColor: Colors.moonA(0.08), borderRadius: 14, padding: 14,
     borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
   },
   modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
   modalPractice: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
   modalClose: {
-    backgroundColor: Colors.stone3, borderRadius: 12,
-    paddingVertical: 12, alignItems: 'center',
+    backgroundColor: Colors.stone3, borderRadius: 14,
+    paddingVertical: 13, alignItems: 'center',
     borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
   modalCloseText: { fontFamily: Fonts.cinzel, fontSize: 12, color: Colors.text2, letterSpacing: 1 },
