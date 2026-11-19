@@ -30,6 +30,8 @@
 
 - **Çekim 7** (`cekim-7.mp4`, 10 sn): tuttu. Bulut denizi → ~3–4. sn'de bulutlar Dünya'nın kavisine eriyerek dönüşüyor (yumuşak bindirme; yükseliş hissini bozmuyor) → mavi atmosfer çizgisi, gece tarafında kıyı boyunca şehir ışıkları. Son kare `cekim-7-son-kare.png` → 8. çekim.
 
+- **Çekim 8** (`cekim-8.mp4`, 10 sn): tuttu. Dünya geri çekilerek küreye dönüşür, Ay ve Samanyolu belirir, ~6. sn'den sonra sabit. Dünya "nokta" kadar küçülmüyor, orta boy bir küre kalıyor; Ay gerçeğe göre büyük/yakın (sinematik, sorun değil). Üst yarı boş ve karanlık → alıntı oraya. Son kare `cekim-8-son-kare.png` → 9. çekim.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
