@@ -28,6 +28,8 @@
 
 - **Çekim 6** (`cekim-6.mp4`, 10 sn): tuttu. Bulutların içinden geçiş → gün batımında bulut denizi → gökyüzü koyulaşır, yıldızlar belirir. Son kare `cekim-6-son-kare.png` → 7. çekim.
 
+- **Çekim 7** (`cekim-7.mp4`, 10 sn): tuttu. Bulut denizi → ~3–4. sn'de bulutlar Dünya'nın kavisine eriyerek dönüşüyor (yumuşak bindirme; yükseliş hissini bozmuyor) → mavi atmosfer çizgisi, gece tarafında kıyı boyunca şehir ışıkları. Son kare `cekim-7-son-kare.png` → 8. çekim.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
