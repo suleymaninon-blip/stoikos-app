@@ -8,10 +8,7 @@ import {
   Animated,
   Easing,
   TouchableOpacity,
-  Pressable,
   Platform,
-  type ViewStyle,
-  type StyleProp,
 } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,6 +22,7 @@ import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { StaggerSection } from '../../components/StaggerSection';
+import { CalmPressable } from '../../components/CalmPressable';
 import { MoodBloom, type MoodOrigin } from '../../components/MoodBloom';
 import { QuoteCard } from '../../components/QuoteCard';
 import BreathOrb from '../../components/BreathOrb';
@@ -43,57 +41,6 @@ const tint = (color: string, a: number) => color.replace(/[\d.]+\)\s*$/, `${a})`
 
 // next: ilk tamamlanmamış gün (aradaki bir günün işareti geri alınmış olabilir; sayı yetmez)
 type Resume = { program: Program; done: number[]; next: number; started: boolean };
-
-// ── Yumuşak dokunma hissi veren kart sarmalayıcı (scale spring) ──
-// (Ana ekran yenilemesi, 19 Kasım 2026: başka bir araçta yazıldı, burada düzeltildi.)
-// Stil içteki Animated.View'a gider; `flex` ise dıştaki Pressable'a da verilmeli, yoksa yan yana
-// kartlar (Pratik/Koç) genişliği paylaşmaz, içeriği kadar daralır. "Hareketi Azalt"ta basılma ölçeği yok.
-function CalmPressable({
-  children,
-  onPress,
-  style,
-  accessibilityLabel,
-  accessibilityHint,
-  accessibilityState,
-}: {
-  children: React.ReactNode;
-  onPress: () => void;
-  style?: StyleProp<ViewStyle>;
-  accessibilityLabel?: string;
-  accessibilityHint?: string;
-  accessibilityState?: { expanded?: boolean };
-}) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const reduce = useReduceMotion();
-  const flex = StyleSheet.flatten(style)?.flex;
-
-  const animateTo = (toValue: number) => {
-    if (reduce) return;
-    Animated.spring(scale, {
-      toValue,
-      useNativeDriver: true,
-      speed: 28,
-      bounciness: 4,
-    }).start();
-  };
-
-  return (
-    <Pressable
-      style={flex != null ? { flex } : undefined}
-      onPress={onPress}
-      onPressIn={() => animateTo(0.975)}
-      onPressOut={() => animateTo(1)}
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel}
-      accessibilityHint={accessibilityHint}
-      accessibilityState={accessibilityState}
-    >
-      <Animated.View style={[style, { transform: [{ scale }] }]}>
-        {children}
-      </Animated.View>
-    </Pressable>
-  );
-}
 
 // ── Kaldığın yer: yarım kalan program, yoksa başlanmamış ilk program ──
 // Alt menüde olmayan tek bölüm; eskiden listenin en sonundaydı (22 Ekim 2026).
