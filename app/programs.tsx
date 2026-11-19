@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, Modal, Pressable, TextInput,
+  Animated, Easing, Platform,
 } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +16,25 @@ import { maybeAskForReview } from '../constants/review';
 import { Paywall } from '../components/Paywall';
 import { LockIcon } from '../components/Icons';
 import { FirstTip } from '../components/FirstTip';
+import { CalmPressable } from '../components/CalmPressable';
+import { StaggerSection } from '../components/StaggerSection';
+import { useReduceMotion } from '../hooks/useReduceMotion';
+
+// Liste kartındaki ilerleme çubuğu akıcı dolar ("Hareketi Azalt"ta doğrudan yerine gelir).
+function ProgramBar({ pct }: { pct: number }) {
+  const styles = useStyles(makeStyles);
+  const anim = useRef(new Animated.Value(0)).current;
+  const reduce = useReduceMotion();
+  useEffect(() => {
+    if (reduce) { anim.setValue(pct); return; }
+    Animated.timing(anim, { toValue: pct, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: false }).start();
+  }, [pct, anim, reduce]);
+  return (
+    <View style={styles.cardTrack}>
+      <Animated.View style={[styles.cardFill, { width: anim.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) }]} />
+    </View>
+  );
+}
 
 export default function ProgramsScreen() {
   const { C: Colors } = useTheme();
@@ -141,19 +161,24 @@ export default function ProgramsScreen() {
       <SafeAreaView ref={rootRef} style={styles.container}>
         <LinearGradient colors={[open.color, 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
         <View style={styles.topBar}>
-          <TouchableOpacity onPress={() => (fromHome ? (router.canGoBack() ? router.back() : router.replace('/')) : setOpenId(null))} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
+          <CalmPressable onPress={() => (fromHome ? (router.canGoBack() ? router.back() : router.replace('/')) : setOpenId(null))} style={[styles.backBtn, styles.cardShadow]} pressScale={0.94}>
+            <Text style={styles.backIcon}>‹</Text>
+          </CalmPressable>
         </View>
         <ScrollView key={finishKey} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Text style={styles.detailIcon}>{open.icon}</Text>
-          <Text style={styles.detailTitle}>{open.title}</Text>
-          <Text style={styles.detailSub}>{open.subtitle}</Text>
-          <Text style={styles.detailProgress}>{t('programs.progress', { done: done.length, total: open.dayCount })}</Text>
+          <StaggerSection delay={0}>
+            <Text style={styles.detailIcon}>{open.icon}</Text>
+            <Text style={styles.detailTitle}>{open.title}</Text>
+            <Text style={styles.detailSub}>{open.subtitle}</Text>
+            <Text style={styles.detailProgress}>{t('programs.progress', { done: done.length, total: open.dayCount })}</Text>
+          </StaggerSection>
           {done.length === open.dayCount && (() => {
             // Bitiş akışı. Amaç 6. programa zincirlemek değil — yolculuklar
             // giriş rampası, günlük pratik ise sonsuza dek tekrar eden asıl iş.
             const next = programs.find((p) => p.id !== open.id && !isComplete(p));
             return (
-              <View style={styles.finishBox}>
+              <StaggerSection delay={80}>
+              <View style={[styles.finishBox, styles.cardShadow]}>
                 <Text style={styles.finished}>{t('programs.finished')}</Text>
 
                 {!reflected[open.id] ? (
@@ -174,14 +199,13 @@ export default function ProgramsScreen() {
                       <TouchableOpacity onPress={() => skipReflection(open)} hitSlop={8}>
                         <Text style={styles.reflectSkip}>{t('programs.reflectSkip')}</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity
+                      <CalmPressable
                         style={[styles.reflectBtn, !reflection.trim() && styles.reflectBtnOff]}
                         onPress={() => saveReflection(open)}
                         disabled={!reflection.trim()}
-                        activeOpacity={0.85}
                       >
                         <Text style={styles.reflectBtnText}>{t('programs.reflectSave')}</Text>
-                      </TouchableOpacity>
+                      </CalmPressable>
                     </View>
                   </View>
                 ) : (
@@ -192,25 +216,23 @@ export default function ProgramsScreen() {
                 )}
 
                 {next ? (
-                  <TouchableOpacity
+                  <CalmPressable
                     style={styles.nextBtn}
                     onPress={() => { setOpenId(next.id); setRestartArmed(false); }}
-                    activeOpacity={0.85}
                   >
                     <Text style={styles.nextLabel}>{upper(t('programs.nextUp'), lang)}</Text>
                     <Text style={styles.nextTitle}>{next.icon}  {next.title}</Text>
-                  </TouchableOpacity>
+                  </CalmPressable>
                 ) : (
                   <View style={styles.allDoneBox}>
                     <Text style={styles.allDoneTitle}>{t('programs.allDone')}</Text>
                     <Text style={styles.allDoneBody}>{t('programs.allDoneBody')}</Text>
-                    <TouchableOpacity
+                    <CalmPressable
                       style={styles.practiceBtn}
                       onPress={() => router.replace('/(tabs)/practice')}
-                      activeOpacity={0.85}
                     >
                       <Text style={styles.practiceBtnText}>{t('programs.toPractice')}</Text>
-                    </TouchableOpacity>
+                    </CalmPressable>
                   </View>
                 )}
 
@@ -223,20 +245,21 @@ export default function ProgramsScreen() {
                   </Text>
                 </TouchableOpacity>
               </View>
+              </StaggerSection>
             );
           })()}
 
-          <View style={{ marginTop: 18 }}>
+          <View style={{ marginTop: 20 }}>
             {open.days.map((d, i) => {
               const unlocked = isUnlocked(open.id, i);
               const completed = done.includes(i);
               return (
-                <TouchableOpacity
-                  key={i}
-                  ref={i === 0 ? (daysRef as any) : undefined}
-                  style={[styles.dayRow, !unlocked && styles.dayRowLocked]}
+                <StaggerSection key={i} delay={Math.min(80 + i * 45, 360)}>
+                <View ref={i === 0 ? daysRef : undefined} collapsable={false}>
+                <CalmPressable
+                  disabled={!unlocked}
+                  style={[styles.dayRow, styles.cardShadow, !unlocked && styles.dayRowLocked]}
                   onPress={() => unlocked && setDayIdx(i)}
-                  activeOpacity={unlocked ? 0.7 : 1}
                 >
                   <View style={[styles.dayNum, completed && styles.dayNumDone, !unlocked && styles.dayNumLocked]}>
                     <Text style={[styles.dayNumText, completed && styles.dayNumTextDone]}>{completed ? '✓' : unlocked ? i + 1 : ''}</Text>
@@ -247,7 +270,9 @@ export default function ProgramsScreen() {
                     <Text style={[styles.dayTitle, !unlocked && styles.dayTitleLocked]}>{d.title}</Text>
                   </View>
                   {unlocked && <Text style={styles.dayChevron}>›</Text>}
-                </TouchableOpacity>
+                </CalmPressable>
+                </View>
+                </StaggerSection>
               );
             })}
           </View>
@@ -319,28 +344,32 @@ export default function ProgramsScreen() {
   }
 
   // ─── LİSTE ───
+  const sortedPrograms = [...programs].sort((a, b) => rank(a) - rank(b));
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={[Colors.tint(0.06), 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
+      <LinearGradient colors={[Colors.tint(Colors.isDark ? 0.07 : 0.08), 'transparent']} style={styles.grad} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} />
       <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}><Text style={styles.backIcon}>‹</Text></TouchableOpacity>
+        <CalmPressable onPress={() => router.back()} style={[styles.backBtn, styles.cardShadow]} pressScale={0.94}>
+          <Text style={styles.backIcon}>‹</Text>
+        </CalmPressable>
       </View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>{t('programs.title')}</Text>
-        <Text style={styles.subtitle}>{t('programs.subtitle')}</Text>
+        <StaggerSection delay={0}>
+          <Text style={styles.title}>{t('programs.title')}</Text>
+          <Text style={styles.subtitle}>{t('programs.subtitle')}</Text>
+        </StaggerSection>
 
-        <View style={{ marginTop: 20, gap: 14 }}>
+        <View style={{ marginTop: 22, gap: 14 }}>
           {/* Devam eden program en üstte, sonra başlanmamışlar, bitenler en altta (22 Ekim 2026). */}
-          {[...programs].sort((a, b) => rank(a) - rank(b)).map((p) => {
+          {sortedPrograms.map((p, i) => {
             const done = (progress[p.id] || []).length;
             const pct = done / p.dayCount;
             const label = done === 0 ? t('programs.start') : done === p.dayCount ? t('programs.review') : t('programs.continue');
             return (
-              <TouchableOpacity
-                key={p.id}
-                style={[styles.card, { backgroundColor: p.color }]}
+              <StaggerSection key={p.id} delay={Math.min(70 + i * 55, 350)}>
+              <CalmPressable
+                style={[styles.card, styles.cardShadow, { backgroundColor: p.color }]}
                 onPress={() => (plusOk ? setOpenId(p.id) : setPaywallOpen(true))}
-                activeOpacity={0.85}
               >
                 <View style={styles.cardHead}>
                   <Text style={styles.cardIcon}>{p.icon}</Text>
@@ -351,17 +380,19 @@ export default function ProgramsScreen() {
                   {p.isNew && done === 0 && <Text style={styles.newBadge}>{upper(t('programs.newTag'), lang)}</Text>}
                   {!plusOk && <Text style={styles.cardBadge}>{t('plus.badge')}</Text>}
                 </View>
-                <View style={styles.cardTrack}><View style={[styles.cardFill, { width: `${pct * 100}%` }]} /></View>
+                <ProgramBar pct={pct} />
                 <View style={styles.cardFoot}>
                   <Text style={styles.cardProgress}>{t('programs.progress', { done, total: p.dayCount })}</Text>
                   <Text style={styles.cardCta}>{plusOk ? `${label} →` : t('plus.unlock')}</Text>
                 </View>
-              </TouchableOpacity>
+              </CalmPressable>
+              </StaggerSection>
             );
           })}
 
           {/* Sıradaki program (15 Kasım 2026): abone devamın geldiğini görsün. Dokunulmaz; tarih yoksa "her ay" sözü. */}
           {upcoming && (
+            <StaggerSection delay={Math.min(70 + sortedPrograms.length * 55, 420)}>
             <View style={styles.soonCard} accessible accessibilityLabel={`${t('programs.soonTag')}: ${upcoming.title}`}>
               <View style={styles.cardHead}>
                 <Text style={[styles.cardIcon, styles.soonIcon]}>{upcoming.icon}</Text>
@@ -377,6 +408,7 @@ export default function ProgramsScreen() {
                   : t('programs.monthly')}
               </Text>
             </View>
+            </StaggerSection>
           )}
         </View>
       </ScrollView>
@@ -386,36 +418,55 @@ export default function ProgramsScreen() {
 }
 
 const makeStyles = (Colors: Palette) => StyleSheet.create({
+  cardShadow: !Colors.isDark
+    ? Platform.select({
+        ios: {
+          shadowColor: '#1D2A2F',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+        },
+        android: { elevation: 2 },
+        default: {},
+      })
+    : {},
+
   newBadge: {
     fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.4, color: Colors.onAccent,
-    backgroundColor: Colors.accent, borderRadius: 4, paddingHorizontal: 7, paddingVertical: 3, overflow: 'hidden',
+    backgroundColor: Colors.accent, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, overflow: 'hidden',
   },
-  soonCard: { borderRadius: 20, padding: 20, borderWidth: 1.5, borderStyle: 'dashed', borderColor: Colors.tint(0.35), backgroundColor: Colors.tint(0.04) },
+  soonCard: {
+    borderRadius: 24, padding: 20, borderWidth: 1.5, borderStyle: 'dashed',
+    borderColor: Colors.tint(0.35), backgroundColor: Colors.tint(0.04),
+  },
   soonIcon: { opacity: 0.6 },
   soonTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 2, color: Colors.sand, marginBottom: 4 },
   soonFoot: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   cardBadge: {
     fontFamily: Fonts.jost, fontSize: 11, letterSpacing: 1.4, color: Colors.sand,
-    borderWidth: 1, borderColor: Colors.tint(0.4), borderRadius: 4,
-    paddingHorizontal: 6, paddingVertical: 2, overflow: 'hidden',
+    borderWidth: 1, borderColor: Colors.tint(0.4), borderRadius: 6,
+    paddingHorizontal: 7, paddingVertical: 2, overflow: 'hidden',
   },
   container: { flex: 1, backgroundColor: Colors.stone },
-  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 240 },
-  topBar: { paddingHorizontal: 16, paddingTop: 8, height: 44, justifyContent: 'center' },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07) },
+  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 260 },
+  topBar: { paddingHorizontal: 16, paddingTop: 8, height: 48, justifyContent: 'center' },
+  backBtn: {
+    width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07),
+  },
   backIcon: { fontSize: 26, color: Colors.sand2, marginTop: -3 },
-  scroll: { padding: 24, paddingTop: 8, paddingBottom: 40 },
+  scroll: { padding: 24, paddingTop: 8, paddingBottom: 48 },
   title: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.text, letterSpacing: 0.5, marginBottom: 4 },
   subtitle: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, letterSpacing: 0.3 },
 
   // Liste kartı
-  card: { borderRadius: 20, padding: 20, borderWidth: 1, borderColor: Colors.overlay(0.07) },
+  card: { borderRadius: 24, padding: 20, borderWidth: 1, borderColor: Colors.overlay(0.07) },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
   cardIcon: { fontSize: 30, color: Colors.sand2 },
   cardTitle: { fontFamily: Fonts.cinzel, fontSize: 17, color: Colors.text, letterSpacing: 0.3, marginBottom: 2 },
   cardSub: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2 },
-  cardTrack: { height: 4, backgroundColor: 'rgba(0,0,0,0.25)', borderRadius: 2, overflow: 'hidden', marginBottom: 10 },
-  cardFill: { height: '100%', backgroundColor: Colors.sand, borderRadius: 2 },
+  cardTrack: { height: 5, backgroundColor: 'rgba(0,0,0,0.22)', borderRadius: 3, overflow: 'hidden', marginBottom: 12 },
+  cardFill: { height: '100%', backgroundColor: Colors.sand, borderRadius: 3 },
   cardFoot: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cardProgress: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.muted },
   cardCta: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2, letterSpacing: 0.5 },
@@ -425,44 +476,55 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   detailTitle: { fontFamily: Fonts.cinzel, fontSize: 24, color: Colors.text, textAlign: 'center', letterSpacing: 0.4, marginTop: 8 },
   detailSub: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', marginTop: 4 },
   detailProgress: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, textAlign: 'center', letterSpacing: 1, marginTop: 12 },
-  finished: { fontFamily: Fonts.cormorantItalic, fontSize: 15, color: Colors.sand, textAlign: 'center', marginTop: 8 },
+  finished: { fontFamily: Fonts.cormorantItalic, fontSize: 16, color: Colors.sand, textAlign: 'center', marginTop: 6 },
 
   // ─── Bitiş akışı ───
-  finishBox: { marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: Colors.tint(0.18), gap: 16 },
-
+  finishBox: {
+    marginTop: 18, backgroundColor: Colors.stone2, borderRadius: 24, padding: 20,
+    borderWidth: 1, borderColor: Colors.tint(0.18), gap: 16,
+  },
   reflectWrap: { gap: 8 },
   reflectPrompt: { fontFamily: Fonts.cormorant, fontSize: 19, color: Colors.text, textAlign: 'center' },
   reflectHint: { fontFamily: Fonts.jostLight, fontSize: 13, color: Colors.muted, textAlign: 'center' },
   reflectInput: {
-    marginTop: 4, minHeight: 92, backgroundColor: Colors.stone, borderRadius: 12, padding: 12,
+    marginTop: 4, minHeight: 96, backgroundColor: Colors.stone, borderRadius: 14, padding: 14,
     fontFamily: Fonts.jost, fontSize: 16, color: Colors.text,
     borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
   reflectNote: { fontFamily: Fonts.jostLight, fontSize: 13, color: Colors.muted, textAlign: 'center' },
   reflectRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 },
   reflectSkip: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted },
-  reflectBtn: { backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 11, paddingHorizontal: 20 },
+  reflectBtn: { backgroundColor: Colors.accent, borderRadius: 14, paddingVertical: 11, paddingHorizontal: 22 },
   reflectBtnOff: { opacity: 0.35 },
   reflectBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.bg, letterSpacing: 0.4 },
   reflectSaved: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.sand2, textAlign: 'center', paddingVertical: 8 },
   reflectView: { fontFamily: Fonts.jostMedium, textDecorationLine: 'underline' },
 
-  nextBtn: { backgroundColor: Colors.stone3, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: Colors.tint(0.22), gap: 4 },
+  nextBtn: {
+    backgroundColor: Colors.stone3, borderRadius: 16, padding: 16,
+    borderWidth: 1, borderColor: Colors.tint(0.22), gap: 4,
+  },
   nextLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
   nextTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text },
 
   allDoneBox: { gap: 10 },
   allDoneTitle: { fontFamily: Fonts.cormorant, fontSize: 20, color: Colors.text, textAlign: 'center' },
   allDoneBody: { fontFamily: Fonts.jostLight, fontSize: 14.5, lineHeight: 23, color: Colors.text2, textAlign: 'center' },
-  practiceBtn: { marginTop: 4, backgroundColor: Colors.accent, borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  practiceBtn: { marginTop: 4, backgroundColor: Colors.accent, borderRadius: 14, paddingVertical: 13, alignItems: 'center' },
   practiceBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.bg, letterSpacing: 0.4 },
 
   restart: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.faint, textAlign: 'center' },
   restartArmed: { color: Colors.sand },
 
-  dayRow: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: Colors.stone2, borderRadius: 16, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: Colors.overlay(0.05) },
+  dayRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: Colors.stone2,
+    borderRadius: 18, padding: 16, marginBottom: 10, borderWidth: 1, borderColor: Colors.overlay(0.06),
+  },
   dayRowLocked: { opacity: 0.55 },
-  dayNum: { width: 34, height: 34, borderRadius: 17, borderWidth: 1.5, borderColor: Colors.tint(0.4), alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  dayNum: {
+    width: 34, height: 34, borderRadius: 17, borderWidth: 1.5, borderColor: Colors.tint(0.4),
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+  },
   dayNumDone: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   dayNumLocked: { borderColor: Colors.overlay(0.12) },
   dayNumText: { fontFamily: Fonts.cinzel, fontSize: 14, color: Colors.sand2 },
@@ -473,16 +535,25 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   dayChevron: { fontSize: 20, color: Colors.stone4 },
 
   // Gün modal
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 28 },
-  modalCard: { width: '100%', backgroundColor: Colors.stone2, borderRadius: 26, padding: 30, alignItems: 'center', borderWidth: 1, borderColor: Colors.tint(0.25) },
-  modalClose: { position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3, zIndex: 2 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  modalCard: {
+    width: '100%', backgroundColor: Colors.stone2, borderRadius: 28, padding: 28,
+    alignItems: 'center', borderWidth: 1, borderColor: Colors.tint(0.25),
+  },
+  modalClose: {
+    position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22,
+    alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone3, zIndex: 2,
+  },
   modalCloseText: { fontSize: 16, color: Colors.text2 },
   modalDayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalTitle: { fontFamily: Fonts.cinzel, fontSize: 22, color: Colors.text, textAlign: 'center', letterSpacing: 0.3 },
   modalDivider: { width: 40, height: 2, backgroundColor: Colors.tint(0.4), borderRadius: 1, marginVertical: 18 },
   modalScroll: { alignSelf: 'stretch', maxHeight: 460, marginBottom: 20 },
   modalRead: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 18 },
-  modalBox: { backgroundColor: Colors.tint(0.08), borderRadius: 14, borderWidth: 1, borderColor: Colors.tint(0.22), padding: 16, marginBottom: 14 },
+  modalBox: {
+    backgroundColor: Colors.tint(0.08), borderRadius: 16, borderWidth: 1,
+    borderColor: Colors.tint(0.22), padding: 16, marginBottom: 14,
+  },
   modalBoxLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand, marginBottom: 8 },
   modalBoxText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
   modalAsk: { paddingHorizontal: 4 },
