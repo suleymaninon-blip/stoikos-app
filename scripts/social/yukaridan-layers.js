@@ -19,7 +19,7 @@ const T = {
   en: {
     c1: 'Everything, all at once.', c2: 'Stop for a moment.', c3: 'Rise above it.', c4: 'A little higher.',
     c5: 'Then go back to your life.', c6: 'The view from above:\na 2,000-year-old Stoic exercise.',
-    q: 'Take the whole universe into your mind,\nand you make ample room for yourself.',
+    q: 'Take the whole universe\ninto your mind, and you make\nample room for yourself.',
     by: 'MARCUS AURELIUS · MEDITATIONS 9.32 · FREELY ADAPTED',
   },
 }[LANG];
