@@ -15,12 +15,31 @@
 7. **Ses:** yalnız ortam sesi, konuşma yok. Müzik kurguda eklenecek.
 8. Bütün denemeleri bana gönder; kurguyu, yazıları, müziği ve logoyu ben yaparım (önceki videolardaki gibi bir `scripts/social/yukaridan-build.sh`).
 
+## Gelen çekimler ve kurgu notları
+
+- **Çekim 1** (`yukaridan-videosu/cekim-1.mp4`, 10 sn, 720×1280): kullanılabilir. İlk ~1,5 sn'de yüz yandan görünüyor → kurguda **4–10 sn** kullanılacak. Arka planda küçük mavi yol levhaları (okunmuyor), gerekirse bulanıklaştır.
+- **Çekim 2** (`cekim-2.mp4`, 10 sn): kullanılabilir, başlangıç 1. çekimin son karesine oturuyor. ~6–9 sn'de yan profil + nefes buharı görünüyor; **kullanıcı kararı (18 Kasım 2026): profil kalsın**, 0–9 sn kullanılacak. Bu yüzden diğer çekimlerden toplam ~2 sn kısılacak. Son kare `cekim-2-son-kare.png` → 10. çekimin ilk karesi.
+
+- **Çekim 3** (`cekim-3.mp4`, 10 sn): 3A fotoğrafı (`cekim-3a-ilk-kare.jpg`, Gemini'de iki kez düzenlendi) + 3B komutuyla. **Tam tepeden düz yükseliş tuttu**, kadın kıpırdamıyor, kalabalık etrafından akıyor. Video ilk kareye birebir bağlı kalmadı ama sorun değil. Işık gündüz gibi aydınlık → kurguda koyulaştırıp maviye çek. Son kare aynı renk düzeltmesiyle `cekim-3-son-kare.png` (ffmpeg `eq=brightness=-0.07:gamma=0.9,colorbalance=…bs=0.07`) → 4. çekimin ilk karesi; böylece 4. çekim akşam ışığında başlar.
+
+- **Çekim 4** (`cekim-4.mp4`, 10 sn): tuttu. Tam tepeden yükseliş, köprü → akşam ışığında şehir ızgarası. Köprü ortadan sola kayıyor (sorun değil). Yükseliş ~6. sn'de yavaşlıyor → kurguda 0–6 sn, gerekirse hafif hızlandır. Son kare `cekim-4-son-kare.png` (renk düzeltmesi gerekmedi) → 5. çekim.
+
+- **Çekim 5** (`cekim-5.mp4`, 10 sn): tuttu. Şehir ızgarası → kamera ufka döner, kıyı ve deniz, gün batımı şeridi, altından bulutlar geçer. Son kare `cekim-5-son-kare.png` → 6. çekim.
+
+- **Çekim 6** (`cekim-6.mp4`, 10 sn): tuttu. Bulutların içinden geçiş → gün batımında bulut denizi → gökyüzü koyulaşır, yıldızlar belirir. Son kare `cekim-6-son-kare.png` → 7. çekim.
+
+- **Çekim 7** (`cekim-7.mp4`, 10 sn): tuttu. Bulut denizi → ~3–4. sn'de bulutlar Dünya'nın kavisine eriyerek dönüşüyor (yumuşak bindirme; yükseliş hissini bozmuyor) → mavi atmosfer çizgisi, gece tarafında kıyı boyunca şehir ışıkları. Son kare `cekim-7-son-kare.png` → 8. çekim.
+
+- **Çekim 8** (`cekim-8.mp4`, 10 sn): tuttu. Dünya geri çekilerek küreye dönüşür, Ay ve Samanyolu belirir, ~6. sn'den sonra sabit. Dünya "nokta" kadar küçülmüyor, orta boy bir küre kalıyor; Ay gerçeğe göre büyük/yakın (sinematik, sorun değil). Üst yarı boş ve karanlık → alıntı oraya. Son kare `cekim-8-son-kare.png` → 9. çekim.
+
+- **Çekim 9** (`cekim-9.mp4`, 10 sn): **ilk denemede tuttu** (yedek plana gerek kalmadı). Uzaydan Dünya'ya dalış → altın bulutlar → şehir → köprü → kadının arkasında, yukarıdan durur; kadın kıpırdamıyor, atkı sırtında. Bulutlar 6. çekimden biraz daha aydınlık/altın, köprü öncekilerden dar — hızlı geçişte fark edilmez. ⚠️ ~6,6. sn'den sonra ölçek bozuluyor: kadın alttaki arabalara göre **dev gibi** görünüyor (kullanıcı fark etti) → kurguda **0–6,4 sn** kullanılacak (kadın köprüde küçük bir figürken kes), ardından düz kesmeyle 10. çekime geç; gerekirse ~5 sn'ye hızlandır.
+
 ## Akış ve kurgu planı
 
 | # | Çekim | Kurguda | Üstteki yazı (TR / EN) |
 |---|---|---|---|
 | 1 | Köprüde kalabalık, kadın durur | 6 sn | Her şey aynı anda. / *Everything, all at once.* |
-| 2 | Telefonu cebe koyar, nefes alır, zaman yavaşlar | 7 sn | Bir an dur. / *Stop for a moment.* |
+| 2 | Telefonu cebe koyar, nefes alır, zaman yavaşlar | 9 sn (0–9; yan profil + nefes buharı bilerek kaldı) | Bir an dur. / *Stop for a moment.* |
 | 3 | Tam tepeden yükseliş: kalabalık onun etrafından akar | 6 sn | — |
 | 4 | Köprü ince bir çizgi, şehir ışıktan bir ağ | 5 sn | Yukarı çık. / *Rise above it.* |
 | 5 | Bütün şehir ve kıyı, bulutlar altta | 5 sn | — |
@@ -125,6 +144,55 @@ SOUND: Soft wind, a distant low hum of the city far below. No music. No spoken w
 
 DO NOT SHOW: her face; any readable text, letters or numbers; signs, billboards, logos, road markings with words; any drone, helicopter or camera visible in the frame; camera tilt or rotation; cuts or scene changes within the shot; rain or snow; animals; cartoon, painterly or CGI look.
 ```
+
+---
+
+### Çekim 3 — 2. sürüm (1. deneme tutmadı)
+
+**2. deneme (kullanıcının önceki üretimi):** kadın ilk ~4 sn kıpırdamadan duruyor, kalabalık etrafından akıyor (güzel); ama pantolon yerine etek/çıplak bacak, kamera yine ufka dönüyor, ışık gri-bulutlu gündüz, köprü farklı (askılı). Yedek olarak saklanıyor (ilk ~4 sn, renk düzeltmesiyle). Bu yüzden 3A/3B'ye "etek değil, pantolon" eklendi.
+
+**1. denemede olanlar (18 Kasım 2026):** kamera tam tepeden bakmadı, arkadan yükselip ufka döndü. Kadın da durmak yerine baştan sona yürüdü. Bu yüzden "kalabalığın ortasında kıpırdamayan bir nokta" görüntüsü oluşmadı.
+
+**Bu sürüm iki adımlı.** Önce Gemini'ye tepeden bir **fotoğraf** çizdiriyoruz; sonra o fotoğrafı ilk kare yapıp videoyu ürettiriyoruz. Gemini fotoğrafta açıyı çok daha iyi tutuyor, video da ilk kareye bağlı kalıyor.
+
+**3A — Fotoğraf** (yeni sohbet, görsel yükleme yok; video değil, **görsel** üret):
+
+```
+Create a photorealistic still image, vertical 9:16.
+
+A perfectly top-down, 90-degree bird's-eye photograph looking straight down at the ground from about 4 meters above. The ground is the pale concrete walkway of a wide pedestrian footbridge with plain grey steel railings along both the left and the right edges of the frame. Blue hour just after sunset: soft, cool, even light; no hard shadows.
+
+In the exact center of the frame stands one woman, seen from directly above: the top of her head with dark brown hair tied in a low, loose bun; the shoulders of a knee-length charcoal-grey wool coat; a long sand-beige knit scarf wrapped once around the neck with both ends hanging down her back; dark grey trousers (she wears trousers, NOT a skirt or a dress, and her legs are not bare); the toes of black leather ankle boots just visible. She stands perfectly still, arms relaxed at her sides.
+
+Around her, about fifteen commuters in dark coats are walking past her on both sides in both directions, slightly motion-blurred, seen from directly above (tops of heads and shoulders).
+
+The sky, the horizon and any buildings are NOT visible — only the bridge walkway and its two railings fill the frame.
+
+Do not show: her face; a skirt, a dress or bare legs; any text, letters, numbers, signs or logos; road markings with words; the sky; the horizon; buildings; a drone or camera; a cartoon, painterly or CGI look.
+```
+
+**3B — Video** (yeni sohbet; **3A'daki fotoğrafı ilk kare olarak yükle**):
+
+```
+Use the uploaded image as the exact first frame of the video. Create an 8-second photorealistic video, vertical 9:16.
+
+STYLE: Photorealistic cinematic live-action film, aerial drone cinematography, soft natural film grain, muted teal-and-amber color grade, 24 fps, real-world physics. No visual effects overlays, no stylization.
+
+CAMERA — THE MOST IMPORTANT RULE: The camera points straight down at the ground (90 degrees) for the entire shot and NEVER tilts up. The sky, the horizon and the buildings are never visible. The camera rises vertically, smoothly and steadily, from about 4 meters to about 30 meters above the woman, without rotating and without moving sideways. The woman stays at the exact center of the frame for the entire shot.
+
+THE WOMAN — SECOND MOST IMPORTANT RULE: She stands completely still like a statue for all 8 seconds. She does not walk, does not take a single step, does not turn, does not move her arms. Only the ends of her sand-beige scarf move very slightly in the wind.
+
+TIMELINE:
+- 0–3 s: Close above her: her bun, her shoulders and the sand-beige scarf fill the center. Commuters in dark coats stream past her on both sides at normal walking speed.
+- 3–6 s: As the camera rises, the people become smaller and the crowd looks like two rivers flowing in opposite directions around one still point — her.
+- 6–8 s: The full width of the bridge walkway is visible, edged by its two railings; along the outer edges of the frame the tops of moving cars with glowing headlights and taillights appear on the highway below. She is a small, still figure in the exact center, the sand-beige scarf a tiny light mark.
+
+SOUND: Soft wind and the distant, low hum of a city below. No music. No spoken words in any language, no voices.
+
+DO NOT SHOW: the woman walking, stepping or turning; a skirt, a dress or bare legs (she wears dark grey trousers); the camera tilting up; the sky; the horizon; buildings; her face; any text, letters, numbers, signs, logos or road markings with words; any drone, helicopter or camera in the frame; cuts or scene changes within the shot; rain or snow; a cartoon, painterly or CGI look.
+```
+
+Tutarsa 4. çekim bu videonun son karesiyle başlar (4. çekimin komutu değişmiyor).
 
 ---
 
