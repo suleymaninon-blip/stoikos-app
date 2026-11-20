@@ -7,7 +7,7 @@ import { useReduceMotion } from '../hooks/useReduceMotion';
 // "Hareketi Azalt"ta basılma ölçeği yok.
 export function CalmPressable({
   children, onPress, style, disabled, pressScale = 0.975,
-  accessibilityLabel, accessibilityHint, accessibilityState,
+  accessibilityLabel, accessibilityHint, accessibilityState, accessibilityRole = 'button',
 }: {
   children: React.ReactNode;
   onPress: () => void;
@@ -16,7 +16,8 @@ export function CalmPressable({
   pressScale?: number;
   accessibilityLabel?: string;
   accessibilityHint?: string;
-  accessibilityState?: { expanded?: boolean; disabled?: boolean };
+  accessibilityState?: { expanded?: boolean; disabled?: boolean; checked?: boolean };
+  accessibilityRole?: 'button' | 'switch';
 }) {
   const scale = useRef(new Animated.Value(1)).current;
   const reduce = useReduceMotion();
@@ -34,7 +35,7 @@ export function CalmPressable({
       disabled={disabled}
       onPressIn={() => { if (!disabled) animateTo(pressScale); }}
       onPressOut={() => animateTo(1)}
-      accessibilityRole="button"
+      accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
       accessibilityState={disabled ? { ...accessibilityState, disabled: true } : accessibilityState}
