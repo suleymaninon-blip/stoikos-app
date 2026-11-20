@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { loadJournalEntries, groupByMonth, JournalEntry } from '../constants/journal';
 import { useLang, localeOf, upper } from '../constants/i18n';
+import { CalmPressable } from '../components/CalmPressable';
+import { StaggerSection } from '../components/StaggerSection';
 
 type Entry = JournalEntry;
 
@@ -16,6 +18,7 @@ export default function JournalScreen() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loaded, setLoaded] = useState(false);
 
+  // loadJournalEntries() tarihi geçersiz anahtarları atlar (koç rızası anahtarı "1 Ocak 1970" diye görünüyordu).
   useEffect(() => {
     (async () => {
       try {
@@ -32,55 +35,75 @@ export default function JournalScreen() {
   const fmt = (d: Date) =>
     cap(d.toLocaleDateString(localeOf(lang), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
   // Ay başlığı: yalnız ay adı + yıl ("НОЯБРЬ 2026", "NOVIEMBRE 2026"); yerel biçim "2026 г." / "de 2026" ekliyordu.
-  const monthTitle = (d: Date) => upper(`${d.toLocaleDateString(localeOf(lang), { month: 'long' })} ${d.getFullYear()}`, lang);
+  const monthTitle = (d: Date) =>
+    upper(`${d.toLocaleDateString(localeOf(lang), { month: 'long' })} ${d.getFullYear()}`, lang);
+
+  const groups = groupByMonth(entries, lang, localeOf(lang));
 
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
-        colors={[Colors.moonA(0.05), 'transparent']}
+        colors={[Colors.moonA(Colors.isDark ? 0.07 : 0.08), 'transparent']}
         style={styles.grad}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
       />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backIcon}>‹</Text>
-        </TouchableOpacity>
-
-        <View style={styles.header}>
-          <Text style={styles.title}>{t('journal.title')}</Text>
-          <Text style={styles.subtitle}>{t('journal.subtitle')}</Text>
+        <View style={styles.backRow}>
+          <CalmPressable onPress={() => router.back()} style={[styles.backBtn, styles.cardShadow]} pressScale={0.94}>
+            <Text style={styles.backIcon}>‹</Text>
+          </CalmPressable>
         </View>
 
-        {loaded && entries.length === 0 && (
-          <View style={styles.emptyWrap}>
-            <Text style={styles.emptyIcon}>✎</Text>
-            <Text style={styles.emptyText}>{t('journal.empty')}</Text>
+        <StaggerSection delay={0}>
+          <View style={styles.header}>
+            <Text style={styles.title}>{t('journal.title')}</Text>
+            <Text style={styles.subtitle}>{t('journal.subtitle')}</Text>
           </View>
+        </StaggerSection>
+
+        {loaded && entries.length === 0 && (
+          <StaggerSection delay={80}>
+            <View style={styles.emptyWrap}>
+              <Text style={styles.emptyIcon}>✎</Text>
+              <Text style={styles.emptyText}>{t('journal.empty')}</Text>
+            </View>
+          </StaggerSection>
         )}
 
         {/* Ay ay: her ayın başında küçük bir özet (yazılan gün, kelime, en çok geçen kelimeler). Cihazda hesaplanır. */}
-        {groupByMonth(entries, lang, localeOf(lang)).map((g) => (
+        {groups.map((g, gi) => (
           <View key={g.key}>
-            <View style={styles.monthCard}>
-              <Text style={styles.monthTitle}>{monthTitle(g.date)}</Text>
-              <Text style={styles.monthStats}>
-                {t('journal.monthStats').replace('{d}', String(g.stats.days)).replace('{w}', String(g.stats.words))}
-              </Text>
-              {g.stats.top.length > 0 && (
-                <View style={styles.topRow}>
-                  <Text style={styles.topLabel}>{t('journal.topWords')}</Text>
-                  <View style={styles.topChips}>
-                    {g.stats.top.map((w) => <View key={w} style={styles.topChip}><Text style={styles.topChipText}>{w}</Text></View>)}
+            <StaggerSection delay={Math.min(70 + gi * 90, 320)}>
+              <View style={[styles.monthCard, styles.cardShadow]}>
+                <Text style={styles.monthTitle}>{monthTitle(g.date)}</Text>
+                <Text style={styles.monthStats}>
+                  {t('journal.monthStats')
+                    .replace('{d}', String(g.stats.days))
+                    .replace('{w}', String(g.stats.words))}
+                </Text>
+                {g.stats.top.length > 0 && (
+                  <View style={styles.topRow}>
+                    <Text style={styles.topLabel}>{t('journal.topWords')}</Text>
+                    <View style={styles.topChips}>
+                      {g.stats.top.map((w) => (
+                        <View key={w} style={styles.topChip}>
+                          <Text style={styles.topChipText}>{w}</Text>
+                        </View>
+                      ))}
+                    </View>
                   </View>
-                </View>
-              )}
-            </View>
-            {g.entries.map((e) => (
-              <View key={e.key} style={styles.entryCard}>
-                <Text style={styles.entryDate}>{fmt(e.date)}</Text>
-                <Text style={styles.entryText}>{e.text}</Text>
+                )}
               </View>
+            </StaggerSection>
+
+            {g.entries.map((e, ei) => (
+              <StaggerSection key={e.key} delay={Math.min(110 + gi * 90 + ei * 45, 420)}>
+                <View style={[styles.entryCard, styles.cardShadow]}>
+                  <Text style={styles.entryDate}>{fmt(e.date)}</Text>
+                  <Text style={styles.entryText}>{e.text}</Text>
+                </View>
+              </StaggerSection>
             ))}
           </View>
         ))}
@@ -91,33 +114,56 @@ export default function JournalScreen() {
 
 const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
-  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 250 },
-  scroll: { padding: 24, paddingBottom: 48 },
-  backBtn: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 4, marginBottom: 12 },
-  backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
-  header: { marginBottom: 22 },
-  title: { fontFamily: Fonts.cormorantItalic, fontSize: 27, color: Colors.text, letterSpacing: 0.3, lineHeight: 33, marginBottom: 8 },
-  subtitle: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.2, lineHeight: 19 },
+  grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 270 },
+  scroll: { padding: 24, paddingBottom: 52 },
 
-  emptyWrap: { alignItems: 'center', justifyContent: 'center', paddingTop: 60, gap: 14 },
+  cardShadow: !Colors.isDark
+    ? Platform.select({
+        ios: {
+          shadowColor: '#1D2A2F',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.05,
+          shadowRadius: 12,
+        },
+        android: { elevation: 2 },
+        default: {},
+      })
+    : {},
+
+  // Geri düğmesi satırı: Pressable ScrollView içinde tam genişliğe yayılmasın, dokunma alanı yalnız düğme olsun.
+  backRow: { flexDirection: 'row', marginTop: 4, marginBottom: 14 },
+  backBtn: {
+    width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07),
+  },
+  backIcon: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.sand2, marginTop: -2 },
+  header: { marginBottom: 24 },
+  title: { fontFamily: Fonts.cormorantItalic, fontSize: 28, color: Colors.text, letterSpacing: 0.3, lineHeight: 34, marginBottom: 8 },
+  subtitle: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, letterSpacing: 0.2, lineHeight: 20 },
+
+  emptyWrap: { alignItems: 'center', justifyContent: 'center', paddingTop: 64, gap: 14 },
   emptyIcon: { fontSize: 36, color: Colors.muted, opacity: 0.5 },
   emptyText: { fontFamily: Fonts.cormorantItalic, fontSize: 18, color: Colors.muted, textAlign: 'center', lineHeight: 26, paddingHorizontal: 20 },
 
   monthCard: {
-    backgroundColor: Colors.tint(0.07), borderRadius: 16, padding: 16, marginBottom: 12, marginTop: 6,
-    borderWidth: 1, borderColor: Colors.tint(0.16),
+    backgroundColor: Colors.tint(0.07), borderRadius: 22, padding: 18, marginBottom: 14, marginTop: 8,
+    borderWidth: 1, borderColor: Colors.tint(0.18),
   },
   monthTitle: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand, marginBottom: 6 },
   monthStats: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.text2, lineHeight: 22 },
   topRow: { marginTop: 12, gap: 8 },
   topLabel: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   topChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  topChip: { backgroundColor: Colors.stone2, borderRadius: 14, paddingVertical: 5, paddingHorizontal: 12, borderWidth: 1, borderColor: Colors.overlay(0.08) },
-  topChipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text },
-  entryCard: {
-    backgroundColor: Colors.stone2, borderRadius: 16, padding: 18, marginBottom: 12,
-    borderWidth: 1, borderColor: Colors.moonA(0.12),
+  topChip: {
+    backgroundColor: Colors.stone2, borderRadius: 14, paddingVertical: 5, paddingHorizontal: 12,
+    borderWidth: 1, borderColor: Colors.overlay(0.08),
   },
-  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: Colors.moon, marginBottom: 8 },
-  entryText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 25 },
+  topChipText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text },
+
+  entryCard: {
+    backgroundColor: Colors.stone2, borderRadius: 20, padding: 20, marginBottom: 14,
+    borderWidth: 1, borderColor: Colors.moonA(0.14),
+  },
+  entryDate: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1, color: Colors.moon, marginBottom: 10 },
+  entryText: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26 },
 });
