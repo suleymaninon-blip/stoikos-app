@@ -528,7 +528,6 @@ export default function WisdomScreen() {
 
       <QuoteShareModal
         quote={shareQuote}
-        tagline={t('setup.tagline')}
         shareLabel={t('share.button')}
         closeLabel={t('wisdom.close')}
         onClose={() => setShareQuote(null)}

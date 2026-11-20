@@ -104,7 +104,7 @@ export default function ChallengeScreen() {
       )}
 
       <WriteModal visible={writing} onClose={() => setWriting(false)} onDone={load} lang={lang} t={t} />
-      <QuoteShareModal quote={share} tagline={t('setup.tagline')} shareLabel={t('share.button')} closeLabel={t('wisdom.close')} onClose={() => setShare(null)} />
+      <QuoteShareModal quote={share} shareLabel={t('share.button')} closeLabel={t('wisdom.close')} onClose={() => setShare(null)} />
     </SafeAreaView>
   );
 }
