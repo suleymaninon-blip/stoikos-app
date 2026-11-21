@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView,
   StyleSheet, SafeAreaView, Animated, Easing, TextInput,
-  KeyboardAvoidingView, Platform, Modal, Pressable, AppState, ImageBackground,
+  KeyboardAvoidingView, Platform, Modal, Pressable, AppState,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
@@ -21,7 +21,7 @@ import { getTodaysReflectionPrompt } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
 import { ConceptModal } from '../../components/ConceptModal';
 import { ConceptGlyph } from '../../components/ConceptGlyph';
-import { PAPER } from '../../components/EmbossTile';
+import { PaperBg } from '../../components/PaperBg';
 import { StaggerSection } from '../../components/StaggerSection';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
 
@@ -408,7 +408,7 @@ export default function PracticeScreen() {
           {/* 2. Morning */}
           <StaggerSection delay={90}>
             <View style={[styles.section, styles.cardShadow]}>
-              <PaperBg />
+              <PaperBg radius={24} />
               <View style={styles.sectionHeader}>
                 <View style={styles.sectionIcon}>
                   <DayPartIcon part="morning" size={22} color={iconColor(Colors, 'morning')} />
@@ -443,7 +443,7 @@ export default function PracticeScreen() {
           {/* 3. Evening */}
           <StaggerSection delay={180}>
             <View style={[styles.section, styles.cardShadow]}>
-              <PaperBg />
+              <PaperBg radius={24} />
               <View style={styles.sectionHeader}>
                 <View style={styles.sectionIcon}>
                   <DayPartIcon part="evening" size={22} color={iconColor(Colors, 'evening')} />
@@ -484,7 +484,7 @@ export default function PracticeScreen() {
             }}
           >
             <View style={[styles.journalCard, styles.cardShadow]}>
-              <PaperBg />
+              <PaperBg radius={24} />
               <View style={styles.journalHeader}>
                 <Text style={styles.journalTag}>{t('practice.journalTag')}</Text>
                 <TouchableOpacity onPress={() => router.push('/journal')} hitSlop={8} activeOpacity={0.7}>
@@ -578,7 +578,7 @@ export default function PracticeScreen() {
           {/* 5. Concept of the day */}
           <StaggerSection delay={360}>
             <View style={[styles.conceptCard, styles.cardShadow]}>
-              <PaperBg />
+              <PaperBg radius={24} />
               {/* Bilgelik'teki kavramlarla aynı dil (21 Kasım 2026): gravür çizimi + sönen ayırıcı */}
               <View style={styles.conceptHead}>
                 <ConceptGlyph latin={concept.latin} fallback={concept.icon} size={48} color={Colors.sand} />
@@ -655,12 +655,6 @@ export default function PracticeScreen() {
 }
 
 // ─── Styles ───────────────────────────────────────────────
-/** Kartın arkasında kâğıt dokusu (açık temada belirgin, koyuda çok soluk). Kart `overflow: 'hidden'` olmalı. */
-function PaperBg() {
-  const { C: Colors } = useTheme();
-  return <ImageBackground source={PAPER} resizeMode="repeat" style={StyleSheet.absoluteFill} imageStyle={{ opacity: Colors.isDark ? 0.15 : 1 }} />;
-}
-
 const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 280 },
@@ -694,8 +688,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
 
   // Section
   // Kartlar açık temada krem "kâğıt" + doku (Bilgelik'le aynı, 21 Kasım 2026); koyuda yüzey rengi.
+  // Doku `PaperBg radius` ile kırpılır; karta overflow:hidden verme (iOS'ta gölgeyi siler).
   section: {
-    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, overflow: 'hidden',
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24,
     padding: 20, marginBottom: 18,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
@@ -780,7 +775,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
 
   // Journal
   journalCard: {
-    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, padding: 20, overflow: 'hidden',
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, padding: 20,
     marginBottom: 18, borderWidth: 1, borderColor: Colors.moonA(0.16),
   },
   journalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
@@ -826,7 +821,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
 
   // Concept
   conceptCard: {
-    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, padding: 22, overflow: 'hidden',
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, padding: 22,
     borderWidth: 1, borderColor: Colors.tint(0.18),
   },
   conceptHead: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 14 },
