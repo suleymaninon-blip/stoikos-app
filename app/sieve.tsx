@@ -58,6 +58,8 @@ export default function SieveScreen() {
   const [dissolving, setDissolving] = useState<number[]>([]);
   const [dragging, setDragging] = useState(false);
   const [saved, setSaved] = useState(false);
+  // Netlikte koça götürülmeyecek maddeler (varsayılan: hepsi seçili; kullanıcı: "koça atmak istediklerimi seçemiyorum")
+  const [skipCoach, setSkipCoach] = useState<number[]>([]);
   const nid = useRef(1);
   const inputRef = useRef<TextInput>(null);
   const zoneInRef = useRef<View>(null);
@@ -120,6 +122,7 @@ export default function SieveScreen() {
   };
 
   const restart = () => {
+    setSkipCoach([]);
     setItems([]); setSaved(false); setSel(null); setDissolving([]); setPartFor(null); setScreen('write');
   };
   const save = async () => {
@@ -133,10 +136,13 @@ export default function SieveScreen() {
     } catch {}
   };
   const toCoach = () => {
-    const draftMsg = t('sieve.coachDraft', { list: kept.map((i) => i.text).join('; ') });
+    const chosen = kept.filter((i) => !skipCoach.includes(i.id));
+    if (!chosen.length) return;
+    const draftMsg = t('sieve.coachDraft', { list: chosen.map((i) => i.text).join('; ') });
     router.navigate({ pathname: '/coach', params: { draft: draftMsg } });
   };
 
+  const chosenCount = kept.filter((i) => !skipCoach.includes(i.id)).length;
   const stepOf = screen === 'write' ? 1 : screen === 'sort' ? 2 : 3;
   const partItem = items.find((i) => i.id === partFor);
   const active = sel != null || dragging;
@@ -323,15 +329,30 @@ export default function SieveScreen() {
                 start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}
                 style={styles.divider}
               />
-              <View style={styles.list}>
-                {kept.map((k) => (
-                  <View key={k.id} style={[styles.keptCard, styles.cardShadow]}>
-                    <View style={styles.keptRing} />
-                    <Text style={styles.keptText}>{k.text}</Text>
-                    {k.part && <Text style={styles.partBadge}>{upper(t('sieve.partBadge'), lang)}</Text>}
-                  </View>
-                ))}
+              {kept.length > 0 && <Text style={[styles.label, { marginTop: 18, marginBottom: 0 }]}>{upper(t('sieve.pickHint'), lang)}</Text>}
+              <View style={[styles.list, { marginTop: 10 }]}>
+                {kept.map((k) => {
+                  const on = !skipCoach.includes(k.id);
+                  return (
+                    <Pressable
+                      key={k.id}
+                      onPress={() => setSkipCoach((cur) => (on ? [...cur, k.id] : cur.filter((x) => x !== k.id)))}
+                      accessibilityRole="checkbox"
+                      accessibilityState={{ checked: on }}
+                      style={[styles.keptCard, styles.cardShadow, !on && styles.keptOff]}
+                    >
+                      <View style={[styles.keptBox, on && styles.keptBoxOn]}>
+                        {on && (
+                          <Svg width={14} height={14} viewBox="0 0 24 24"><Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.onAccent} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" /></Svg>
+                        )}
+                      </View>
+                      <Text style={styles.keptText}>{k.text}</Text>
+                      {k.part && <Text style={styles.partBadge}>{upper(t('sieve.partBadge'), lang)}</Text>}
+                    </Pressable>
+                  );
+                })}
               </View>
+              {kept.some((k) => k.part) && <Text style={styles.legend}>{t('sieve.partLegend')}</Text>}
               {released.length > 0 && (
                 <View style={[styles.releasedRow, { justifyContent: 'center', marginTop: 14 }]}>
                   <View style={[styles.goldDot, { backgroundColor: gold }]} />
@@ -342,10 +363,10 @@ export default function SieveScreen() {
             <View style={styles.footer}>
               {kept.length > 0 && (
                 <>
-                  <CalmPressable onPress={toCoach} style={styles.primary}>
+                  <CalmPressable onPress={toCoach} disabled={chosenCount === 0} style={[styles.primary, chosenCount === 0 && styles.dim]}>
                     <Text style={styles.primaryText}>{t('sieve.coach')}</Text>
                   </CalmPressable>
-                  <Text style={styles.note}>{t('sieve.coachNote')}</Text>
+                  <Text style={styles.note}>{chosenCount ? t('sieve.coachNote', { n: chosenCount }) : t('sieve.pickNone')}</Text>
                 </>
               )}
               <CalmPressable onPress={save} disabled={saved} style={styles.secondary} accessibilityState={{ disabled: saved }}>
@@ -666,7 +687,10 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: Colors.stone2,
     borderWidth: 1, borderColor: Colors.stone4, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16,
   },
-  keptRing: { width: 18, height: 18, borderRadius: 9, borderWidth: 1.5, borderColor: Colors.sand },
+  keptBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: Colors.muted, alignItems: 'center', justifyContent: 'center' },
+  keptBoxOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
+  keptOff: { opacity: 0.6 },
+  legend: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.muted, marginTop: 10 },
   keptText: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, lineHeight: 22, color: Colors.text },
   partBadge: {
     fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.2, color: Colors.sand2,
