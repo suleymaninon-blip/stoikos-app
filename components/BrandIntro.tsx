@@ -17,10 +17,11 @@ import { MARK_CENTER, MARK_PATH, MARK_PATH_LEN, MARK_VIEWBOX } from './StoikosMa
  * - "Hareketi Azalt" açıksa yalnız son hâl görünür ve süre sonunda kapanır.
  * - `strokeDashoffset` için `useNativeDriver: false`, `transform`/`opacity` için `useNativeDriver: true`.
  *
- * 21 Kasım 2026 (kullanıcının Gemini videolarından): Stoa kapısı (çift çizgili kemer), küçük doğup
- * yükselirken açılan ve dönerek küreye toplanan nefes çiçeği, toplanma ışığı, küre sisi, sırayla açılan
- * üç hale halkası + kayan parıltılar, 80 yıldız tozu, daha sıcak şafak. Son düzenlemeyi kullanıcının
- * dış aracı yaptı (değerlerin sıfırlanması, benzersiz gradyan adları, biraz daha sıkı zamanlama).
+ * 21 Kasım 2026 (kullanıcının Gemini videosunun zamanlaması): Stoa kapısı (tek kemer), küçük doğup
+ * yükselirken açılan ve dönerek küreye toplanan nefes çiçeği, sırayla açılan üç hale halkası + kayan
+ * parıltılar, 46 yıldız tozu. Kullanıcı bu sade sürümü, sonradan eklenen beş efektli/çift kemerli
+ * sürüme tercih etti (o sürüm commit 2a6e16b). Değerlerin sıfırlanması ve benzersiz gradyan adları
+ * kullanıcının dış aracından korundu.
  */
 const { width, height } = appDimensions();
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -29,8 +30,7 @@ const MARK = 150;                      // işaretin ekrandaki boyutu
 const K = MARK / 640;                  // viewBox birimi → piksel
 const PETAL = 112 * 2 * K;             // yaprak çapı
 const SPREAD = 150 * K;                // açık çiçekte yaprak merkezinin uzaklığı
-const GLOW = Math.round(Math.min(width * 1.7, 640));
-const ORB_GLOW = Math.round(MARK * 1.7); // kürenin hemen etrafındaki parlak sis
+const GLOW = Math.round(Math.min(width * 1.5, 560));
 const RISE = Math.round(height * 0.36); // kürenin doğduğu derinlik
 const SPEED = 0.85;
 const ms = (t: number) => Math.round(t * SPEED);
@@ -46,35 +46,28 @@ const ARCH_LEN = (Math.PI * ARCH_R) / 2 + (ARCH_H - ARCH_R);
 const ARCH_L = `M${ARCH_R + ARCH_PAD} ${ARCH_PAD} A${ARCH_R} ${ARCH_R} 0 0 0 ${ARCH_PAD} ${ARCH_R + ARCH_PAD} V${ARCH_H + ARCH_PAD}`;
 const ARCH_RT = `M${ARCH_R + ARCH_PAD} ${ARCH_PAD} A${ARCH_R} ${ARCH_R} 0 0 1 ${ARCH_W + ARCH_PAD} ${ARCH_R + ARCH_PAD} V${ARCH_H + ARCH_PAD}`;
 
-// İç çizgi (çift çizgili kemer): 8 px içeride, daha ince ve soluk.
-const ARCH_IN = 8;
-const ARCH_IR = ARCH_R - ARCH_IN;
-const ARCH_ILEN = (Math.PI * ARCH_IR) / 2 + (ARCH_H - ARCH_R);
-const ARCH_IL = `M${ARCH_R + ARCH_PAD} ${ARCH_PAD + ARCH_IN} A${ARCH_IR} ${ARCH_IR} 0 0 0 ${ARCH_PAD + ARCH_IN} ${ARCH_R + ARCH_PAD} V${ARCH_H + ARCH_PAD}`;
-const ARCH_IRT = `M${ARCH_R + ARCH_PAD} ${ARCH_PAD + ARCH_IN} A${ARCH_IR} ${ARCH_IR} 0 0 1 ${ARCH_W + ARCH_PAD - ARCH_IN} ${ARCH_R + ARCH_PAD} V${ARCH_H + ARCH_PAD}`;
-
 // İçeriğin (işaret + yazı + alt başlık ≈ 272 px) tepesinden 74 px yukarıda başlar.
 const ARCH_TOP = Math.round(height / 2 - height * 0.03 - 136 - 74);
 
 // Hale: küreden dışa sırayla açılan üç halka. Dış iki halka yazının hizasına iniyor:
 // parıltıları yalnız üst yarıda gezsin, STOIKOS'un üstünden geçmesin.
 const RINGS = [
-  { r: 94, at: 2200, op: 0.42, from: -90, to: 260, len: 0.16 },
-  { r: 118, at: 2380, op: 0.28, from: -20, to: -200, len: 0.12 },
-  { r: 142, at: 2560, op: 0.18, from: -200, to: -30, len: 0.09 },
+  { r: 94, at: 2300, op: 0.42, from: -90, to: 260, len: 0.16 },
+  { r: 118, at: 2500, op: 0.28, from: -20, to: -200, len: 0.12 },
+  { r: 142, at: 2700, op: 0.18, from: -200, to: -30, len: 0.09 },
 ];
 const HALO = 2 * 142 + 8;
 
-// Yıldız tozu: sabit tohumlu 80 zerre; gece gökyüzünde baştan var, iki kez parıldar, yavaşça yükselir.
+// Yıldız tozu: sabit tohumlu 46 zerre; gece gökyüzünde baştan var, iki kez parıldar, yavaşça yükselir.
 const DUST = (() => {
   let seed = 11;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-  return Array.from({ length: 80 }, () => ({
+  return Array.from({ length: 46 }, () => ({
     x: Math.round(12 + rnd() * (width - 24)),
     y: Math.round(height * 0.06 + rnd() * (ARCH_TOP + ARCH_H * 0.75 - height * 0.06)),
-    r: 0.6 + rnd() * 1.7,
+    r: 0.7 + rnd() * 1.3,
     p: rnd() * 0.3,
-    o: 0.5 + rnd() * 0.5,
+    o: 0.35 + rnd() * 0.55,
   }));
 })();
 
@@ -100,7 +93,6 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
   const arch = useRef(new Animated.Value(0)).current;
   const rings = useRef(RINGS.map(() => new Animated.Value(0))).current;
   const shine = useRef(new Animated.Value(0)).current;
-  const flash = useRef(new Animated.Value(0)).current;
   const dust = useRef(new Animated.Value(0)).current;
   const done = useRef(false);
   const exitAnimRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -111,7 +103,7 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
     exitAnimRef.current?.stop();
     exitAnimRef.current = Animated.timing(exit, {
       toValue: 1,
-      duration: 420,
+      duration: 520,
       easing: Easing.in(Easing.quad),
       useNativeDriver: true,
     });
@@ -124,7 +116,7 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
 
     const allNativeValues = [
       dawn, day, glow, rise, conv, petalsIn, bloom, petalsOut, orb,
-      hair, tag, flash, dust, shine, ...letters, ...rings,
+      hair, tag, dust, shine, ...letters, ...rings,
     ];
     allNativeValues.forEach((v) => v.stopAnimation());
     arch.stopAnimation();
@@ -134,7 +126,6 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
       [dawn, day, glow, rise, bloom, conv, orb, hair, tag, ...letters, ...rings].forEach((v) => v.setValue(1));
       dust.setValue(1);
       shine.setValue(0);
-      flash.setValue(0);
       petalsOut.setValue(0);
       arch.setValue(1);
       arc.setValue(1);
@@ -159,7 +150,6 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
     arch.setValue(0);
     dust.setValue(0);
     shine.setValue(0);
-    flash.setValue(0);
     hair.setValue(0);
     tag.setValue(0);
     letters.forEach((v) => v.setValue(0));
@@ -172,31 +162,27 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
 
     // Çiçek küçük doğar, yükselirken açılır, dönerek küreye toplanır; küre yerine oturunca Ω, halkalar, yazı.
     const mainAnim = Animated.parallel([
-      tm(glow, 150, 850, o),
-      tm(dawn, 250, 1500),
-      tm(day, 2550, 1150),
-      tm(arch, 220, 1050, io, false),
-      tm(dust, 0, 3900, Easing.linear),
-      tm(petalsIn, 100, 380, o),
-      tm(bloom, 100, 1100, o),
-      tm(rise, 180, 1850),
-      tm(conv, 1200, 620),
-      tm(petalsOut, 1720, 280, o, true, 0),
-      tm(orb, 1580, 320, o),
-      Animated.sequence([
-        tm(flash, 1600, 200, o),
-        Animated.timing(flash, { toValue: 0, duration: ms(650), easing: Easing.out(Easing.quad), useNativeDriver: true }),
-      ]),
-      tm(arc, 1900, 750, io, false),
-      ...rings.map((v, i) => tm(v, RINGS[i].at, 920, o)),
-      tm(shine, 2200, 1750, io),
-      ...letters.map((v, i) => tm(v, 2450 + i * 75, 440, o)),
-      tm(hair, 3050, 480),
-      tm(tag, 3200, 480, o),
+      tm(glow, 150, 900, o),
+      tm(dawn, 300, 1600),
+      tm(day, 2300, 1300),
+      tm(arch, 250, 1100, io, false),
+      tm(dust, 0, 4200, Easing.linear),
+      tm(petalsIn, 100, 400, o),
+      tm(bloom, 100, 1200, o),
+      tm(rise, 200, 2000),
+      tm(conv, 1300, 650),
+      tm(petalsOut, 1850, 300, o, true, 0),
+      tm(orb, 1700, 350, o),
+      tm(arc, 2050, 800, io, false),
+      ...rings.map((v, i) => tm(v, RINGS[i].at, 1000, o)),
+      tm(shine, 2300, 2600, io),
+      ...letters.map((v, i) => tm(v, 2700 + i * 90, 520, o)),
+      tm(hair, 3350, 600),
+      tm(tag, 3550, 600, o),
     ]);
 
     mainAnim.start();
-    const id = setTimeout(leave, 4150);
+    const id = setTimeout(leave, ms(4700));
 
     return () => {
       clearTimeout(id);
@@ -211,8 +197,7 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
   // Altınlar açık temada biraz koyu, koyuda biraz açık: iki zeminde de görünsün.
   const archColor = C.isDark ? '#e6cc94' : '#b8944f';
   const haloColor = C.isDark ? '#f0d9a4' : '#b8944f';
-  const glintColor = C.isDark ? '#fff1cf' : '#d6ad62';
-  const dustColor = C.isDark ? '#fff4d6' : '#c9a25e';
+  const dustColor = C.isDark ? '#f6e7c2' : '#c9a25e';
   const riseY = rise.interpolate({ inputRange: [0, 1], outputRange: [RISE, 0] });
 
   return (
@@ -229,7 +214,7 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
         {/* gece → gün doğumu → temanın zemini */}
         <LinearGradient colors={['#101826', '#1b2740', '#2c3550']} locations={[0, 0.6, 1]} style={StyleSheet.absoluteFill} />
         <Animated.View style={[StyleSheet.absoluteFill, { opacity: dawn }]}>
-          <LinearGradient colors={['#2e3b66', '#86719f', '#e8a283', '#ffd49b', '#ffe7c0']} locations={[0, 0.34, 0.62, 0.84, 1]} style={StyleSheet.absoluteFill} />
+          <LinearGradient colors={['#2b3a63', '#7a6f9c', '#e0a184', '#ffd9a0']} locations={[0, 0.38, 0.68, 1]} style={StyleSheet.absoluteFill} />
         </Animated.View>
         <Animated.View style={[StyleSheet.absoluteFill, { opacity: day, backgroundColor: C.bg }]} />
 
@@ -253,19 +238,6 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
                 strokeLinecap="round"
                 strokeDasharray={ARCH_LEN}
                 strokeDashoffset={arch.interpolate({ inputRange: [0, 1], outputRange: [ARCH_LEN, 0] })}
-              />
-            ))}
-            {[ARCH_IL, ARCH_IRT].map((d) => (
-              <AnimatedPath
-                key={d}
-                d={d}
-                fill="none"
-                stroke="url(#brandIntroArchGrad)"
-                strokeOpacity={0.5}
-                strokeWidth={0.8}
-                strokeLinecap="round"
-                strokeDasharray={ARCH_ILEN}
-                strokeDashoffset={arch.interpolate({ inputRange: [0, 1], outputRange: [ARCH_ILEN, 0] })}
               />
             ))}
           </Svg>
@@ -303,8 +275,8 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
               <Svg width={GLOW} height={GLOW}>
                 <Defs>
                   <RadialGradient id="brandIntroGlowGrad" cx="50%" cy="50%" r="50%">
-                    <Stop offset="0" stopColor="#f0b964" stopOpacity="0.5" />
-                    <Stop offset="0.5" stopColor="#e2aa5a" stopOpacity="0.16" />
+                    <Stop offset="0" stopColor="#e2aa5a" stopOpacity="0.34" />
+                    <Stop offset="0.56" stopColor="#e2aa5a" stopOpacity="0.1" />
                     <Stop offset="1" stopColor="#e2aa5a" stopOpacity="0" />
                   </RadialGradient>
                 </Defs>
@@ -357,8 +329,7 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
                     ]}
                   >
                     <Svg width={HALO} height={HALO}>
-                      <Circle cx={HALO / 2} cy={HALO / 2} r={g.r} fill="none" stroke={haloColor} strokeOpacity={g.op * 0.22} strokeWidth={7} />
-                      <Circle cx={HALO / 2} cy={HALO / 2} r={g.r} fill="none" stroke={haloColor} strokeOpacity={g.op * 1.2} strokeWidth={1.1} />
+                      <Circle cx={HALO / 2} cy={HALO / 2} r={g.r} fill="none" stroke={haloColor} strokeOpacity={g.op} strokeWidth={1} />
                     </Svg>
                   </Animated.View>
                   {!reduce && (
@@ -372,72 +343,14 @@ export function BrandIntro({ onFinish }: { onFinish: () => void }) {
                       ]}
                     >
                       <Svg width={HALO} height={HALO}>
-                        <Circle
-                          cx={HALO / 2}
-                          cy={HALO / 2}
-                          r={g.r}
-                          fill="none"
-                          stroke={glintColor}
-                          strokeOpacity={0.35}
-                          strokeWidth={8}
-                          strokeLinecap="round"
-                          strokeDasharray={`${c * g.len} ${c}`}
-                        />
-                        <Circle
-                          cx={HALO / 2}
-                          cy={HALO / 2}
-                          r={g.r}
-                          fill="none"
-                          stroke={glintColor}
-                          strokeOpacity={1}
-                          strokeWidth={2.2}
-                          strokeLinecap="round"
-                          strokeDasharray={`${c * g.len} ${c}`}
-                        />
+                        <Circle cx={HALO / 2} cy={HALO / 2} r={g.r} fill="none" stroke={haloColor} strokeOpacity={Math.min(1, g.op * 2.2)} strokeWidth={1.6}
+                          strokeLinecap="round" strokeDasharray={`${c * g.len} ${c}`} />
                       </Svg>
                     </Animated.View>
                   )}
                 </React.Fragment>
               );
             })}
-
-            {/* kürenin etrafında parlak sis */}
-            <Animated.View style={[styles.orbGlow, { opacity: orb, transform: [{ translateY: riseY }] }]}>
-              <Svg width={ORB_GLOW} height={ORB_GLOW}>
-                <Defs>
-                  <RadialGradient id="brandIntroOrbGlowGrad" cx="50%" cy="50%" r="50%">
-                    <Stop offset="0" stopColor="#ffe2a6" stopOpacity="0.65" />
-                    <Stop offset="0.45" stopColor="#f3c177" stopOpacity="0.28" />
-                    <Stop offset="1" stopColor="#f3c177" stopOpacity="0" />
-                  </RadialGradient>
-                </Defs>
-                <Rect x="0" y="0" width={ORB_GLOW} height={ORB_GLOW} fill="url(#brandIntroOrbGlowGrad)" />
-              </Svg>
-            </Animated.View>
-
-            {/* toplanma anında kısa, yumuşak ışık */}
-            {!reduce && (
-              <Animated.View
-                style={[
-                  styles.orbGlow,
-                  {
-                    opacity: flash,
-                    transform: [{ translateY: riseY }, { scale: flash.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1.5] }) }],
-                  },
-                ]}
-              >
-                <Svg width={ORB_GLOW} height={ORB_GLOW}>
-                  <Defs>
-                    <RadialGradient id="brandIntroFlashGrad" cx="50%" cy="50%" r="50%">
-                      <Stop offset="0" stopColor="#fff6dc" stopOpacity="0.95" />
-                      <Stop offset="0.35" stopColor="#ffdc96" stopOpacity="0.45" />
-                      <Stop offset="1" stopColor="#ffdc96" stopOpacity="0" />
-                    </RadialGradient>
-                  </Defs>
-                  <Rect x="0" y="0" width={ORB_GLOW} height={ORB_GLOW} fill="url(#brandIntroFlashGrad)" />
-                </Svg>
-              </Animated.View>
-            )}
 
             {/* küre */}
             <Animated.View style={[styles.markFill, { opacity: orb, transform: [{ translateY: riseY }] }]}>
@@ -507,8 +420,7 @@ const styles = StyleSheet.create({
   container: { ...StyleSheet.absoluteFillObject, zIndex: 999, backgroundColor: '#101826' },
   arch: { position: 'absolute', left: (width - ARCH_W) / 2 - ARCH_PAD, top: ARCH_TOP - ARCH_PAD },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingBottom: height * 0.06 },
-  // Halka, sis ve yapraklar işaretin küre merkezine oturur (viewBox'ta merkez y 477, kare ortası 482).
-  orbGlow: { position: 'absolute', width: ORB_GLOW, height: ORB_GLOW, left: (MARK - ORB_GLOW) / 2, top: (MARK - ORB_GLOW) / 2 + (MARK_CENTER.y - 482) * K },
+  // Halka ve yapraklar işaretin küre merkezine oturur (viewBox'ta merkez y 477, kare ortası 482).
   glow: { position: 'absolute', width: GLOW, height: GLOW, left: (MARK - GLOW) / 2, top: (MARK - GLOW) / 2 },
   mark: { width: MARK, height: MARK },
   halo: { position: 'absolute', width: HALO, height: HALO, left: (MARK - HALO) / 2, top: (MARK - HALO) / 2 + (MARK_CENTER.y - 482) * K },
