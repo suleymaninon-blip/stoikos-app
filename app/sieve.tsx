@@ -227,7 +227,14 @@ export default function SieveScreen() {
 
         {/* 2 · Ele */}
         {screen === 'sort' && (
-          <View style={styles.sortWrap}>
+          // Kaydırılabilir: 5 taş küçük ekranda alanların üstüne biniyordu (21 Kasım 2026, kullanıcının iPhone'u).
+          // Sürüklerken kaydırma kapalı; taşta web'de touchAction 'none' (parmak sayfayı değil taşı taşısın).
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={styles.sortWrap}
+            scrollEnabled={!dragging}
+            showsVerticalScrollIndicator={false}
+          >
             <Text style={styles.h1}>{t('sieve.sortTitle')}</Text>
             <Text style={styles.lead}>{t('sieve.sortBody')}</Text>
 
@@ -299,7 +306,7 @@ export default function SieveScreen() {
                 </Pressable>
               </Pulse>
             </View>
-          </View>
+          </ScrollView>
         )}
 
         {/* 4 · Netlik */}
@@ -445,6 +452,7 @@ function SortStone({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 6 || Math.abs(g.dy) > 6,
     onPanResponderGrant: () => { setLifted(true); cb.current.onDragStart(); },
     onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], { useNativeDriver: false }),
+    onPanResponderTerminationRequest: () => false,
     onPanResponderRelease: (_, g) => {
       setLifted(false);
       const dropped = cb.current.onDragEnd(g.moveX, g.moveY);
@@ -460,7 +468,7 @@ function SortStone({
 
   return (
     <View style={lifted ? styles.liftedWrap : undefined}>
-      <Animated.View {...responder.panHandlers} style={{ transform: pan.getTranslateTransform() }}>
+      <Animated.View {...responder.panHandlers} style={[{ transform: pan.getTranslateTransform() }, Platform.OS === 'web' && ({ touchAction: 'none' } as any)]}>
         <Pressable
           onPress={onTap}
           accessibilityRole="button"
@@ -627,15 +635,15 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   endMuted: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.muted },
   endAccent: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.sand },
 
-  sortWrap: { flex: 1, paddingHorizontal: 20, paddingTop: 18, paddingBottom: 18 },
-  field: { flex: 1, gap: 10 },
+  sortWrap: { flexGrow: 1, paddingHorizontal: 20, paddingTop: 18, paddingBottom: 18 },
+  field: { flexGrow: 1, gap: 10 },
   fieldLifted: { zIndex: 5, elevation: 8 },
   emptyField: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.muted, textAlign: 'center', marginTop: 30 },
   choiceRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
   choiceBtn: { flex: 1, minHeight: 46, borderRadius: 14 },
 
-  zones: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  zone: { height: 172, borderRadius: 20, padding: 14, gap: 8, borderWidth: 1.5 },
+  zones: { flexDirection: 'row', gap: 10, marginTop: 16 },
+  zone: { height: 150, borderRadius: 20, padding: 14, gap: 8, borderWidth: 1.5 },
   zoneIn: { backgroundColor: Colors.tint(0.1), borderColor: Colors.tint(0.3) },
   zoneInActive: { borderColor: Colors.sand },
   zoneOut: { borderStyle: 'dashed', borderColor: Colors.stone4 },
