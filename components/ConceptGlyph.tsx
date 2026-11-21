@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import Svg, { G, Path } from 'react-native-svg';
-import { CONCEPT_ICONS } from '../constants/conceptIcons';
+import { CONCEPT_ICONS, type ConceptIconPaths } from '../constants/conceptIcons';
 
 /**
  * Kavram simgesi — gravür üslubunda SVG çizim (21 Kasım 2026, kullanıcı onayı; tasarım
@@ -11,11 +11,13 @@ import { CONCEPT_ICONS } from '../constants/conceptIcons';
  * çizilir: kâğıda basılmış görünür. Çizimi olmayan kavramda yazı karakterine düşer.
  */
 export function ConceptGlyph({
-  latin, fallback, size, color, press, pressOpacity = 0.95,
+  latin, fallback, size, color, press, pressOpacity = 0.95, paths,
 }: {
   latin: string; fallback: string; size: number; color: string; press?: string; pressOpacity?: number;
+  /** Başka bir simge kümesinden (ör. filozoflar) çizim; verilirse `latin` aranmaz. */
+  paths?: ConceptIconPaths;
 }) {
-  const p = CONCEPT_ICONS[latin];
+  const p = paths ?? CONCEPT_ICONS[latin];
   if (!p) return <Text style={{ fontSize: size * 0.7, color, textAlign: 'center' }}>{fallback + '︎'}</Text>;
   const layer = (c: string) => (
     <>
