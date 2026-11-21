@@ -79,6 +79,7 @@ function ThemedStack() {
         <Stack.Screen name="settings" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="journal" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="help" options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="sieve" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="programs" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="wallpaper" options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="challenge" options={{ animation: 'slide_from_right' }} />

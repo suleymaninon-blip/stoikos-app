@@ -26,6 +26,7 @@ import { CalmPressable } from '../../components/CalmPressable';
 import { MoodBloom, type MoodOrigin } from '../../components/MoodBloom';
 import { QuoteCard } from '../../components/QuoteCard';
 import { PaperBg } from '../../components/PaperBg';
+import { ConceptGlyph } from '../../components/ConceptGlyph';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
 import { FirstTip } from '../../components/FirstTip';
@@ -406,6 +407,20 @@ export default function HomeScreen() {
             />
           </View>
           {togetherCard && <TogetherCard onOpen={() => setTogetherOpen(true)} onDismiss={skipTogether} />}
+          {/* Kontrol Eleği — zor anda 30 sn'lik araç; nefes çiçeğinin kardeşi (21 Kasım 2026, seçenek A) */}
+          <CalmPressable
+            style={[styles.sieveRow, styles.cardShadow]}
+            onPress={() => router.push('/sieve')}
+            accessibilityLabel={`${t('sieve.entryTitle')} ${t('sieve.entrySub')}`}
+          >
+            <PaperBg radius={20} />
+            <ConceptGlyph latin="Dichotomy of Control" fallback="◎" size={40} color={Colors.sand} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.sieveTitle}>{t('sieve.entryTitle')}</Text>
+              <Text style={styles.sieveSub}>{t('sieve.entrySub')}</Text>
+            </View>
+            <Text style={styles.sieveChev}>›</Text>
+          </CalmPressable>
         </StaggerSection>
 
         {/* 3. Kaldığın yer — program; altında program listesine tek giriş */}
@@ -546,6 +561,15 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   resumeBar: { flexDirection: 'row', gap: 6 },
   resumeSeg: { flex: 1, height: 5, borderRadius: 3 },
   resumeCta: { fontFamily: Fonts.jostMedium, fontSize: 15, marginTop: 2 },
+  sieveRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 14, minHeight: 72, marginBottom: 14,
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 20,
+    borderWidth: 1, borderColor: Colors.overlay(0.06), paddingVertical: 12, paddingHorizontal: 16,
+  },
+  sieveTitle: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.text },
+  sieveSub: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, marginTop: 2 },
+  sieveChev: { fontFamily: Fonts.jostLight, fontSize: 26, color: Colors.muted, marginTop: -2 },
+
   allPrograms: { alignSelf: 'flex-end', marginTop: -4, marginBottom: 18, paddingVertical: 6, paddingHorizontal: 4 },
   allProgramsText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand, letterSpacing: 0.3 },
 
