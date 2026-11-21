@@ -17,7 +17,8 @@ import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import { fetchHearts, HEART_MIN, type Hearts } from '../../constants/stoa';
 import PhilosopherSymbol from '../../components/PhilosopherSymbol';
-import { ConceptModal, TEXT_GLYPH } from '../../components/ConceptModal';
+import { ConceptModal } from '../../components/ConceptModal';
+import { ConceptGlyph } from '../../components/ConceptGlyph';
 import { CalmPressable } from '../../components/CalmPressable';
 import { StaggerSection } from '../../components/StaggerSection';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
@@ -97,9 +98,12 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor, hearts, weekTop }: 
 // ─── ConceptCard ───────────────────────────────────────────
 function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPress: () => void; moreLabel: string }) {
   const styles = useStyles(makeStyles);
+  const { C: Colors } = useTheme();
   return (
     <CalmPressable style={[styles.conceptCard, styles.cardShadow, { backgroundColor: concept.color }]} onPress={onPress}>
-      <Text style={styles.conceptIcon}>{concept.icon + TEXT_GLYPH}</Text>
+      <View style={styles.conceptIcon}>
+        <ConceptGlyph latin={concept.latin} fallback={concept.icon} size={40} color={Colors.sand2} />
+      </View>
       <Text style={styles.conceptLatin}>{concept.latin}</Text>
       <Text style={styles.conceptTr}>{concept.name}</Text>
       <Text style={styles.conceptPreview} numberOfLines={2}>{concept.desc}</Text>
@@ -623,7 +627,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     borderRadius: 22, padding: 20,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
-  conceptIcon: { fontSize: 22, color: Colors.sand2, marginBottom: 10 },
+  conceptIcon: { marginBottom: 8, marginLeft: -3 },
   conceptLatin: { fontFamily: Fonts.cormorantItalic, fontSize: 24, color: Colors.sand2, marginBottom: 2 },
   conceptTr: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, letterSpacing: 0.5, marginBottom: 10 },
   conceptPreview: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21, marginBottom: 10 },

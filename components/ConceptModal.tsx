@@ -11,6 +11,7 @@ import { usePlus } from '../constants/entitlement';
 import { ENFORCE_PLUS_GATE } from '../constants/config';
 import { Paywall } from './Paywall';
 import { SoundIcon, StopIcon, SunIcon } from './Icons';
+import { ConceptGlyph } from './ConceptGlyph';
 
 // Kâğıt dokusu (scripts/brand/make-paper.py): 160 px döşenen, saydam zeminli hafif benekler.
 const PAPER = require('../assets/paper.png');
@@ -98,7 +99,11 @@ export function ConceptModal({ concept, onClose }: { concept: Concept | null; on
                 <Path d={PANEL} fill={Colors.isDark ? 'rgba(0,0,0,0.16)' : 'rgba(92,77,51,0.05)'} stroke="url(#tileDeboss)" strokeWidth={1.6} />
                 <Path d={PANEL_LINE} fill="none" stroke={Colors.tint(Colors.isDark ? 0.3 : 0.35)} strokeWidth={0.8} />
               </Svg>
-              <Text style={styles.icon}>{concept.icon + TEXT_GLYPH}</Text>
+              {/* gravür çizimi; altında açık (koyu temada koyu) bir kopya → kâğıda basılmış */}
+              <ConceptGlyph
+                latin={concept.latin} fallback={concept.icon} size={62} color={Colors.sand}
+                press={Colors.isDark ? '#000000' : '#ffffff'} pressOpacity={Colors.isDark ? 0.55 : 0.95}
+              />
             </View>
             <Text style={styles.latin}>{concept.latin}</Text>
             <Text style={styles.name}>{concept.name}</Text>
@@ -182,12 +187,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     }),
   },
   tileClip: { borderRadius: TILE_R, overflow: 'hidden' },
-  // Simge kâğıda basılmış gibi: altında ince açık bir kenar.
-  icon: {
-    fontSize: 40, color: Colors.sand, textAlign: 'center',
-    textShadowColor: Colors.isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.95)',
-    textShadowOffset: { width: 0, height: Colors.isDark ? -1 : 1 }, textShadowRadius: 0,
-  },
+
   latin: { fontFamily: Fonts.cormorant, fontSize: 40, lineHeight: 46, color: Colors.sand3, textAlign: 'center' },
   name: { fontFamily: Fonts.cormorantItalic, fontSize: 20, lineHeight: 26, color: Colors.text2, textAlign: 'center', marginTop: 2, marginBottom: 14 },
   listenBtn: { alignSelf: 'center', width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.25), marginTop: 2, marginBottom: 14 },
