@@ -60,6 +60,8 @@ export default function SieveScreen() {
   const [saved, setSaved] = useState(false);
   // Netlikte koça götürülmeyecek maddeler (varsayılan: hepsi seçili; kullanıcı: "koça atmak istediklerimi seçemiyorum")
   const [skipCoach, setSkipCoach] = useState<number[]>([]);
+  // Bırakılanlardan koça götürülecekler (varsayılan: hiçbiri; kullanıcı işaretlerse "bırakmakta zorlandıklarım")
+  const [letCoach, setLetCoach] = useState<number[]>([]);
   const nid = useRef(1);
   const inputRef = useRef<TextInput>(null);
   const zoneInRef = useRef<View>(null);
@@ -123,6 +125,7 @@ export default function SieveScreen() {
 
   const restart = () => {
     setSkipCoach([]);
+    setLetCoach([]);
     setItems([]); setSaved(false); setSel(null); setDissolving([]); setPartFor(null); setScreen('write');
   };
   const save = async () => {
@@ -136,13 +139,16 @@ export default function SieveScreen() {
     } catch {}
   };
   const toCoach = () => {
-    const chosen = kept.filter((i) => !skipCoach.includes(i.id));
-    if (!chosen.length) return;
-    const draftMsg = t('sieve.coachDraft', { list: chosen.map((i) => i.text).join('; ') });
+    const chosen = kept.filter((i) => !skipCoach.includes(i.id)).map((i) => i.text).join('; ');
+    const lets = released.filter((i) => letCoach.includes(i.id)).map((i) => i.text).join('; ');
+    if (!chosen && !lets) return;
+    const draftMsg = chosen && lets
+      ? t('sieve.coachDraftBoth', { list: chosen, let: lets })
+      : chosen ? t('sieve.coachDraft', { list: chosen }) : t('sieve.coachDraftLet', { let: lets });
     router.navigate({ pathname: '/coach', params: { draft: draftMsg } });
   };
 
-  const chosenCount = kept.filter((i) => !skipCoach.includes(i.id)).length;
+  const chosenCount = kept.filter((i) => !skipCoach.includes(i.id)).length + released.filter((i) => letCoach.includes(i.id)).length;
   const stepOf = screen === 'write' ? 1 : screen === 'sort' ? 2 : 3;
   const partItem = items.find((i) => i.id === partFor);
   const active = sel != null || dragging;
@@ -353,15 +359,40 @@ export default function SieveScreen() {
                 })}
               </View>
               {kept.some((k) => k.part) && <Text style={styles.legend}>{t('sieve.partLegend')}</Text>}
+              {/* Bıraktıkların: varsayılan seçili değil; bırakmakta zorlanılan işaretlenirse koça o da gider */}
               {released.length > 0 && (
-                <View style={[styles.releasedRow, { justifyContent: 'center', marginTop: 14 }]}>
-                  <View style={[styles.goldDot, { backgroundColor: gold }]} />
-                  <Text style={styles.releasedText}>{t('sieve.released', { n: released.length })}</Text>
-                </View>
+                <>
+                  <View style={[styles.releasedRow, { marginTop: 22 }]}>
+                    <View style={[styles.goldDot, { backgroundColor: gold }]} />
+                    <Text style={[styles.label, { marginBottom: 0 }]}>{upper(t('sieve.letTitle'), lang)}</Text>
+                  </View>
+                  <Text style={[styles.legend, { marginTop: 4 }]}>{t('sieve.letHint')}</Text>
+                  <View style={[styles.list, { marginTop: 10 }]}>
+                    {released.map((r) => {
+                      const on = letCoach.includes(r.id);
+                      return (
+                        <Pressable
+                          key={r.id}
+                          onPress={() => setLetCoach((cur) => (on ? cur.filter((x) => x !== r.id) : [...cur, r.id]))}
+                          accessibilityRole="checkbox"
+                          accessibilityState={{ checked: on }}
+                          style={[styles.keptCard, styles.letCard, on && styles.letCardOn]}
+                        >
+                          <View style={[styles.keptBox, on && styles.keptBoxOn]}>
+                            {on && (
+                              <Svg width={14} height={14} viewBox="0 0 24 24"><Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.onAccent} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" /></Svg>
+                            )}
+                          </View>
+                          <Text style={[styles.keptText, !on && styles.letText]}>{r.text}</Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </>
               )}
             </ScrollView>
             <View style={styles.footer}>
-              {kept.length > 0 && (
+              {(kept.length > 0 || released.length > 0) && (
                 <>
                   <CalmPressable onPress={toCoach} disabled={chosenCount === 0} style={[styles.primary, chosenCount === 0 && styles.dim]}>
                     <Text style={styles.primaryText}>{t('sieve.coach')}</Text>
@@ -690,6 +721,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   keptBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: Colors.muted, alignItems: 'center', justifyContent: 'center' },
   keptBoxOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
   keptOff: { opacity: 0.6 },
+  letCard: { backgroundColor: 'transparent', borderStyle: 'dashed' },
+  letCardOn: { borderStyle: 'solid', borderColor: Colors.sand, backgroundColor: Colors.tint(0.08) },
+  letText: { color: Colors.text2 },
   legend: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.muted, marginTop: 10 },
   keptText: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, lineHeight: 22, color: Colors.text },
   partBadge: {
