@@ -25,6 +25,7 @@ import { StaggerSection } from '../../components/StaggerSection';
 import { CalmPressable } from '../../components/CalmPressable';
 import { MoodBloom, type MoodOrigin } from '../../components/MoodBloom';
 import { QuoteCard } from '../../components/QuoteCard';
+import { PaperBg } from '../../components/PaperBg';
 import BreathOrb from '../../components/BreathOrb';
 import { FEATURES } from '../../constants/config';
 import { FirstTip } from '../../components/FirstTip';
@@ -66,6 +67,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
         })
       }
     >
+      <PaperBg radius={24} />
       <View style={styles.resumeTop}>
         <Text style={[styles.resumeLabel, { color: tint(c, 1) }]}>
           {t(started ? 'home.resume' : 'home.startJourney')}
@@ -192,6 +194,7 @@ function MoodPicker() {
 
   return (
     <View style={[styles.moodCard, styles.cardShadow]}>
+      <PaperBg radius={24} />
       <CalmPressable
         onPress={openBloom}
         style={styles.moodHead}
@@ -435,6 +438,7 @@ export default function HomeScreen() {
               style={[styles.shortcut, styles.cardShadow]}
               onPress={() => router.push('/practice')}
             >
+              <PaperBg radius={20} />
               <Text style={styles.shortcutLabel}>{upper(t('tabs.practice'), lang)}</Text>
               <Text style={styles.shortcutText}>
                 {t('home.practiceShort', { done: practiceDone, total: ALL_EXERCISE_IDS.length })}
@@ -444,6 +448,7 @@ export default function HomeScreen() {
               style={[styles.shortcut, styles.cardShadow]}
               onPress={() => router.push('/coach')}
             >
+              <PaperBg radius={20} />
               <Text style={styles.shortcutLabel}>{upper(t('tabs.coach'), lang)}</Text>
               <Text style={styles.shortcutText}>{t('home.coachShort')}</Text>
             </CalmPressable>
@@ -544,8 +549,9 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   allPrograms: { alignSelf: 'flex-end', marginTop: -4, marginBottom: 18, paddingVertical: 6, paddingHorizontal: 4 },
   allProgramsText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand, letterSpacing: 0.3 },
 
+  // Kartlar açık temada krem "kâğıt" + doku (Bilgelik/Pratik ile aynı, 21 Kasım 2026); koyuda yüzey rengi.
   moodCard: {
-    backgroundColor: Colors.stone2, borderRadius: 24, padding: 20, marginBottom: 18,
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, padding: 20, marginBottom: 18,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   moodHead: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 52 },
@@ -569,7 +575,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
 
   shortcuts: { flexDirection: 'row', gap: 12, marginBottom: 28 },
   shortcut: {
-    flex: 1, backgroundColor: Colors.stone2, borderRadius: 20, padding: 16, gap: 6,
+    flex: 1, backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 20, padding: 16, gap: 6,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
   shortcutLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.sand },
