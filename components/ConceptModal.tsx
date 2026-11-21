@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Modal, Pressable, ImageBackground, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Defs, LinearGradient as SvgLinear, Path, Rect, Stop } from 'react-native-svg';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang } from '../constants/i18n';
@@ -15,8 +15,17 @@ import { SoundIcon, StopIcon, SunIcon } from './Icons';
 // Kâğıt dokusu (scripts/brand/make-paper.py): 160 px döşenen, saydam zeminli hafif benekler.
 const PAPER = require('../assets/paper.png');
 
-// Simge kartının içindeki köşeleri oyulmuş ince çerçeve (64×80 kart, 6 px içeride, 7 px oyuk).
-const FRAME = 'M13 6 H51 A7 7 0 0 0 58 13 V67 A7 7 0 0 0 51 74 H13 A7 7 0 0 0 6 67 V13 A7 7 0 0 0 13 6 Z';
+// Kabartma simge kartı (21 Kasım 2026, kullanıcı: "o hissi alamıyorum" → iki katlı yapıldı):
+// dışta kabarık çerçeve (üstü ışık, altı gölge), içte köşeleri oyulmuş, basılmış (çökük) pano
+// (iç kenarın üstü gölge, altı ışık). Göz bu "yükselen dış, çöken iç" farkını kabartma okuyor.
+const TILE_W = 92, TILE_H = 118, TILE_R = 14, PANEL_IN = 9, NOTCH = 8;
+/** Köşeleri içe oyulmuş dikdörtgen (oyuk yarıçapı n). */
+function notched(x: number, y: number, w: number, h: number, n: number) {
+  const r = x + w, b = y + h;
+  return `M${x + n} ${y} H${r - n} A${n} ${n} 0 0 0 ${r} ${y + n} V${b - n} A${n} ${n} 0 0 0 ${r - n} ${b} H${x + n} A${n} ${n} 0 0 0 ${x} ${b - n} V${y + n} A${n} ${n} 0 0 0 ${x + n} ${y} Z`;
+}
+const PANEL = notched(PANEL_IN, PANEL_IN, TILE_W - PANEL_IN * 2, TILE_H - PANEL_IN * 2, NOTCH);
+const PANEL_LINE = notched(PANEL_IN + 4, PANEL_IN + 4, TILE_W - (PANEL_IN + 4) * 2, TILE_H - (PANEL_IN + 4) * 2, NOTCH - 2);
 
 // Kavram simgeleri (☉ ◉ ⚖ …) renk verilmezse siyah çiziliyor, iOS ⚖'yi renkli emojiye
 // çeviriyor. U+FE0E metin biçimini zorlar → paletin rengini alır.
@@ -65,9 +74,29 @@ export function ConceptModal({ concept, onClose }: { concept: Concept | null; on
             {/* Kabartma simge kartı: gölge + üst kenarda ışık + oyuk köşeli iç çerçeve + doku. */}
             <View style={styles.tile}>
               <ImageBackground source={PAPER} resizeMode="repeat" style={[StyleSheet.absoluteFill, styles.tileClip]} imageStyle={{ opacity: Colors.isDark ? 0.3 : 1 }} />
-              <View style={styles.tileHighlight} />
-              <Svg width={64} height={80} style={StyleSheet.absoluteFill}>
-                <Path d={FRAME} fill="none" stroke={Colors.tint(Colors.isDark ? 0.35 : 0.4)} strokeWidth={1} />
+              <Svg width={TILE_W} height={TILE_H} style={StyleSheet.absoluteFill}>
+                <Defs>
+                  {/* yüzey: üstü biraz açık, altı biraz koyu */}
+                  <SvgLinear id="tileFace" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor={Colors.isDark ? '#ffffff' : '#ffffff'} stopOpacity={Colors.isDark ? 0.06 : 0.55} />
+                    <Stop offset="1" stopColor={Colors.isDark ? '#000000' : '#8a7a5c'} stopOpacity={Colors.isDark ? 0.18 : 0.1} />
+                  </SvgLinear>
+                  {/* dış kenar: üstte ışık, altta gölge (kabarık) */}
+                  <SvgLinear id="tileBevel" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor="#ffffff" stopOpacity={Colors.isDark ? 0.22 : 1} />
+                    <Stop offset="0.5" stopColor="#ffffff" stopOpacity={0} />
+                    <Stop offset="1" stopColor={Colors.isDark ? '#000000' : '#5c4d33'} stopOpacity={Colors.isDark ? 0.5 : 0.28} />
+                  </SvgLinear>
+                  {/* iç kenar: üstte gölge, altta ışık (basılmış) */}
+                  <SvgLinear id="tileDeboss" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor={Colors.isDark ? '#000000' : '#5c4d33'} stopOpacity={Colors.isDark ? 0.55 : 0.3} />
+                    <Stop offset="0.5" stopColor="#ffffff" stopOpacity={0} />
+                    <Stop offset="1" stopColor="#ffffff" stopOpacity={Colors.isDark ? 0.18 : 1} />
+                  </SvgLinear>
+                </Defs>
+                <Rect x={0.75} y={0.75} width={TILE_W - 1.5} height={TILE_H - 1.5} rx={TILE_R} fill="url(#tileFace)" stroke="url(#tileBevel)" strokeWidth={1.5} />
+                <Path d={PANEL} fill={Colors.isDark ? 'rgba(0,0,0,0.16)' : 'rgba(92,77,51,0.05)'} stroke="url(#tileDeboss)" strokeWidth={1.6} />
+                <Path d={PANEL_LINE} fill="none" stroke={Colors.tint(Colors.isDark ? 0.3 : 0.35)} strokeWidth={0.8} />
               </Svg>
               <Text style={styles.icon}>{concept.icon + TEXT_GLYPH}</Text>
             </View>
@@ -141,24 +170,24 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.overlay(0.07),
   },
-  // Kabartma simge kartı (20 Kasım 2026, kullanıcının taslağından): açıkta gölge, koyuda açık kenar.
+  // Kabartma simge kartı: dış gölge ikili (yakın + yumuşak) ki kart zeminden kalksın.
   tile: {
-    alignSelf: 'center', width: 64, height: 80, borderRadius: 12, overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
-    alignItems: 'center', justifyContent: 'center', marginBottom: 18,
+    alignSelf: 'center', width: TILE_W, height: TILE_H, borderRadius: TILE_R,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 20,
     backgroundColor: Colors.isDark ? Colors.stone3 : Colors.stone2,
-    borderWidth: 1, borderColor: Colors.isDark ? Colors.overlay(0.1) : Colors.overlay(0.06),
-    ...(Colors.isDark ? {} : Platform.select({
-      ios: { shadowColor: '#1D2A2F', shadowOffset: { width: 0, height: 5 }, shadowOpacity: 0.14, shadowRadius: 10 },
-      android: { elevation: 4 },
-      default: { boxShadow: '0 5px 12px rgba(29,42,47,0.14)' } as any,
-    })),
+    ...Platform.select({
+      ios: { shadowColor: Colors.isDark ? '#000' : '#3b3222', shadowOffset: { width: 0, height: 7 }, shadowOpacity: Colors.isDark ? 0.5 : 0.2, shadowRadius: 12 },
+      android: { elevation: 6 },
+      default: { boxShadow: Colors.isDark ? '0 1px 2px rgba(0,0,0,0.5), 0 8px 18px rgba(0,0,0,0.45)' : '0 1px 2px rgba(59,50,34,0.14), 0 8px 18px rgba(59,50,34,0.18)' } as any,
+    }),
   },
-  tileClip: { borderRadius: 11, overflow: 'hidden' },
-  tileHighlight: {
-    position: 'absolute', top: 0, left: 10, right: 10, height: 1,
-    backgroundColor: Colors.isDark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.95)',
+  tileClip: { borderRadius: TILE_R, overflow: 'hidden' },
+  // Simge kâğıda basılmış gibi: altında ince açık bir kenar.
+  icon: {
+    fontSize: 40, color: Colors.sand, textAlign: 'center',
+    textShadowColor: Colors.isDark ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.95)',
+    textShadowOffset: { width: 0, height: Colors.isDark ? -1 : 1 }, textShadowRadius: 0,
   },
-  icon: { fontSize: 34, color: Colors.sand, textAlign: 'center' },
   latin: { fontFamily: Fonts.cormorant, fontSize: 40, lineHeight: 46, color: Colors.sand3, textAlign: 'center' },
   name: { fontFamily: Fonts.cormorantItalic, fontSize: 20, lineHeight: 26, color: Colors.text2, textAlign: 'center', marginTop: 2, marginBottom: 14 },
   listenBtn: { alignSelf: 'center', width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.tint(0.12), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Colors.tint(0.25), marginTop: 2, marginBottom: 14 },
