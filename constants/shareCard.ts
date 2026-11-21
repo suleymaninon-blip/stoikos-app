@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import { Fonts } from './theme';
+import { PHILOSOPHER_ICONS } from './philosopherIcons';
 
 /**
  * Söz kartını görsel olarak paylaşır (yalnız web). Native'de `react-native-view-shot` kartın
@@ -12,7 +13,7 @@ import { Fonts } from './theme';
  * sayıları 0,8 katla, bu çizim 3 katla kullanır — biri değişirse öteki de değişmeli.
  * Dönüş: 'shared' | 'downloaded' | 'unsupported' (çağıran metne düşer).
  */
-export type ShareCardInput = { text: string; author: string; source: string; message: string };
+export type ShareCardInput = { text: string; author: string; source: string; authorId?: string; message: string };
 
 export const CARD_OUT = { width: 1080, height: 1920 };
 const S = 3; // 360×640 → 1080×1920
@@ -98,12 +99,27 @@ async function renderCard(q: ShareCardInput): Promise<Blob> {
   ctx.strokeStyle = 'rgba(196,169,106,0.16)'; ctx.lineWidth = S;
   ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(sx, sy, sw, sh, sr) : ctx.rect(sx, sy, sw, sh); ctx.stroke();
 
-  // Yaprağın içi: tırnak + söz + yazar + künye, dikeyde ortalı
+  // Kâğıt dokusu (uygulamadaki kartlarla aynı dil, 21 Kasım 2026): yaprağa kırpılmış, tohumlu soluk benekler.
+  ctx.save();
+  ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(sx, sy, sw, sh, sr) : ctx.rect(sx, sy, sw, sh); ctx.clip();
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 9000; i++) {
+    const light = rnd() < 0.45;
+    ctx.fillStyle = light ? `rgba(255,248,230,${0.025 + rnd() * 0.05})` : `rgba(0,0,0,${0.05 + rnd() * 0.08})`;
+    const r = 0.8 + rnd() * 1.6;
+    ctx.fillRect(sx + rnd() * sw, sy + rnd() * sh, r, r);
+  }
+  ctx.restore();
+
+  // Yaprağın içi: tırnak + söz + ayırıcı + (yazarın çizimi) + yazar + künye, dikeyde ortalı
+  const glyph = q.authorId ? PHILOSOPHER_ICONS[q.authorId] : undefined;
   const innerW = sw - 26 * S * 2;
   ctx.font = `${qs.size * S}px "${fam.quote}"`;
   const lines = wrap(ctx, q.text, innerW);
-  const markH = 36 * S, lh = qs.line * S, authorH = 20 * S + 14 * S, sourceH = 4 * S + 13 * S;
-  const blockH = markH + lines.length * lh + authorH + sourceH;
+  const markH = 36 * S, lh = qs.line * S, divH = 14 * S, glyphH = glyph ? (10 + 30) * S : 0;
+  const authorH = (glyph ? 6 : 12) * S + 14 * S, sourceH = 4 * S + 13 * S;
+  const blockH = markH + lines.length * lh + divH + glyphH + authorH + sourceH;
   let y = sy + (sh - blockH) / 2;
   const cx = W / 2;
   ctx.textAlign = 'center';
@@ -114,7 +130,27 @@ async function renderCard(q: ShareCardInput): Promise<Blob> {
   ctx.fillStyle = '#f5edd8'; ctx.font = `${qs.size * S}px "${fam.quote}"`;
   for (const l of lines) { ctx.fillText(l, cx, y + lh * 0.76); y += lh; }
 
-  y += 20 * S;
+  // kenarlara sönen ayırıcı
+  y += divH;
+  const dw = 140 * S, grad = ctx.createLinearGradient(cx - dw / 2, 0, cx + dw / 2, 0);
+  grad.addColorStop(0, 'rgba(196,169,106,0)'); grad.addColorStop(0.5, 'rgba(196,169,106,0.55)'); grad.addColorStop(1, 'rgba(196,169,106,0)');
+  ctx.fillStyle = grad; ctx.fillRect(cx - dw / 2, y - S / 2, dw, S);
+
+  // yazarın gravür çizimi (64×64 tuvaldeki yollar ölçeklenerek)
+  if (glyph) {
+    y += 10 * S;
+    const gs = 30 * S;
+    ctx.save();
+    ctx.translate(cx - gs / 2, y); ctx.scale(gs / 64, gs / 64);
+    ctx.strokeStyle = '#c2a878'; ctx.fillStyle = '#c2a878'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = 0.7; ctx.stroke(new Path2D(glyph.thin));
+    ctx.lineWidth = 1.6; ctx.stroke(new Path2D(glyph.thick));
+    if (glyph.fill) ctx.fill(new Path2D(glyph.fill));
+    ctx.restore();
+    y += gs;
+  }
+
+  y += (glyph ? 6 : 12) * S;
   // Cinzel'de Kiril yok: Rusça yazar adında Cormorant (RU_DISPLAY_FALLBACK ile aynı mantık).
   const authorFam = /[\u0400-\u04FF]/.test(q.author) ? fam.mark : fam.author;
   ctx.fillStyle = '#c2a878'; ctx.font = `${(authorFam === fam.mark ? 13 : 11) * S}px "${authorFam}"`; ctx.textAlign = 'left';

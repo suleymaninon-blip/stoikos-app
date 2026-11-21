@@ -1,15 +1,18 @@
 import React, { useRef, useState } from 'react';
 import {
-  View, Text, StyleSheet, Modal, Pressable, TouchableOpacity, Share, ActivityIndicator, Platform,
+  View, Text, StyleSheet, Modal, Pressable, TouchableOpacity, Share, ActivityIndicator, Platform, ImageBackground,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { Colors, Fonts } from '../constants/theme';
 import StoikosMark from './StoikosMark';
+import { ConceptGlyph } from './ConceptGlyph';
+import { PAPER } from './EmbossTile';
+import { PHILOSOPHER_ICONS } from '../constants/philosopherIcons';
 import { shareQuoteCardWeb, CARD_OUT, quoteSizeFor } from '../constants/shareCard';
 
-export interface ShareableQuote { text: string; author: string; source: string; }
+export interface ShareableQuote { text: string; author: string; source: string; authorId?: string; }
 
 /**
  * Söz paylaşım kartı (20 Kasım 2026; tasarım https://claude.ai/artifact/6U1GQAtzbNer2zyC6pkm3F).
@@ -38,6 +41,7 @@ export function QuoteShareModal({ quote, shareLabel, closeLabel, onClose }: {
   // Mesajın sonunda adres var: görselle birlikte giden metin uygulamayı tanıtsın.
   const message = `“${quote.text}”\n— ${quote.author}, ${quote.source}\n\n✦ Stoikos · https://stoikos.app`;
   const qs = quoteSizeFor(quote.text);
+  const glyph = quote.authorId ? PHILOSOPHER_ICONS[quote.authorId] : undefined;
 
   async function doShare() {
     setBusy(true);
@@ -45,7 +49,7 @@ export function QuoteShareModal({ quote, shareLabel, closeLabel, onClose }: {
       if (Platform.OS === 'web') {
         // Web'de view-shot çalışmıyor; kart canvas'a çizilip dosya olarak paylaşılıyor.
         // Söz zaten görselde: yanına yalnız tıklanabilir adres (kullanıcı: "niye hem kart hem yazı gidiyor").
-        const r = await shareQuoteCardWeb({ text: quote!.text, author: quote!.author, source: quote!.source, message: '✦ Stoikos · https://stoikos.app' });
+        const r = await shareQuoteCardWeb({ text: quote!.text, author: quote!.author, source: quote!.source, authorId: quote!.authorId, message: '✦ Stoikos · https://stoikos.app' });
         if (r !== 'unsupported') return;
         throw new Error('web share unsupported');
       }
@@ -79,9 +83,21 @@ export function QuoteShareModal({ quote, shareLabel, closeLabel, onClose }: {
                 <Text style={styles.brand}>STOIKOS</Text>
               </View>
               <View style={styles.sheet}>
+                {/* Uygulamadaki kartlarla aynı dil (21 Kasım 2026): kâğıt dokusu, sönen ayırıcı, yazarın gravür çizimi; renkler siyah-altın */}
+                <ImageBackground source={PAPER} resizeMode="repeat" style={[StyleSheet.absoluteFill, styles.sheetPaper]} imageStyle={{ opacity: 0.35 }} />
                 <Text style={styles.mark}>“</Text>
                 <Text style={[styles.quote, { fontSize: n(qs.size), lineHeight: n(qs.line) }]}>{quote.text}</Text>
-                <Text style={[styles.author, CYRILLIC.test(quote.author) && { fontFamily: Fonts.cormorant, fontSize: n(13) }]}>{quote.author}</Text>
+                <LinearGradient
+                  colors={['rgba(196,169,106,0)', 'rgba(196,169,106,0.55)', 'rgba(196,169,106,0)']}
+                  start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}
+                  style={styles.divider}
+                />
+                {glyph ? (
+                  <View style={styles.glyph}>
+                    <ConceptGlyph latin={quote.authorId!} fallback="" paths={glyph} size={n(30)} color="#c2a878" />
+                  </View>
+                ) : null}
+                <Text style={[styles.author, glyph && { marginTop: n(6) }, CYRILLIC.test(quote.author) && { fontFamily: Fonts.cormorant, fontSize: n(13) }]}>{quote.author}</Text>
                 <Text style={styles.source}>{quote.source}</Text>
               </View>
               <Text style={styles.url}>stoikos.app</Text>
@@ -128,7 +144,10 @@ const styles = StyleSheet.create({
   },
   mark: { fontFamily: Fonts.cormorant, fontSize: n(64), lineHeight: n(52), height: n(36), color: '#6e5a3a' },
   quote: { fontFamily: Fonts.cormorantItalic, color: '#f5edd8', textAlign: 'center' },
-  author: { fontFamily: Fonts.cinzel, fontSize: n(11), letterSpacing: n(3), color: '#c2a878', marginTop: n(20), textAlign: 'center' },
+  sheetPaper: { borderRadius: n(6), overflow: 'hidden' },
+  divider: { width: n(140), height: 1, marginTop: n(14) },
+  glyph: { marginTop: n(10) },
+  author: { fontFamily: Fonts.cinzel, fontSize: n(11), letterSpacing: n(3), color: '#c2a878', marginTop: n(12), textAlign: 'center' },
   source: { fontFamily: Fonts.jost, fontSize: n(10.5), fontStyle: 'italic', color: '#8a8070', marginTop: n(4), textAlign: 'center' },
   url: {
     position: 'absolute', left: 0, right: 0, top: n(488),
