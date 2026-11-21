@@ -18,7 +18,7 @@ import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLang, localeOf } from '../../constants/i18n';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
 import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
 import { Paywall } from '../../components/Paywall';
@@ -322,6 +322,13 @@ export default function CoachScreen() {
   ]);
   const [input, setInput] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
+  // Kontrol Eleği'nden "Bunu koçla konuş": elinde olan maddeler yazı alanına taslak olarak gelir, gönderilmez.
+  const { draft } = useLocalSearchParams<{ draft?: string }>();
+  useEffect(() => {
+    if (!draft) return;
+    setInput(String(draft));
+    router.setParams({ draft: '' });
+  }, [draft]);
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState(false);
   const [revealId, setRevealId] = useState<string | null>(null);
