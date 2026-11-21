@@ -62,10 +62,20 @@ function QuoteItem({ quote, onShare, isFav, onFav, onAuthor, hearts, weekTop }: 
 
   return (
     <Animated.View style={[styles.quoteCard, styles.cardShadow, weekTop && styles.weekCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+      {/* Kavram/filozof pencereleriyle aynı dil (21 Kasım 2026): kâğıt dokusu, sönen ayırıcı, yazarın gravür çizimi */}
+      <ImageBackground source={PAPER} resizeMode="repeat" style={StyleSheet.absoluteFill} imageStyle={{ opacity: Colors.isDark ? 0.15 : 1 }} />
       {weekTop && <Text style={styles.weekLabel}>{upper(t('stoa.weekTop'), lang)}</Text>}
       <Text style={styles.quoteMark}>“</Text>
       <Text style={styles.quoteText}>{quote.text}</Text>
+      <LinearGradient
+        colors={['transparent', Colors.tint(0.4), 'transparent']}
+        start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}
+        style={styles.quoteDivider}
+      />
       <View style={styles.quoteMeta}>
+        {PHILOSOPHER_ICONS[quote.authorId] ? (
+          <ConceptGlyph latin={quote.authorId} fallback="" paths={PHILOSOPHER_ICONS[quote.authorId]} size={34} color={Colors.sand2} />
+        ) : null}
         <View style={{ flex: 1 }}>
           {onAuthor ? (
             <TouchableOpacity onPress={() => onAuthor(quote.authorId)} activeOpacity={0.6} hitSlop={6}>
@@ -630,11 +640,13 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   attribution: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, textAlign: 'center', marginTop: 22, marginBottom: 8, paddingHorizontal: 20, lineHeight: 16 },
 
   quoteCard: {
-    backgroundColor: Colors.stone2, borderRadius: 24, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 20,
+    // Açık temada krem "kâğıt" + doku (kavram penceresiyle aynı), koyuda yüzey rengi
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 24, paddingHorizontal: 22, paddingTop: 8, paddingBottom: 20,
     borderWidth: 1, borderColor: Colors.tint(0.11), overflow: 'hidden',
   },
   quoteMark: { fontFamily: Fonts.cormorant, fontSize: 64, color: Colors.sand, opacity: 0.24, height: 48, marginBottom: -4 },
-  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 18 },
+  quoteText: { fontFamily: Fonts.cormorantItalic, fontSize: 21, color: Colors.text2, lineHeight: 33, marginBottom: 14 },
+  quoteDivider: { height: 1, marginBottom: 14 },
   quoteMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
   quoteAuthor: { fontFamily: Fonts.jostMedium, fontSize: 13, color: Colors.sand, letterSpacing: 0.3 },
   quoteAuthorLink: { color: Colors.accent },
