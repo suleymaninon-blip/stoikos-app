@@ -322,6 +322,10 @@ export default function CoachScreen() {
   ]);
   const [input, setInput] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
+  // Web'de çok satırlı yazı alanı kendiliğinden büyümüyor (react-native-web sabit yükseklik);
+  // Kontrol Eleği'nden gelen taslak dar alanda kesik görünüyordu (21 Kasım 2026). Native zaten büyür.
+  const [webInputH, setWebInputH] = useState(0);
+  useEffect(() => { if (!input) setWebInputH(0); }, [input]);
   // Kontrol Eleği'nden "Bunu koçla konuş": elinde olan maddeler yazı alanına taslak olarak gelir, gönderilmez.
   const { draft } = useLocalSearchParams<{ draft?: string }>();
   useEffect(() => {
@@ -594,7 +598,8 @@ export default function CoachScreen() {
             <View style={styles.inputRow}>
               <TextInput
                 keyboardAppearance={Colors.isDark ? 'dark' : 'light'}
-                style={[styles.input, inputFocused && styles.inputFocused]}
+                style={[styles.input, inputFocused && styles.inputFocused, Platform.OS === 'web' && webInputH > 0 && { height: Math.min(INPUT_MAX_H, Math.max(48, webInputH)) }]}
+                onContentSizeChange={Platform.OS === 'web' ? (e) => setWebInputH(Math.ceil(e.nativeEvent.contentSize.height)) : undefined}
                 placeholder={t('coach.placeholder')}
                 placeholderTextColor={Colors.muted}
                 value={input}
@@ -629,6 +634,8 @@ export default function CoachScreen() {
     </SafeAreaView>
   );
 }
+
+const INPUT_MAX_H = 180; // ~7 satır; daha uzunu alan içinde kayar
 
 // ─── Styles ───────────────────────────────────────────────
 const makeStyles = (Colors: Palette) =>
@@ -823,7 +830,7 @@ const makeStyles = (Colors: Palette) =>
       color: Colors.text,
       borderWidth: 1,
       borderColor: Colors.overlay(0.08),
-      maxHeight: 110,
+      maxHeight: INPUT_MAX_H,
       lineHeight: 22,
     },
     inputFocused: {
