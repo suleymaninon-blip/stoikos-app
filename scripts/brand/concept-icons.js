@@ -181,7 +181,7 @@ function ICONS() {
   }
   return I;
 }
-if (typeof module !== 'undefined') module.exports = { ICONS };
+if (typeof module !== 'undefined') module.exports = { ICONS, circ, line, leaf, hatch, hatchCircle, star, f };
 
 // Çalıştır: node scripts/brand/concept-icons.js → constants/conceptIcons.ts yeniden üretilir.
 if (require.main === module) {

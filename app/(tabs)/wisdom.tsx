@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import {
   View, Text, TouchableOpacity, ScrollView, FlatList,
   StyleSheet, SafeAreaView, Animated, Easing, Modal, Pressable, Platform,
-  NativeSyntheticEvent, NativeScrollEvent,
+  NativeSyntheticEvent, NativeScrollEvent, ImageBackground,
 } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { useAppDimensions } from '../../constants/layout';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Fonts } from '../../constants/theme';
@@ -16,7 +17,8 @@ import { getQuotes, getConcepts, getPhilosophers, PHILOSOPHER_IDS, AUTHORS, MOOD
 import { QuoteShareModal } from '../../components/QuoteShareModal';
 import { getFavorites, toggleFavorite } from '../../constants/favorites';
 import { fetchHearts, HEART_MIN, type Hearts } from '../../constants/stoa';
-import PhilosopherSymbol from '../../components/PhilosopherSymbol';
+import { PHILOSOPHER_ICONS } from '../../constants/philosopherIcons';
+import { EmbossTile, PAPER } from '../../components/EmbossTile';
 import { ConceptModal } from '../../components/ConceptModal';
 import { ConceptGlyph } from '../../components/ConceptGlyph';
 import { CalmPressable } from '../../components/CalmPressable';
@@ -116,9 +118,13 @@ function ConceptCard({ concept, onPress, moreLabel }: { concept: Concept; onPres
 // ─── Philosopher Card ──────────────────────────────────────
 function PhilosopherCard({ philo, onPress }: { philo: Philosopher; onPress: () => void }) {
   const styles = useStyles(makeStyles);
+  const { C: Colors } = useTheme();
   return (
     <CalmPressable style={[styles.philoCard, styles.cardShadow, { backgroundColor: philo.color }]} onPress={onPress}>
-      <View style={styles.philoSymbolBox}><PhilosopherSymbol id={philo.id} size={24} /></View>
+      {/* gravür çizimi (kavramlarla aynı üslup, 21 Kasım 2026); eskiden soluk dairede küçük altın simgeydi */}
+      <View style={styles.philoSymbolBox}>
+        <ConceptGlyph latin={philo.id} fallback={philo.symbol} paths={PHILOSOPHER_ICONS[philo.id]} size={46} color={Colors.sand2} />
+      </View>
       <View style={{ flex: 1 }}>
         <Text style={styles.philoName}>{philo.name}</Text>
         <Text style={styles.philoEra}>{philo.era}</Text>
@@ -133,16 +139,28 @@ function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
   philo: Philosopher | null; onClose: () => void; contributionLabel: string; closeLabel: string;
 }) {
   const styles = useStyles(makeStyles);
+  const { C: Colors } = useTheme();
   if (!philo) return null;
   return (
     <Modal transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
+        {/* Kavram penceresiyle aynı dil (21 Kasım 2026): kâğıt dokusu, kabartma kart, sağ üstte ×, büyük ad */}
         <Pressable style={styles.modalCard} onPress={() => {}}>
-          <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-            <View style={styles.philoModalSymbolBox}><PhilosopherSymbol id={philo.id} size={32} /></View>
+          <ImageBackground source={PAPER} resizeMode="repeat" style={StyleSheet.absoluteFill} imageStyle={{ opacity: Colors.isDark ? 0.18 : 1 }} />
+          <ScrollView showsVerticalScrollIndicator={false} bounces={false} contentContainerStyle={styles.modalScroll}>
+            <EmbossTile>
+              <ConceptGlyph
+                latin={philo.id} fallback={philo.symbol} paths={PHILOSOPHER_ICONS[philo.id]} size={62} color={Colors.sand}
+                press={Colors.isDark ? '#000000' : '#ffffff'} pressOpacity={Colors.isDark ? 0.55 : 0.95}
+              />
+            </EmbossTile>
             <Text style={styles.modalTr}>{philo.name}</Text>
             <Text style={styles.philoModalEra}>{philo.era}</Text>
-            <View style={styles.modalDivider} />
+            <LinearGradient
+              colors={['transparent', Colors.tint(0.45), 'transparent']}
+              start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}
+              style={styles.modalDivider}
+            />
             <Text style={styles.modalDesc}>{philo.story}</Text>
             {philo.contribution ? (
               <View style={styles.modalPracticeBox}>
@@ -154,6 +172,11 @@ function PhilosopherModal({ philo, onClose, contributionLabel, closeLabel }: {
               <Text style={styles.modalCloseText}>{closeLabel}</Text>
             </TouchableOpacity>
           </ScrollView>
+          <TouchableOpacity onPress={onClose} style={styles.modalX} accessibilityRole="button" accessibilityLabel={closeLabel} hitSlop={6}>
+            <Svg width={16} height={16} viewBox="0 0 24 24">
+              <Path d="M6 6 L18 18 M18 6 L6 18" stroke={Colors.sand2} strokeWidth={1.8} strokeLinecap="round" />
+            </Svg>
+          </TouchableOpacity>
         </Pressable>
       </Pressable>
     </Modal>
@@ -638,36 +661,36 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     borderRadius: 22, padding: 18,
     borderWidth: 1, borderColor: Colors.overlay(0.06),
   },
-  philoSymbolBox: {
-    width: 48, height: 48, borderRadius: 24,
-    alignItems: 'center', justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.18)', borderWidth: 1, borderColor: Colors.tint(0.25),
-  },
+  philoSymbolBox: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+
   philoName: { fontFamily: Fonts.cormorantItalic, fontSize: 22, color: Colors.sand2, marginBottom: 2 },
   philoEra: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, letterSpacing: 0.3, marginBottom: 8 },
   philoOneLiner: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.text2, lineHeight: 21 },
 
-  philoModalSymbolBox: {
-    alignSelf: 'center', width: 56, height: 56, borderRadius: 28,
-    alignItems: 'center', justifyContent: 'center', marginBottom: 12,
-    backgroundColor: Colors.tint(0.10), borderWidth: 1, borderColor: Colors.tint(0.28),
-  },
-  philoModalEra: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, textAlign: 'center', letterSpacing: 0.3, marginTop: -10, marginBottom: 16 },
+
+  philoModalEra: { fontFamily: Fonts.cormorantItalic, fontSize: 18, lineHeight: 24, color: Colors.text2, textAlign: 'center', marginTop: 2, marginBottom: 16, paddingHorizontal: 8 },
 
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.75)',
     justifyContent: 'center', alignItems: 'center', padding: 24,
   },
   modalCard: {
-    backgroundColor: Colors.stone2, borderRadius: 26, padding: 28, width: '100%', maxHeight: '85%',
+    // Açık temada krem "kâğıt", koyuda yüzey rengi (kavram penceresiyle aynı)
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderRadius: 26, width: '100%', maxHeight: '85%', overflow: 'hidden',
     borderWidth: 1, borderColor: Colors.tint(0.22),
   },
-  modalTr: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted, textAlign: 'center', letterSpacing: 0.5, marginBottom: 16 },
-  modalDivider: { height: 1, backgroundColor: Colors.tint(0.15), marginBottom: 16 },
+  modalScroll: { padding: 28, paddingTop: 30 },
+  modalX: {
+    position: 'absolute', top: 12, right: 12, width: 44, height: 44, borderRadius: 22,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.stone3, borderWidth: 1, borderColor: Colors.overlay(0.07),
+  },
+  modalTr: { fontFamily: Fonts.cormorant, fontSize: 36, lineHeight: 42, color: Colors.sand3, textAlign: 'center' },
+  modalDivider: { height: 1, marginBottom: 18 },
   modalDesc: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text2, lineHeight: 26, marginBottom: 16 },
   modalPracticeBox: {
-    backgroundColor: Colors.moonA(0.08), borderRadius: 14, padding: 14,
-    borderLeftWidth: 2, borderLeftColor: Colors.moon, marginBottom: 20,
+    backgroundColor: Colors.moonA(0.1), borderRadius: 16, padding: 16, marginBottom: 20,
+    borderWidth: 1, borderColor: Colors.moonA(0.4),
   },
   modalPracticeLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2, color: Colors.moon, marginBottom: 6 },
   modalPractice: { fontFamily: Fonts.jost, fontSize: 16, color: Colors.text, lineHeight: 25 },
