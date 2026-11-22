@@ -53,9 +53,10 @@ export function FirstTip({ id, text, target, container, enabled = true }: {
   }, [enabled, id, container, target]);
 
   useEffect(() => {
+    if (!enabled) { setRect(null); return; } // ekran/adım değişince açık ipucu üstte kalmasın
     tryShow();
     return onOnboardingDone(tryShow);
-  }, [tryShow]);
+  }, [tryShow, enabled]);
 
   useEffect(() => {
     if (!rect) return;

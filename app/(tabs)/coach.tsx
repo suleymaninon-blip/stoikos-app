@@ -19,6 +19,7 @@ import { useTheme, useStyles, type Palette } from '../../constants/themeContext'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLang, localeOf } from '../../constants/i18n';
 import { router, useLocalSearchParams } from 'expo-router';
+import { FirstTip } from '../../components/FirstTip';
 import { COACH_INITIAL, COACH_SUGGESTIONS } from '../../constants/content';
 import { sendCoach, getCoachQuota, type CoachQuota } from '../../constants/api';
 import { Paywall } from '../../components/Paywall';
@@ -322,6 +323,8 @@ export default function CoachScreen() {
   ]);
   const [input, setInput] = useState('');
   const [inputFocused, setInputFocused] = useState(false);
+  const rootRef = useRef<View>(null);
+  const inputTipRef = useRef<View>(null);
   // Web'de çok satırlı yazı alanı kendiliğinden büyümüyor (react-native-web sabit yükseklik);
   // Kontrol Eleği'nden gelen taslak dar alanda kesik görünüyordu (21 Kasım 2026). Native zaten büyür.
   const [webInputH, setWebInputH] = useState(0);
@@ -493,7 +496,7 @@ export default function CoachScreen() {
   const suggestions = COACH_SUGGESTIONS[lang];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
         colors={[Colors.tint(Colors.isDark ? 0.07 : 0.08), 'transparent']}
         style={styles.gradientTop}
@@ -590,7 +593,7 @@ export default function CoachScreen() {
             </CalmPressable>
           </View>
         ) : (
-          <View style={styles.inputArea}>
+          <View ref={inputTipRef} collapsable={false} style={styles.inputArea}>
             {weekly && quota?.remaining === 1 && !quota.subscribed && quota.resetsAt ? (
               <Text style={styles.lastWarning}>{t('coach.lastWarning', { day: resetDay })}</Text>
             ) : null}
@@ -631,6 +634,7 @@ export default function CoachScreen() {
 
       {/* onSubscribe verilmedi → buton "yakında" durumunda; RevenueCat bağlanınca buraya geçilecek. */}
       <Paywall visible={paywallOpen} onClose={() => setPaywallOpen(false)} />
+      <FirstTip id="coach" text={t('tip.coach')} target={inputTipRef} container={rootRef} />
     </SafeAreaView>
   );
 }
