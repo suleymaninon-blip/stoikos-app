@@ -728,6 +728,13 @@ export function getUpcoming(lang: Lang, now: Date = new Date()): UpcomingProgram
   return p && { id: p.id, icon: p.icon, title: pick(p.title, lang), subtitle: pick(p.subtitle, lang), releaseAt: p.releaseAt ? toDate(p.releaseAt) : undefined };
 }
 
+/** Henüz açılmamış bütün programlar (İzler'deki "yakında" yuvaları için), tarih sırasıyla. */
+export function getUpcomingAll(lang: Lang, now: Date = new Date()): UpcomingProgram[] {
+  return PROGRAMS_RAW.filter((p) => !isReleased(p, now))
+    .sort((a, b) => (a.releaseAt ?? '9999').localeCompare(b.releaseAt ?? '9999'))
+    .map((p) => ({ id: p.id, icon: p.icon, title: pick(p.title, lang), subtitle: pick(p.subtitle, lang), releaseAt: p.releaseAt ? toDate(p.releaseAt) : undefined }));
+}
+
 /** O gün açılan program (bildirim için). */
 export function getReleaseOn(day: Date, lang: Lang): { id: string; title: string; subtitle: string } | undefined {
   const k = dayKey(day);

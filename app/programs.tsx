@@ -19,6 +19,8 @@ import { FirstTip } from '../components/FirstTip';
 import { CalmPressable } from '../components/CalmPressable';
 import { StaggerSection } from '../components/StaggerSection';
 import { useReduceMotion } from '../hooks/useReduceMotion';
+import { addTrace } from '../constants/traces';
+import TraceSeal from '../components/TraceSeal';
 
 // Liste kartındaki ilerleme çubuğu akıcı dolar ("Hareketi Azalt"ta doğrudan yerine gelir).
 function ProgramBar({ pct }: { pct: number }) {
@@ -60,6 +62,8 @@ export default function ProgramsScreen() {
   const [reflected, setReflected] = useState<Record<string, boolean>>({});
   const [reflection, setReflection] = useState('');
   const [restartArmed, setRestartArmed] = useState(false);
+  // İzler: yedinci gün ilk kez bitince o programın sikkesi (sessiz mühür).
+  const [sealPid, setSealPid] = useState<string | null>(null);
 
   // Ana ekrandaki "Kaldığın yer" kartı programı doğrudan açar (?open=<id>).
   // `day` verilirse o günün penceresi de açılır ("Bugünkü adımı aç").
@@ -110,6 +114,8 @@ export default function ProgramsScreen() {
       // kurarak başa dön. (Web'de ScrollView ref'i burada boş geliyordu; yeniden kurmak her
       // platformda aynı çalışıyor.)
       setTimeout(() => setFinishKey((k) => k + 1), 380);
+      // Sikke yalnız ilk bitişte verilir; yeniden başlatılıp bitirilince mühür tekrar çıkmaz.
+      if (await addTrace(pid)) setTimeout(() => setSealPid(pid), 420);
     }
   }
 
@@ -338,7 +344,13 @@ export default function ProgramsScreen() {
             </Pressable>
           </Pressable>
         </Modal>
-        <FirstTip id="programs" text={t('tip.programs')} target={daysRef} container={rootRef} />
+        <FirstTip id="programs" text={t('tip.programs')} target={daysRef} container={rootRef} enabled={!sealPid} />
+        <TraceSeal
+          pid={sealPid}
+          programTitle={programs.find((p) => p.id === sealPid)?.title ?? ''}
+          onContinue={() => setSealPid(null)}
+          onSeeAll={() => { setSealPid(null); router.navigate('/(tabs)/progress'); }}
+        />
       </SafeAreaView>
     );
   }

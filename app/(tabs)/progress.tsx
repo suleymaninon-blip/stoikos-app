@@ -18,6 +18,7 @@ import { CalmPressable } from '../../components/CalmPressable';
 import { StaggerSection } from '../../components/StaggerSection';
 import { FirstTip } from '../../components/FirstTip';
 import { SettingsIcon } from '../../components/Icons';
+import TracesSection from '../../components/TracesSection';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 
@@ -291,6 +292,11 @@ export default function ProgressScreen() {
             </StaggerSection>
           </>
         )}
+
+        {/* İzler (22 Kasım 2026): bitirilen her programın sikkesi */}
+        <StaggerSection delay={310}>
+          <TracesSection />
+        </StaggerSection>
 
         {/* Yansımaların (2 Kasım 2026): günlük ve program yansımalarına Pratik'e gitmeden ulaşılsın */}
         <StaggerSection delay={340}>
