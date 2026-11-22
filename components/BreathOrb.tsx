@@ -48,9 +48,9 @@ type Props = {
  */
 const PREP = 900;    // ms — başlarken çiçeğin önce kapandığı hazırlık
 const PETALS = 6;
-const SIZE = 210;    // çiçeğin kutusu
-const PETAL = 96;    // yaprak çapı
-const SPREAD = 48;   // tam açıkken yaprak merkezinin çiçek merkezine uzaklığı
+const SIZE = 180;    // çiçeğin kutusu
+const PETAL = 82;    // yaprak çapı
+const SPREAD = 41;   // tam açıkken yaprak merkezinin çiçek merkezine uzaklığı
 const DONE = 104;    // bitiş işaretinin (altın küre + onay) kutusu
 const CHECK_LEN = 56; // onay çizgisinin yaklaşık uzunluğu
 const DONE_MS = 5200; // tebrik ekranda bu kadar kalır
@@ -487,7 +487,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   card: {
     backgroundColor: Colors.tint(0.07),
     borderWidth: 1, borderColor: Colors.tint(0.14),
-    borderRadius: 28, paddingTop: 16, paddingBottom: 20, paddingHorizontal: 20,
+    borderRadius: 28, paddingTop: 16, paddingBottom: 16, paddingHorizontal: 20,
     alignItems: 'center',
   },
   cardActive: { backgroundColor: Colors.tint(0.10), borderColor: Colors.tint(0.24) },
@@ -510,7 +510,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   menuName: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text },
   menuNameOn: { color: Colors.sand2 },
   menuTime: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 2 },
-  flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
   halo: {
     position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2,
     backgroundColor: Colors.tint(0.22),
