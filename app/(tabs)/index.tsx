@@ -15,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
-import { MoonIcon } from '../../components/Icons';
+import { MoonIcon, SettingsIcon } from '../../components/Icons';
 import { getTodaysQuote, getMoodQuote, MOOD_THEMES } from '../../constants/content';
 import { getPrograms, getProgress, Program } from '../../constants/programs';
 import { useLang, localeOf, upper } from '../../constants/i18n';
@@ -383,7 +383,7 @@ export default function HomeScreen() {
               style={[styles.gearBtn, styles.cardShadow]}
               accessibilityLabel={t('settings.title')}
             >
-              <Text style={styles.gearIcon}>⚙</Text>
+              <SettingsIcon size={22} color={Colors.sand} />
             </CalmPressable>
           </View>
           <PulseRow refreshKey={pulseKey} />
@@ -543,7 +543,6 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 2,
   },
-  gearIcon: { fontSize: 17, color: Colors.sand },
   dateText: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 2.5, color: Colors.sand, marginBottom: 8 },
   greetingText: { fontFamily: Fonts.cormorantItalic, fontSize: 30, color: Colors.text, letterSpacing: 0.3, lineHeight: 38 },
 
