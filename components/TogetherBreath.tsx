@@ -8,7 +8,6 @@ import { useAppDimensions } from '../constants/layout';
 import { useReduceMotion } from '../hooks/useReduceMotion';
 import { DoneMark } from './DoneMark';
 import { logBreathSession } from '../constants/breathLog';
-import { getSoundPref, startBreathSound, stopBreathSound } from '../constants/breathSound';
 import { REMINDERS_SUPPORTED, isTogetherReminderOn, setTogetherReminder } from '../constants/notify';
 import { notify } from '../constants/dialog';
 import {
@@ -128,7 +127,6 @@ export function TogetherModal({ visible, onClose, onComplete }: { visible: boole
   const [phaseIn, setPhaseIn] = useState(true);
   const [evening, setEvening] = useState(1);
   const [shown, setShown] = useState(0);
-  const soundOn = useRef(true);
   const startedAt = useRef(0);
   const breath = useRef(new Animated.Value(0.45)).current;
   const twinkle = useRef([0, 1, 2].map(() => new Animated.Value(0.6))).current;
@@ -152,7 +150,6 @@ export function TogetherModal({ visible, onClose, onComplete }: { visible: boole
   useEffect(() => {
     if (!visible) return;
     setStage('ready'); setLeft(SESSION_SECONDS); setShown(0); setLoaded(false);
-    getSoundPref().then((v) => { soundOn.current = v; }).catch(() => {});
     fetchTogether().then((c) => { setCounts(c); setLoaded(true); });
     const poll = setInterval(() => fetchTogether().then((c) => c && setCounts(c)), 10_000);
     // Dururken çiçek yavaşça nefes alır.
@@ -168,7 +165,7 @@ export function TogetherModal({ visible, onClose, onComplete }: { visible: boole
       Animated.timing(v, { toValue: 0.35, duration: 900 + i * 350, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
     ]))));
     tw?.start();
-    return () => { clearInterval(poll); loopRef.current?.stop(); tw?.stop(); stopBreathSound(); };
+    return () => { clearInterval(poll); loopRef.current?.stop(); tw?.stop(); };
   }, [visible]);
 
   // Gösterilecek sayı ve ışık sayısı
@@ -184,7 +181,6 @@ export function TogetherModal({ visible, onClose, onComplete }: { visible: boole
 
   const finish = useCallback(async () => {
     loopRef.current?.stop();
-    stopBreathSound();
     Animated.timing(breath, { toValue: 0, duration: 700, useNativeDriver: true }).start();
     await logBreathSession();
     setEvening(await recordTogetherEvening());
@@ -207,7 +203,6 @@ export function TogetherModal({ visible, onClose, onComplete }: { visible: boole
 
   const start = () => {
     if (stage !== 'ready') return;
-    if (soundOn.current) startBreathSound();   // iOS: dokunuşun içinde, await'siz
     startedAt.current = Date.now();
     setStage('live');
     loopRef.current?.stop();
@@ -222,7 +217,7 @@ export function TogetherModal({ visible, onClose, onComplete }: { visible: boole
     joinTogether().then((c) => c && setCounts(c));
   };
 
-  const close = () => { stopBreathSound(); loopRef.current?.stop(); onClose(); };
+  const close = () => { loopRef.current?.stop(); onClose(); };
 
   const rotate = breath.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '60deg'] });
   const petalScale = breath.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] });

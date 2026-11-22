@@ -5,11 +5,6 @@ import Svg, { Circle, Defs, Path, RadialGradient, Stop } from 'react-native-svg'
 import { useFocusEffect } from 'expo-router';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
-import { SoundIcon } from './Icons';
-import {
-  isBreathSoundSupported, getSoundPref, setSoundPref,
-  startBreathSound, stopBreathSound,
-} from '../constants/breathSound';
 import {
   BREATH_DURATIONS, BreathDuration, MIN_LOGGED_SECONDS,
   getBreathDuration, setBreathDuration, logBreathSession,
@@ -32,7 +27,6 @@ type Props = {
   countLabel?: string;  // "{n} nefes" — çalışırken ve bitince
   inhaleLabel?: string; // "Nefes al"
   exhaleLabel?: string; // "Nefes ver"
-  soundLabel?: string;
   minuteLabel?: string;   // "{n} dk" — süre seçici ve özet
   noLimitLabel?: string;  // "Süresiz" — ∞ seçeneğinin erişilebilirlik adı
   doneLabel?: string;     // "Tebrikler" — sayılan bir seans bitince
@@ -50,8 +44,7 @@ type Props = {
  * kullanıcı parmağını ekranda tutmak zorunda kalıyordu. Şimdi bir kez DOKUN →
  * başlar, tekrar DOKUN → biter. Dururken çiçek kapalı ve çok hafif "yaşıyor".
  *
- * ⚠️ Ses: startBreathSound() dokunma işleyicisinin İÇİNDE, araya await
- * girmeden çağrılmalı — iOS Safari kuralı (bkz. constants/breathSound.ts).
+ * Ses yok (22 Kasım 2026'da kaldırıldı; Apple'ın Nefes uygulaması gibi sessiz).
  */
 const PREP = 900;    // ms — başlarken çiçeğin önce kapandığı hazırlık
 const PETALS = 6;
@@ -68,7 +61,6 @@ export default function BreathOrb({
   stopHint = 'Bitirmek için dokun',
   countLabel = '{n} nefes',
   inhaleLabel = 'Nefes al', exhaleLabel = 'Nefes ver',
-  soundLabel = 'Sakinleştirici ses',
   minuteLabel = '{n} dk',
   noLimitLabel = 'Süresiz',
   doneLabel = 'Tebrikler',
@@ -124,14 +116,6 @@ export default function BreathOrb({
     setRhythm(r); rhythmRef.current = r; setBreathRhythm(r); setMenuOpen(false);
   }, []);
 
-  const soundSupported = isBreathSoundSupported();
-  const [soundOn, setSoundOn] = useState(false);
-  const soundOnRef = useRef(false);
-
-  useEffect(() => {
-    if (soundSupported) getSoundPref().then((on) => { setSoundOn(on); soundOnRef.current = on; });
-  }, [soundSupported]);
-
   const clearTimers = () => { timers.current.forEach((t) => { clearTimeout(t); clearInterval(t); }); timers.current = []; };
 
   // Dururken: çiçek yarı açık, yavaşça nefes alıyor — davetkâr, canlı (Apple Watch'taki gibi).
@@ -163,7 +147,6 @@ export default function BreathOrb({
     setCount(0);
     countRef.current = 0;
     setPhase('out'); // hazırlık: çiçek önce kapanır
-    if (soundOnRef.current) startBreathSound(); // dokunuşun içinde, await yok (iOS)
 
     loopRef.current?.stop();
     Animated.timing(live, { toValue: 1, duration: 600, useNativeDriver: true }).start();
@@ -221,7 +204,6 @@ export default function BreathOrb({
     activeRef.current = false;
     setActive(false);
     clearTimers();
-    stopBreathSound();
     loopRef.current?.stop();
     Animated.timing(live, { toValue: 0, duration: 900, useNativeDriver: true }).start();
     Animated.timing(breath, { toValue: 0.3, duration: 1400, easing: Easing.inOut(Easing.sin), useNativeDriver: true })
@@ -273,21 +255,11 @@ export default function BreathOrb({
     if (activeRef.current) stop(); else start();
   }, [start, stop, menuOpen]);
 
-  const toggleSound = useCallback(() => {
-    const next = !soundOnRef.current;
-    soundOnRef.current = next;
-    setSoundOn(next);
-    setSoundPref(next);
-    if (!next) stopBreathSound();
-    else if (activeRef.current) startBreathSound();
-  }, []);
-
   // Ekrandan (sekmeden) çıkınca egzersiz sessizce biter.
   useFocusEffect(useCallback(() => () => stop(false), [stop]));
-  // Telefon kilitlenince / arka planda egzersiz SÜRER (25 Ekim 2026, rekabet analizi: rakibin
-  // "ekran kilitlenince ses duruyor" şikâyeti). Ses arka planda çalar (breathSound.ts:
-  // staysActiveInBackground, app.json: UIBackgroundModes audio). Süreli seansın bitiş zamanlayıcısı
-  // arka planda gecikirse, öne dönünce süre dolmuşsa seans burada kapanır.
+  // Arka plana geçince seans durdurulmaz; süreli seansın bitiş zamanlayıcısı arka planda gecikirse,
+  // öne dönünce süre dolmuşsa seans burada kapanır. (Nefes sesi 22 Kasım 2026'da kaldırıldı:
+  // tutmalı ritimlerle uyuşmuyordu; arka plan ses izni de gitti.)
   useEffect(() => {
     const sub = AppState.addEventListener('change', (s) => {
       if (s !== 'active' || !activeRef.current) return;
@@ -496,20 +468,6 @@ export default function BreathOrb({
         )}
       </View>
 
-      {soundSupported && (
-        <TouchableOpacity
-          style={styles.soundBtn}
-          onPress={toggleSound}
-          hitSlop={10}
-          accessibilityRole="switch"
-          accessibilityState={{ checked: soundOn }}
-          accessibilityLabel={soundLabel}
-        >
-          <View style={[styles.soundIcon, soundOn && styles.soundIconOn]}>
-            <SoundIcon size={17} on={soundOn} color={Colors.sand} />
-          </View>
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
@@ -533,11 +491,6 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     alignItems: 'center',
   },
   cardActive: { backgroundColor: Colors.tint(0.10), borderColor: Colors.tint(0.24) },
-  soundBtn: {
-    position: 'absolute', top: 14, right: 16, zIndex: 5,
-    width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: Colors.tint(0.08),
-  },
   rhythmWrap: { position: 'absolute', top: 14, left: 16, zIndex: 8, alignItems: 'flex-start' },
   rhythmBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6, height: 40, paddingHorizontal: 14, borderRadius: 20,
@@ -557,8 +510,6 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   menuName: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.text },
   menuNameOn: { color: Colors.sand2 },
   menuTime: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 2 },
-  soundIcon: { opacity: 0.55 },
-  soundIconOn: { opacity: 1 },
   flowerBox: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   halo: {
     position: 'absolute', width: SIZE, height: SIZE, borderRadius: SIZE / 2,
