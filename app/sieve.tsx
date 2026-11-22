@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View, Text, TextInput, ScrollView, StyleSheet, SafeAreaView, Platform, Animated, Easing,
-  PanResponder, Modal, Pressable, KeyboardAvoidingView, AccessibilityInfo,
+  PanResponder, Pressable, KeyboardAvoidingView, AccessibilityInfo,
 } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,21 +17,17 @@ import { DoneMark } from '../components/DoneMark';
 import { FirstTip } from '../components/FirstTip';
 
 /**
- * Kontrol Eleği (21 Kasım 2026; tasarım https://claude.ai/artifact/RTrVnZZAzwGn92rw64bb7S, kullanıcı seçimi A).
- * Zor anda 30 saniyelik araç: aklındakileri yaz (en çok 5) → her birini "elimde olan / olmayan"a ayır
- * (dokun + düğme ya da alana sürükle) → bırakmadan önce "içinde elinde olan bir parça var mı?" →
- * bırakılan taş altın toza dönüşüp dağılır → yalnız yapabileceklerin kalır.
- * Yazılanlar hiçbir yere gitmez: kaydetmezsen ekran kapanınca silinir. "Koçla konuş" yalnız
- * elinde olan maddeleri koçun yazı alanına taslak olarak koyar; göndermek kişiye kalır.
- * Titreşim bilerek yok (TestFlight'ta denenecek). "Hareketi Azalt"ta toz yok, taş söner.
+ * Kontrol Eleği — Zor anda 30 saniyelik sakin netlik aracı.
+ * Aklındakileri yaz (en çok 5) → "elimde olan / olmayan"a ayır (dokun + düğme ya da sürükle) →
+ * bırakılan taş kesintisiz biçimde altın toza dönüşüp dağılır → yalnız yapabileceklerin kalır.
+ * Yazılanlar yalnızca cihazda kalır; "Koçla konuş" seçimi koçun yazı alanına taslak olarak düşer.
  */
 
 type Zone = 'in' | 'out';
-type Item = { id: number; text: string; zone: Zone | null; part: boolean };
+type Item = { id: number; text: string; zone: Zone | null };
 type Rect = { x: number; y: number; w: number; h: number };
 const MAX_ITEMS = 5;
 const MAX_LEN = 70;
-const LATIN = 'Dichotomy of Control';
 
 // Dağılma tozu: [sol %, üst %, dx, dy, boyut, gecikme (0–1)]
 const DUST: [number, number, number, number, number, number][] = [
@@ -54,15 +50,13 @@ export default function SieveScreen() {
   const [items, setItems] = useState<Item[]>([]);
   const [draft, setDraft] = useState('');
   const [sel, setSel] = useState<number | null>(null);
-  const [partFor, setPartFor] = useState<number | null>(null);
-  const [partDraft, setPartDraft] = useState('');
   const [dissolving, setDissolving] = useState<number[]>([]);
   const [dragging, setDragging] = useState(false);
   const [saved, setSaved] = useState(false);
-  // Netlikte koça götürülmeyecek maddeler (varsayılan: hepsi seçili; kullanıcı: "koça atmak istediklerimi seçemiyorum")
-  const [skipCoach, setSkipCoach] = useState<number[]>([]);
-  // Bırakılanlardan koça götürülecekler (varsayılan: hiçbiri; kullanıcı işaretlerse "bırakmakta zorlandıklarım")
+  // Bırakılanlar netlikte kapalı durur; kullanıcı açıp zorlandığını işaretlerse koç taslağına eklenir
+  const [showLet, setShowLet] = useState(false);
   const [letCoach, setLetCoach] = useState<number[]>([]);
+
   const nid = useRef(1);
   const inputRef = useRef<TextInput>(null);
   const rootRef = useRef<View>(null);
@@ -79,15 +73,15 @@ export default function SieveScreen() {
   const field = items.filter((i) => i.zone === null || dissolving.includes(i.id));
   const pending = items.filter((i) => i.zone === null).length;
 
-  // Hepsi ayrıldı, toz dağıldı, soru penceresi kapalı → netlik.
+  // Hepsi ayrıldı ve toz dağıldı → netlik ekranına geç
   useEffect(() => {
-    if (screen !== 'sort' || items.length === 0 || pending > 0 || dissolving.length > 0 || partFor != null) return;
+    if (screen !== 'sort' || items.length === 0 || pending > 0 || dissolving.length > 0) return;
     timer.current = setTimeout(() => setScreen('clear'), reduce ? 200 : 650);
     return () => { if (timer.current) clearTimeout(timer.current); };
-  }, [screen, items.length, pending, dissolving.length, partFor, reduce]);
+  }, [screen, items.length, pending, dissolving.length, reduce]);
 
-  const newItem = (text: string, zone: Zone | null = null, part = false): Item =>
-    ({ id: nid.current++, text: text.trim().slice(0, MAX_LEN), zone, part });
+  const newItem = (text: string, zone: Zone | null = null): Item =>
+    ({ id: nid.current++, text: text.trim().slice(0, MAX_LEN), zone });
 
   const add = () => {
     const txt = draft.trim();
@@ -103,18 +97,10 @@ export default function SieveScreen() {
     setSel(null);
     setItems((cur) => cur.map((i) => (i.id === id ? { ...i, zone: 'in' } : i)));
   };
-  const askRelease = (id: number) => { setSel(null); setPartDraft(''); setPartFor(id); };
-  const release = (withPart: boolean) => {
-    const id = partFor;
-    if (id == null) return;
-    const p = partDraft.trim();
-    setItems((cur) => {
-      const next = cur.map((i) => (i.id === id ? { ...i, zone: 'out' as Zone } : i));
-      return withPart && p ? [...next, newItem(p, 'in', true)] : next;
-    });
-    setDissolving((d) => [...d, id]);
-    setPartFor(null);
-    setPartDraft('');
+  const release = (id: number) => {
+    setSel(null);
+    setItems((cur) => cur.map((i) => (i.id === id ? { ...i, zone: 'out' as Zone } : i)));
+    setDissolving((d) => (d.includes(id) ? d : [...d, id]));
   };
 
   const measureZones = () => {
@@ -123,15 +109,20 @@ export default function SieveScreen() {
   };
   const onDrop = (id: number, x: number, y: number): boolean => {
     if (inside(zones.current.in, x, y)) { keep(id); return true; }
-    if (inside(zones.current.out, x, y)) { askRelease(id); return true; }
+    if (inside(zones.current.out, x, y)) { release(id); return true; }
     return false;
   };
 
   const restart = () => {
-    setSkipCoach([]);
+    setShowLet(false);
     setLetCoach([]);
-    setItems([]); setSaved(false); setSel(null); setDissolving([]); setPartFor(null); setScreen('write');
+    setItems([]);
+    setSaved(false);
+    setSel(null);
+    setDissolving([]);
+    setScreen('write');
   };
+
   const save = async () => {
     const lines = [t('sieve.name')];
     if (kept.length) lines.push(`${t('sieve.zoneIn')}: ${kept.map((i) => i.text).join('; ')}`);
@@ -142,8 +133,9 @@ export default function SieveScreen() {
       AccessibilityInfo.announceForAccessibility?.(t('sieve.saved'));
     } catch {}
   };
+
   const toCoach = () => {
-    const chosen = kept.filter((i) => !skipCoach.includes(i.id)).map((i) => i.text).join('; ');
+    const chosen = kept.map((i) => i.text).join('; ');
     const lets = released.filter((i) => letCoach.includes(i.id)).map((i) => i.text).join('; ');
     if (!chosen && !lets) return;
     const draftMsg = chosen && lets
@@ -152,9 +144,8 @@ export default function SieveScreen() {
     router.navigate({ pathname: '/coach', params: { draft: draftMsg } });
   };
 
-  const chosenCount = kept.filter((i) => !skipCoach.includes(i.id)).length + released.filter((i) => letCoach.includes(i.id)).length;
+  const chosenCount = kept.length + released.filter((i) => letCoach.includes(i.id)).length;
   const stepOf = screen === 'write' ? 1 : screen === 'sort' ? 2 : 3;
-  const partItem = items.find((i) => i.id === partFor);
   const active = sel != null || dragging;
   const kb = Colors.isDark ? 'dark' : 'light';
 
@@ -166,7 +157,9 @@ export default function SieveScreen() {
         <View style={styles.top}>
           <View style={styles.topRow}>
             <CalmPressable onPress={() => router.back()} style={styles.closeBtn} pressScale={0.92} accessibilityLabel={t('sieve.close')}>
-              <Svg width={22} height={22} viewBox="0 0 24 24"><Path d="M6 6l12 12M18 6L6 18" stroke={Colors.text2} strokeWidth={1.6} strokeLinecap="round" /></Svg>
+              <Svg width={22} height={22} viewBox="0 0 24 24">
+                <Path d="M6 6l12 12M18 6L6 18" stroke={Colors.text2} strokeWidth={1.6} strokeLinecap="round" />
+              </Svg>
             </CalmPressable>
             <Text style={styles.topName}>{upper(t('sieve.name'), lang)}</Text>
             <Text style={styles.topStep}>{t('sieve.step', { n: stepOf })}</Text>
@@ -243,8 +236,6 @@ export default function SieveScreen() {
 
         {/* 2 · Ele */}
         {screen === 'sort' && (
-          // Kaydırılabilir: 5 taş küçük ekranda alanların üstüne biniyordu (21 Kasım 2026, kullanıcının iPhone'u).
-          // Sürüklerken kaydırma kapalı; taşta web'de touchAction 'none' (parmak sayfayı değil taşı taşısın).
           <ScrollView
             style={{ flex: 1 }}
             contentContainerStyle={styles.sortWrap}
@@ -254,7 +245,6 @@ export default function SieveScreen() {
             <Text style={styles.h1}>{t('sieve.sortTitle')}</Text>
             <Text style={styles.lead}>{t('sieve.sortBody')}</Text>
 
-            {/* Sürüklenen taş alanların üstünde çizilsin (kardeşler arasında zIndex) */}
             <View ref={sortTipRef} collapsable={false} style={[styles.field, dragging && styles.fieldLifted]}>
               {field.map((i) =>
                 dissolving.includes(i.id) ? (
@@ -275,7 +265,7 @@ export default function SieveScreen() {
                     onDragStart={() => { setSel(null); setDragging(true); measureZones(); }}
                     onDragEnd={(x, y) => { setDragging(false); return onDrop(i.id, x, y); }}
                     onKeep={() => keep(i.id)}
-                    onRelease={() => askRelease(i.id)}
+                    onRelease={() => release(i.id)}
                     mineLabel={t('sieve.mine')}
                     notMineLabel={t('sieve.notMine')}
                   />
@@ -284,7 +274,7 @@ export default function SieveScreen() {
               {field.length === 0 && <Text style={styles.emptyField}>{t('sieve.emptyField')}</Text>}
             </View>
 
-            <View style={styles.zones}>
+            <View style={styles.zones} onLayout={measureZones}>
               <Pulse active={active && !reduce} style={{ flex: 1 }}>
                 <Pressable
                   ref={zoneInRef}
@@ -306,7 +296,7 @@ export default function SieveScreen() {
                 <Pressable
                   ref={zoneOutRef}
                   collapsable={false}
-                  onPress={() => { if (sel != null) askRelease(sel); }}
+                  onPress={() => { if (sel != null) release(sel); }}
                   accessibilityRole="button"
                   accessibilityLabel={t('sieve.zoneOut')}
                   style={[styles.zone, styles.zoneOut, active && styles.zoneOutActive]}
@@ -325,7 +315,7 @@ export default function SieveScreen() {
           </ScrollView>
         )}
 
-        {/* 4 · Netlik */}
+        {/* 3 · Netlik */}
         {screen === 'clear' && (
           <View style={{ flex: 1 }}>
             <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -339,75 +329,89 @@ export default function SieveScreen() {
                 start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }}
                 style={styles.divider}
               />
-              {kept.length > 0 && <Text style={[styles.label, { marginTop: 18, marginBottom: 0 }]}>{upper(t('sieve.pickHint'), lang)}</Text>}
-              <View style={[styles.list, { marginTop: 10 }]}>
-                {kept.map((k) => {
-                  const on = !skipCoach.includes(k.id);
-                  return (
-                    <Pressable
-                      key={k.id}
-                      onPress={() => setSkipCoach((cur) => (on ? [...cur, k.id] : cur.filter((x) => x !== k.id)))}
-                      accessibilityRole="checkbox"
-                      accessibilityState={{ checked: on }}
-                      style={[styles.keptCard, styles.cardShadow, !on && styles.keptOff]}
-                    >
-                      <View style={[styles.keptBox, on && styles.keptBoxOn]}>
-                        {on && (
-                          <Svg width={14} height={14} viewBox="0 0 24 24"><Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.onAccent} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" /></Svg>
-                        )}
-                      </View>
+
+              {/* Elinde olanlar: onay kutusu kalabalığı olmadan sakin kartlar */}
+              {kept.length > 0 && (
+                <View style={[styles.list, { marginTop: 22 }]}>
+                  {kept.map((k) => (
+                    <View key={k.id} style={[styles.keptCard, styles.cardShadow]}>
+                      <View style={styles.keptDot} />
                       <Text style={styles.keptText}>{k.text}</Text>
-                      {k.part && <Text style={styles.partBadge}>{upper(t('sieve.partBadge'), lang)}</Text>}
-                    </Pressable>
-                  );
-                })}
-              </View>
-              {kept.some((k) => k.part) && <Text style={styles.legend}>{t('sieve.partLegend')}</Text>}
-              {/* Bıraktıkların: varsayılan seçili değil; bırakmakta zorlanılan işaretlenirse koça o da gider */}
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Bırakılanlar: varsayılan olarak gizli; dokunulursa açılıp koça eklenebilir */}
               {released.length > 0 && (
-                <>
-                  <View style={[styles.releasedRow, { marginTop: 22 }]}>
+                <View style={styles.letWrap}>
+                  <Pressable
+                    onPress={() => setShowLet((v) => !v)}
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: showLet }}
+                    style={styles.letToggle}
+                  >
                     <View style={[styles.goldDot, { backgroundColor: gold }]} />
-                    <Text style={[styles.label, { marginBottom: 0 }]}>{upper(t('sieve.letTitle'), lang)}</Text>
-                  </View>
-                  <Text style={[styles.legend, { marginTop: 4 }]}>{t('sieve.letHint')}</Text>
-                  <View style={[styles.list, { marginTop: 10 }]}>
-                    {released.map((r) => {
-                      const on = letCoach.includes(r.id);
-                      return (
-                        <Pressable
-                          key={r.id}
-                          onPress={() => setLetCoach((cur) => (on ? cur.filter((x) => x !== r.id) : [...cur, r.id]))}
-                          accessibilityRole="checkbox"
-                          accessibilityState={{ checked: on }}
-                          style={[styles.keptCard, styles.letCard, on && styles.letCardOn]}
-                        >
-                          <View style={[styles.keptBox, on && styles.keptBoxOn]}>
-                            {on && (
-                              <Svg width={14} height={14} viewBox="0 0 24 24"><Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.onAccent} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" /></Svg>
-                            )}
-                          </View>
-                          <Text style={[styles.keptText, !on && styles.letText]}>{r.text}</Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                </>
+                    <Text style={styles.letToggleText}>
+                      {upper(t('sieve.letTitle'), lang)} ({released.length})
+                    </Text>
+                    <Svg
+                      width={16}
+                      height={16}
+                      viewBox="0 0 24 24"
+                      style={{ transform: [{ rotate: showLet ? '90deg' : '0deg' }] }}
+                    >
+                      <Path d="M9 6l6 6-6 6" fill="none" stroke={Colors.muted} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+                    </Svg>
+                  </Pressable>
+
+                  {showLet && (
+                    <>
+                      <Text style={styles.legend}>{t('sieve.letHint')}</Text>
+                      <View style={[styles.list, { marginTop: 10 }]}>
+                        {released.map((r) => {
+                          const on = letCoach.includes(r.id);
+                          return (
+                            <Pressable
+                              key={r.id}
+                              onPress={() => setLetCoach((cur) => (on ? cur.filter((x) => x !== r.id) : [...cur, r.id]))}
+                              accessibilityRole="checkbox"
+                              accessibilityState={{ checked: on }}
+                              style={[styles.keptCard, styles.letCard, on && styles.letCardOn]}
+                            >
+                              <View style={[styles.keptBox, on && styles.keptBoxOn]}>
+                                {on && (
+                                  <Svg width={14} height={14} viewBox="0 0 24 24">
+                                    <Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.onAccent} strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round" />
+                                  </Svg>
+                                )}
+                              </View>
+                              <Text style={[styles.keptText, !on && styles.letText]}>{r.text}</Text>
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                    </>
+                  )}
+                </View>
               )}
             </ScrollView>
+
             <View style={styles.footer}>
-              {(kept.length > 0 || released.length > 0) && (
+              {chosenCount > 0 && (
                 <>
-                  <CalmPressable onPress={toCoach} disabled={chosenCount === 0} style={[styles.primary, chosenCount === 0 && styles.dim]}>
+                  <CalmPressable onPress={toCoach} style={styles.primary}>
                     <Text style={styles.primaryText}>{t('sieve.coach')}</Text>
                   </CalmPressable>
-                  <Text style={styles.note}>{chosenCount ? t('sieve.coachNote', { n: chosenCount }) : t('sieve.pickNone')}</Text>
+                  <Text style={styles.note}>{t('sieve.coachNote', { n: chosenCount })}</Text>
                 </>
               )}
               <CalmPressable onPress={save} disabled={saved} style={styles.secondary} accessibilityState={{ disabled: saved }}>
                 <View style={styles.secondaryInner}>
                   {saved && (
-                    <Svg width={16} height={16} viewBox="0 0 24 24"><Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.sand} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" /></Svg>
+                    <Svg width={16} height={16} viewBox="0 0 24 24">
+                      <Path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke={Colors.sand} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                    </Svg>
                   )}
                   <Text style={styles.secondaryText}>{saved ? t('sieve.saved') : t('sieve.save')}</Text>
                 </View>
@@ -425,50 +429,9 @@ export default function SieveScreen() {
         )}
       </KeyboardAvoidingView>
 
-      {/* İlk kullanım ipuçları (22 Kasım 2026): yazma ve ayırma adımında birer kez */}
+      {/* İlk kullanım ipuçları: yazma ve ayırma adımında birer kez */}
       <FirstTip id="sieve" text={t('tip.sieve')} target={writeTipRef} container={rootRef} enabled={screen === 'write'} />
-      <FirstTip id="sieveSort" text={t('tip.sieveSort')} target={sortTipRef} container={rootRef} enabled={screen === 'sort' && partFor == null} />
-
-      {/* 3 · Payını al — bırakmadan önce tek soru */}
-      <Modal
-        visible={partFor != null}
-        transparent
-        animationType={reduce ? 'none' : 'slide'}
-        onRequestClose={() => setPartFor(null)}
-      >
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <Pressable style={styles.scrim} onPress={() => setPartFor(null)} accessibilityLabel={t('sieve.close')} />
-          <View style={styles.sheet}>
-            <View style={styles.grip} />
-            <Text style={styles.label}>{upper(t('sieve.partTag'), lang)}</Text>
-            <Text style={styles.sheetTitle}>{t('sieve.partTitle', { x: partItem?.text ?? '' })}</Text>
-            <Text style={styles.lead}>{t('sieve.partBody')}</Text>
-            <TextInput
-              value={partDraft}
-              onChangeText={setPartDraft}
-              onSubmitEditing={() => release(!!partDraft.trim())}
-              maxLength={MAX_LEN}
-              placeholder={t('sieve.partPh')}
-              placeholderTextColor={Colors.muted}
-              keyboardAppearance={kb}
-              accessibilityLabel={t('sieve.partLabel')}
-              style={styles.input}
-            />
-            <View style={styles.sheetBtns}>
-              <CalmPressable onPress={() => release(false)} style={[styles.secondary, { flex: 1 }]}>
-                <Text style={[styles.secondaryText, styles.center]}>{t('sieve.releaseOnly')}</Text>
-              </CalmPressable>
-              <CalmPressable
-                onPress={() => release(true)}
-                disabled={!partDraft.trim()}
-                style={[styles.primary, { flex: 1 }, !partDraft.trim() && styles.dim]}
-              >
-                <Text style={styles.primaryText}>{t('sieve.releaseWith')}</Text>
-              </CalmPressable>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+      <FirstTip id="sieveSort" text={t('tip.sieveSort')} target={sortTipRef} container={rootRef} enabled={screen === 'sort'} />
     </SafeAreaView>
   );
 }
@@ -486,7 +449,9 @@ function WriteStone({ text, onRemove, removeLabel }: { text: string; onRemove: (
     <Animated.View style={[styles.stone, styles.stoneRow, styles.cardShadow, { opacity: v, transform: [{ translateY: v.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }]}>
       <Text style={[styles.stoneText, { flex: 1 }]}>{text}</Text>
       <CalmPressable onPress={onRemove} style={styles.removeBtn} pressScale={0.9} accessibilityLabel={removeLabel}>
-        <Svg width={16} height={16} viewBox="0 0 24 24"><Path d="M7 7l10 10M17 7L7 17" stroke={Colors.muted} strokeWidth={1.6} strokeLinecap="round" /></Svg>
+        <Svg width={16} height={16} viewBox="0 0 24 24">
+          <Path d="M7 7l10 10M17 7L7 17" stroke={Colors.muted} strokeWidth={1.6} strokeLinecap="round" />
+        </Svg>
       </CalmPressable>
     </Animated.View>
   );
@@ -504,7 +469,6 @@ function SortStone({
   const reduce = useReduceMotion();
   const pan = useRef(new Animated.ValueXY()).current;
   const [lifted, setLifted] = useState(false);
-  // PanResponder bir kez kurulur; geri çağrılar her çizimde güncel kalsın.
   const cb = useRef({ onDragStart, onDragEnd });
   cb.current = { onDragStart, onDragEnd };
 
@@ -579,6 +543,7 @@ function DissolvingStone({ text, gold, reduce, onDone }: { text: string; gold: s
           { translateY: v.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0, 0, -8] }) },
         ],
       };
+
   return (
     <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
       <Animated.View style={[styles.stone, body]}>
@@ -718,7 +683,6 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   },
   releasedRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 'auto' },
   goldDot: { width: 6, height: 6, borderRadius: 3 },
-  releasedText: { fontFamily: Fonts.jost, fontSize: 14, color: Colors.muted },
 
   clearSub: { fontFamily: Fonts.cormorantItalic, fontSize: 21, lineHeight: 28, color: Colors.text2, textAlign: 'center', marginTop: 6 },
   divider: { height: 1, marginTop: 20, marginHorizontal: 40 },
@@ -726,25 +690,18 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: Colors.stone2,
     borderWidth: 1, borderColor: Colors.stone4, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16,
   },
-  keptBox: { width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: Colors.muted, alignItems: 'center', justifyContent: 'center' },
+  keptDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.sand },
+  keptBox: { width: 22, height: 22, borderRadius: 6, borderWidth: 1.5, borderColor: Colors.muted, alignItems: 'center', justifyContent: 'center' },
   keptBoxOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
-  keptOff: { opacity: 0.6 },
+  keptText: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, lineHeight: 22, color: Colors.text },
+
+  letWrap: { marginTop: 24 },
+  letToggle: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10,
+  },
+  letToggleText: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.8, color: Colors.muted },
   letCard: { backgroundColor: 'transparent', borderStyle: 'dashed' },
   letCardOn: { borderStyle: 'solid', borderColor: Colors.sand, backgroundColor: Colors.tint(0.08) },
   letText: { color: Colors.text2 },
-  legend: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.muted, marginTop: 10 },
-  keptText: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, lineHeight: 22, color: Colors.text },
-  partBadge: {
-    fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.2, color: Colors.sand2,
-    backgroundColor: Colors.tint(0.1), borderRadius: 99, paddingVertical: 3, paddingHorizontal: 8, overflow: 'hidden',
-  },
-
-  scrim: { flex: 1, backgroundColor: Colors.isDark ? 'rgba(5,10,18,0.55)' : 'rgba(29,42,47,0.35)' },
-  sheet: {
-    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone, borderTopLeftRadius: 26, borderTopRightRadius: 26,
-    paddingHorizontal: 20, paddingTop: 12, paddingBottom: 30, gap: 4,
-  },
-  grip: { width: 40, height: 4, borderRadius: 2, backgroundColor: Colors.stone4, alignSelf: 'center', marginBottom: 14 },
-  sheetTitle: { fontFamily: Fonts.cormorant, fontSize: 26, lineHeight: 31, color: Colors.text },
-  sheetBtns: { flexDirection: 'row', gap: 10, marginTop: 14 },
+  legend: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.muted, marginTop: 2 },
 });
