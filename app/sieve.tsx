@@ -17,7 +17,9 @@ import { DoneMark } from '../components/DoneMark';
 import { FirstTip } from '../components/FirstTip';
 
 /**
- * Kontrol Eleği — Zor anda 30 saniyelik sakin netlik aracı.
+ * Kontrol Eleği — Zor anda 30 saniyelik sakin netlik aracı (tasarım https://claude.ai/artifact/RTrVnZZAzwGn92rw64bb7S).
+ * 23 Kasım 2026 sade sürüm (kullanıcının dış araçta düzenlettiği): "küçük adım" penceresi yok, bırakılanlar
+ * netlikte kapalı satır, elindekiler onay kutusuz; koça elindekilerin hepsi + işaretlenen bırakılanlar gider.
  * Aklındakileri yaz (en çok 5) → "elimde olan / olmayan"a ayır (dokun + düğme ya da sürükle) →
  * bırakılan taş kesintisiz biçimde altın toza dönüşüp dağılır → yalnız yapabileceklerin kalır.
  * Yazılanlar yalnızca cihazda kalır; "Koçla konuş" seçimi koçun yazı alanına taslak olarak düşer.
@@ -697,7 +699,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
 
   letWrap: { marginTop: 24 },
   letToggle: {
-    flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10,
+    flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, paddingVertical: 10,
   },
   letToggleText: { flex: 1, fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.8, color: Colors.muted },
   letCard: { backgroundColor: 'transparent', borderStyle: 'dashed' },
