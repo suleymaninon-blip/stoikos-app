@@ -4,7 +4,7 @@ const { getDefaultConfig } = require('expo/metro-config');
 const config = getDefaultConfig(__dirname);
 
 // m4a asset uzantısı. Orb nefes sesi Eylül 2026'da MP3'e geçti (eski .m4a
-// aslında video içeriyordu ve tarayıcıda çalmıyordu, bkz. constants/breathSound.ts),
+// aslında video içeriyordu; nefes sesi 22 Kasım 2026'da tamamen kaldırıldı),
 // yani şu an m4a kullanan dosya yok — kayıt ileride gerekirse dursun diye bırakıldı.
 if (!config.resolver.assetExts.includes('m4a')) {
   config.resolver.assetExts.push('m4a');

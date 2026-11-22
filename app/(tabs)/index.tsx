@@ -403,7 +403,6 @@ export default function HomeScreen() {
               onComplete={refresh}
               inhaleLabel={t('home.breathIn')}
               exhaleLabel={t('home.breathOut')}
-              soundLabel={t('breathSound.label')}
             />
           </View>
           {togetherCard && <TogetherCard onOpen={() => setTogetherOpen(true)} onDismiss={skipTogether} />}
