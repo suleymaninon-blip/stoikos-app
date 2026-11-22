@@ -16,6 +16,7 @@ import {
 } from '../constants/healthPrefs';
 import { useLang } from '../constants/i18n';
 import { useReduceMotion } from '../hooks/useReduceMotion';
+import { ChevronDownIcon } from './Icons';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedPath = Animated.createAnimatedComponent(Path);
@@ -118,12 +119,12 @@ export default function BreathOrb({
 
   const clearTimers = () => { timers.current.forEach((t) => { clearTimeout(t); clearInterval(t); }); timers.current = []; };
 
-  // Dururken: çiçek yarı açık, yavaşça nefes alıyor — davetkâr, canlı (Apple Watch'taki gibi).
+  // Dururken (22 Kasım 2026: 0,3–0,5 → 0,5–0,72; kapalıyken kartta küçük kalıyordu): çiçek yarı açık, yavaşça nefes alıyor — davetkâr, canlı (Apple Watch'taki gibi).
   const startIdle = useCallback(() => {
     loopRef.current?.stop();
     loopRef.current = Animated.loop(Animated.sequence([
+      Animated.timing(breath, { toValue: 0.72, duration: 3600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
       Animated.timing(breath, { toValue: 0.5, duration: 3600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-      Animated.timing(breath, { toValue: 0.3, duration: 3600, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
     ]));
     loopRef.current.start();
   }, [breath]);
@@ -445,7 +446,7 @@ export default function BreathOrb({
           accessibilityLabel={`${t('breath.rhythm')}: ${t(`breath.${rhythm}`)}`}
         >
           <Text style={styles.rhythmText}>{t(`breath.${rhythm}`)}</Text>
-          <Text style={[styles.rhythmCaret, menuOpen && styles.rhythmCaretOpen]}>▾</Text>
+          <View style={[styles.rhythmCaret, menuOpen && styles.rhythmCaretOpen]}><ChevronDownIcon size={16} color={Colors.sand2} /></View>
         </TouchableOpacity>
         {menuOpen && !active && (
           <View style={styles.menu}>
@@ -498,7 +499,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   },
   rhythmBtnDim: { opacity: 0.35 },
   rhythmText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand2, letterSpacing: 0.3 },
-  rhythmCaret: { fontSize: 11, color: Colors.sand2, marginTop: 1 },
+  rhythmCaret: { marginTop: 1 },
   rhythmCaretOpen: { transform: [{ rotate: '180deg' }] },
   menu: {
     marginTop: 6, minWidth: 230, backgroundColor: Colors.stone2, borderRadius: 16, paddingVertical: 6,

@@ -17,6 +17,7 @@ import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { CalmPressable } from '../../components/CalmPressable';
 import { StaggerSection } from '../../components/StaggerSection';
 import { FirstTip } from '../../components/FirstTip';
+import { SettingsIcon } from '../../components/Icons';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 
@@ -249,7 +250,7 @@ export default function ProgressScreen() {
                 style={[styles.gearBtn, styles.cardShadow]}
                 accessibilityLabel={t('settings.title')}
               >
-                <Text style={styles.gearIcon}>⚙</Text>
+                <SettingsIcon size={22} color={Colors.sand} />
               </CalmPressable>
             </View>
             <Text style={styles.subtitle}>{t('progress.subtitle')}</Text>
@@ -347,7 +348,6 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center',
     backgroundColor: Colors.stone2, borderWidth: 1, borderColor: Colors.overlay(0.07), marginTop: 2,
   },
-  gearIcon: { fontSize: 17, color: Colors.sand },
 
   journalRow: {
     flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 68,

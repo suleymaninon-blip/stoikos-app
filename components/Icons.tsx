@@ -115,6 +115,42 @@ export function LockIcon({ size = 24, color: colorProp }: IconProps) {
 export type DayPart = 'morning' | 'evening';
 
 /** Paylaş (sağ üst ok) ve zarf: `↗` ve `✉` glifleri iOS'ta renkli emoji çiziliyordu (15 Kasım 2026, Ayarlar ekran görüntüsü). */
+/** Ayarlar — sekiz dişli ince çark + göbek. ⚙ glifi iOS'ta emoji gibi çiziliyordu. */
+const GEAR_D = (() => {
+  const cx = 12, cy = 12, ro = 9, ri = 7, n = 8;
+  const pts: string[] = [];
+  for (let i = 0; i < n; i++) {
+    const a0 = (i / n) * Math.PI * 2;
+    const step = Math.PI * 2 / n;
+    // diş: iç → dış → dış → iç
+    const angs: [number, number][] = [
+      [a0 - step * 0.30, ri], [a0 - step * 0.17, ro], [a0 + step * 0.17, ro], [a0 + step * 0.30, ri],
+    ];
+    for (const [a, r] of angs) pts.push(`${(cx + Math.cos(a) * r).toFixed(2)} ${(cy + Math.sin(a) * r).toFixed(2)}`);
+  }
+  return 'M ' + pts.join(' L ') + ' Z';
+})();
+
+export function SettingsIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d={GEAR_D} {...base(color)} />
+      <Circle cx={12} cy={12} r={3} {...base(color)} />
+    </Svg>
+  );
+}
+
+/** Açılır menü oku — ince "⌄". */
+export function ChevronDownIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M 6 9.5 L 12 15.5 L 18 9.5" {...base(color)} strokeWidth={2} />
+    </Svg>
+  );
+}
+
 export function ShareArrowIcon({ size = 24, color: colorProp }: IconProps) {
   const color = colorProp ?? useTheme().C.sand;
   return (
