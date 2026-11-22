@@ -16,6 +16,7 @@ import { useStreak } from '../../hooks/useStreak';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { CalmPressable } from '../../components/CalmPressable';
 import { StaggerSection } from '../../components/StaggerSection';
+import { FirstTip } from '../../components/FirstTip';
 
 const COMPLETED_KEY = 'stoikos_completed_';
 
@@ -181,6 +182,8 @@ export default function ProgressScreen() {
   // Süreklilik tek yerde hesaplanır (useStreak). Eskiden burada ham anahtar
   // okunuyordu; ana ekrana uğramadan gelen kişi bugünü sayılmamış görüyordu.
   const { streak, refresh: refreshStreak } = useStreak();
+  const rootRef = useRef<View>(null);
+  const statsTipRef = useRef<View>(null);
   const [totalDone, setTotalDone] = useState(0);
   const [totalMoments, setTotalMoments] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
@@ -227,7 +230,7 @@ export default function ProgressScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView ref={rootRef} style={styles.container}>
       <LinearGradient
         colors={[Colors.tint(Colors.isDark ? 0.07 : 0.08), 'transparent']}
         style={styles.grad}
@@ -270,7 +273,7 @@ export default function ProgressScreen() {
           </StaggerSection>
         ) : (
           <>
-            <View style={styles.statsRow}>
+            <View ref={statsTipRef} collapsable={false} style={styles.statsRow}>
               <StatBox label={t('progress.streak')} value={`${streak}`} delay={60} />
               <StatBox label={t('progress.thisWeek')} value={`${totalDone}`} delay={120} />
               <StatBox label={t('progress.totalMoments')} value={`${totalMoments}`} delay={180} />
@@ -312,6 +315,7 @@ export default function ProgressScreen() {
         </StaggerSection>
 
       </ScrollView>
+      <FirstTip id="progress" text={t('tip.progress')} target={statsTipRef} container={rootRef} enabled={loaded && totalMoments > 0} />
     </SafeAreaView>
   );
 }

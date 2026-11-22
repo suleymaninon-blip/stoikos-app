@@ -14,6 +14,7 @@ import { appendToJournalToday } from '../constants/journal';
 import { CalmPressable } from '../components/CalmPressable';
 import { PaperBg } from '../components/PaperBg';
 import { DoneMark } from '../components/DoneMark';
+import { FirstTip } from '../components/FirstTip';
 
 /**
  * Kontrol Eleği (21 Kasım 2026; tasarım https://claude.ai/artifact/RTrVnZZAzwGn92rw64bb7S, kullanıcı seçimi A).
@@ -64,6 +65,9 @@ export default function SieveScreen() {
   const [letCoach, setLetCoach] = useState<number[]>([]);
   const nid = useRef(1);
   const inputRef = useRef<TextInput>(null);
+  const rootRef = useRef<View>(null);
+  const writeTipRef = useRef<View>(null);
+  const sortTipRef = useRef<View>(null);
   const zoneInRef = useRef<View>(null);
   const zoneOutRef = useRef<View>(null);
   const zones = useRef<{ in: Rect | null; out: Rect | null }>({ in: null, out: null });
@@ -155,7 +159,7 @@ export default function SieveScreen() {
   const kb = Colors.isDark ? 'dark' : 'light';
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView ref={rootRef} style={styles.container}>
       <PaperBg />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Üst satır: kapat · ad · adım */}
@@ -181,7 +185,7 @@ export default function SieveScreen() {
               <Text style={styles.h1}>{t('sieve.writeTitle')}</Text>
               <Text style={styles.lead}>{t('sieve.writeBody')}</Text>
               <Text style={styles.label}>{upper(t('sieve.inputLabel'), lang)}</Text>
-              <View style={styles.inputRow}>
+              <View ref={writeTipRef} collapsable={false} style={styles.inputRow}>
                 <TextInput
                   ref={inputRef}
                   value={draft}
@@ -251,7 +255,7 @@ export default function SieveScreen() {
             <Text style={styles.lead}>{t('sieve.sortBody')}</Text>
 
             {/* Sürüklenen taş alanların üstünde çizilsin (kardeşler arasında zIndex) */}
-            <View style={[styles.field, dragging && styles.fieldLifted]}>
+            <View ref={sortTipRef} collapsable={false} style={[styles.field, dragging && styles.fieldLifted]}>
               {field.map((i) =>
                 dissolving.includes(i.id) ? (
                   <DissolvingStone
@@ -420,6 +424,10 @@ export default function SieveScreen() {
           </View>
         )}
       </KeyboardAvoidingView>
+
+      {/* İlk kullanım ipuçları (22 Kasım 2026): yazma ve ayırma adımında birer kez */}
+      <FirstTip id="sieve" text={t('tip.sieve')} target={writeTipRef} container={rootRef} enabled={screen === 'write'} />
+      <FirstTip id="sieveSort" text={t('tip.sieveSort')} target={sortTipRef} container={rootRef} enabled={screen === 'sort' && partFor == null} />
 
       {/* 3 · Payını al — bırakmadan önce tek soru */}
       <Modal
