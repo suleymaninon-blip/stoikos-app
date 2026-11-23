@@ -10,6 +10,7 @@ import { reportPulse } from '../../constants/stoa';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { onDataReset } from '../../constants/dataReset';
+import PracticePrograms from '../../components/PracticePrograms';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { FirstTip } from '../../components/FirstTip';
@@ -194,7 +195,12 @@ export default function PracticeScreen() {
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const draftTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const { focus, view: viewParam } = useLocalSearchParams<{ focus?: string; view?: string }>();
+  // Bugün | Programlar (23 Kasım 2026; tasarım https://claude.ai/artifact/VVEhHjRXjEyhZyUJFBs8PW).
+  // Programlar alt menüde yoktu; altıncı sekme yerine Pratik'in içinde. `?view=programs` ile doğrudan açılır.
+  const [view, setView] = useState<'today' | 'programs'>('today');
+  useEffect(() => { if (viewParam === 'programs') setView('programs'); }, [viewParam]);
+  useEffect(() => { if (focus === 'journal') setView('today'); }, [focus]);
   const scrollRef = useRef<ScrollView>(null);
   const rootRef = useRef<View>(null);
   const firstRowRef = useRef<View>(null);
@@ -416,10 +422,24 @@ export default function PracticeScreen() {
               <Text style={styles.title}>
                 {t(new Date().getHours() < 18 ? 'practice.calmTitle' : 'practice.calmTitleEve')}
               </Text>
-              <Text style={styles.intro}>{t('practice.intro')}</Text>
+              <Text style={styles.intro}>{t(view === 'programs' ? 'practice.programsIntro' : 'practice.intro')}</Text>
             </View>
 
-            <View style={styles.progressWrap}>
+            <View style={styles.seg} accessibilityRole="tablist">
+              {(['today', 'programs'] as const).map((v) => (
+                <Pressable
+                  key={v}
+                  onPress={() => { setView(v); scrollRef.current?.scrollTo({ y: 0, animated: false }); }}
+                  style={[styles.segBtn, view === v && styles.segBtnOn]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: view === v }}
+                >
+                  <Text style={[styles.segText, view === v && styles.segTextOn]}>{t(v === 'today' ? 'practice.segToday' : 'practice.segPrograms')}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {view === 'today' && <View style={styles.progressWrap}>
               <View style={styles.progressHeader}>
                 <Text style={styles.progressLabel}>{t('practice.todayProgress')}</Text>
                 <Text style={styles.progressCount}>{doneCount}/{totalCount}</Text>
@@ -430,8 +450,10 @@ export default function PracticeScreen() {
               {doneCount === totalCount && doneCount > 0 && (
                 <Text style={styles.allDoneText}>{t('practice.allDone')}</Text>
               )}
-            </View>
+            </View>}
           </StaggerSection>
+
+          {view === 'programs' ? <PracticePrograms /> : <>
 
           {/* 2. Morning */}
           <StaggerSection delay={90}>
@@ -633,6 +655,7 @@ export default function PracticeScreen() {
               </TouchableOpacity>
             </View>
           </StaggerSection>
+          </>}
 
         </ScrollView>
       </KeyboardAvoidingView>
@@ -676,7 +699,7 @@ export default function PracticeScreen() {
         text={t('tip.practice')}
         target={firstRowRef}
         container={rootRef}
-        enabled={MORNING_EXERCISES.length > 0}
+        enabled={MORNING_EXERCISES.length > 0 && view === 'today'}
       />
     </SafeAreaView>
   );
@@ -687,6 +710,13 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 280 },
   scroll: { padding: 24, paddingBottom: 48 },
+  seg: { flexDirection: 'row', gap: 4, padding: 4, borderRadius: 16, backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone3, marginBottom: 22 },
+  segBtn: { flex: 1, minHeight: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  segBtnOn: Colors.isDark
+    ? { backgroundColor: Colors.stone4 }
+    : { backgroundColor: Colors.stone2, ...(Platform.select({ ios: { shadowColor: '#1D2A2F', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 3 }, android: { elevation: 1 }, default: {} }) ?? {}) },
+  segText: { fontFamily: Fonts.jostMedium, fontSize: 15, color: Colors.muted },
+  segTextOn: { color: Colors.text },
 
   cardShadow: !Colors.isDark
     ? Platform.select({
