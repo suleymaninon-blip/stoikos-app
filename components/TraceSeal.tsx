@@ -19,13 +19,18 @@ import { CalmPressable } from './CalmPressable';
 interface Props {
   pid: string | null;
   programTitle: string;
+  /** Sıradaki (bitmemiş) programın adı; yoksa tek düğme "Devam et" olur. */
+  nextTitle?: string;
+  /** Sıradaki programı açar (23 Kasım 2026, kullanıcı: "devam et deyince sıradaki programa geçmesi gerekmez mi"). */
+  onNext?: () => void;
+  /** Pencereyi kapatıp bitiş kartına (kapanış yansıması) bırakır. */
   onContinue: () => void;
   onSeeAll: () => void;
 }
 
 const COIN = 172;
 
-export default function TraceSeal({ pid, programTitle, onContinue, onSeeAll }: Props) {
+export default function TraceSeal({ pid, programTitle, nextTitle, onNext, onContinue, onSeeAll }: Props) {
   const styles = useStyles(makeStyles);
   const { C } = useTheme();
   const { t, lang } = useLang();
@@ -102,9 +107,20 @@ export default function TraceSeal({ pid, programTitle, onContinue, onSeeAll }: P
         </Animated.View>
 
         <View style={styles.actions}>
-          <CalmPressable onPress={onContinue} style={[styles.primary, { backgroundColor: C.accent }]} accessibilityLabel={t('trace.continue')}>
-            <Text style={styles.primaryText}>{t('trace.continue')}</Text>
-          </CalmPressable>
+          {nextTitle && onNext ? (
+            <>
+              <CalmPressable onPress={onNext} style={[styles.primary, { backgroundColor: C.accent }]}>
+                <Text style={styles.primaryText} numberOfLines={1}>{t('trace.next', { name: nextTitle })}</Text>
+              </CalmPressable>
+              <Pressable onPress={onContinue} style={styles.link} accessibilityRole="button" hitSlop={6}>
+                <Text style={styles.linkText}>{t('trace.reflectFirst')}</Text>
+              </Pressable>
+            </>
+          ) : (
+            <CalmPressable onPress={onContinue} style={[styles.primary, { backgroundColor: C.accent }]}>
+              <Text style={styles.primaryText}>{t('trace.continue')}</Text>
+            </CalmPressable>
+          )}
           <Pressable onPress={onSeeAll} style={styles.link} accessibilityRole="button" hitSlop={6}>
             <Text style={styles.linkText}>{t('trace.seeAll')}</Text>
           </Pressable>
@@ -133,7 +149,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   date: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted, marginTop: 12, textAlign: 'center' },
   actions: { alignSelf: 'stretch', alignItems: 'stretch', gap: 4, marginTop: 28 },
   primary: { height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  primaryText: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.onAccent },
+  primaryText: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.onAccent, paddingHorizontal: 16 },
   link: { alignSelf: 'center', minHeight: 44, justifyContent: 'center', paddingHorizontal: 12 },
   linkText: { fontFamily: Fonts.jost, fontSize: 15, color: Colors.sand },
 });
