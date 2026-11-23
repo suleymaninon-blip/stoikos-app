@@ -20,16 +20,16 @@ DO NOT include: any text, letters, numbers, inscriptions or writing on the rim; 
 |---|---|---|---|---|
 | control | Kontrol Dairesi | dark bronze with a faint green patina | a ship's steering wheel (helm) with eight spokes and round handles, seen flat from the front | ✅ |
 | calm | İç Sakinlik | warm golden brass | an ancient Roman oil lamp seen from the side, a small calm flame rising from its spout, a ring handle on the left | ✅ |
-| anger | Öfkeyle Çalışmak | reddish copper-bronze | a drawn bow with an arrow nocked and pointing right, string pulled back, arrow not yet released | |
-| regard | Başkalarının Gözü | cool silvery dark bronze | a single ancient Greek theatre mask with a calm neutral expression, front view, empty eye holes, ribbons at the sides | |
-| time | Zamanın Kısalığı | dark bronze with a slight plum tint | a sundial seen from above: round dial with twelve hour marks, a triangular gnomon in the middle, its shadow falling across the dial | |
-| grief | Kayıpla Yaşamak | very dark blue-black patinated bronze | a short branch with three leaves, and one single leaf falling below it | |
-| enough | Az ile Yetinmek | golden brass | a single upright ear of wheat on a short stem | |
-| work | İşte Stoacı Olmak | bronze with teal verdigris patina | three hexagonal honeycomb cells with one small bee flying above them | |
-| patience | Sabır | rose copper | a single ripe fig with one fig leaf on its stem | |
-| criticism | Eleştiriyi Kaldırmak | warm grey iron-bronze | a blacksmith's anvil seen from the side, three small sparks above it, no hammer | |
-| mortality | Ölümlülük | pewter grey | a single poppy flower on a thin stem with one leaf | |
-| uncertainty | Belirsizlikle Yaşamak | blue-grey bronze | a compass rose with a single needle and sixteen fine tick marks around it | |
-| people | Zor İnsanlar | copper | a stone arch bridge over gentle water, seen from the side | |
+| anger | Öfkeyle Çalışmak | reddish copper-bronze | a drawn bow with an arrow nocked and pointing right, string pulled back, arrow not yet released | ✅ |
+| regard | Başkalarının Gözü | cool silvery dark bronze | a single ancient Greek theatre mask with a calm neutral expression, front view, empty eye holes, ribbons at the sides | ✅ |
+| time | Zamanın Kısalığı | dark bronze with a slight plum tint | a sundial seen from above: round dial with twelve hour marks, a triangular gnomon in the middle, its shadow falling across the dial | ✅ |
+| grief | Kayıpla Yaşamak | very dark blue-black patinated bronze | a short branch with three leaves, and one single leaf falling below it | ✅ |
+| enough | Az ile Yetinmek | golden brass | a single upright ear of wheat on a short stem | ✅ |
+| work | İşte Stoacı Olmak | bronze with teal verdigris patina | three hexagonal honeycomb cells with one small bee flying above them | ✅ |
+| patience | Sabır | rose copper | a single ripe fig with one fig leaf on its stem | ✅ |
+| criticism | Eleştiriyi Kaldırmak | warm grey iron-bronze | a blacksmith's anvil seen from the side, three small sparks above it, no hammer | ✅ |
+| mortality | Ölümlülük | pewter grey | a single poppy flower on a thin stem with one leaf | ✅ |
+| uncertainty | Belirsizlikle Yaşamak | blue-grey bronze | a compass rose with a single needle and sixteen fine tick marks around it | ✅ |
+| people | Zor İnsanlar | copper | a stone arch bridge over gentle water, seen from the side | ✅ |
 
 Kontrol: kenarda yazı/harf benzeri iz yok; tam yuvarlak, tam tepeden; zemin düz beyaz; küçültünce sembol okunuyor.

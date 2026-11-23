@@ -10,4 +10,15 @@ import type { ImageSourcePropType } from 'react-native';
 export const TRACE_IMAGES: Record<string, ImageSourcePropType> = {
   control: require('../assets/traces/control.webp'),
   calm: require('../assets/traces/calm.webp'),
+  anger: require('../assets/traces/anger.webp'),
+  regard: require('../assets/traces/regard.webp'),
+  time: require('../assets/traces/time.webp'),
+  grief: require('../assets/traces/grief.webp'),
+  enough: require('../assets/traces/enough.webp'),
+  work: require('../assets/traces/work.webp'),
+  patience: require('../assets/traces/patience.webp'),
+  criticism: require('../assets/traces/criticism.webp'),
+  mortality: require('../assets/traces/mortality.webp'),
+  uncertainty: require('../assets/traces/uncertainty.webp'),
+  people: require('../assets/traces/people.webp'),
 };
