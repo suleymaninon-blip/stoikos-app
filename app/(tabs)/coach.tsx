@@ -28,6 +28,7 @@ import { confirmAction } from '../../constants/dialog';
 import { CoachWaiting, WAIT_CLOSE_MS } from '../../components/CoachWaiting';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
 import { CalmPressable } from '../../components/CalmPressable';
+import { onDataReset } from '../../constants/dataReset';
 
 // ─── Types ────────────────────────────────────────────────
 interface Message {
@@ -38,6 +39,10 @@ interface Message {
 }
 
 const CHAT_HISTORY_KEY = 'stoikos_chat_history';
+// Bağlantı/hız hatası balonları sohbette görünür ama koça gönderilmez ve kaydedilmez (23 Kasım 2026 denetimi:
+// sonraki mesajda koça "senin söylediğin" gibi gidiyordu).
+const ERR_PREFIX = 'err-';
+const isErr = (m: { id: string }) => m.id.startsWith(ERR_PREFIX);
 
 // ── Öneri çipleri için kademeli giriş ──
 function StaggerChip({
@@ -388,7 +393,7 @@ export default function CoachScreen() {
       if (raw) {
         try {
           const saved = JSON.parse(raw) as Array<Omit<Message, 'timestamp'> & { timestamp: string }>;
-          setMessages(saved.map((m) => ({ ...m, timestamp: new Date(m.timestamp) })));
+          setMessages(saved.filter((m) => !isErr(m)).map((m) => ({ ...m, timestamp: new Date(m.timestamp) })));
         } catch {}
       }
     });
@@ -397,6 +402,9 @@ export default function CoachScreen() {
   useEffect(() => {
     setMessages((prev) => (prev.length === 1 && prev[0].id === '0' ? [makeInitial()] : prev));
   }, [lang, makeInitial]);
+
+  // "Tüm verilerimi sil": bellekteki sohbet de gitsin, yoksa sonraki mesajda depoya geri yazılırdı.
+  useEffect(() => onDataReset(() => { setMessages([makeInitial()]); setInput(''); }), [makeInitial]);
 
   // Yeni mesajda sona kaydır — ama koçun yeni cevabında değil: uzun cevapta kişi metnin sonunda
   // kalıyordu (10 Kasım 2026). O cevap yerleşince başına kaydırılır (onRevealLayout).
@@ -414,7 +422,7 @@ export default function CoachScreen() {
   };
 
   const saveMessages = useCallback((msgs: Message[]) => {
-    AsyncStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(msgs));
+    AsyncStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(msgs.filter((m) => !isErr(m))));
   }, []);
 
   async function send(text?: string) {
@@ -434,9 +442,16 @@ export default function CoachScreen() {
       // Karşılama mesajı (id '0') çıkar — Claude ilk mesajın 'user' olmasını ister.
       // Asıl kırpma backend'de (MAX_HISTORY_MESSAGES); buradaki pencere kasten daha geniş.
       const payload = withUser
-        .filter((m) => m.id !== '0')
+        .filter((m) => m.id !== '0' && !isErr(m))
         .slice(-24)
-        .map((m) => ({ role: m.role, content: m.content }));
+        .map((m) => ({ role: m.role, content: m.content }))
+        // Hata balonu atlanınca arka arkaya iki kullanıcı mesajı kalabiliyor: tek mesajda birleştir.
+        .reduce<{ role: Message['role']; content: string }[]>((acc, m) => {
+          const last = acc[acc.length - 1];
+          if (last && last.role === m.role) last.content += '\n\n' + m.content;
+          else acc.push({ ...m });
+          return acc;
+        }, []);
       const { reply, remaining, subscribed, ...rest } = await sendCoach(lang, payload);
       setQuota((q) =>
         q ? { ...q, remaining, subscribed, period: rest.period ?? q.period, resetsAt: rest.resetsAt ?? q.resetsAt } : q
@@ -469,7 +484,7 @@ export default function CoachScreen() {
       await closeWait();
       setMessages((prev) => [
         ...prev,
-        { id: (Date.now() + 1).toString(), role: 'assistant', content: errContent, timestamp: new Date() },
+        { id: ERR_PREFIX + (Date.now() + 1), role: 'assistant', content: errContent, timestamp: new Date() },
       ]);
     } finally {
       setLoading(false);

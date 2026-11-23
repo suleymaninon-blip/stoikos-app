@@ -19,6 +19,20 @@ export const JOURNAL_KEY = 'stoikos_journal_';
 export const journalKeyFor = (d: Date = new Date()): string => JOURNAL_KEY + d.toDateString();
 
 /**
+ * `Date.toDateString()` biçimindeki gün anahtarını ("Mon Nov 23 2026") yerel tarihe çevirir.
+ * `new Date("Mon Nov 23 2026")` V8'de (web) çalışır ama standart dışı bir biçim; telefondaki
+ * Hermes motorunun bunu ayrıştıracağının garantisi yok (23 Kasım 2026 denetimi). Ayrıştıramazsa
+ * Yansımaların, ay özeti, dışa aktarma ve yedek boş çıkardı. Bu yüzden elle ayrıştırılır.
+ */
+const MONTHS: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+export function parseDayKey(s: string): Date | null {
+  const m = /^[A-Za-z]{3} ([A-Za-z]{3}) (\d{1,2}) (\d{4})$/.exec(s.trim());
+  if (m && m[1] in MONTHS) return new Date(Number(m[3]), MONTHS[m[1]], Number(m[2]));
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/**
  * Bugünün kaydına **ekler** — üzerine yazmaz.
  *
  * Gerekli, çünkü günde tek kayıt var: kullanıcı sabah günlük yansımasını
@@ -44,10 +58,10 @@ export async function loadJournalEntries(): Promise<JournalEntry[]> {
   for (const [k, v] of pairs) {
     const text = (v || '').trim();
     if (!text) continue;
-    const date = new Date(k.slice(JOURNAL_KEY.length));
+    const date = parseDayKey(k.slice(JOURNAL_KEY.length));
     // Aynı önekle başlayan ama günlük olmayan anahtarlar var (ör. koç rızası `stoikos_journal_coach_consent` = '1').
     // 14 Kasım 2026'ya kadar bunlar "1 Ocak 1970 — 1" diye bir yansıma gibi listeleniyor ve dışa aktarılıyordu.
-    if (isNaN(date.getTime())) continue;
+    if (!date) continue;
     list.push({ key: k, date, text });
   }
   list.sort((a, b) => b.date.getTime() - a.date.getTime());

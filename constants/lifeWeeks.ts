@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { parseDayKey } from './journal';
 
 /**
  * Hayat haftaları — memento mori duvar kağıdı (30 Ekim 2026; tasarım
@@ -69,8 +70,8 @@ export async function loadActiveDays(): Promise<Date[]> {
     for (const [k, v] of pairs) {
       if (!v || v === '[]' || !v.trim()) continue;
       const day = k.replace(/^stoikos_(completed|journal)_/, '');
-      const d = new Date(day);
-      if (!isNaN(d.getTime())) out.set(d.toDateString(), d);
+      const d = parseDayKey(day);
+      if (d) out.set(d.toDateString(), d);
     }
     return [...out.values()];
   } catch {

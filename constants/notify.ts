@@ -285,8 +285,20 @@ export async function setTogetherReminder(on: boolean, lang: Lang): Promise<bool
   return true;
 }
 
-/** Bütün takvimi baştan kurar: açıksa 14 günlük sabah/akşam + açıksa pazar hatırlatması. */
-async function scheduleAll(lang: Lang): Promise<void> {
+/**
+ * Bütün takvimi baştan kurar. Çağrılar **sırayla** çalışır (23 Kasım 2026 denetimi): saat düğmesine
+ * art arda basılınca ya da izin penceresinden dönülünce birden fazla kurulum iç içe geçiyor, biri
+ * ötekinin yarısını silip eski saatle bildirim bırakıyordu (çift bildirim, iOS'un 64 sınırı).
+ */
+let scheduleQueue: Promise<unknown> = Promise.resolve();
+function scheduleAll(lang: Lang): Promise<void> {
+  const run = scheduleQueue.then(() => scheduleAllNow(lang));
+  scheduleQueue = run.catch(() => {});
+  return run;
+}
+
+/** Açıksa 14 günlük sabah/akşam + pazar + birlikte nefes hatırlatmaları. */
+async function scheduleAllNow(lang: Lang): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
   if (await isNotifyEnabled()) await scheduleDays(lang);
   if (await isWeeksReminderOn()) await scheduleWeeks(lang);

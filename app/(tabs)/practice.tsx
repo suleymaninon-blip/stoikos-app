@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView,
   StyleSheet, SafeAreaView, Animated, Easing, TextInput,
@@ -8,7 +8,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { reportPulse } from '../../constants/stoa';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { onDataReset } from '../../constants/dataReset';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { FirstTip } from '../../components/FirstTip';
@@ -177,7 +178,9 @@ export default function PracticeScreen() {
   const styles = useStyles(makeStyles);
   const { t, lang } = useLang();
   const reduceMotion = useReduceMotion();
-  const today = new Date().toDateString();
+  // Ekranın gösterdiği gün. Sekmeler açık kaldığı için `today` her yazışta buradan okunur, gece yarısı
+  // geçince ekran yeniden yüklenir (23 Kasım 2026 denetimi: dünkü işaretler/yazı bugüne kopyalanıyordu).
+  const dayRef = useRef(new Date().toDateString());
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [journal, setJournal] = useState('');
   const [journalSaved, setJournalSaved] = useState(false);
@@ -212,16 +215,33 @@ export default function PracticeScreen() {
   const { morning: MORNING_EXERCISES, evening: EVENING_EXERCISES } = getExercises(lang, t('unit.min'));
   const concept = getDailyConcept(lang);
 
-  useEffect(() => {
+  // Sekmeye her dönüşte depodan yeniden oku (23 Kasım 2026 denetimi): Pratik açık kalırken başka ekranlar
+  // aynı güne yazıyor (nefes seansı, program kapanış yansıması, Kontrol Eleği, yedekten geri yükleme).
+  // Eskiden ekran ilk açılıştaki kopyayı tutuyor ve ilk yazışta onların üzerine yazıyordu.
+  useFocusEffect(useCallback(() => {
     loadData();
-  }, []);
+    return () => { persistDraft(); };
+  }, []));
+
+  useEffect(() => onDataReset(() => {
+    if (draftTimer.current) { clearTimeout(draftTimer.current); draftTimer.current = null; }
+    draftRef.current = null;
+    setSavedStats(null);
+    loadData();
+  }), []);
 
   async function loadData() {
+    const today = new Date().toDateString();
+    dayRef.current = today;
     const raw = await AsyncStorage.getItem(COMPLETED_KEY + today);
-    if (raw) setCompleted(new Set(JSON.parse(raw)));
+    setCompleted(new Set(raw ? JSON.parse(raw) : []));
 
-    const journalRaw = await AsyncStorage.getItem(JOURNAL_KEY + today);
-    if (journalRaw) { setJournal(journalRaw); setJournalSaved(true); }
+    // Yazılmakta olan taslak varsa (henüz depoya inmemiş) ekrandaki metne dokunma.
+    if (draftRef.current == null) {
+      const journalRaw = await AsyncStorage.getItem(JOURNAL_KEY + today);
+      setJournal(journalRaw || '');
+      setJournalSaved(!!journalRaw);
+    }
 
     const y = new Date(); y.setDate(y.getDate() - 1);
     const yRaw = (await AsyncStorage.getItem(journalKeyFor(y)))?.trim();
@@ -262,12 +282,16 @@ export default function PracticeScreen() {
     await AsyncStorage.setItem(COACH_CONSENT_KEY, next ? '1' : '0');
   }
 
+  // Depodaki listeyi okuyup yalnız bu egzersizi ekler/çıkarır: aynı listeye ana ekrandaki nefes seansı da
+  // ('breath') yazıyor; bellekteki kopyayı yazmak onu siliyordu (23 Kasım 2026 denetimi).
   async function setExerciseDone(id: string, done: boolean) {
-    const next = new Set(completed);
-    if (done) { next.add(id); reportPulse('practice'); }
-    else next.delete(id);
-    setCompleted(next);
-    await AsyncStorage.setItem(COMPLETED_KEY + today, JSON.stringify([...next]));
+    setCompleted((prev) => { const n = new Set(prev); if (done) n.add(id); else n.delete(id); return n; });
+    if (done) reportPulse('practice');
+    const key = COMPLETED_KEY + dayRef.current;
+    const stored = new Set<string>(JSON.parse((await AsyncStorage.getItem(key)) || '[]'));
+    if (done) stored.add(id); else stored.delete(id);
+    await AsyncStorage.setItem(key, JSON.stringify([...stored]));
+    setCompleted(new Set(stored));
   }
 
   function markExercise(ex: Exercise, done: boolean) {
@@ -303,8 +327,8 @@ export default function PracticeScreen() {
     const txt = draftRef.current;
     if (txt == null) return;
     draftRef.current = null;
-    if (txt.trim()) await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
-    else await AsyncStorage.removeItem(JOURNAL_KEY + today);
+    if (txt.trim()) await AsyncStorage.setItem(JOURNAL_KEY + dayRef.current, txt);
+    else await AsyncStorage.removeItem(JOURNAL_KEY + dayRef.current);
   }
 
   function onJournalChange(txt: string) {
@@ -317,7 +341,11 @@ export default function PracticeScreen() {
   }
 
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (s) => { if (s !== 'active') persistDraft(); });
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s !== 'active') persistDraft();
+      // Uygulama gece boyunca arka planda kaldıysa yeni güne geç.
+      else if (new Date().toDateString() !== dayRef.current) persistDraft().then(loadData);
+    });
     return () => { sub.remove(); persistDraft(); };
   }, []);
 
@@ -326,7 +354,7 @@ export default function PracticeScreen() {
     draftRef.current = null;
     const txt = journal.trim();
     if (!txt) return;
-    await AsyncStorage.setItem(JOURNAL_KEY + today, txt);
+    await AsyncStorage.setItem(JOURNAL_KEY + dayRef.current, txt);
     reportPulse('journal');
     setJournalSaved(true);
     thisMonthStats(lang, localeOf(lang))
