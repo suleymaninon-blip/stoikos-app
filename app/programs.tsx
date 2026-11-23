@@ -127,6 +127,8 @@ export default function ProgramsScreen() {
   }
 
   const isComplete = (p: Program) => (progress[p.id] || []).length === p.dayCount;
+  // Mühür penceresindeki "Sıradaki" düğmesi: bitiş kartındaki "Sırada" ile aynı seçim.
+  const sealNext = sealPid ? programs.find((p) => p.id !== sealPid && !isComplete(p)) : undefined;
 
   /**
    * Kapanış yansımasını bugünün günlüğüne EKLER (üzerine yazmaz — günde tek
@@ -348,6 +350,8 @@ export default function ProgramsScreen() {
         <TraceSeal
           pid={sealPid}
           programTitle={programs.find((p) => p.id === sealPid)?.title ?? ''}
+          nextTitle={sealNext?.title}
+          onNext={sealNext ? () => { setSealPid(null); setRestartArmed(false); setDayIdx(null); setOpenId(sealNext.id); } : undefined}
           onContinue={() => setSealPid(null)}
           onSeeAll={() => { setSealPid(null); router.navigate('/(tabs)/progress'); }}
         />
