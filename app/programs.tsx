@@ -353,7 +353,7 @@ export default function ProgramsScreen() {
           nextTitle={sealNext?.title}
           onNext={sealNext ? () => { setSealPid(null); setRestartArmed(false); setDayIdx(null); setOpenId(sealNext.id); } : undefined}
           onContinue={() => setSealPid(null)}
-          onSeeAll={() => { setSealPid(null); router.navigate('/(tabs)/progress'); }}
+          onSeeAll={() => { setSealPid(null); router.navigate({ pathname: '/(tabs)/progress', params: { focus: 'traces' } }); }}
         />
       </SafeAreaView>
     );
