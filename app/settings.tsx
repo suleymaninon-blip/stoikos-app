@@ -11,6 +11,7 @@ import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
 import { backupJournal, exportJournal, pickAndRestoreJournal } from '../constants/journal';
+import { emitDataReset } from '../constants/dataReset';
 import { getMemberNo, isFounder } from '../constants/stoa';
 import {
   isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders,
@@ -264,6 +265,7 @@ export default function SettingsScreen() {
     await cancelAllReminders().catch(() => {});
     const keys = (await AsyncStorage.getAllKeys()).filter((k) => k.startsWith('stoikos'));
     await AsyncStorage.multiRemove(keys);
+    emitDataReset(); // açık sekmeler (Koç, Pratik) bellekteki kopyayı bıraksın
     notify(t('data.deleteAll'), t('data.deleteAllDone'));
     await replayOnboarding();
     router.replace('/');

@@ -55,8 +55,15 @@ export async function markMemberWelcomeSeen(): Promise<void> {
  * Bugün bu türden ilk olaysa sunucuya bildirir (günün ilk olayı "active"i ve ülkeyi de sayar).
  * Beklenmez, hata yutulur: nabız hiçbir zaman asıl işi geciktirmemeli.
  */
+// Bildirimler sırayla işlenir: aynı anda gelen iki tür (ör. program günü + kapanış yansıması) ikisi de
+// "günün ilk olayı" sanıp "active"i ve ülkeyi iki kez saydırıyordu (23 Kasım 2026 denetimi).
+let pulseQueue: Promise<void> = Promise.resolve();
 export function reportPulse(kind: PulseKind): void {
-  (async () => {
+  pulseQueue = pulseQueue.then(() => sendPulse(kind)).catch(() => {});
+}
+
+async function sendPulse(kind: PulseKind): Promise<void> {
+  await (async () => {
     const day = localDay();
     const raw = await AsyncStorage.getItem(PULSE_KEY);
     const cur: { day: string; kinds: string[] } = raw ? JSON.parse(raw) : { day, kinds: [] };
@@ -67,13 +74,20 @@ export function reportPulse(kind: PulseKind): void {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ day, kinds }),
     });
     if (res.ok) await AsyncStorage.setItem(PULSE_KEY, JSON.stringify({ day, kinds: [...sent, ...kinds] }));
-  })().catch(() => {});
+  })();
 }
 
 export async function fetchPulse(): Promise<Pulse | null> {
   try {
     const res = await fetch(`${BACKEND_URL}/stoa/pulse?day=${localDay()}`);
-    return res.ok ? await res.json() : null;
+    if (!res.ok) return null;
+    // Beklenmeyen bir cevap ana ekranı düşürmesin (23 Kasım 2026 denetimi: eksik `top` alanında ekran çöküyordu).
+    const j = await res.json();
+    const num = (v: unknown) => (typeof v === 'number' && isFinite(v) ? v : 0);
+    return {
+      active: num(j?.active), breath: num(j?.breath), program: num(j?.program), journal: num(j?.journal),
+      countries: num(j?.countries), top: Array.isArray(j?.top) ? j.top.filter((c: unknown) => typeof c === 'string') : [],
+    };
   } catch { return null; }
 }
 
@@ -85,7 +99,8 @@ export async function fetchHearts(force = false): Promise<Hearts | null> {
   try {
     const res = await fetch(`${BACKEND_URL}/stoa/hearts`);
     if (!res.ok) return heartsCache?.data ?? null;
-    const data: Hearts = await res.json();
+    const j = await res.json();
+    const data: Hearts = { counts: j && typeof j.counts === 'object' && j.counts ? j.counts : {}, weekTop: j?.weekTop ?? null };
     heartsCache = { at: Date.now(), data };
     return data;
   } catch { return heartsCache?.data ?? null; }

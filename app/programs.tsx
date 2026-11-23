@@ -53,7 +53,7 @@ export default function ProgramsScreen() {
   const [finishKey, setFinishKey] = useState(0);
   // Programlar Stoikos Plus'a dahil. Kilitliyken kart gizlenmiyor — ne olduğu
   // görünsün, dokununca ödeme duvarı açılsın; kapatmak yerine tanıtmak.
-  const { plus } = usePlus();
+  const { plus, loading: plusLoading } = usePlus();
   // ⚠️ ENFORCE_PLUS_GATE geçici olarak false (bkz. constants/config.ts).
   // Ad bilerek `unlocked` değil: aşağıda gün kilidi için o ad kullanılıyor.
   const plusOk = plus || !ENFORCE_PLUS_GATE;
@@ -75,12 +75,14 @@ export default function ProgramsScreen() {
     const id = Array.isArray(params.open) ? params.open[0] : params.open;
     const day = Number(Array.isArray(params.day) ? params.day[0] : params.day);
     if (id && programs.some((p) => p.id === id)) {
-      if (!plusOk) { setPaywallOpen(true); return; }
+      // Abonelik durumu henüz yüklenirken karar verme: abone kullanıcıya bir an ödeme penceresi açılıyordu.
+      if (!plusOk) { if (!plusLoading) setPaywallOpen(true); return; }
+      setPaywallOpen(false);
       setOpenId(id);
       setFromHome(true);
       if (Number.isInteger(day) && day >= 0) setDayIdx(day);
     }
-  }, [params.open, params.day, plusOk]);
+  }, [params.open, params.day, plusOk, plusLoading]);
 
   const rank = (p: { id: string; dayCount: number }) => {
     const n = (progress[p.id] || []).length;

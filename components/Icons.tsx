@@ -30,6 +30,19 @@ const base = (color: string) => ({
 });
 
 /** Sabah — çekirdek + sekiz ışın. */
+/** Zil — tanıtımdaki hatırlatıcı slaytı (🔔 iOS'ta sarı emoji çiziliyordu, 23 Kasım 2026). */
+export function BellIcon({ size = 24, color: colorProp }: IconProps) {
+  const color = colorProp ?? useTheme().C.sand;
+  const b = base(color);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M6.5 16.5 V11 a5.5 5.5 0 0 1 11 0 V16.5 L19 18 H5 Z" {...b} />
+      <Path d="M10 20.2 a2.1 2.1 0 0 0 4 0" {...b} />
+      <Line x1="12" y1="3.6" x2="12" y2="5.4" {...b} />
+    </Svg>
+  );
+}
+
 export function SunIcon({ size = 24, color: colorProp }: IconProps) {
   const color = colorProp ?? useTheme().C.sand;
   const b = base(color);

@@ -12,7 +12,7 @@ import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper } from '../constants/i18n';
 import { ThemePicker } from './ThemePicker';
 import { enableReminders, disableReminders, REMINDERS_SUPPORTED } from '../constants/notify';
-import { SunIcon } from './Icons';
+import { BellIcon, SunIcon } from './Icons';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -319,7 +319,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
                       <View style={styles.iconWrap}>
                         <PulseGlow size={92} />
                         <View style={styles.iconBox}>
-                          {s.icon === '☀' ? <SunIcon size={44} /> : <Text style={styles.icon}>{s.icon}</Text>}
+                          {s.icon === '☀' ? <SunIcon size={44} /> : s.icon === '🔔' ? <BellIcon size={44} /> : <Text style={styles.icon}>{s.icon}</Text>}
                         </View>
                       </View>
                     )}
