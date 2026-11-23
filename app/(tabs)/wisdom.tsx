@@ -485,9 +485,10 @@ export default function WisdomScreen() {
               accessibilityState={{ selected: filter === 'fav' }}
               accessibilityLabel={t('wisdom.favorites')}
               activeOpacity={0.8}
-              onPress={() => setFilter('fav')}
+              // Aç/kapa (23 Kasım 2026, kullanıcı: "kalbe basınca tekrar kalkmıyor"): ikinci dokunuş Tümü'ye döner.
+              onPress={() => setFilter((f) => (f === 'fav' ? 'all' : 'fav'))}
             >
-              <HeartIcon size={20} filled color={filter === 'fav' ? Colors.accent : Colors.muted} />
+              <HeartIcon size={20} filled={filter === 'fav'} color={filter === 'fav' ? Colors.accent : Colors.muted} />
             </TouchableOpacity>
           </View>
       )}
