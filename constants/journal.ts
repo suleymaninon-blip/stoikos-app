@@ -1,5 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform, Share } from 'react-native';
+import * as DocumentPicker from 'expo-document-picker';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { reportPulse } from './stoa';
 
 /**
@@ -79,6 +82,98 @@ export async function exportJournal(title: string, locale: string): Promise<'emp
   }
   await Share.share({ title, message: body });
   return 'shared';
+}
+
+// ─── Yedek (JSON) ve geri yükleme (23 Kasım 2026) ──────────────
+// Kullanıcı: "JSON dışa aktarmayı ekleyelim … evet ekle, metin de kalsın."
+// Düz metin okumak/paylaşmak için; JSON ise uygulamanın geri okuyabildiği yedek
+// (telefon değişince ya da uygulama silinip kurulunca). Yalnız günlük — ilerleme,
+// izler, ayarlar dahil değil. Hiçbir şey sunucuya gitmez: dosya kullanıcının
+// seçtiği yere (Dosyalar, iCloud Drive, e-posta…) kaydedilir.
+type BackupFile = { app: 'stoikos'; kind: 'journal'; version: 1; exportedAt: string; entries: { date: string; text: string }[] };
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const ymd = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+/** Günlüğü `.json` yedek dosyası olarak kaydettirir. Native'de paylaşım sayfası ("Dosyalara Kaydet"), web'de indirme. */
+export async function backupJournal(): Promise<'empty' | 'shared' | 'downloaded'> {
+  const entries = await loadJournalEntries();
+  if (!entries.length) return 'empty';
+  const data: BackupFile = {
+    app: 'stoikos', kind: 'journal', version: 1, exportedAt: new Date().toISOString(),
+    entries: [...entries].reverse().map((e) => ({ date: ymd(e.date), text: e.text })),
+  };
+  const json = JSON.stringify(data, null, 2);
+  const name = `stoikos-yedek-${ymd(new Date())}.json`;
+
+  if (Platform.OS === 'web') {
+    if (typeof document === 'undefined') return 'empty';
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    return 'downloaded';
+  }
+  const file = new File(Paths.cache, name);
+  if (file.exists) file.delete();
+  file.create();
+  file.write(json);
+  await Sharing.shareAsync(file.uri, { mimeType: 'application/json', UTI: 'public.json', dialogTitle: 'Stoikos' });
+  return 'shared';
+}
+
+/**
+ * Yedek metnini günlüğe işler. Aynı gün zaten yazılmışsa **üzerine yazmaz**:
+ * metin aynıysa (ya da zaten içindeyse) atlar, farklıysa sonuna ekler.
+ * Dönüş: işlenen gün sayısı. Geçersiz dosyada hata fırlatır, hiçbir şey yazılmaz.
+ */
+export async function restoreJournalFromText(raw: string): Promise<number> {
+  const data = JSON.parse(raw) as Partial<BackupFile>;
+  if (!data || data.app !== 'stoikos' || data.kind !== 'journal' || !Array.isArray(data.entries)) throw new Error('not a backup');
+  const items: [string, string][] = [];
+  for (const e of data.entries) {
+    const m = typeof e?.date === 'string' ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(e.date) : null;
+    const text = typeof e?.text === 'string' ? e.text.trim() : '';
+    if (!m || !text) continue;
+    const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    if (isNaN(d.getTime())) continue;
+    items.push([journalKeyFor(d), text]);
+  }
+  if (!items.length && data.entries.length) throw new Error('no valid entries');
+  const cur = new Map((await AsyncStorage.multiGet(items.map(([k]) => k))).map(([k, v]) => [k, (v || '').trim()]));
+  const writes: [string, string][] = [];
+  for (const [k, text] of items) {
+    const have = cur.get(k) || '';
+    if (have === text || have.includes(text)) continue;
+    const next = have ? `${have}\n\n${text}` : text;
+    cur.set(k, next);
+    writes.push([k, next]);
+  }
+  // Aynı gün dosyada iki kez geçerse son hâli yazılsın.
+  const final = new Map(writes);
+  if (final.size) await AsyncStorage.multiSet([...final.entries()]);
+  return final.size;
+}
+
+/** Dosya seçtirip yedeği geri yükler. 'cancel' | sayı; geçersiz dosyada hata fırlatır. */
+export async function pickAndRestoreJournal(): Promise<'cancel' | number> {
+  const res = await DocumentPicker.getDocumentAsync({
+    // Native'de her dosya seçilebilir (e-postadan gelen yedek text/plain görünebilir); içerik aşağıda doğrulanır.
+    type: Platform.OS === 'web' ? ['application/json', '.json'] : '*/*',
+    copyToCacheDirectory: true,
+    multiple: false,
+  });
+  if (res.canceled || !res.assets?.length) return 'cancel';
+  const asset = res.assets[0];
+  let raw: string;
+  if (Platform.OS === 'web') {
+    raw = asset.file ? await asset.file.text() : await (await fetch(asset.uri)).text();
+  } else {
+    raw = await new File(asset.uri).text();
+  }
+  return restoreJournalFromText(raw);
 }
 
 // ─── Ay özeti (14 Kasım 2026) ──────────────────────────────

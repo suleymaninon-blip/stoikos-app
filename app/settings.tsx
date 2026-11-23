@@ -10,7 +10,7 @@ import { router } from 'expo-router';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, LANGUAGES, upper, localeOf } from '../constants/i18n';
-import { exportJournal } from '../constants/journal';
+import { backupJournal, exportJournal, pickAndRestoreJournal } from '../constants/journal';
 import { getMemberNo, isFounder } from '../constants/stoa';
 import {
   isNotifyEnabled, enableReminders, disableReminders, cancelAllReminders,
@@ -222,6 +222,25 @@ export default function SettingsScreen() {
       const r = await exportJournal(t('data.exportTitle'), localeOf(lang));
       if (r === 'empty') notify(t('data.export'), t('data.exportEmpty'));
     } catch {}
+  }
+
+  // JSON yedek + geri yükleme (23 Kasım 2026): telefon değişince ya da uygulama silinip kurulunca günlük geri gelsin.
+  async function backupMyJournal() {
+    try {
+      const r = await backupJournal();
+      if (r === 'empty') notify(t('data.backup'), t('data.exportEmpty'));
+    } catch {
+      notify(t('data.backup'), t('data.backupFailed'));
+    }
+  }
+  async function restoreMyJournal() {
+    try {
+      const r = await pickAndRestoreJournal();
+      if (r === 'cancel') return;
+      notify(t('data.restore'), r > 0 ? t('data.restoreDone', { n: r }) : t('data.restoreNothing'));
+    } catch {
+      notify(t('data.restore'), t('data.restoreFailed'));
+    }
   }
 
   // Tüm verileri sil: önce sunucudaki koç hafızası (ağ gerekir), o onaylanınca cihazdaki
@@ -473,6 +492,13 @@ export default function SettingsScreen() {
               <CalmPressable style={[styles.resetBtn, styles.cardShadow, { marginBottom: 10 }]} onPress={exportMyJournal}>
                 <Text style={styles.resetText}>{t('data.export')}</Text>
               </CalmPressable>
+              <CalmPressable style={[styles.resetBtn, styles.cardShadow, { marginBottom: 10 }]} onPress={backupMyJournal}>
+                <Text style={styles.resetText}>{t('data.backup')}</Text>
+              </CalmPressable>
+              <CalmPressable style={[styles.resetBtn, styles.cardShadow, { marginBottom: 6 }]} onPress={restoreMyJournal}>
+                <Text style={styles.resetText}>{t('data.restore')}</Text>
+              </CalmPressable>
+              <Text style={[styles.dataNote, { marginBottom: 14 }]}>{t('data.backupNote')}</Text>
               <CalmPressable style={styles.dangerBtn} onPress={resetCoachMemory}>
                 <Text style={styles.dangerText}>{t('memory.resetBtn')}</Text>
               </CalmPressable>
