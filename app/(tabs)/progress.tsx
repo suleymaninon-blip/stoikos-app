@@ -9,7 +9,7 @@ import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { useLang, DAY_LABELS } from '../../constants/i18n';
 import { getExerciseNames } from '../../constants/content';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import StoikosMark from '../../components/StoikosMark';
 import { BREATH_ID } from '../../constants/breathLog';
 import { useStreak } from '../../hooks/useStreak';
@@ -186,6 +186,25 @@ export default function ProgressScreen() {
   const { streak, refresh: refreshStreak } = useStreak();
   const rootRef = useRef<View>(null);
   const statsTipRef = useRef<View>(null);
+  // Mühürdeki "İzlerimi gör" → /progress?focus=traces: İzler bölümüne kaydır (23 Kasım 2026,
+  // kullanıcı: "izlerimi gör deyince istatistikler karşılıyor, aşağı çekmek gerekiyor").
+  // İstatistikler yüklenince bölüm aşağı kayar; ilk ~1,5 sn her yerleşimde yeniden kaydırılır,
+  // sonra bırakılır ki kişinin kendi kaydırmasına karışmasın.
+  const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const scrollRef = useRef<ScrollView>(null);
+  const tracesY = useRef<number | null>(null);
+  const tracesPending = useRef(false);
+  const scrollToTraces = () => {
+    if (tracesPending.current && tracesY.current != null)
+      scrollRef.current?.scrollTo({ y: Math.max(0, tracesY.current - 12), animated: true });
+  };
+  useEffect(() => {
+    if (focus !== 'traces') return;
+    tracesPending.current = true;
+    const a = setTimeout(scrollToTraces, 450);
+    const b = setTimeout(() => { tracesPending.current = false; router.setParams({ focus: undefined }); }, 1600);
+    return () => { clearTimeout(a); clearTimeout(b); };
+  }, [focus]);
   const [totalDone, setTotalDone] = useState(0);
   const [totalMoments, setTotalMoments] = useState(0);
   const [weekData, setWeekData] = useState<{ day: string; count: number; isToday: boolean }[]>([]);
@@ -239,7 +258,7 @@ export default function ProgressScreen() {
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
       />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+      <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
         {/* 1. Başlık + Ayarlar (en az 44x44 px) */}
         <StaggerSection delay={0}>
@@ -294,7 +313,10 @@ export default function ProgressScreen() {
         )}
 
         {/* İzler (22 Kasım 2026): bitirilen her programın sikkesi */}
-        <StaggerSection delay={310}>
+        <StaggerSection
+          delay={310}
+          onLayout={(e) => { tracesY.current = e.nativeEvent.layout.y; scrollToTraces(); }}
+        >
           <TracesSection />
         </StaggerSection>
 
