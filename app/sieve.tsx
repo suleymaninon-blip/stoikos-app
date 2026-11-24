@@ -11,6 +11,8 @@ import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, upper } from '../constants/i18n';
 import { useReduceMotion } from '../hooks/useReduceMotion';
 import { appendToJournalToday } from '../constants/journal';
+import { setFocus } from '../constants/focus';
+import { reportPulse } from '../constants/stoa';
 import { CalmPressable } from '../components/CalmPressable';
 import { PaperBg } from '../components/PaperBg';
 import { DoneMark } from '../components/DoneMark';
@@ -58,6 +60,8 @@ export default function SieveScreen() {
   // Bırakılanlar netlikte kapalı durur; kullanıcı açıp zorlandığını işaretlerse koç taslağına eklenir
   const [showLet, setShowLet] = useState(false);
   const [letCoach, setLetCoach] = useState<number[]>([]);
+  // Bugünün adımı (24 Kasım 2026): netlikte elindekilerden birine dokununca Pratik'te seni bekler.
+  const [focusId, setFocusId] = useState<number | null>(null);
 
   const nid = useRef(1);
   const inputRef = useRef<TextInput>(null);
@@ -78,7 +82,10 @@ export default function SieveScreen() {
   // Hepsi ayrıldı ve toz dağıldı → netlik ekranına geç
   useEffect(() => {
     if (screen !== 'sort' || items.length === 0 || pending > 0 || dissolving.length > 0) return;
-    timer.current = setTimeout(() => setScreen('clear'), reduce ? 200 : 650);
+    timer.current = setTimeout(() => {
+      setScreen('clear');
+      reportPulse('sieve');   // yalnız "bugün bir eleme yapıldı" toplamı; yazılanlar gitmez
+    }, reduce ? 200 : 650);
     return () => { if (timer.current) clearTimeout(timer.current); };
   }, [screen, items.length, pending, dissolving.length, reduce]);
 
@@ -118,11 +125,19 @@ export default function SieveScreen() {
   const restart = () => {
     setShowLet(false);
     setLetCoach([]);
+    setFocusId(null);
     setItems([]);
     setSaved(false);
     setSel(null);
     setDissolving([]);
     setScreen('write');
+  };
+
+  const pickFocus = (id: number, text: string) => {
+    const next = focusId === id ? null : id;
+    setFocusId(next);
+    setFocus(next == null ? null : text).catch(() => {});
+    if (next != null) AccessibilityInfo.announceForAccessibility?.(t('sieve.focusSet'));
   };
 
   const save = async () => {
@@ -335,12 +350,26 @@ export default function SieveScreen() {
               {/* Elinde olanlar: onay kutusu kalabalığı olmadan sakin kartlar */}
               {kept.length > 0 && (
                 <View style={[styles.list, { marginTop: 22 }]}>
-                  {kept.map((k) => (
-                    <View key={k.id} style={[styles.keptCard, styles.cardShadow]}>
-                      <View style={styles.keptDot} />
-                      <Text style={styles.keptText}>{k.text}</Text>
-                    </View>
-                  ))}
+                  {kept.map((k) => {
+                    const on = focusId === k.id;
+                    return (
+                      <Pressable
+                        key={k.id}
+                        onPress={() => pickFocus(k.id, k.text)}
+                        style={({ pressed }) => [styles.keptCard, styles.cardShadow, on && styles.keptCardFocus, pressed && { opacity: 0.85 }]}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: on }}
+                        accessibilityLabel={on ? `${t('sieve.focusTag')}: ${k.text}` : k.text}
+                      >
+                        <View style={[styles.keptDot, on && styles.keptDotFocus]} />
+                        <View style={{ flex: 1 }}>
+                          {on && <Text style={styles.focusTag}>{upper(t('sieve.focusTag'), lang)}</Text>}
+                          <Text style={styles.keptText}>{k.text}</Text>
+                        </View>
+                      </Pressable>
+                    );
+                  })}
+                  <Text style={styles.focusHint}>{t(focusId != null ? 'sieve.focusSet' : 'sieve.focusHint')}</Text>
                 </View>
               )}
 
@@ -693,6 +722,10 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
     borderWidth: 1, borderColor: Colors.stone4, borderRadius: 16, paddingVertical: 14, paddingHorizontal: 16,
   },
   keptDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.sand },
+  keptCardFocus: { borderColor: Colors.sand, borderWidth: 1.5, backgroundColor: Colors.isDark ? Colors.stone3 : Colors.stone },
+  keptDotFocus: { width: 12, height: 12, borderRadius: 6 },
+  focusTag: { fontFamily: Fonts.jostMedium, fontSize: 11, letterSpacing: 1.6, color: Colors.sand, marginBottom: 3 },
+  focusHint: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 19, color: Colors.muted, textAlign: 'center', marginTop: 4 },
   keptBox: { width: 22, height: 22, borderRadius: 6, borderWidth: 1.5, borderColor: Colors.muted, alignItems: 'center', justifyContent: 'center' },
   keptBoxOn: { backgroundColor: Colors.sand, borderColor: Colors.sand },
   keptText: { flex: 1, fontFamily: Fonts.jost, fontSize: 16, lineHeight: 22, color: Colors.text },

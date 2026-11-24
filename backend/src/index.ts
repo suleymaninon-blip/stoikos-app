@@ -305,7 +305,8 @@ async function ensureStoa(env: Env): Promise<void> {
   ]);
   stoaReady = true;
 }
-const PULSE_KINDS = new Set(['active', 'breath', 'program', 'journal', 'practice']);
+// 'sieve' (24 Kasım 2026): o gün Kontrol Eleği'ni bitirenlerin toplamı; uygulamada gösterilmiyor, yalnız ölçüm.
+const PULSE_KINDS = new Set(['active', 'breath', 'program', 'journal', 'practice', 'sieve']);
 const QUOTE_ID_RE = /^[a-z0-9_-]{1,24}$/i;
 /** Pazartesi başlayan haftanın ilk günü (UTC), YYYY-MM-DD. */
 function weekKey(d = new Date()): string {
@@ -415,7 +416,7 @@ export default {
       for (const r of rows.results ?? []) by[r.kind] = r.n;
       const cs = await env.DB.prepare('SELECT cc FROM stoa_country WHERE day=? ORDER BY n DESC').bind(day).all<{ cc: string }>();
       const ccs = (cs.results ?? []).map((r) => r.cc);
-      return json({ active: by.active ?? 0, breath: by.breath ?? 0, program: by.program ?? 0, journal: by.journal ?? 0, countries: ccs.length, top: ccs.slice(0, 40) });
+      return json({ active: by.active ?? 0, breath: by.breath ?? 0, program: by.program ?? 0, journal: by.journal ?? 0, sieve: by.sieve ?? 0, countries: ccs.length, top: ccs.slice(0, 40) });
     }
     // Kalp: { quoteId, on } — +1 / −1 (sıfırın altına inmez); haftalık sayaç da.
     if (req.method === 'POST' && path === '/stoa/heart') {
