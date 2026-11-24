@@ -19,7 +19,7 @@ const MEMBER_KEY = 'stoikos_member_no';
 const MEMBER_SEEN_KEY = 'stoikos_member_seen';
 const PULSE_KEY = 'stoikos_pulse';
 
-export type PulseKind = 'breath' | 'program' | 'journal' | 'practice';
+export type PulseKind = 'breath' | 'program' | 'journal' | 'practice' | 'sieve';
 export type Pulse = { active: number; breath: number; program: number; journal: number; countries: number; top: string[] };
 export type Hearts = { counts: Record<string, number>; weekTop: { id: string; n: number } | null };
 

@@ -11,13 +11,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { onDataReset } from '../../constants/dataReset';
 import PracticePrograms from '../../components/PracticePrograms';
+import { getFocus, setFocus, setFocusDone, type Focus } from '../../constants/focus';
 import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { FirstTip } from '../../components/FirstTip';
 import { JOURNAL_KEY, journalKeyFor, thisMonthStats, type MonthStats } from '../../constants/journal';
 import { DoneMark } from '../../components/DoneMark';
 import { DayPartIcon, DayPart } from '../../components/Icons';
-import { useLang, localeOf } from '../../constants/i18n';
+import { useLang, localeOf, upper } from '../../constants/i18n';
 import { getExercises, getDailyConcept, Exercise } from '../../constants/content';
 import { getTodaysReflectionPrompt } from '../../constants/content';
 import { addReflectionToMemory } from '../../constants/api';
@@ -187,6 +188,7 @@ export default function PracticeScreen() {
   const [journalSaved, setJournalSaved] = useState(false);
   const [savedStats, setSavedStats] = useState<MonthStats | null>(null);
   const [yesterdayNote, setYesterdayNote] = useState<string | null>(null);
+  const [focusStep, setFocusStep] = useState<Focus | null>(null);
   const [coachConsent, setCoachConsent] = useState(false);
   const [selected, setSelected] = useState<(Exercise & { icon: DayPart }) | null>(null);
   const [seen, setSeen] = useState<Set<string>>(new Set());
@@ -252,6 +254,7 @@ export default function PracticeScreen() {
     const y = new Date(); y.setDate(y.getDate() - 1);
     const yRaw = (await AsyncStorage.getItem(journalKeyFor(y)))?.trim();
     setYesterdayNote(yRaw ? yRaw.replace(/\s+/g, ' ') : null);
+    setFocusStep(await getFocus());
 
     const consent = await AsyncStorage.getItem(COACH_CONSENT_KEY);
     setCoachConsent(consent === '1');
@@ -454,6 +457,33 @@ export default function PracticeScreen() {
           </StaggerSection>
 
           {view === 'programs' ? <PracticePrograms /> : <>
+
+          {/* Bugünün adımı — Kontrol Eleği'nin netlik ekranında seçildiyse (24 Kasım 2026) */}
+          {focusStep && (
+            <StaggerSection delay={45}>
+              <View style={[styles.focusCard, styles.cardShadow, focusStep.done && styles.focusCardDone]}>
+                <PaperBg radius={24} />
+                <View style={styles.focusHead}>
+                  <Text style={styles.focusLabel}>{upper(t('practice.focusTitle'), lang)}</Text>
+                  <Text style={styles.focusFrom}>{t('practice.focusFrom')}</Text>
+                </View>
+                <Text style={[styles.focusText, focusStep.done && styles.focusTextDone]}>{focusStep.text}</Text>
+                <View style={styles.focusActions}>
+                  <Pressable
+                    onPress={async () => { const f = await setFocusDone(!focusStep.done); if (f) { setFocusStep(f); if (f.done) reportPulse('practice'); } }}
+                    style={[styles.focusBtn, focusStep.done && styles.focusBtnOn]}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: focusStep.done }}
+                  >
+                    <Text style={[styles.focusBtnText, focusStep.done && styles.focusBtnTextOn]}>{focusStep.done ? '✓ ' : ''}{t('practice.focusDone')}</Text>
+                  </Pressable>
+                  <Pressable onPress={async () => { await setFocus(null); setFocusStep(null); }} style={styles.focusRemove} accessibilityRole="button" hitSlop={8}>
+                    <Text style={styles.focusRemoveText}>{t('practice.focusRemove')}</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </StaggerSection>
+          )}
 
           {/* 2. Morning */}
           <StaggerSection delay={90}>
@@ -710,6 +740,23 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.bg },
   grad: { position: 'absolute', top: 0, left: 0, right: 0, height: 280 },
   scroll: { padding: 24, paddingBottom: 48 },
+  focusCard: {
+    borderRadius: 24, borderWidth: 1.5, borderColor: Colors.tint(0.45), padding: 18, marginBottom: 18,
+    backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone,
+  },
+  focusCardDone: { borderColor: Colors.stone4 },
+  focusHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 8 },
+  focusLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.8, color: Colors.sand },
+  focusFrom: { fontFamily: Fonts.jost, fontSize: 12, color: Colors.muted, flexShrink: 1, textAlign: 'right' },
+  focusText: { fontFamily: Fonts.cormorant, fontSize: 22, lineHeight: 28, color: Colors.text },
+  focusTextDone: { color: Colors.muted, textDecorationLine: 'line-through' },
+  focusActions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 },
+  focusBtn: { minHeight: 40, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1.5, borderColor: Colors.sand, justifyContent: 'center' },
+  focusBtnOn: { backgroundColor: Colors.sand },
+  focusBtnText: { fontFamily: Fonts.jostMedium, fontSize: 14, color: Colors.sand },
+  focusBtnTextOn: { color: Colors.onAccent },
+  focusRemove: { minHeight: 40, justifyContent: 'center', paddingHorizontal: 6 },
+  focusRemoveText: { fontFamily: Fonts.jost, fontSize: 13, color: Colors.muted },
   seg: { flexDirection: 'row', gap: 4, padding: 4, borderRadius: 16, backgroundColor: Colors.isDark ? Colors.stone2 : Colors.stone3, marginBottom: 22 },
   segBtn: { flex: 1, minHeight: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   segBtnOn: Colors.isDark
