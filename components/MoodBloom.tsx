@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet } from 'react-native';
+import { View, Text, Modal, Pressable, Animated, Easing, StyleSheet, ImageBackground, Platform } from 'react-native';
+import Svg, { Circle, Defs, LinearGradient as SvgLinear, Stop } from 'react-native-svg';
+import { PAPER } from './EmbossTile';
 
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
@@ -29,6 +31,50 @@ const BLOOM_EASE = Easing.inOut(Easing.cubic);
  * (kodla çizilen ve Gemini görselleri) bırakıldı; yaprak temanın kendi tonunda düz renkli bir daire, yazı
  * üstünde düz ve okunur (`onColor`). Gölge, degrade, görsel yok. Cam görselleri `docs/mood-cam/` altında duruyor.
  */
+/**
+ * Kâğıt madalyon (24 Kasım 2026, kullanıcı: "yine yuvarlak olacak ama kavram kartındaki gibi kraft kâğıt dokulu";
+ * tasarım https://claude.ai/artifact/Nud66hVuE8yYwFjjutWZhe, seçenek A). Dokuz yaprak aynı krem kâğıt
+ * (gecede lacivert kâğıt, doku çok soluk); kenar kabarık (üstü ışık, altı gölge), ortası basılmış; duygunun
+ * rengi yalnız iç çemberdeki ince çizgide, küçük noktada ve yazıda. `EmbossTile` ile aynı ışık mantığı.
+ * ⚠️ Gölge dıştaki View'da; dokuyu kırpan `overflow: 'hidden'` içteki katmanda (iOS'ta gölge silinmesin).
+ */
+function PaperDisc({ size, color, dark, id, children }: { size: number; color?: string; dark: boolean; id: string; children?: React.ReactNode }) {
+  const styles = useStyles(makeStyles);
+  const r = size / 2, inset = Math.max(6, size * 0.085);
+  return (
+    <View style={[styles.disc, { width: size, height: size, borderRadius: r }]}>
+      <View style={[StyleSheet.absoluteFill, { borderRadius: r, overflow: 'hidden' }]}>
+        <ImageBackground source={PAPER} resizeMode="repeat" style={StyleSheet.absoluteFill} imageStyle={{ opacity: dark ? 0.3 : 1 }} />
+      </View>
+      <Svg width={size} height={size} style={StyleSheet.absoluteFill} pointerEvents="none">
+        <Defs>
+          <SvgLinear id={`bev${id}`} x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#ffffff" stopOpacity={dark ? 0.22 : 1} />
+            <Stop offset="0.5" stopColor="#ffffff" stopOpacity={0} />
+            <Stop offset="1" stopColor={dark ? '#000000' : '#5c4d33'} stopOpacity={dark ? 0.5 : 0.28} />
+          </SvgLinear>
+          <SvgLinear id={`deb${id}`} x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={dark ? '#000000' : '#5c4d33'} stopOpacity={dark ? 0.55 : 0.3} />
+            <Stop offset="0.5" stopColor="#ffffff" stopOpacity={0} />
+            <Stop offset="1" stopColor="#ffffff" stopOpacity={dark ? 0.18 : 1} />
+          </SvgLinear>
+          <SvgLinear id={`face${id}`} x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#ffffff" stopOpacity={dark ? 0.05 : 0.5} />
+            <Stop offset="1" stopColor={dark ? '#000000' : '#8a7a5c'} stopOpacity={dark ? 0.16 : 0.08} />
+          </SvgLinear>
+        </Defs>
+        {/* kabarık dış kenar */}
+        <Circle cx={r} cy={r} r={r - 0.8} fill={`url(#face${id})`} stroke={`url(#bev${id})`} strokeWidth={1.5} />
+        {/* basılmış iç yüz */}
+        <Circle cx={r} cy={r} r={r - inset} fill={dark ? 'rgba(0,0,0,0.16)' : 'rgba(92,77,51,0.05)'} stroke={`url(#deb${id})`} strokeWidth={1.6} />
+        {/* duygunun rengiyle ince süs çemberi */}
+        {!!color && <Circle cx={r} cy={r} r={r - inset - 4} fill="none" stroke={color} strokeOpacity={dark ? 0.55 : 0.6} strokeWidth={1} />}
+      </Svg>
+      {children}
+    </View>
+  );
+}
+
 export type MoodOrigin = { x: number; y: number } | null;
 
 export function MoodBloom({
@@ -138,18 +184,21 @@ export function MoodBloom({
               >
                 <Pressable
                   onPress={() => { onPick(m); close(); }}
-                  style={({ pressed }) => [styles.petal, { left: (S - D) / 2, top: (S - D) / 2, width: D, height: D, borderRadius: D / 2, backgroundColor: c }, pressed && styles.petalPressed]}
+                  style={({ pressed }) => [styles.petal, { left: (S - D) / 2, top: (S - D) / 2, width: D, height: D, borderRadius: D / 2 }, pressed && styles.petalPressed]}
                   accessibilityRole="button"
                   accessibilityState={{ selected: on }}
                   accessibilityLabel={label}
                 >
-                  {on && <View pointerEvents="none" style={[styles.ring, { width: D + 8, height: D + 8, borderRadius: (D + 8) / 2, borderColor: c }]} />}
-                  <Text
-                    style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: onColor, maxWidth: D - 6 }]}
-                    numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
-                  >
-                    {label}
-                  </Text>
+                  {on && <View pointerEvents="none" style={[styles.ring, { width: D + 10, height: D + 10, borderRadius: (D + 10) / 2, borderColor: c }]} />}
+                  <PaperDisc size={D} color={c} dark={Colors.isDark} id={m}>
+                    <View pointerEvents="none" style={[styles.petalDot, { backgroundColor: c }]} />
+                    <Text
+                      style={[styles.petalText, label.length > 8 && styles.petalTextLong, { color: c, maxWidth: label.length > 11 ? D - 4 : D - 16 }]}
+                      numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}
+                    >
+                      {label}
+                    </Text>
+                  </PaperDisc>
                 </Pressable>
               </Animated.View>
             );
@@ -168,9 +217,10 @@ export function MoodBloom({
               accessibilityRole="button"
               accessibilityLabel={t('practice.close')}
             >
-              <View pointerEvents="none" style={[styles.coreDot, { width: CORE * 0.62, height: CORE * 0.62, borderRadius: CORE * 0.31 }]} />
-              <View style={[styles.x, { transform: [{ rotate: '45deg' }] }]} />
-              <View style={[styles.x, { transform: [{ rotate: '-45deg' }] }]} />
+              <PaperDisc size={Math.round(CORE * 0.7)} dark={Colors.isDark} id="core">
+                <View style={[styles.x, { transform: [{ rotate: '45deg' }] }]} />
+                <View style={[styles.x, { transform: [{ rotate: '-45deg' }] }]} />
+              </PaperDisc>
             </Pressable>
           </Animated.View>
         </Animated.View>
@@ -187,12 +237,21 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   petal: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
   petalPressed: { opacity: 0.88, transform: [{ scale: 0.95 }] },
   ring: { position: 'absolute', borderWidth: 2 },
+  disc: {
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.isDark ? Colors.stone3 : Colors.stone,
+    ...Platform.select({
+      ios: { shadowColor: Colors.isDark ? '#000' : '#3b3222', shadowOffset: { width: 0, height: 6 }, shadowOpacity: Colors.isDark ? 0.45 : 0.18, shadowRadius: 9 },
+      android: { elevation: 5 },
+      default: { boxShadow: Colors.isDark ? '0 1px 2px rgba(0,0,0,0.45), 0 7px 16px rgba(0,0,0,0.4)' : '0 1px 2px rgba(59,50,34,0.12), 0 7px 16px rgba(59,50,34,0.16)' } as any,
+    }),
+  },
+  petalDot: { width: 6, height: 6, borderRadius: 3, marginBottom: 4 },
   petalText: {
     fontFamily: Fonts.jostMedium, fontSize: 13.5, textAlign: 'center', letterSpacing: 0.4,
   },
   // En uzun etiketler (RU "Благодарность", DE "Dankbarkeit") yaprağa sığsın; web'de adjustsFontSizeToFit yok.
-  petalTextLong: { fontSize: 11, letterSpacing: 0 },
+  petalTextLong: { fontSize: 11, letterSpacing: -0.2 },
   core: { alignItems: 'center', justifyContent: 'center' },
-  coreDot: { position: 'absolute', backgroundColor: Colors.sand },
-  x: { position: 'absolute', width: 16, height: 2, borderRadius: 1, backgroundColor: Colors.onAccent },
+  x: { position: 'absolute', width: 16, height: 2, borderRadius: 1, backgroundColor: Colors.sand },
 });
