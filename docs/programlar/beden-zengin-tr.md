@@ -126,7 +126,7 @@ Bir hafta oldu. Belki soğuk suyu sevdin, belki yürüyüşü. Belki şimdi her 
 
 Epiktetos burada frene basar: bedenle fazla uğraşmak, egzersize, yemeğe, içmeye uzun vakit vermek, sıradan bir zihnin işaretidir. Bunlar yan işler olarak yapılmalı; dikkatin asıl yeri zihindir. Beden alettir, amaç değil.
 
-Bu, bu haftayı geri almak değil. Bir aleti iyi tutmak gerekir; ama alete tapan, işi unutur. Stoacılar bedeni güçlü olsun diye değil, zihne engel olmasın diye eğittiler.
+Bu, bu haftayı geri almak değil. Bir aleti iyi tutmak gerekir; ama alete tapan, işi unutur. Stoacılar bedeni gösteriş için değil, iyi yaşamanın aleti olsun diye eğittiler: dayanıklı olsun, gerektiğinde iş görsün, zihne engel olmasın.
 
 Usta, kalemini her gün açar ama bütün gün kalem açmaz. Asıl işi yazmaktır.
 
