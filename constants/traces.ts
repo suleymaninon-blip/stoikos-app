@@ -188,6 +188,15 @@ function build(): Record<string, TraceMotif> {
     fill: '',
   };
 
+  // Beden Disiplini (yayın bekliyor) — meşe yaprağı: her gün biraz rüzgâra direnen dal
+  M.body = {
+    thick: 'M32 50C26 50 21 47 23 43C18 41 18 36 24 35C19 32 19 27 25 27C21 23 22 18 27 19C27 14 30 11 32 10'
+      + 'C34 11 37 14 37 19C42 18 43 23 39 27C45 27 45 32 40 35C46 36 46 41 41 43C43 47 38 50 32 50Z' + 'M32 50C32 53 31 56 29 58',
+    thin: ln(32, 50, 32, 14) + ln(32, 44, 24, 41) + ln(32, 44, 40, 41) + ln(32, 37, 22, 33.5) + ln(32, 37, 42, 33.5)
+      + ln(32, 30, 23, 26.5) + ln(32, 30, 41, 26.5) + ln(32, 23, 27, 19.5) + ln(32, 23, 37, 19.5),
+    fill: '',
+  };
+
   return M;
 }
 
@@ -198,5 +207,5 @@ export const TRACE_RGB: Record<string, [number, number, number]> = {
   control: [80, 160, 120], calm: [196, 169, 106], anger: [198, 108, 74], regard: [140, 160, 190],
   time: [160, 120, 170], grief: [90, 120, 170], enough: [140, 150, 90], work: [70, 150, 150],
   patience: [180, 110, 130], criticism: [150, 140, 125], mortality: [150, 145, 140],
-  uncertainty: [120, 150, 175], people: [184, 120, 80],
+  uncertainty: [120, 150, 175], people: [184, 120, 80], body: [125, 105, 70],
 };
