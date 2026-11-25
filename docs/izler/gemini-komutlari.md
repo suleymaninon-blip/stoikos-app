@@ -31,5 +31,6 @@ DO NOT include: any text, letters, numbers, inscriptions or writing on the rim; 
 | mortality | Ölümlülük | pewter grey | a single poppy flower on a thin stem with one leaf | ✅ |
 | uncertainty | Belirsizlikle Yaşamak | blue-grey bronze | a compass rose with a single needle and sixteen fine tick marks around it | ✅ |
 | people | Zor İnsanlar | copper | a stone arch bridge over gentle water, seen from the side | ✅ |
+| body | Beden Disiplini | dark olive bronze with a warm brown patina | a single oak leaf with deep rounded lobes and a short curved stem, upright, central vein clearly visible, no acorns | ⏳ |
 
 Kontrol: kenarda yazı/harf benzeri iz yok; tam yuvarlak, tam tepeden; zemin düz beyaz; küçültünce sembol okunuyor.
