@@ -60,19 +60,22 @@ function drawSpaced(ctx: CanvasRenderingContext2D, s: string, x: number, y: numb
   for (const ch of s) { ctx.fillText(ch, x, y); x += ctx.measureText(ch).width + sp; }
 }
 
-async function renderCard(q: ShareCardInput): Promise<Blob> {
-  const fam = {
-    quote: Fonts.cormorantItalic, mark: Fonts.cormorant, brand: Fonts.cinzelBold ?? Fonts.cinzel,
-    author: Fonts.cinzel, body: Fonts.jost,
-  };
-  const qs = quoteSizeFor(q.text);
-  try {
-    await Promise.all([`${qs.size * S}px "${fam.quote}"`, `192px "${fam.mark}"`, `39px "${fam.brand}"`, `33px "${fam.author}"`, `33px "${fam.body}"`]
-      .map((f) => (document as any).fonts.load(f)));
-  } catch {}
+const FAM = () => ({
+  quote: Fonts.cormorantItalic, mark: Fonts.cormorant, brand: Fonts.cinzelBold ?? Fonts.cinzel,
+  author: Fonts.cinzel, body: Fonts.jost,
+});
+// Yaprağın yeri (360×640 tuvalde) — native kartlar (QuoteShareModal, TraceShare) aynı sayıları kullanır.
+export const SHEET = { x: 28, y: 150, w: 304, h: 322, r: 6 };
+const URL_Y = 488;
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h);
+}
+
+/** Ortak çerçeve: zemin, üstte işaret + STOIKOS, gölgeli kâğıt yaprak (dokulu), altta stoikos.app. */
+function drawFrame(ctx: CanvasRenderingContext2D) {
+  const fam = FAM();
   const W = CARD_OUT.width, H = CARD_OUT.height;
-  const c = document.createElement('canvas'); c.width = W; c.height = H;
-  const ctx = c.getContext('2d')!;
   ctx.textBaseline = 'alphabetic';
 
   // Zemin
@@ -81,27 +84,27 @@ async function renderCard(q: ShareCardInput): Promise<Blob> {
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   // Üst: işaret + STOIKOS, ortalı (y 98–124)
-  ctx.font = `${13 * S}px "${fam.brand}"`;
+  ctx.font = `${13 * S}px "${fam.brand}"`; ctx.textAlign = 'left';
   const brandSp = 4 * S, markSz = 26 * S, gap = 10 * S;
   const bw = markSz + gap + spacedWidth(ctx, 'STOIKOS', brandSp);
-  let bx = (W - bw) / 2; const by = 98 * S;
+  const bx = (W - bw) / 2; const by = 98 * S;
   drawMark(ctx, bx, by, markSz);
   ctx.fillStyle = '#d8c49a';
   drawSpaced(ctx, 'STOIKOS', bx + markSz + gap, by + markSz / 2 + 13 * S * 0.36, brandSp);
 
   // Yaprak (gölgeli)
-  const sx = 28 * S, sy = 150 * S, sw = 304 * S, sh = 322 * S, sr = 6 * S;
+  const sx = SHEET.x * S, sy = SHEET.y * S, sw = SHEET.w * S, sh = SHEET.h * S, sr = SHEET.r * S;
   ctx.save();
   ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 30 * S; ctx.shadowOffsetY = 10 * S;
   ctx.fillStyle = '#1f1b16';
-  ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(sx, sy, sw, sh, sr) : ctx.rect(sx, sy, sw, sh); ctx.fill();
+  roundRect(ctx, sx, sy, sw, sh, sr); ctx.fill();
   ctx.restore();
   ctx.strokeStyle = 'rgba(196,169,106,0.16)'; ctx.lineWidth = S;
-  ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(sx, sy, sw, sh, sr) : ctx.rect(sx, sy, sw, sh); ctx.stroke();
+  roundRect(ctx, sx, sy, sw, sh, sr); ctx.stroke();
 
   // Kâğıt dokusu (uygulamadaki kartlarla aynı dil, 21 Kasım 2026): yaprağa kırpılmış, tohumlu soluk benekler.
   ctx.save();
-  ctx.beginPath(); (ctx as any).roundRect ? (ctx as any).roundRect(sx, sy, sw, sh, sr) : ctx.rect(sx, sy, sw, sh); ctx.clip();
+  roundRect(ctx, sx, sy, sw, sh, sr); ctx.clip();
   let seed = 7;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   for (let i = 0; i < 9000; i++) {
@@ -112,6 +115,38 @@ async function renderCard(q: ShareCardInput): Promise<Blob> {
   }
   ctx.restore();
 
+  // Alt: adres (Instagram'ın cevap çubuğunun üstünde)
+  ctx.fillStyle = '#8a8070'; ctx.font = `${11 * S}px "${fam.body}"`; ctx.textAlign = 'left';
+  const usp = 1.5 * S, cx = W / 2;
+  drawSpaced(ctx, 'stoikos.app', cx - spacedWidth(ctx, 'stoikos.app', usp) / 2, URL_Y * S + 11 * S, usp);
+}
+
+/** Kenarlara sönen altın ayırıcı (merkez cx, y). */
+function drawDivider(ctx: CanvasRenderingContext2D, cx: number, y: number, w: number) {
+  const grad = ctx.createLinearGradient(cx - w / 2, 0, cx + w / 2, 0);
+  grad.addColorStop(0, 'rgba(196,169,106,0)'); grad.addColorStop(0.5, 'rgba(196,169,106,0.55)'); grad.addColorStop(1, 'rgba(196,169,106,0)');
+  ctx.fillStyle = grad; ctx.fillRect(cx - w / 2, y - S / 2, w, S);
+}
+
+function newCanvas() {
+  const c = document.createElement('canvas'); c.width = CARD_OUT.width; c.height = CARD_OUT.height;
+  return { c, ctx: c.getContext('2d')! };
+}
+function toBlob(c: HTMLCanvasElement) {
+  return new Promise<Blob>((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('toBlob'))), 'image/png'));
+}
+
+async function renderCard(q: ShareCardInput): Promise<Blob> {
+  const fam = FAM();
+  const qs = quoteSizeFor(q.text);
+  try {
+    await Promise.all([`${qs.size * S}px "${fam.quote}"`, `192px "${fam.mark}"`, `39px "${fam.brand}"`, `33px "${fam.author}"`, `33px "${fam.body}"`]
+      .map((f) => (document as any).fonts.load(f)));
+  } catch {}
+  const W = CARD_OUT.width;
+  const { c, ctx } = newCanvas();
+  drawFrame(ctx);
+  const sy = SHEET.y * S, sw = SHEET.w * S, sh = SHEET.h * S;
   // Yaprağın içi: tırnak + söz + ayırıcı + (yazarın çizimi) + yazar + künye, dikeyde ortalı
   const glyph = q.authorId ? PHILOSOPHER_ICONS[q.authorId] : undefined;
   const innerW = sw - 26 * S * 2;
@@ -132,9 +167,7 @@ async function renderCard(q: ShareCardInput): Promise<Blob> {
 
   // kenarlara sönen ayırıcı
   y += divH;
-  const dw = 140 * S, grad = ctx.createLinearGradient(cx - dw / 2, 0, cx + dw / 2, 0);
-  grad.addColorStop(0, 'rgba(196,169,106,0)'); grad.addColorStop(0.5, 'rgba(196,169,106,0.55)'); grad.addColorStop(1, 'rgba(196,169,106,0)');
-  ctx.fillStyle = grad; ctx.fillRect(cx - dw / 2, y - S / 2, dw, S);
+  drawDivider(ctx, cx, y, 140 * S);
 
   // yazarın gravür çizimi (64×64 tuvaldeki yollar ölçeklenerek)
   if (glyph) {
@@ -162,21 +195,111 @@ async function renderCard(q: ShareCardInput): Promise<Blob> {
   ctx.fillStyle = '#8a8070'; ctx.font = `italic ${10.5 * S}px "${fam.body}"`;
   ctx.fillText(q.source, cx, y + 10.5 * S);
 
-  // Alt: adres (Instagram'ın cevap çubuğunun üstünde)
-  ctx.font = `${11 * S}px "${fam.body}"`; ctx.textAlign = 'left';
-  const usp = 1.5 * S;
-  drawSpaced(ctx, 'stoikos.app', cx - spacedWidth(ctx, 'stoikos.app', usp) / 2, 488 * S + 11 * S, usp);
+  return toBlob(c);
+}
 
-  return await new Promise<Blob>((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error('toBlob'))), 'image/png'));
+/**
+ * İzler sikkesi öneri kartı (25 Kasım 2026; tasarım A · Kâğıt yaprak,
+ * https://claude.ai/artifact/YHC39D6eCJesqL8kZGdp1V). Övünme değil arkadaşa öneri:
+ * "Bu yolu yürüdüm" + sikke + program adı + motif cümlesi + "Sana da iyi gelebilir."
+ * Dikey yerleşim `traceCardLayout`'ta; native kart (components/TraceShare.tsx) aynı sayıları okur.
+ */
+export type TraceCardInput = { coinUri: string | null; tag: string; title: string; motif: string; invite: string; message: string };
+
+/** Yaprağın içindeki dikey yerleşim (360'lık tuvalde). Motif satır sayısına göre ortalanır. */
+export function traceCardLayout(motifLines: number) {
+  const tagH = 12, gap1 = 16, coin = 112, gap2 = 16, titleH = 30, gap3 = 8, motifLH = 20, gap4 = 16, gap5 = 14, inviteH = 16;
+  const blockH = tagH + gap1 + coin + gap2 + titleH + gap3 + motifLines * motifLH + gap4 + gap5 + inviteH;
+  const top = SHEET.y + (SHEET.h - blockH) / 2;
+  const tagY = top;
+  const coinY = tagY + tagH + gap1;
+  const titleY = coinY + coin + gap2;
+  const motifY = titleY + titleH + gap3;
+  const dividerY = motifY + motifLines * motifLH + gap4;
+  const inviteY = dividerY + gap5;
+  return { tagY, coinY, coin, titleY, motifY, motifSize: 15, motifLH, dividerY, inviteY, inviteSize: 12.5 };
+}
+/** Program adının puntosu uzunluğa göre (tek satıra sığsın; native kart da bunu okur). */
+export function traceTitleSize(title: string): number {
+  const len = title.length;
+  return len <= 18 ? 26 : len <= 24 ? 22 : 19;
+}
+/** Motif metninin genişliği (360'lık tuvalde) — native kart da bu genişliği kullanır. */
+export const TRACE_MOTIF_W = SHEET.w - 2 * 30;
+
+function loadImage(uri: string): Promise<HTMLImageElement | null> {
+  return new Promise((res) => {
+    const img = new (window as any).Image() as HTMLImageElement;
+    img.crossOrigin = 'anonymous';
+    img.onload = () => res(img); img.onerror = () => res(null);
+    img.src = uri;
+  });
+}
+
+async function renderTraceCard(q: TraceCardInput): Promise<Blob> {
+  const fam = FAM();
+  try {
+    await Promise.all([`${26 * S}px "${fam.mark}"`, `${15 * S}px "${fam.quote}"`, `39px "${fam.brand}"`, `33px "${fam.body}"`, `33px "${Fonts.jostMedium}"`]
+      .map((f) => (document as any).fonts.load(f)));
+  } catch {}
+  const img = q.coinUri ? await loadImage(q.coinUri) : null;
+  const { c, ctx } = newCanvas();
+  drawFrame(ctx);
+  const cx = CARD_OUT.width / 2;
+
+  ctx.font = `${15 * S}px "${fam.quote}"`;
+  const motifLines = wrap(ctx, q.motif, TRACE_MOTIF_W * S);
+  const L = traceCardLayout(motifLines.length);
+
+  // Üst etiket, harf aralıklı
+  ctx.fillStyle = '#c2a878'; ctx.font = `${10 * S}px "${Fonts.jostMedium}"`; ctx.textAlign = 'left';
+  const tsp = 2.4 * S;
+  drawSpaced(ctx, q.tag, cx - spacedWidth(ctx, q.tag, tsp) / 2, (L.tagY + 10) * S, tsp);
+
+  // Sikke: altında yumuşak gölge, üstünde fotoğraf (TraceCoin ile aynı oranlar)
+  const cs = L.coin * S, cxL = cx - cs / 2, cy = L.coinY * S;
+  ctx.fillStyle = 'rgba(0,0,0,0.32)';
+  ctx.beginPath(); ctx.arc(cx + cs * 0.01, cy + cs * 0.525, cs * 0.465, 0, Math.PI * 2); ctx.fill();
+  if (img) ctx.drawImage(img, cxL + cs * 0.03, cy + cs * 0.03, cs * 0.94, cs * 0.94);
+  else {
+    const g = ctx.createRadialGradient(cx - cs * 0.1, cy + cs * 0.36, cs * 0.05, cx, cy + cs / 2, cs * 0.46);
+    g.addColorStop(0, '#c9a27a'); g.addColorStop(1, '#5e4329');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy + cs / 2, cs * 0.46, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Program adı
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#f5edd8'; ctx.font = `${traceTitleSize(q.title) * S}px "${fam.mark}"`;
+  ctx.fillText(q.title, cx, (L.titleY + 23) * S, (SHEET.w - 40) * S);
+
+  // Motif cümlesi (kısa, italik)
+  ctx.fillStyle = '#d8c49a'; ctx.font = `${L.motifSize * S}px "${fam.quote}"`;
+  motifLines.forEach((l, i) => ctx.fillText(l, cx, (L.motifY + i * L.motifLH + 15) * S));
+
+  drawDivider(ctx, cx, L.dividerY * S, 120 * S);
+
+  // Öneri satırı
+  ctx.fillStyle = '#b5a88f'; ctx.font = `${L.inviteSize * S}px "${fam.body}"`;
+  ctx.fillText(q.invite, cx, (L.inviteY + 12.5) * S, (SHEET.w - 40) * S);
+
+  return toBlob(c);
+}
+
+export async function shareTraceCardWeb(q: TraceCardInput): Promise<'shared' | 'downloaded' | 'unsupported'> {
+  if (Platform.OS !== 'web' || typeof document === 'undefined') return 'unsupported';
+  return shareBlob(await renderTraceCard(q), q.message);
 }
 
 export async function shareQuoteCardWeb(q: ShareCardInput): Promise<'shared' | 'downloaded' | 'unsupported'> {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return 'unsupported';
-  const blob = await renderCard(q);
+  return shareBlob(await renderCard(q), q.message);
+}
+
+async function shareBlob(blob: Blob, message: string): Promise<'shared' | 'downloaded'> {
   const file = new File([blob], 'stoikos.png', { type: 'image/png' });
   const nav: any = navigator;
   if (nav.canShare?.({ files: [file] })) {
-    try { await nav.share({ files: [file], text: q.message }); return 'shared'; }
+    try { await nav.share({ files: [file], text: message }); return 'shared'; }
     catch (e: any) { if (e?.name === 'AbortError') return 'shared'; }
   }
   const a = document.createElement('a');
