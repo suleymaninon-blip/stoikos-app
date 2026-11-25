@@ -10,7 +10,7 @@
 
 # Askêsis — 7 günde bedeni zihne ortak et
 
-Kaynaklar: Musonius Rufus *Diatribe* 6 (Alıştırma üzerine), 18B (Yemek üzerine) · Diogenes Laertios 7.5 · Seneca *Ruh Huzuru Üzerine* 17.8, Mektuplar 15 ve 83 · Epiktetos *Söylevler* 3.12, *Enchiridion* 41.
+Kaynaklar: Musonius Rufus *Diatribe* 6 (Alıştırma üzerine), 18A–B (Yemek üzerine) · Diogenes Laertios 7.5 · Seneca *Ruh Huzuru Üzerine* 17.8, Mektuplar 15 ve 83 · Epiktetos *Söylevler* 3.12, *Enchiridion* 41.
 
 ## Gün 1 · Beden de bir alet
 
@@ -18,7 +18,7 @@ Sabah alarm çaldı, yorgan sıcak, oda soğuk. Beş dakika daha. Sonra on. Kalk
 
 Musonius Rufus öğrencilerine şunu söylerdi: insan ne yalnız ruhtur ne yalnız beden; ikisi birlikte çalışır. Bu yüzden filozof bedenini de eğitir: soğuğa, sıcağa, açlığa, susuzluğa, sert yatağa alışsın diye. Amaç güçlü görünmek değil; rahatsızlık kapıyı çaldığında kararı onun vermemesi.
 
-Bu bir spor programı değil. Kas, kilo, sayı yok. Stoacıların "askêsis" dediği şey, Yunanca'da bir sanatçının ya da atletin günlük çalışması demekti; onlar bu sözcüğü karaktere taşıdılar. Bedeni, iradenin çalıştığı ilk yer olarak gördüler.
+Bu bir spor programı değil. Kas, kilo, sayı yok. Stoacıların "askêsis" dediği şey, Yunanca'da bir zanaatkârın ya da atletin düzenli çalışması demekti; onlar bu sözcüğü karaktere taşıdılar. Musonius'a göre bazı alıştırmalar yalnız ruha, bazıları ise ruhla bedene birlikte aittir; bu hafta ikincilerle çalışacaksın.
 
 Yayını her gün biraz geren okçu, yayı kırmak için germez. Gerektiğinde elinin titrememesi içindir.
 
@@ -34,11 +34,11 @@ Bu hafta küçük şeyler yapacaksın. Küçük oldukları için işe yarayacakl
 
 Masada aynı cümleyi üçüncü kez okuyorsun. Kafan dolu ama hiçbir düşünce sonuna varmıyor. Kalkıp pencereye gidiyorsun, sonra yine oturuyorsun.
 
-Stoacılar adlarını bir binadan alır: Atina'daki boyalı sütunlu galeri, Stoa. Zenon orada, sütunların arasında aşağı yukarı yürüyerek ders verirdi. Seneca da yazar: açık havada yürümek gerekir; geniş gök ve derin nefes zihni toparlar, yükseltir.
+Stoacılar adlarını bir binadan alır: Atina'daki duvarları resimlerle süslü revak, Stoa Poikile. Zenon orada, sütunların arasında aşağı yukarı yürüyerek ders verirdi. Seneca da yazar: açık havada yürümek gerekir; geniş gök ve derin nefes zihni toparlar, yükseltir.
 
 Bu, kafayı boşaltmak için yürümek değil. Kafayı boşaltmaya çalışan genellikle onu telefonla doldurur. Yürürken tek bir soru taşırsın; adımlar onu senin yerine evirip çevirir. Çoğu cevap otururken değil, yolun ikinci yarısında gelir.
 
-Durgun suda bulanıklık dibe çökmez; akan suda çöker.
+Akan su yosun tutmaz.
 
 Döndüğünde aynı masaya oturacaksın. Ama aynı kişi oturmayacak.
 
@@ -50,7 +50,7 @@ Döndüğünde aynı masaya oturacaksın. Ama aynı kişi oturmayacak.
 
 Duşta sıcak su akıyor, dışarısı soğuk. Musluğu bir an soğuğa çevirmeyi düşünüyorsun, sonra vazgeçiyorsun. Neden olsun ki?
 
-Seneca bir mektubunda gülerek anlatır: gençliğinde yılın ilk günü soğuk suya atlayarak yeni yılı karşılarmış. Yıllar geçtikçe önce daha ılık bir nehre, sonra kendi küvetine geçmiş; yaşlılığında artık ancak ılık suya girebildiğini yazar. Utanmadan, ölçüsünü bilerek.
+Seneca yaşlılığında yazdığı bir mektupta kendine gülerek anlatır: eskiden yeni yılı, yılın ilk günü Roma'nın soğuk su kanalına atlayarak karşılarmış; kendine "soğuk su tutkunu" dermiş. Zamanla önce Tiber nehrine, sonra kendi küvetine geçmiş; şimdi o küveti de güneş ılıtıyormuş. Utanmadan, ölçüsünü bilerek.
 
 Burada iki ders var. Birincisi: küçük, gönüllü bir soğuk, hayatın sana sormadan getireceği büyük soğuklar için bir provadır. Bedenin "dayanamam" dediği yerin, sandığından biraz ileride olduğunu öğrenirsin. İkincisi: bu bir gösteri değil. Seneca bile kendi bedenini dinledi.
 
@@ -72,7 +72,7 @@ Musonius yemek üzerine konuşurken Sokrates'i hatırlatır: çoğu insan yemek 
 
 Bu bir diyet değil. Neyi yiyeceğini sana kimse söylemiyor; sayı, yasak, liste yok. Söylenen yalnız şu: yediğin şeyin yanında ol. Hız ve ekran, tadı da doyumu da senden çalar.
 
-Kuru bir ekmek, aç birine ziyafetten daha tatlı gelir. Tat tabakta değil, dikkattedir.
+Kuru bir ekmek, aç birine ziyafetten daha tatlı gelir. Tat yalnız tabakta değil, sofraya getirdiğin şeydedir.
 
 Bir öğün. Tek tabak. Yavaş. Belki tadını yıllardır ilk kez duyacaksın.
 
@@ -104,7 +104,7 @@ Seneca dostuna bedeni ihmal etmemesini ama ona da fazla vakit vermemesini öğü
 
 Bu, salona gitmeyenleri suçlamak değil. Tersine: uzun ve zor olmadığı için ertelenecek bir şey yok. Beş dakika yeter. Önemli olan bedenin orada olduğunu hatırlamak ve gerginliği biriktirmemek.
 
-Gün boyu gerilen bir yay, gevşetilmezse sonunda kırılır.
+Bütün gün sıkılı tutulan el, akşam açılmayı unutur.
 
 Beş dakika sonra ekrana döneceksin. Ama omuzların kulaklarında değil, yerinde olacak.
 
