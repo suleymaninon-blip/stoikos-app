@@ -21,4 +21,5 @@ export const TRACE_IMAGES: Record<string, ImageSourcePropType> = {
   mortality: require('../assets/traces/mortality.webp'),
   uncertainty: require('../assets/traces/uncertainty.webp'),
   people: require('../assets/traces/people.webp'),
+  body: require('../assets/traces/body.webp'),
 };
