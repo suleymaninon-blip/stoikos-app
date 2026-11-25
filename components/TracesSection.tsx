@@ -9,6 +9,7 @@ import { backfillTraces, type TraceMap } from '../constants/traces';
 import { useReduceMotion } from '../hooks/useReduceMotion';
 import TraceCoin, { type TraceState } from './TraceCoin';
 import { CalmPressable } from './CalmPressable';
+import TraceShare from './TraceShare';
 
 /**
  * İlerleme → İzler (22 Kasım 2026; tasarım
@@ -27,6 +28,8 @@ export default function TracesSection() {
   const reduce = useReduceMotion();
   const [slots, setSlots] = useState<Slot[]>([]);
   const [sel, setSel] = useState<Slot | null>(null);
+  // Kazanılmış sikkede "Bir arkadaşına öner": aynı Modal'ın içinde kart önizlemesine geçer.
+  const [sharing, setSharing] = useState(false);
   const sheet = useRef(new Animated.Value(0)).current;
 
   const load = useCallback(async () => {
@@ -46,7 +49,7 @@ export default function TracesSection() {
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   useEffect(() => {
-    if (!sel) return;
+    if (!sel) { setSharing(false); return; }
     sheet.setValue(reduce ? 1 : 0);
     if (!reduce) Animated.timing(sheet, { toValue: 1, duration: 360, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start();
   }, [sel]);
@@ -87,9 +90,10 @@ export default function TracesSection() {
         ))}
       </View>
 
-      <Modal transparent visible={!!sel} animationType="fade" onRequestClose={() => setSel(null)}>
+      <Modal transparent visible={!!sel} animationType="fade" onRequestClose={() => (sharing ? setSharing(false) : setSel(null))}>
         <Pressable style={styles.scrim} onPress={() => setSel(null)} accessibilityLabel={t('trace.close')} />
-        {sel && (
+        {sel && sharing && <TraceShare pid={sel.id} title={sel.title} onBack={() => setSharing(false)} />}
+        {sel && !sharing && (
           <Animated.View
             accessibilityViewIsModal
             style={[styles.sheet, { transform: [{ translateY: sheet.interpolate({ inputRange: [0, 1], outputRange: [400, 0] }) }] }]}
@@ -112,6 +116,11 @@ export default function TracesSection() {
               {sel.state === 'locked' && (
                 <CalmPressable onPress={() => goProgram(sel.id)} style={[styles.primary, { backgroundColor: C.accent }]}>
                   <Text style={styles.primaryText}>{t('trace.goProgram')}</Text>
+                </CalmPressable>
+              )}
+              {sel.state === 'earned' && (
+                <CalmPressable onPress={() => setSharing(true)} style={[styles.primary, { backgroundColor: C.accent }]} accessibilityHint={t('trace.shareHint')}>
+                  <Text style={styles.primaryText}>{t('trace.share')}</Text>
                 </CalmPressable>
               )}
               {sel.state === 'earned' && (

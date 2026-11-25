@@ -79,6 +79,7 @@
 - **Ses**: `assets/audio` 72 kavram mp3'ü (~20 MB); gömülü sesi uzatma (önce talep üzerine indirme mimarisi). Yeni ses MP3 olsun, `ffmpeg -i` ile akışları ve ilk 5 sn seviyesini ölç. iOS: `play()` dokunuşla aynı görevde, araya `await` yok (`createAsync(..., {shouldPlay:true})`). `constants/audioManifest.ts` otomatik (`npm run gen-audio`, ElevenLabs).
 - **Yeni program** (`constants/programs.ts` → `PROGRAMS_RAW`): ayrı simge + renk; her gün `read` (≈1 dk, beş adım) + `ask` (akşam sorusu) + `body`, 6 dilde; `TRACE_MOTIFS` + `TRACE_RGB` (`constants/traces.ts`) + `trace.m.<id>` (6 dil) + Gemini sikkesi (`docs/izler/gemini-komutlari.md`, `bash scripts/brand/cut-trace-coins.sh <id>`). Stokta bekleyen: `upcoming: true`; yayın = `releaseAt: 'YYYY-MM-DD'` (o gün kendiliğinden açılır). Akış: TR konu+başlıklar → onay → TR tam metin → onay → 6 dil JSON (`docs/programlar/`). Zor konularda (yas, beden, tükenmişlik) uzman/güvenlik notu.
 - Dışarıya söz **"her ay en az bir yeni program"**; "ilk 3 ay ayda iki" vaat edilmez.
+- **Paylaşım = öneri, övünme değil**: İzler'de yalnız kazanılmış sikke, "Bir arkadaşına öner" (yalnız sikke ayrıntısında; mühür ekranında paylaş düğmesi yok). Kartta tarih/sayı/üye numarası/yazılanlar yok.
 - **Topluluk**: yalnız toplam sayılar, isim yok, **sıralama/yarış/kıyas yok**, uydurma sayı/ışık yok; eşiklerin altında sayısız cümle (`NOW_MIN`, `TODAY_MIN`, `PULSE_MIN`, `HEART_MIN`…). Reklam/videoda da uydurma toplam yok.
 - Koç cevabında uydurma atıf yasağı (prompt'ta). Koç terapi değildir notu kalır.
 
@@ -95,7 +96,7 @@
 - **Bileşenler**: `BreathOrb`, `TogetherBreath`, `MoodBloom`, `ConceptModal`, `ConceptGlyph`, `EmbossTile`, `PaperBg`, `QuoteCard`, `QuoteShareModal`, `TraceCoin/TraceSeal/TracesSection`, `StoaPulse`, `Paywall`, `CoachWaiting`, `DoneMark`, `FirstTip`, `Onboarding`, `BrandIntro`, `StoikosMark`, `ThemePicker`, `TypePicker`, `PracticePrograms`, `ReminderSync`, `Icons`.
 - **Eşleşmesi gereken kopyalar** (biri değişirse öteki de):
   - Marka işareti: `components/StoikosMark.tsx` ↔ `scripts/brand/mark.js` ↔ `website/index.html` `<symbol id="mark">` (+ `scripts/feature-graphic.html`). İkonlar `node scripts/brand/render-icons.js`.
-  - Söz paylaşım kartı: native `QuoteShareModal` ↔ web `constants/shareCard.ts` (360×640 tuval, aynı sayılar).
+  - Paylaşım kartları (söz + İzler sikkesi): native `QuoteShareModal` / `TraceShare` ↔ web `constants/shareCard.ts` (360×640 tuval, ortak `SHEET` çerçevesi, `traceCardLayout`, `traceTitleSize`).
   - Hayat haftaları: `components/WeeksWallpaper.tsx` ↔ `constants/weeksCanvas.ts` (geometri `lifeWeeks.ts`).
   - Otomatik üretilen, elle düzenlenmeyen: `audioManifest.ts`, `conceptIcons.ts`, `philosopherIcons.ts`.
 - **Mağaza görselleri**: `store-assets/` (+ `README.md`), betikler `scripts/shoot-store.js`, `shoot-feature.js`. Ekran değişince site görselleri de (`website/img/`, webp).
@@ -123,13 +124,12 @@
    - **Plus koçuna günde 30 mesaj** (`coachRateLimited`) + `coach.plusCta` "Sınırsız sohbet" ve tanıtım `onb.p2d` "sınırsızı Plus'ta" metinlerini 6 dilde dürüst cümleye çevir.
    - "Tüm verilerimi sil" `stoikos_user_id`'yi siliyor — geri yükleme ile birlikte karar ver.
    - Deneme bitmeden hatırlatma.
-5. **TestFlight'ta gerçek cihazda denenecekler**: bildirimler (sabah/akşam/pazar/birlikte nefes/yeni program), kavram sesi, ikon ve açılış, Sağlık yazma, kilitli ekranda seans, duvar kağıdı kaydetme, `expo-document-picker` (yedekten geri yükle), `Intl.DisplayNames` (Hermes, nabız ülke adları), sistem pencerelerinin koyu kalması, **hafif titreşim** (yalnız Bilgelik tekerleği seçimi + egzersiz işareti; nefese değil; rahatsız ederse hiç eklenmez).
+5. **TestFlight'ta gerçek cihazda denenecekler**: bildirimler (sabah/akşam/pazar/birlikte nefes/yeni program), kavram sesi, ikon ve açılış, İzler öneri kartının görsel olarak paylaşılması, Sağlık yazma, kilitli ekranda seans, duvar kağıdı kaydetme, `expo-document-picker` (yedekten geri yükle), `Intl.DisplayNames` (Hermes, nabız ülke adları), sistem pencerelerinin koyu kalması, **hafif titreşim** (yalnız Bilgelik tekerleği seçimi + egzersiz işareti; nefese değil; rahatsız ederse hiç eklenmez).
 6. **Google Play**: Android cihaz doğrulaması bekliyor (elde Android yok).
 7. **Kullanıcı tarafı**: avukat kontrolü (gizlilik + koşullar), marka tescili (Türkiye, 9+41+42, şekil + kelime, `docs/marka/`; yayından ve reklamdan önce), `config.ts` `storeUrl` (yayında), yaş anketi, kategori.
 8. **App Store öne çıkarılma başvurusu**: taslak `docs/apple-one-cikarilma.md`; TestFlight bağlantısıyla, yayından birkaç hafta önce.
 
 ### Karar / seçim bekleyen
-- **İzler sikke paylaşım kartı**: tasarım https://claude.ai/artifact/YHC39D6eCJesqL8kZGdp1V — A kâğıt yaprak (öneri) / B sikke merkezde / C açık kâğıt. Yalnız kazanılmış sikke, altta soluk `stoikos.app`; söz kartının yolunu izle (native `captureRef` + web canvas, temasız).
 - **Hayat haftaları duvar kağıdı**: kullanıcı son hâli beğenmedi ("sonra kaldıralım ya da değiştirelim"). Ne beğenilmediğini sormadan değiştirme. Kaldırılırsa liste tarihçede (⚠️ `stoikos_weeks_sunday` bayrağını silip takvimi yeniden kur).
 - **Videolarda müzik**: gövdede videoya göre farklı telifsiz kayıt + logoda sabit ses imzası (adaylar `docs/sosyal-medya/muzik/imza-adaylari/`).
 - **"Kurucu üye fiyatı"** fikri (ilk 10.000'e ilk yıl ~$29,99) — karar yok; Apple'da deneme ile indirimli dönem birlikte verilemez.

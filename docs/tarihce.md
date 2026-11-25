@@ -293,3 +293,9 @@
 
 ## Güvenlik
 - ElevenLabs anahtarı paylaşıldıysa **iptal/yenile**.
+
+
+---
+
+## 25 Kasım 2026 — İzler: "Bir arkadaşına öner"
+Kullanıcı sordu: "Sikke kartını paylaşmak kullanıcının ne işine yarar?" Cevap: çoğu kişi kişisel programını (yas, kaygı) göstermek istemez ve "bak ne başardım" kartı "Başkalarının Gözü" programıyla çelişir. Karar: paylaşım **arkadaşa öneri** olarak kuruldu. Yer: yalnız İlerleme → İzler → kazanılmış sikkenin ayrıntısı ("Bir arkadaşına öner"); mühür ekranında yok (sakin anı bozmasın). Görünüm A · Kâğıt yaprak (https://claude.ai/artifact/YHC39D6eCJesqL8kZGdp1V), siyah-altın, söz kartıyla aynı çerçeve: "BU YOLU YÜRÜDÜM" + sikke fotoğrafı + program adı + motif cümlesi + sönen ayırıcı + "Sana da iyi gelebilir." + stoikos.app. Önizleme aynı Modal içinde açılır (iç içe Modal yok; Android geri tuşu önce önizlemeyi kapatır), altında "Yalnız bu kart paylaşılır. Yazdıkların telefonunda kalır." Native `components/TraceShare.tsx` (`captureRef` 1080×1920), web `constants/shareCard.ts` → `renderTraceCard` (söz kartı ile ortak `drawFrame`; sikke fotoğrafı `expo-asset` ile çözülüyor, paket açıkça eklendi). Uzun program adı `traceTitleSize` ile küçülür (DE "Die Dichotomie der Kontrolle"). Paylaşım metni `trace.shareMsg` (RU'da cinsiyetsiz "Позади семидневная программа…"). Metinler `trace.share/shareHint/shareTag/shareInvite/shareMsg/shareNote/shareBtn/shareBack` (6 dil). Web'de TR/RU/DE/EN önizleme + indirilen PNG Playwright ile kontrol edildi; native yakalama TestFlight'ta denenecek.
