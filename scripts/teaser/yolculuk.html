@@ -187,6 +187,62 @@ function brandLintel(c, w, uo) {
   c.restore();
 }
 
+
+// ---------- III · Sabır ----------
+const RB = rng(37);
+const BEES = Array.from({ length: 16 }, () => ({ cx: (450 + RB() * 1250) * K, cy: (60 + RB() * 260) * K, rx: 20 + RB() * 50, ry: 10 + RB() * 30, sp: 1.5 + RB() * 2.5, ph: RB() * 6.28 }));
+const FLIES = Array.from({ length: 4 }, () => ({ x: (300 + RB() * 1500) * K, y: (150 + RB() * 300) * K, ph: RB() * 6.28, c: ['150,170,240', '250,210,120', '240,170,200', '255,255,240'][Math.floor(RB() * 4)] }));
+const MIST = Array.from({ length: 7 }, () => ({ x: (RB() * 800) * K, y: (390 + RB() * 170) * K, r: 160 + RB() * 140, sp: 6 + RB() * 10, ph: RB() * 6.28 }));
+
+function fxSabir(c, lt, uo) {
+  // vadide sabah sisi (yavaşça sürüklenir)
+  for (const m of MIST) {
+    const [x, y] = P(m.x, m.y, uo); const xx = x + m.sp * lt;
+    const g = c.createRadialGradient(xx, y, 0, xx, y, m.r);
+    const a = 0.16 + 0.06 * Math.sin(lt * 0.5 + m.ph);
+    g.addColorStop(0, `rgba(240,244,240,${a})`); g.addColorStop(1, 'rgba(240,244,240,0)');
+    c.fillStyle = g; c.fillRect(xx - m.r, y - m.r, 2 * m.r, 2 * m.r);
+  }
+  c.save(); c.globalCompositeOperation = 'screen';
+  glow(c, ...P(1930 * K, 260 * K, uo), 260, 0.28 + 0.05 * Math.sin(lt * 0.8), '255,236,190');   // güneş
+  for (let i = 0; i < 3; i++) {                                                                  // ışık huzmeleri
+    const a = 0.05 + 0.03 * Math.sin(lt * 0.6 + i * 2);
+    const x = 900 + i * 140 - (uo - 294) * 0.2;
+    const g = c.createLinearGradient(x, 0, x - 300, 620);
+    g.addColorStop(0, `rgba(255,240,200,${a})`); g.addColorStop(1, 'rgba(255,240,200,0)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(x - 20, 0); c.lineTo(x + 50, 0); c.lineTo(x - 230, 640); c.lineTo(x - 340, 640); c.fill();
+  }
+  c.restore();
+  // arılar: ağacın çevresinde küçük döngüler
+  for (const b of BEES) {
+    const [bx, by] = P(b.cx, b.cy, uo);
+    const x = bx + Math.cos(lt * b.sp + b.ph) * b.rx, y = by + Math.sin(lt * b.sp * 1.7 + b.ph) * b.ry;
+    if (x < -10 || x > W + 10) continue;
+    c.fillStyle = 'rgba(255,255,255,0.55)';
+    const wf = Math.abs(Math.sin(lt * 60 + b.ph)) * 3;
+    c.beginPath(); c.ellipse(x - 1, y - 3, 2.2, 1 + wf * 0.4, -0.4, 0, 2 * PI); c.fill();
+    c.fillStyle = '#e0a830'; c.beginPath(); c.ellipse(x, y, 3.2, 2.2, 0, 0, 2 * PI); c.fill();
+    c.fillStyle = '#3a2a14'; c.fillRect(x - 0.6, y - 2, 1.2, 4);
+  }
+  // kelebekler: kanat çırpan ikili leke
+  for (const f of FLIES) {
+    const [fx0, fy0] = P(f.x, f.y, uo);
+    const x = fx0 + Math.sin(lt * 0.7 + f.ph) * 60 + lt * 8, y = fy0 + Math.sin(lt * 1.9 + f.ph) * 26;
+    const fl = 0.25 + 0.75 * Math.abs(Math.sin(lt * 11 + f.ph));
+    c.fillStyle = `rgba(${f.c},0.9)`;
+    c.beginPath(); c.ellipse(x - 4 * fl, y, 4.5 * fl, 3.5, -0.3, 0, 2 * PI); c.ellipse(x + 4 * fl, y, 4.5 * fl, 3.5, 0.3, 0, 2 * PI); c.fill();
+  }
+}
+
+// Sepetin önündeki tahtaya yakılmış damga (kaynak px ≈ 1355, 712)
+function brandBasket(c, w, uo) {
+  const [x, y] = P(1052 * K, 562 * K, uo); if (x < -150 || x > W + 150) return;
+  c.save(); c.font = '600 19px Cinzel'; c.textBaseline = 'alphabetic';
+  c.filter = 'blur(1.4px)'; c.fillStyle = 'rgba(70,36,14,0.35)'; spaced(c, 'STOIKOS', x, y, 3.2);   // yanığın halesi
+  c.filter = 'none'; c.fillStyle = 'rgba(62,34,16,0.88)'; spaced(c, 'STOIKOS', x, y, 3.2);       // yanık iz
+  c.restore();
+}
+
 const WORLDS = [
   { id: 'kontrol', coin: 'control', upStart: 250, upK: 0.8, loStart: 100, split: 636 * K, feet: 700 * K, fgTop: 1050,
     fx: fxKontrol, brand: brandShip, woman: () => ({ b: 1, s: 1, blue: 0, warm: 0 }), dust: '255,222,160' },
@@ -198,6 +254,8 @@ const WORLDS = [
       for (const [x, y] of LAMPS2) { const dx = (x * K * S - uo) - cx; warm = Math.max(warm, Math.exp(-((dx / 170) ** 2))); }
       return { b: 0.62, s: 0.78, blue: 0.24, warm: 0.3 * warm };
     } },
+  { id: 'sabir', coin: 'patience', upStart: 294, upK: 0.85, loStart: 100, split: 645 * K, feet: 718 * K, fgTop: 1040,
+    fx: fxSabir, brand: brandBasket, dust: '255,238,185', woman: () => ({ b: 1.03, s: 1.02, blue: 0, warm: 0.08 }) },
 ];
 for (const w of WORLDS) {
   w.pano = load(DIR + `parca-3-manzara-${w.id}.jpg`);
@@ -211,10 +269,12 @@ const T = {
   tr: { worlds: [
       { num: 'I', title: 'KONTROL DAİRESİ', q1: 'Denizi sen seçmezsin;', q2: 'dümeni sen tutarsın.' },
       { num: 'II', title: 'İÇ SAKİNLİK', q1: 'Dışarısı rüzgârlı;', q2: 'alev içeride sakin.' },
+      { num: 'III', title: 'SABIR', q1: 'İncir bir saatte', q2: 'olgunlaşmaz.' },
     ] },
   en: { worlds: [
       { num: 'I', title: 'THE DICHOTOMY OF CONTROL', q1: 'You do not choose the sea;', q2: 'you hold the helm.' },
       { num: 'II', title: 'INNER CALM', q1: 'Wind outside;', q2: 'the flame within stays still.' },
+      { num: 'III', title: 'PATIENCE', q1: 'A fig does not ripen', q2: 'in an hour.' },
     ] },
 };
 let L = T.tr;
