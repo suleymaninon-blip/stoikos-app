@@ -48,7 +48,7 @@ const FEET_IN_IMG = 318;
 // --- yerleşim ---
 const BAND_Y = 360, BAND_H = 1040;
 const SRC_H = 1093, K = 2576 / 2000;
-const S = BAND_H / SRC_H;
+let S = BAND_H / SRC_H;            // o an çizilen dünyanın ölçeği (dünyanın srcH'sine göre; useWorld ile kurulur)
 const V = 120;                  // yol hızı px/sn = kadının adım hızı
 const WOMAN_X = 300;
 const FG_S = 0.45, FG_K = 1.7;
@@ -80,6 +80,7 @@ function glow(c, x, y, r, a, rgb = '255,200,120') {
 // fx/brand: c = bant tuvali (0,0 = şeridin sol üstü), uo = üst katman kayması (ekran px).
 // Kaynak noktayı (gerçek px) bant tuvaline çevir:
 const P = (sx, sy, uo) => [sx * S - uo, sy * S];
+const useWorld = (w) => { S = BAND_H / (w.srcH || SRC_H); };
 
 // ---------- I · Kontrol Dairesi ----------
 const RK = rng(11);
@@ -243,6 +244,55 @@ function brandBasket(c, w, uo) {
   c.restore();
 }
 
+
+// ---------- IV · Kayıpla Yaşamak ----------
+const RL = rng(53);
+const FALL = Array.from({ length: 44 }, () => ({ x: RL() * 1300, y0: RL() * 900, v: 28 + RL() * 40, sw: 18 + RL() * 30, ph: RL() * 6.28, s: 0.7 + RL() * 0.9,
+  c: ['226,170,70', '210,120,50', '190,80,40', '240,200,110'][Math.floor(RL() * 4)] }));
+const LAKE = Array.from({ length: 50 }, () => ({ x: (1130 + RL() * 800) * K, y: (565 + RL() * 70) * K, ph: RL() * 6.28, sp: 1.2 + RL() * 2.5 }));
+const MIST4 = Array.from({ length: 6 }, () => ({ x: (RL() * 700) * K, y: (250 + RL() * 350) * K, r: 180 + RL() * 160, sp: 5 + RL() * 8, ph: RL() * 6.28 }));
+
+function fxKayip(c, lt, uo) {
+  for (const m of MIST4) {                                     // sol ormanda sis
+    const [x, y] = P(m.x, m.y, uo); const xx = x + m.sp * lt;
+    const g = c.createRadialGradient(xx, y, 0, xx, y, m.r);
+    g.addColorStop(0, `rgba(235,228,220,${0.14 + 0.05 * Math.sin(lt * 0.5 + m.ph)})`); g.addColorStop(1, 'rgba(235,228,220,0)');
+    c.fillStyle = g; c.fillRect(xx - m.r, y - m.r, 2 * m.r, 2 * m.r);
+  }
+  c.save(); c.globalCompositeOperation = 'screen';
+  glow(c, ...P(1600 * K, 300 * K, uo), 300, 0.22 + 0.05 * Math.sin(lt * 0.7), '255,214,150');
+  for (let i = 0; i < 4; i++) {                                // meşenin altından süzülen huzmeler
+    const a = 0.05 + 0.035 * Math.sin(lt * 0.6 + i * 1.6);
+    const [bx] = P((1150 + i * 110) * K, 0, uo);
+    const g = c.createLinearGradient(bx, 200, bx - 220, 700);
+    g.addColorStop(0, `rgba(255,226,170,${a})`); g.addColorStop(1, 'rgba(255,226,170,0)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(bx, 200); c.lineTo(bx + 45, 200); c.lineTo(bx - 170, 720); c.lineTo(bx - 250, 720); c.fill();
+  }
+  for (const s of LAKE) {                                      // gölde parıltı
+    const [x, y] = P(s.x, s.y, uo); if (x < -10 || x > W + 10) continue;
+    const a = Math.pow(Math.max(0, Math.sin(lt * s.sp + s.ph)), 6) * 0.85; if (a < 0.02) continue;
+    c.fillStyle = `rgba(255,232,180,${a})`; c.fillRect(x - 3, y, 6, 1.3);
+  }
+  c.restore();
+  // süzülen yapraklar: yavaş, salınarak, dönerek
+  for (const l of FALL) {
+    const y = ((l.y0 + l.v * lt) % 900);
+    const x = ((l.x - 30 * lt) % 1300 + 1300) % 1300 - 110 + Math.sin(lt * 1.1 + l.ph) * l.sw;
+    c.save(); c.translate(x, y); c.rotate(Math.sin(lt * 1.7 + l.ph) * 1.2); c.scale(l.s, l.s * (0.4 + 0.6 * Math.abs(Math.cos(lt * 2 + l.ph))));
+    c.fillStyle = `rgba(${l.c},0.92)`; c.beginPath(); c.ellipse(0, 0, 6, 3.4, 0, 0, 2 * PI); c.fill();
+    c.restore();
+  }
+}
+
+// Bankın sırtına oyulmuş STOIKOS (önizleme 918, 568)
+function brandBench(c, w, uo) {
+  const [x, y] = P(918 * K, 574 * K, uo); if (x < -200 || x > W + 200) return;
+  c.save(); c.font = '600 24px Cinzel'; c.textBaseline = 'alphabetic';
+  c.fillStyle = 'rgba(255,240,215,0.45)'; spaced(c, 'STOIKOS', x, y + 1.4, 5.5);   // oyuğun alt kenarı
+  c.fillStyle = 'rgba(52,38,26,0.95)'; spaced(c, 'STOIKOS', x, y, 5.5);           // oyuk
+  c.restore();
+}
+
 const WORLDS = [
   { id: 'kontrol', coin: 'control', upStart: 250, upK: 0.8, loStart: 100, split: 636 * K, feet: 700 * K, fgTop: 1050,
     fx: fxKontrol, brand: brandShip, woman: () => ({ b: 1, s: 1, blue: 0, warm: 0 }), dust: '255,222,160' },
@@ -256,6 +306,9 @@ const WORLDS = [
     } },
   { id: 'sabir', coin: 'patience', upStart: 294, upK: 0.85, loStart: 100, split: 645 * K, feet: 718 * K, fgTop: 1040,
     fx: fxSabir, brand: brandBasket, dust: '255,238,185', woman: () => ({ b: 1.03, s: 1.02, blue: 0, warm: 0.08 }) },
+  // Gemini resmin altını (src 944+) boyamamış: srcH 940 → resim biraz büyür, o şerit kadraj dışında kalır
+  { id: 'kayip', coin: 'grief', upStart: 372, upK: 0.85, loStart: 100, split: 665 * K, feet: 692 * K, fgTop: 990, srcH: 940,
+    fx: fxKayip, brand: brandBench, dust: '255,225,170', woman: () => ({ b: 0.98, s: 0.95, blue: 0, warm: 0.14 }) },
 ];
 for (const w of WORLDS) {
   w.pano = load(DIR + `parca-3-manzara-${w.id}.jpg`);
@@ -270,11 +323,13 @@ const T = {
       { num: 'I', title: 'KONTROL DAİRESİ', q1: 'Denizi sen seçmezsin;', q2: 'dümeni sen tutarsın.' },
       { num: 'II', title: 'İÇ SAKİNLİK', q1: 'Dışarısı rüzgârlı;', q2: 'alev içeride sakin.' },
       { num: 'III', title: 'SABIR', q1: 'İncir bir saatte', q2: 'olgunlaşmaz.' },
+      { num: 'IV', title: 'KAYIPLA YAŞAMAK', q1: 'Yaprak düşer;', q2: 'dal onu hatırlar.' },
     ] },
   en: { worlds: [
       { num: 'I', title: 'THE DICHOTOMY OF CONTROL', q1: 'You do not choose the sea;', q2: 'you hold the helm.' },
       { num: 'II', title: 'INNER CALM', q1: 'Wind outside;', q2: 'the flame within stays still.' },
       { num: 'III', title: 'PATIENCE', q1: 'A fig does not ripen', q2: 'in an hour.' },
+      { num: 'IV', title: 'LIVING WITH LOSS', q1: 'The leaf falls;', q2: 'the branch remembers it.' },
     ] },
 };
 let L = T.tr;
@@ -288,12 +343,14 @@ const upOff = (w, lt) => w.upStart + w.upK * V * lt;
 const loOff = (w, lt) => w.loStart + V * lt;
 
 function renderBack(c, w, lt) {
+  useWorld(w);
   c.clearRect(0, 0, W, BAND_H);
   const uo = upOff(w, lt), lo = loOff(w, lt);
   c.drawImage(w.pano, uo / S, 0, W / S, w.split, 0, 0, W, w.split * S);
   w.fx(c, lt, uo);
   w.brand(c, w, uo);
-  c.drawImage(w.pano, lo / S, w.split, W / S, SRC_H - w.split, 0, w.split * S, W, (SRC_H - w.split) * S);
+  const sh = w.srcH || SRC_H;          // resmin altı boyanmamışsa o şerit kadraj dışında kalır
+  c.drawImage(w.pano, lo / S, w.split, W / S, sh - w.split, 0, w.split * S, W, (sh - w.split) * S);
   const y = w.split * S, sg = c.createLinearGradient(0, y - 6, 0, y + 6);
   sg.addColorStop(0, 'rgba(40,32,26,0)'); sg.addColorStop(0.5, 'rgba(40,32,26,0.3)'); sg.addColorStop(1, 'rgba(40,32,26,0)');
   c.fillStyle = sg; c.fillRect(0, y - 6, W, 12);
@@ -324,7 +381,7 @@ function drawWoman(t, act) {
   let p = { b: 0, s: 0, blue: 0, warm: 0 };
   let tot = 0;
   for (const { i, lt, a } of act) {
-    const w = WORLDS[i], q = w.woman(lt, upOff(w, lt)), k = act.length > 1 ? (i === act[0].i ? 1 - act[1].a : act[1].a) : 1;
+    const w = WORLDS[i]; useWorld(w); const q = w.woman(lt, upOff(w, lt)), k = act.length > 1 ? (i === act[0].i ? 1 - act[1].a : act[1].a) : 1;
     for (const key in p) p[key] += q[key] * k; tot += k;
   }
   const c = WCV.getContext('2d');
@@ -340,7 +397,8 @@ function drawWoman(t, act) {
     c.fillStyle = g; c.fillRect(0, 0, 240, 330);
   }
   // ayak çizgisi iki dünya arasında yumuşak geçer
-  const feet = BAND_Y + (act.length > 1 ? lerp(WORLDS[act[0].i].feet, WORLDS[act[1].i].feet, act[1].a) : WORLDS[act[0].i].feet) * S;
+  const fpx = (w) => w.feet * BAND_H / (w.srcH || SRC_H);
+  const feet = BAND_Y + (act.length > 1 ? lerp(fpx(WORLDS[act[0].i]), fpx(WORLDS[act[1].i]), act[1].a) : fpx(WORLDS[act[0].i]));
   const sh = ctx.createRadialGradient(WOMAN_X + 120, feet + 2, 2, WOMAN_X + 120, feet + 2, 90);
   sh.addColorStop(0, 'rgba(15,12,10,0.45)'); sh.addColorStop(1, 'rgba(15,12,10,0)');
   ctx.save(); ctx.translate(0, feet); ctx.scale(1, 0.22); ctx.translate(0, -feet);

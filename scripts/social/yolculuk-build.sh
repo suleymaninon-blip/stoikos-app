@@ -5,7 +5,7 @@
 # Parçalar: docs/sosyal-medya/yolculuk-videosu/ (Gemini; komutlar docs/sosyal-medya/yolculuk-videosu-yapay-zeka.md):
 #   parca-2-yuruyus.mp4, parca-3-manzara-<dünya>.jpg, parca-4-on-katman-<dünya>.jpg
 # Hazırlık: yürüyüşten ve ön katmanlardan yeşil silinir (kadin-kareler/, on-katman-saydam-<dünya>.png; git'e girmez).
-# Ses: dünyaya göre kodla ortam sesi (I dalga, II rüzgâr, III kuş + arı) + altında Grieg "Sabah" (Musopen, kamu malı kayıt).
+# Ses: dünyaya göre kodla ortam sesi (I dalga, II rüzgâr, III kuş + arı, IV yaprak hışırtısı) + altında Grieg "Sabah" (Musopen, kamu malı kayıt).
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 LANGS="${1:-tr,en}"
@@ -37,7 +37,7 @@ if [ -z "${SKIP_RENDER:-}" ]; then
 fi
 
 # 3) Ses: her dünyanın ortam sesi kendi 10 sn'sinde (geçişlerde 1,2 sn erir) + altında müzik.
-#    Ortam sesleri kodla: kontrol = dalga, sakinlik = rüzgâr, sabir = kuş cıvıltısı + arı vızıltısı + hafif esinti.
+#    Ortam sesleri kodla: kontrol = dalga, sakinlik = rüzgâr, sabir = kuş cıvıltısı + arı vızıltısı, kayip = yaprak hışırtısı.
 python3 - "$DUR" $WORLDS > "$TMP/ses-filtre.txt" <<'PY'
 import sys
 dur=int(sys.argv[1]); ws=sys.argv[2:]; n=len(ws)
@@ -48,12 +48,14 @@ def gate(i):
 src={
  'kontrol': f"anoisesrc=color=brown:amplitude=0.6:duration={dur}:sample_rate=48000",
  'sakinlik': f"anoisesrc=color=pink:amplitude=0.5:duration={dur}:sample_rate=48000",
+ 'kayip': f"anoisesrc=color=pink:amplitude=0.5:duration={dur}:sample_rate=48000",
  'sabir': f"aevalsrc='0.22*sin(2*PI*(2700+900*sin(2*PI*15*t))*t)*gt(sin(2*PI*0.62*t+1)\\,0.93)+0.16*sin(2*PI*(3400+600*sin(2*PI*22*t))*t)*gt(sin(2*PI*0.41*t)\\,0.95)+0.05*sin(2*PI*185*t+3*sin(2*PI*6*t))+0.03*sin(2*PI*370*t)':s=48000:d={dur}",
 }
 shape={
  'kontrol': "lowpass=f=900,volume='(0.35+0.3*sin(2*PI*t/5.2))*G':eval=frame",
  'sakinlik': "highpass=f=300,lowpass=f=2400,volume='(0.18+0.14*sin(2*PI*t/3.1)+0.06*sin(2*PI*t/1.3))*G':eval=frame",
  'sabir': "volume='0.9*G':eval=frame",
+ 'kayip': "highpass=f=700,lowpass=f=4200,volume='(0.09+0.06*sin(2*PI*t/4.3)+0.05*gt(sin(2*PI*t*1.7)\\\\,0.6))*G':eval=frame",
 }
 ins=[]; parts=[]
 for i,w in enumerate(ws):
