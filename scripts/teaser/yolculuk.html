@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "Yolculuk" — I · Kontrol Dairesi denemesi (10 sn, 1080×1920), 26 Kasım 2026.
+     Yandan kayan katmanlı sahne: Gemini parçaları (docs/sosyal-medya/yolculuk-videosu/) + kodla hareket.
+     Katmanlar (arkadan öne): manzaranın üst yarısı (deniz, gemi, fener; 0,8 hız) → yol (1,0 hız, kadının
+     adımlarıyla aynı) → kadın (yeşili silinmiş yürüyüş kareleri) → ön katman (kayalar, 1,7 hız, bulanık).
+     Kodla: fener + kandil ışığı, dalga serpintisi, martılar, altın tozları, denizde parıltı, ışık huzmesi.
+     Üstte bölüm başlığı + yol çizgisi; sonda dümen sikkesi gökyüzünde belirip çizgiye iner. Altta motif cümlesi.
+     Hazırlık + çekim: bash scripts/social/yolculuk-build.sh [tr,en] -->
+<style>
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf') format('truetype'); }
+  * { margin:0; padding:0; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  canvas { display:block; }
+  .pre { position:absolute; left:-999px; top:0; }
+  .img { position:absolute; left:-9999px; top:0; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<span class="pre" style="font-family:Cinzel;font-weight:600">S</span>
+<span class="pre" style="font-family:Cormorant;font-style:italic">S</span>
+<span class="pre" style="font-family:Jost">S</span>
+<div id="imgs"></div>
+<script>
+const W = 1080, H = 1920, PI = Math.PI, DUR = 10000;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const DIR = '../../docs/sosyal-medya/yolculuk-videosu/';
+
+function load(src) {
+  const im = new Image(); im.className = 'img'; im.src = src;
+  document.getElementById('imgs').appendChild(im); return im;
+}
+const PANO = load(DIR + 'parca-3-manzara-kontrol.jpg');   // 2576×1093
+const FG = load(DIR + 'on-katman-saydam.png');             // 2576×1093, saydam
+const COIN = load('../../assets/traces/control.webp');
+const WALK = [];
+for (let i = 1; i <= 240; i++) WALK.push(load(DIR + 'kadin-kareler/' + String(i).padStart(3, '0') + '.png')); // 240×330, 24 fps
+
+const T = {
+  tr: { num: 'I', title: 'KONTROL DAİRESİ', q1: 'Denizi sen seçmezsin;', q2: 'dümeni sen tutarsın.' },
+  en: { num: 'I', title: 'THE DICHOTOMY OF CONTROL', q1: 'You do not choose the sea;', q2: 'you hold the helm.' },
+};
+let L = T.tr;
+
+// --- yerleşim ---
+const BAND_Y = 360, BAND_H = 1040;            // sahne şeridi
+const SRC_H = 1093, K = 2576 / 2000;          // K: konumlar 2000 px'lik önizlemeden ölçüldü
+const SPLIT = Math.round(636 * K);            // manzarada yolun başladığı satır (duvarın dibi)
+const S = BAND_H / SRC_H;                     // manzara ölçeği
+const V = 120;                                // yol hızı px/sn = kadının adım hızı (videoda 240 px/sn × 0,5)
+const UP_START = 250, UP_K = 0.8;             // üst katman
+const LO_START = 100;                         // yol
+const FG_S = 0.45, FG_K = 1.7, FG_TOP = 1050; // ön katman
+const WOMAN_X = 300, FEET_Y = BAND_Y + 700 * K * S; // kadın: kare solu, ayak çizgisi (duvarın önündeki yol)
+const FEET_IN_IMG = 318;
+
+// --- yardımcılar ---
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const eout = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const fade = (t, a, b) => clamp((t - a) / (b - a));
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+// Sabit tohumlu parçacıklar
+const R = rng(11);
+const DUST = Array.from({ length: 70 }, () => ({ x: R() * 1400, y: R() * BAND_H, r: 0.8 + R() * 2.2, k: 0.3 + R() * 1.2, ph: R() * 6.28, a: 0.25 + R() * 0.5 }));
+const SPARK = Array.from({ length: 60 }, () => ({ x: 1380 + R() * 650, y: 455 + R() * 100, ph: R() * 6.28, sp: 1.5 + R() * 3 }));
+const GULLS = [
+  { x: 700, y: 210, s: 1.0, sp: 26, ph: 0.0 },
+  { x: 760, y: 240, s: 0.8, sp: 24, ph: 1.3 },
+  { x: 1150, y: 160, s: 0.7, sp: 30, ph: 2.1 },
+];
+const SPRAY_SRC = [{ x: 330, y: 455, t0: 0.4 }, { x: 250, y: 430, t0: 2.0 }, { x: 420, y: 470, t0: 3.6 }, { x: 330, y: 455, t0: 5.4 }];
+const SPRAY = SPRAY_SRC.map((s, i) => { const r = rng(100 + i); return { ...s, p: Array.from({ length: 34 }, () => ({ vx: (r() - 0.6) * 70, vy: -60 - r() * 120, r: 1 + r() * 2.5 })) }; });
+
+// manzara (kaynak) koordinatını ekrana çevir — üst katman
+const upOff = (t) => UP_START + UP_K * V * t;
+const loOff = (t) => LO_START + V * t;
+const toScr = (sx, sy, off) => [sx * K * S - off, BAND_Y + sy * K * S];
+
+function drawBand(t) {
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, BAND_Y, W, BAND_H); ctx.clip();
+
+  // 1) üst katman: deniz, gemi, fener, gök
+  const uo = upOff(t);
+  ctx.drawImage(PANO, uo / S, 0, W / S, SPLIT, 0, BAND_Y, W, SPLIT * S);
+
+  // ışık huzmesi (sağ üstten), yavaş nefes alır
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 4; i++) {
+    const a = 0.05 + 0.035 * Math.sin(t * 0.7 + i * 1.7);
+    const x = 620 + i * 150 - (uo - UP_START) * 0.25;
+    const g = ctx.createLinearGradient(x, BAND_Y, x - 260, BAND_Y + 640);
+    g.addColorStop(0, `rgba(255,214,150,${a})`); g.addColorStop(1, 'rgba(255,214,150,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.moveTo(x - 30, BAND_Y); ctx.lineTo(x + 40, BAND_Y); ctx.lineTo(x - 200, BAND_Y + 660); ctx.lineTo(x - 320, BAND_Y + 660); ctx.fill();
+  }
+  ctx.restore();
+
+  // denizde parıltı (sakin sağ taraf)
+  ctx.save(); ctx.globalCompositeOperation = 'screen';
+  for (const s of SPARK) {
+    const [x, y] = toScr(s.x, s.y, uo);
+    if (x < -10 || x > W + 10) continue;
+    const a = Math.pow(Math.max(0, Math.sin(t * s.sp + s.ph)), 6) * 0.9;
+    if (a < 0.02) continue;
+    ctx.fillStyle = `rgba(255,236,190,${a})`;
+    ctx.fillRect(x - 3, y, 6, 1.4); ctx.fillRect(x - 0.7, y - 1.5, 1.4, 4);
+  }
+  ctx.restore();
+
+  // dalga serpintisi (sol kayalar)
+  for (const sp of SPRAY) {
+    const lt = ((t - sp.t0) % 5.2 + 5.2) % 5.2;
+    if (t < sp.t0 || lt > 1.6) continue;
+    const [bx, by] = toScr(sp.x, sp.y, uo);
+    for (const p of sp.p) {
+      const x = bx + p.vx * lt, y = by + p.vy * lt + 0.5 * 140 * lt * lt;
+      const a = (1 - lt / 1.6) * 0.75;
+      ctx.fillStyle = `rgba(245,248,250,${a})`;
+      ctx.beginPath(); ctx.arc(x, y, p.r * (1 + lt * 0.6), 0, 2 * PI); ctx.fill();
+    }
+  }
+
+  // fener ve kandiller
+  ctx.save(); ctx.globalCompositeOperation = 'screen';
+  const glow = (sx, sy, r, a, off) => {
+    const [x, y] = toScr(sx, sy, off);
+    if (x < -r || x > W + r) return;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(255,220,150,${a})`); g.addColorStop(0.35, `rgba(255,180,90,${a * 0.35})`); g.addColorStop(1, 'rgba(255,170,80,0)');
+    ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  };
+  glow(1718, 238, 70, 0.55 + 0.35 * Math.max(0, Math.sin(t * 2.2)), uo);           // fener
+  const fl = (i) => 0.55 + 0.18 * Math.sin(t * 9 + i * 2) + 0.1 * Math.sin(t * 23 + i);
+  glow(903, 512, 34, fl(0), uo); glow(1180, 428, 30, fl(1), uo); glow(1117, 537, 34, fl(2), uo);
+  ctx.restore();
+
+  // martılar
+  for (const g of GULLS) {
+    const [x0, y] = toScr(g.x, g.y, uo * 0.7);
+    const x = x0 - g.sp * t;
+    const f = Math.sin(t * 7 + g.ph) * 6 * g.s;
+    ctx.strokeStyle = 'rgba(60,52,48,0.75)'; ctx.lineWidth = 2 * g.s; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x - 12 * g.s, y - f); ctx.quadraticCurveTo(x - 5 * g.s, y - 4 * g.s, x, y); ctx.quadraticCurveTo(x + 5 * g.s, y - 4 * g.s, x + 12 * g.s, y - f); ctx.stroke();
+  }
+
+  // 2) yol (kadının adımlarıyla aynı hız)
+  const lo = loOff(t);
+  ctx.drawImage(PANO, lo / S, SPLIT, W / S, SRC_H - SPLIT, 0, BAND_Y + SPLIT * S, W, (SRC_H - SPLIT) * S);
+  // birleşim çizgisini yumuşat
+  const sg = ctx.createLinearGradient(0, BAND_Y + SPLIT * S - 6, 0, BAND_Y + SPLIT * S + 6);
+  sg.addColorStop(0, 'rgba(40,32,26,0)'); sg.addColorStop(0.5, 'rgba(40,32,26,0.35)'); sg.addColorStop(1, 'rgba(40,32,26,0)');
+  ctx.fillStyle = sg; ctx.fillRect(0, BAND_Y + SPLIT * S - 6, W, 12);
+
+  // 3) kadın + yumuşak gölge
+  const fi = Math.min(239, Math.floor(t * 24));
+  const sh = ctx.createRadialGradient(WOMAN_X + 120, FEET_Y + 2, 2, WOMAN_X + 120, FEET_Y + 2, 90);
+  sh.addColorStop(0, 'rgba(20,14,10,0.45)'); sh.addColorStop(1, 'rgba(20,14,10,0)');
+  ctx.save(); ctx.translate(0, FEET_Y); ctx.scale(1, 0.22); ctx.translate(0, -FEET_Y);
+  ctx.fillStyle = sh; ctx.fillRect(WOMAN_X + 20, FEET_Y - 90, 200, 180); ctx.restore();
+  ctx.drawImage(WALK[fi], WOMAN_X, FEET_Y - FEET_IN_IMG);
+
+  // altın tozlar (iki derinlikte)
+  ctx.save(); ctx.globalCompositeOperation = 'screen';
+  for (const d of DUST) {
+    const x = ((d.x - V * d.k * t * 0.6) % 1400 + 1400) % 1400 - 160;
+    const y = BAND_Y + d.y + Math.sin(t * 0.8 + d.ph) * 14;
+    const a = d.a * (0.6 + 0.4 * Math.sin(t * 1.3 + d.ph));
+    ctx.fillStyle = `rgba(255,222,160,${a})`;
+    ctx.beginPath(); ctx.arc(x, y, d.r, 0, 2 * PI); ctx.fill();
+  }
+  ctx.restore();
+
+  // 4) ön katman (bulanık, hızlı)
+  const fo = (LO_START + FG_K * V * t);
+  const fw = 2576 * FG_S, fh = 1093 * FG_S;
+  ctx.save(); ctx.filter = 'blur(5px) brightness(0.8)';
+  for (let k = -1; k < 4; k++) {
+    const x = k * fw - (fo % fw);
+    if (x > W || x + fw < 0) continue;
+    if (k % 2 === 0) ctx.drawImage(FG, x, FG_TOP, fw, fh);
+    else { ctx.save(); ctx.translate(x + fw, FG_TOP); ctx.scale(-1, 1); ctx.drawImage(FG, 0, 0, fw, fh); ctx.restore(); }
+  }
+  ctx.restore();
+
+  // sıcak renk + kenar kararması
+  const vg = ctx.createRadialGradient(W / 2, BAND_Y + BAND_H * 0.45, 200, W / 2, BAND_Y + BAND_H * 0.45, 900);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(8,6,4,0.45)');
+  ctx.fillStyle = vg; ctx.fillRect(0, BAND_Y, W, BAND_H);
+  ctx.restore();
+
+  // şeridin üst/alt kenarı zemine erir
+  const top = ctx.createLinearGradient(0, BAND_Y, 0, BAND_Y + 90);
+  top.addColorStop(0, '#0b0907'); top.addColorStop(1, 'rgba(11,9,7,0)');
+  ctx.fillStyle = top; ctx.fillRect(0, BAND_Y, W, 90);
+  const bot = ctx.createLinearGradient(0, BAND_Y + BAND_H - 110, 0, BAND_Y + BAND_H);
+  bot.addColorStop(0, 'rgba(11,9,7,0)'); bot.addColorStop(1, '#0b0907');
+  ctx.fillStyle = bot; ctx.fillRect(0, BAND_Y + BAND_H - 110, W, 110);
+}
+
+// Harf aralıklı yazı
+function spaced(s, x, y, sp, align = 'center') {
+  let w = 0; for (const ch of s) w += ctx.measureText(ch).width + sp; w -= sp;
+  let cx = align === 'center' ? x - w / 2 : x;
+  for (const ch of s) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; }
+}
+
+const PATH_X0 = 250, PATH_X1 = 830, PATH_Y = 318, NODES = 5;
+const nodeX = (i) => PATH_X0 + (PATH_X1 - PATH_X0) * (i / (NODES - 1));
+const COIN_LAND = 8.6;
+
+function drawHud(t) {
+  const a = ease(fade(t, 0.3, 1.4));
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#d8c49a'; ctx.font = '600 30px Cinzel';
+  spaced(`${L.num} · ${L.title}`, W / 2, 276, 6);
+
+  // yol çizgisi + düğümler
+  ctx.strokeStyle = 'rgba(196,169,106,0.35)'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([2, 7]); ctx.beginPath(); ctx.moveTo(PATH_X0, PATH_Y); ctx.lineTo(PATH_X1, PATH_Y); ctx.stroke(); ctx.setLineDash([]);
+  const prog = clamp(t / COIN_LAND);
+  ctx.strokeStyle = 'rgba(216,196,154,0.9)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(PATH_X0, PATH_Y); ctx.lineTo(PATH_X0 + (nodeX(1) - PATH_X0) * prog, PATH_Y); ctx.stroke();
+  for (let i = 0; i < NODES; i++) {
+    ctx.fillStyle = i === 0 ? '#d8c49a' : 'rgba(196,169,106,0.4)';
+    ctx.beginPath(); ctx.arc(nodeX(i), PATH_Y, i === 0 ? 4.5 : 3.5, 0, 2 * PI); ctx.fill();
+  }
+  // yürüyen nokta
+  const mx = PATH_X0 + (nodeX(1) - PATH_X0) * prog;
+  const g = ctx.createRadialGradient(mx, PATH_Y, 0, mx, PATH_Y, 16);
+  g.addColorStop(0, 'rgba(255,226,170,0.95)'); g.addColorStop(1, 'rgba(255,226,170,0)');
+  ctx.fillStyle = g; ctx.fillRect(mx - 16, PATH_Y - 16, 32, 32);
+  ctx.restore();
+}
+
+function drawCoin(t) {
+  // 7,2 sn: gökyüzünde belirir (büyüyerek, hale) → 8,6 sn: yol çizgisindeki 2. düğüme iner
+  if (t < 7.2) return;
+  const appear = eout(fade(t, 7.2, 7.9));
+  const fly = ease(fade(t, 8.0, COIN_LAND));
+  const sx = W / 2 + 120, sy = BAND_Y + 230, ex = nodeX(1), ey = PATH_Y;
+  const x = sx + (ex - sx) * fly, y = sy + (ey - sy) * fly - Math.sin(fly * PI) * 60;
+  const size = (150 - 108 * fly) * (0.6 + 0.4 * appear);
+  ctx.save(); ctx.globalAlpha = appear;
+  const halo = ctx.createRadialGradient(x, y, size * 0.3, x, y, size * 1.3);
+  halo.addColorStop(0, `rgba(255,214,150,${0.5 * (1 - fly * 0.6)})`); halo.addColorStop(1, 'rgba(255,214,150,0)');
+  ctx.fillStyle = halo; ctx.fillRect(x - size * 1.3, y - size * 1.3, size * 2.6, size * 2.6);
+  ctx.drawImage(COIN, x - size / 2, y - size / 2, size, size);
+  ctx.restore();
+  // inişte küçük parıltı
+  if (t > COIN_LAND) {
+    const k = fade(t, COIN_LAND, COIN_LAND + 0.8);
+    ctx.save(); ctx.globalAlpha = 1 - k;
+    ctx.strokeStyle = 'rgba(255,226,170,0.9)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(ex, ey, 22 + 30 * k, 0, 2 * PI); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawQuote(t) {
+  const a1 = ease(fade(t, 2.6, 3.8)), a2 = ease(fade(t, 3.4, 4.6));
+  ctx.save(); ctx.textAlign = 'center'; ctx.fillStyle = '#efe2c4'; ctx.font = 'italic 46px Cormorant';
+  ctx.globalAlpha = a1; ctx.fillText(L.q1, W / 2, BAND_Y + BAND_H + 52 - 10 * (1 - a1));
+  ctx.globalAlpha = a2; ctx.fillText(L.q2, W / 2, BAND_Y + BAND_H + 108 - 10 * (1 - a2));
+  ctx.restore();
+}
+
+function renderFrame(ms) {
+  const t = ms / 1000;
+  ctx.fillStyle = '#0b0907'; ctx.fillRect(0, 0, W, H);
+  drawBand(t);
+  drawHud(t);
+  drawQuote(t);
+  drawCoin(t);
+  // açılış: siyahtan
+  const o = 1 - ease(fade(t, 0, 0.9));
+  if (o > 0) { ctx.fillStyle = `rgba(0,0,0,${o})`; ctx.fillRect(0, 0, W, H); }
+}
+
+async function init(lang) { L = T[lang] || T.tr; await document.fonts.ready; renderFrame(0); }
+window.init = init; window.renderFrame = renderFrame;
+</script>
+</body>
+</html>
