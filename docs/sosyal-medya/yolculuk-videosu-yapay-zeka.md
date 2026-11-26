@@ -172,6 +172,16 @@ Light: deep golden-hour light from the right, long soft shadows.
 ```
 Ön katman nesneler: `tall ripe wheat stalks and a few red poppies, a wooden fence post, dry grass (no green); deep golden backlight from the right.`
 
+## STOIKOS yazısı sahnelerde (kullanıcı isteği, 26 Kasım 2026)
+Yazıyı Gemini'ye **yazdırmıyoruz** (harfleri bozuyor); her dünyada bir nesnenin üstüne **kodla** boyanır/oyulur,
+katmanla birlikte kayar. Komutlara şu cümleyi de ekle ki o yüzey **boş ve düz** kalsın:
+- I · Kontrol Dairesi: yelkenlinin gövdesi (yapıldı: pencerelerin altında altın boyalı gemi adı).
+- II · İç Sakinlik: `Above the courtyard's wooden door, a plain smooth rectangular stone lintel with NO carving and NO letters.`
+- III · Sabır: `The woven basket has one plain smooth wooden board strapped across its front, with NO marks.`
+- IV · Kayıpla Yaşamak: `The wooden bench has a wide, plain, smooth backrest plank facing the viewer, with NO carving.`
+- V · Az ile Yetinmek: `Above the farmhouse door, a plain smooth wooden lintel beam with NO letters.`
+Ayrıca videonun üstünde, bölüm başlığının üstünde sürekli küçük logo + STOIKOS; sonda büyük logo.
+
 ## Benim tarafım
 - Dünyalar arası geçiş: kadın yürümeye devam eder, sahne ışıklı yumuşak bir erimeyle değişir (düz kesme değil).
 - Kadının ışığı dünyaya göre renklendirilir (gecede mavi + kandil turuncusu).

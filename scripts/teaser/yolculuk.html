@@ -146,6 +146,9 @@ function drawBand(t) {
   glow(903, 512, 34, fl(0), uo); glow(1180, 428, 30, fl(1), uo); glow(1117, 537, 34, fl(2), uo);
   ctx.restore();
 
+  // geminin adı: gövdede, pencerelerin altında (gerçek kaynak pikseli)
+  shipName(uo);
+
   // martılar
   for (const g of GULLS) {
     const [x0, y] = toScr(g.x, g.y, uo * 0.7);
@@ -207,6 +210,52 @@ function drawBand(t) {
   const bot = ctx.createLinearGradient(0, BAND_Y + BAND_H - 110, 0, BAND_Y + BAND_H);
   bot.addColorStop(0, 'rgba(11,9,7,0)'); bot.addColorStop(1, '#0b0907');
   ctx.fillStyle = bot; ctx.fillRect(0, BAND_Y + BAND_H - 110, W, 110);
+}
+
+// "STOIKOS" — Gemini'ye yazdırılmaz (harfleri bozuyor); kodla nesnenin üstüne boyanır, katmanla birlikte kayar.
+const NAME_CV = document.createElement('canvas'); NAME_CV.width = 300; NAME_CV.height = 48;
+function shipName(off) {
+  const x = 1655 * S - off, y = BAND_Y + 742 * S;
+  if (x < -200 || x > W + 200) return;
+  // Harfler ayrı tuvalde: altın boya, üstüne gövdenin kendi tahta dokusu (overlay) → boyanmış, eskimiş görünüm
+  const n = NAME_CV.getContext('2d');
+  n.clearRect(0, 0, 300, 48);
+  n.globalCompositeOperation = 'source-over';
+  n.font = '600 26px Cinzel'; n.textBaseline = 'alphabetic'; n.fillStyle = 'rgb(226,192,126)';
+  let w = 0; for (const ch of 'STOIKOS') w += n.measureText(ch).width + 5; w -= 5;
+  let cx = 150 - w / 2; for (const ch of 'STOIKOS') { n.fillText(ch, cx, 32); cx += n.measureText(ch).width + 5; }
+  n.globalCompositeOperation = 'source-atop'; n.globalAlpha = 0.4;
+  n.filter = 'contrast(1.6) brightness(1.4)';
+  n.drawImage(PANO, 1655 - 150 / S, 742 - 32 / S, 300 / S, 48 / S, 0, 0, 300, 48);
+  n.filter = 'none'; n.globalAlpha = 1;
+  ctx.save();
+  ctx.globalAlpha = 0.5; ctx.filter = 'blur(0.6px) brightness(0.15)'; ctx.drawImage(NAME_CV, x - 150 + 1, y - 32 + 1.5);  // boyanın gölgesi
+  ctx.filter = 'none'; ctx.globalAlpha = 0.95; ctx.drawImage(NAME_CV, x - 150, y - 32);
+  ctx.restore();
+}
+
+// Marka işareti — components/StoikosMark.tsx ve constants/shareCard.ts ile aynı geometri
+const MARK_ARC = new Path2D('M296 688 H415 A232 232 0 1 1 609 688 H728');
+function drawMark(x, y, size) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(size / 640, size / 640); ctx.translate(-192, -162);
+  const orb = ctx.createRadialGradient(480, 430, 10, 512, 477, 128);
+  orb.addColorStop(0, '#f6e6c0'); orb.addColorStop(0.45, '#cfae6c'); orb.addColorStop(1, '#6e5530');
+  ctx.fillStyle = orb; ctx.beginPath(); ctx.arc(512, 477, 128, 0, 2 * PI); ctx.fill();
+  const gold = ctx.createLinearGradient(0, 250, 0, 760);
+  gold.addColorStop(0, '#f4e2b8'); gold.addColorStop(0.45, '#d4b376'); gold.addColorStop(1, '#9a7b44');
+  ctx.strokeStyle = gold; ctx.lineWidth = 40; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.stroke(MARK_ARC); ctx.restore();
+}
+
+function drawBrand(t) {
+  const a = ease(fade(t, 0.2, 1.2));
+  ctx.save(); ctx.globalAlpha = a * 0.9;
+  ctx.font = '600 20px Cinzel'; ctx.textAlign = 'left'; ctx.fillStyle = '#d8c49a';
+  let w = 0; for (const ch of 'STOIKOS') w += ctx.measureText(ch).width + 5; w -= 5;
+  const ms = 26, gap = 10, x0 = (W - (ms + gap + w)) / 2, y = 222;
+  drawMark(x0, y - 20, ms);
+  spaced('STOIKOS', x0 + ms + gap, y, 5, 'left');
+  ctx.restore();
 }
 
 // Harf aralıklı yazı
@@ -283,6 +332,7 @@ function renderFrame(ms) {
   drawBand(t);
   drawHud(t);
   drawQuote(t);
+  drawBrand(t);
   drawCoin(t);
   // açılış: siyahtan
   const o = 1 - ease(fade(t, 0, 0.9));
