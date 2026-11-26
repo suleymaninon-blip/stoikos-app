@@ -100,3 +100,80 @@ No text, no logo, no watermark.
 - Katmanlar: gökyüzü/manzara yavaş, kadın sabit, ön katman hızlı kayar; üstüne kodla dalga köpüğü, uçuşan su damlaları, ışık huzmesi parıltısı.
 - **Dikey 9:16** (Instagram): manzara ekranın ortasında geniş bir şerit; üst siyah alanda bölüm başlığı "I · KONTROL DAİRESİ" ve yol çizgisi, sonda dümen sikkesi çizgiye oturur; alt alanda motif cümlesi ("Denizi sen seçmezsin; dümeni sen tutarsın."). Ayrıca **yatay 16:9** sürüm (başlık sol üstte, örnekteki gibi).
 - Ses: dalga + martı (sentez/serbest kayıt) + adımlar; müzik kararı tüm video için birlikte.
+
+---
+
+# 2. adım: diğer dört dünya (26 Kasım 2026, deneme beğenildi)
+
+Kadının yürüyüşü **yeniden çekilmez** (Parça 2 her dünyada kullanılır). Her dünya için yalnız iki resim:
+**manzara** (21:9) ve **ön katman** (21:9, yeşil zeminli).
+
+**Üslup farkını kapatmak için yeni kural:** manzara üretirken **Parça 1 resmini (yeşil zeminli kadın)
+üslup örneği olarak yükle.** Komut onu sahneye koymamasını açıkça söylüyor. Kontrol Dairesi manzarası
+kadından biraz daha gerçekçi çıkmıştı; bu, dünyaları kahramanla aynı çizgi film diline çeker.
+
+Her resim için **yeni sohbet**. Dosya adları: `parca-3-manzara-<dünya>.jpg`, `parca-4-on-katman-<dünya>.jpg`
+(dünya: `sakinlik`, `sabir`, `kayip`, `yetinmek`). Bana gönderirken hangisi olduğunu yazman yeter.
+
+Ortak kalıp (her manzara komutunun başı aynı):
+```
+The attached image is ONLY a STYLE reference (character rendering, materials, colours, lighting softness). Do NOT include this woman or any person in the new image.
+
+Create ONE very wide panoramic image, 21:9, for a side-scrolling scene. NO PEOPLE and NO ANIMALS anywhere (unless listed below).
+
+STYLE: exactly the same stylized 3D animated feature film look as the reference: soft rounded shapes, slightly simplified forms, rich painterly textures, gentle haze, cozy and calm. Not photorealistic.
+
+WALKING LINE: a flat path runs PERFECTLY HORIZONTALLY across the whole image; its walkable surface is at about 78–85% of the image height. Below it only the simple path surface, nothing tall. Above the path, nothing should overlap the path itself.
+```
+Ön katman komutu her dünyada Parça 4'teki ile aynı, yalnız **nesneler ve ışık** satırı değişir (aşağıda).
+Hiçbir resimde yazı, tabela, harf, logo, sembollü bayrak yok.
+
+## II · İç Sakinlik — kandil (motif: "Dışarısı rüzgârlı; alev içeride sakin.")
+Manzara (ortak kalıbın altına):
+```
+SCENE: a quiet hillside village path at blue night, strong wind. The path is pale stone, running along low whitewashed stone walls.
+- Left third: wind-bent cypress and olive trees, leaves streaming sideways, dark clouds racing across a big full moon.
+- Middle: a small stone courtyard behind the low wall: a wooden door, a bench, and several small clay oil lamps on the wall and in niches, their flames tall, warm and perfectly STILL despite the wind.
+- Right third: the wind calms; a view over dark rolling hills to a far bay with tiny warm village lights; stars appear.
+Light: cool moonlit blue everywhere, with warm orange pools of lamplight on the path. 
+```
+Ön katman nesneler: `dark wind-bent tall grass, wild lavender stalks, a few round stones and a broken clay jar; cool moonlight rim from the upper left, a faint warm glow from the right.`
+
+## III · Sabır — incir (motif: "İncir bir saatte olgunlaşmaz.")
+Manzara:
+```
+SCENE: a sunny late-summer morning on terraced Mediterranean hills. The path is packed earth edged with flat stones, running past old dry-stone terrace walls.
+- Left third: young fig saplings, thin and small, with green unripe figs; morning mist in the valley below.
+- Middle: one huge ancient fig tree with a twisted trunk and broad leaves, heavy with ripe purple figs; a wooden ladder and a woven basket resting against it; bees and small butterflies around it.
+- Right third: terraces of vines and olive trees descending to a calm blue sea far below; a few white stone houses.
+Light: soft warm morning sunlight from the right, dappled leaf shadows on the path.
+```
+Ön katman nesneler: `big broad fig leaves, a few fallen ripe figs, wild thyme, a weathered wooden stake; warm morning rim light from the right.`
+
+## IV · Kayıpla Yaşamak — dal ve yaprak (motif: "Yaprak düşer; dal onu hatırlar.")
+Manzara:
+```
+SCENE: a tall autumn forest at late afternoon, soft and gentle, not gloomy. The path is a wide trail covered with fallen golden and red leaves.
+- Left third: tall bare grey trunks in soft mist, the last leaves on the branches.
+- Middle: a great old oak with one long low branch reaching over the path; golden leaves drifting down from it through shafts of light; a simple old wooden bench under it.
+- Right third: the forest opens to a small calm lake reflecting the warm sky; one young sapling with fresh green buds stands by the water.
+Light: warm, low, honey-coloured sunbeams through mist; quiet and tender.
+```
+Ön katman nesneler: `ferns turning bronze, piles of fallen leaves, a mossy fallen log, a few mushrooms; warm low sunlight from the right.`
+
+## V · Az ile Yetinmek — buğday (motif: "Bir başak, bir ekmek. Yeter.")
+Manzara:
+```
+SCENE: endless golden wheat fields at sunset. The path is a narrow dirt track between the fields.
+- Left third: rolling hills of ripe wheat bending gently in the breeze, a single old olive tree.
+- Middle: a small simple stone farmhouse with a wooden door, a round clay bread oven beside it with thin smoke rising, a wooden table outside with one loaf of bread and a clay jug.
+- Right third: the fields open to a wide sky glowing orange and pink, the sun touching the horizon, the first star above.
+Light: deep golden-hour light from the right, long soft shadows.
+```
+Ön katman nesneler: `tall ripe wheat stalks and a few red poppies, a wooden fence post, dry grass (no green); deep golden backlight from the right.`
+
+## Benim tarafım
+- Dünyalar arası geçiş: kadın yürümeye devam eder, sahne ışıklı yumuşak bir erimeyle değişir (düz kesme değil).
+- Kadının ışığı dünyaya göre renklendirilir (gecede mavi + kandil turuncusu).
+- Her dünyanın kendi canlıları kodla: II rüzgârda yapraklar + kıpırdamayan alevler, III arılar + kelebekler, IV düşen yapraklar, V başakların arasında uçuşan polen + bacadan duman.
+- Son: beş sikke yan yana, logo, "Yürüdüğün her yol bir iz bırakır.", stoikos.app. Yaklaşık 60 sn.
