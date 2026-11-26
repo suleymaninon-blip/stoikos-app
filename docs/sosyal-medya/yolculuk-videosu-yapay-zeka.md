@@ -3,10 +3,10 @@
 > Hazırlandı: 26 Kasım 2026. Kullanıcının X'te gördüğü, çok beğenilen yandan kayan "yolculuk"
 > animasyonundan esinlenildi (karakterleri, sahneleri, yazıları **kullanılmıyor**; yalnız fikir:
 > yürüyerek dünyadan dünyaya geçmek + sol üstte sade bölüm başlığı).
-> Karar (kullanıcı): **B yolu** (Gemini resmi + kodla hareket), **iki kahraman birlikte**.
+> Karar (kullanıcı): **B yolu** (Gemini resmi + kodla hareket), **yalnız kadın** (aynı gün "ikisi birlikte"den vazgeçildi).
+> Görünüm: örnekteki gibi masalsı 3D animasyon (gerçekçi değil).
 >
-> Fikir: kadın (`bahce-videosu/00-kadin-referans.png`) ve filozof
-> (`stoaci-modern-hayatta/00-filozof-yuz-referans.png`) yan yana yürür; her dünya bir programdır.
+> Fikir: kadın (`bahce-videosu/00-kadin-referans.png`) yürür; her dünya bir programdır.
 > Bölüm sonunda o programın sikkesi üstteki yol çizgisine oturur. Sonda: "Yürüdüğün her yol bir iz bırakır."
 >
 > **Bu deneme:** yalnız I · Kontrol Dairesi, ~10 sn. Beğenilirse diğer dünyalar
@@ -14,8 +14,8 @@
 
 ## Nasıl birleşecek (Süleyman için kısa)
 Gemini'den **dört parça** istiyoruz; ben bunları üst üste koyup hareketlendiriyorum:
-1. **Kahramanlar** (tek resim, yeşil zeminde) → üslubun ve yüzlerin "kalıbı".
-2. **Yürüyüş videosu** (8 sn, yeşil zeminde) → yeşili silip kahramanları manzaranın önünde yürüteceğim.
+1. **Kahraman** (tek resim, yeşil zeminde) → üslubun ve yüzün "kalıbı".
+2. **Yürüyüş videosu** (8 sn, yeşil zeminde) → yeşili silip kadını manzaranın önünde yürüteceğim.
 3. **Manzara** (geniş resim, insansız) → yavaşça kayan arka plan.
 4. **Ön katman** (yeşil zeminde eğreltiotu ve kayalar) → önde daha hızlı kayan bulanık katman; derinlik hissi bundan gelir.
 
@@ -24,29 +24,25 @@ Google Drive bağlantısıyla da gönderebilirsin).
 
 ## Kurallar
 - Üslup her parçada aynı cümleyle: **STYLE** paragrafı aynen kopyalanır.
-- Yeşil zemin her zaman **düz, tek renk, gölgesiz** (#00B140). Yeşil giysi/yaprak kahramanlarda yok.
+- Yeşil zemin her zaman **düz, tek renk, gölgesiz** (#00B140). Kahramanda yeşil giysi/yaprak yok.
 - Hiçbir yerde yazı, tabela, logo yok (yazıları ben ekliyorum). Gerçek kişi adı yok.
-- Kahramanlar hep **yandan**, sağa doğru yürür; kamera onlarla aynı hızda kayar.
+- Kahraman hep **yandan**, sağa doğru yürür; kamera onunla aynı hızda kayar.
 
 ---
 
-## Parça 1 · Kahramanlar (resim)
-**Yeni sohbet. Yükle:** `bahce-videosu/00-kadin-referans.png` **ve** `stoaci-modern-hayatta/00-filozof-yuz-referans.png`
-(resim üretiminde iki referans sorun çıkarmıyor; videoda çıkarıyordu). Biçim: **16:9**.
+## Parça 1 · Kahraman (resim)
+**Yeni sohbet. Yükle:** yalnız `bahce-videosu/00-kadin-referans.png`. Biçim: **16:9**.
 
 ```
 Create ONE image, 16:9.
 
 STYLE: a stylized 3D animated feature film look, like a handcrafted miniature world: soft rounded shapes, slightly simplified proportions, rich painterly textures, warm golden-hour lighting, gentle rim light, cozy and calm. Not photorealistic, not anime, not pixel art.
 
-The two attached photos are ONLY references for the faces and hair. Turn both people into characters in this STYLE, keeping their faces recognisable.
+The attached photo is ONLY a reference for the face and hair. Turn this woman into a character in this STYLE, keeping her face recognisable.
 
-CHARACTERS, side by side, both in full-body SIDE VIEW walking to the RIGHT, mid-stride, calm relaxed posture, looking ahead:
-- LEFT (slightly behind): a calm woman about 40, olive skin, dark brown eyes, very dark brown hair with a few silver strands in a long loose braid over one shoulder. Ankle-length undyed off-white linen tunic, thin brown leather belt, long sand-coloured wool cloak over both shoulders, simple brown leather sandals. Hood down.
-- RIGHT (slightly in front): an old philosopher about 60, short wavy grey hair, short neat grey beard. Same clothes: off-white linen tunic, brown belt, sand-coloured cloak over both shoulders, brown sandals. Hood down. Hands empty.
-They are the same height scale, small and charming, walking together like old friends.
+CHARACTER, in the centre, full-body SIDE VIEW walking to the RIGHT, mid-stride, calm relaxed posture, looking ahead: a calm woman about 40, olive skin, dark brown eyes, very dark brown hair with a few silver strands in a long loose braid over one shoulder. Ankle-length undyed off-white linen tunic, thin brown leather belt, long sand-coloured wool cloak over both shoulders, simple brown leather sandals. Hood down, head bare. Hands empty: no bag, no stick, no jewellery. Small and charming, she fills about half of the image height.
 
-BACKGROUND: a perfectly flat, uniform chroma-key green (#00B140) filling the whole image. No floor, no shadow on the background, no gradient, no other objects. Nothing green on the characters.
+BACKGROUND: a perfectly flat, uniform chroma-key green (#00B140) filling the whole image. No floor, no shadow on the background, no gradient, no other objects. Nothing green on the character.
 No text, no logo, no watermark.
 ```
 
@@ -54,11 +50,11 @@ No text, no logo, no watermark.
 **Yeni sohbet. Yükle:** yalnız **Parça 1'de çıkan resim** (ilk kare olarak). Biçim: **16:9, 8 sn**.
 
 ```
-Use the attached image as the FIRST FRAME and keep exactly the same two characters, the same STYLE and the same flat chroma-key green background (#00B140) for the whole video.
+Use the attached image as the FIRST FRAME and keep exactly the same woman, the same STYLE and the same flat chroma-key green background (#00B140) for the whole video.
 
 STYLE: a stylized 3D animated feature film look, soft rounded shapes, painterly textures, warm golden lighting.
 
-ACTION (one continuous 8-second shot): the woman and the old philosopher walk side by side to the RIGHT at a slow, calm, steady pace. Full-body side view the whole time. The CAMERA TRACKS WITH THEM at exactly their speed, so they stay in the same place in the frame, as in a side-scrolling game. Natural walking cycle: legs and arms swing gently, cloaks sway softly behind them. Halfway through, the woman turns her head towards him for a moment and smiles; he nods. Then both look ahead again.
+ACTION (one continuous 8-second shot): the woman walks to the RIGHT at a slow, calm, steady pace. Full-body side view the whole time. The CAMERA TRACKS WITH HER at exactly her speed, so she stays in the same place in the frame, as in a side-scrolling game. Natural walking cycle: legs and arms swing gently, her cloak and braid sway softly behind her. Halfway through, she lifts her face slightly as if feeling a sea breeze, takes one slow breath with a small calm smile, then looks ahead again and keeps walking.
 
 The background stays a perfectly flat uniform green (#00B140) for all 8 seconds: no floor, no shadows, no light changes, no objects, no particles, no camera shake, no zoom, no cuts.
 Audio: soft footsteps only. No music, no spoken words in any language.
@@ -101,6 +97,6 @@ No text, no logo, no watermark.
 
 ## Benim tarafım (parçalar gelince)
 - Yeşil zemin silinir (ffmpeg `chromakey`), yürüyüş döngüye alınır.
-- Katmanlar: gökyüzü/manzara yavaş, kahramanlar sabit, ön katman hızlı kayar; üstüne kodla dalga köpüğü, uçuşan su damlaları, ışık huzmesi parıltısı.
+- Katmanlar: gökyüzü/manzara yavaş, kadın sabit, ön katman hızlı kayar; üstüne kodla dalga köpüğü, uçuşan su damlaları, ışık huzmesi parıltısı.
 - **Dikey 9:16** (Instagram): manzara ekranın ortasında geniş bir şerit; üst siyah alanda bölüm başlığı "I · KONTROL DAİRESİ" ve yol çizgisi, sonda dümen sikkesi çizgiye oturur; alt alanda motif cümlesi ("Denizi sen seçmezsin; dümeni sen tutarsın."). Ayrıca **yatay 16:9** sürüm (başlık sol üstte, örnekteki gibi).
 - Ses: dalga + martı (sentez/serbest kayıt) + adımlar; müzik kararı tüm video için birlikte.
