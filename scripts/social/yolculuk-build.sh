@@ -5,15 +5,16 @@
 # Parçalar: docs/sosyal-medya/yolculuk-videosu/ (Gemini; komutlar docs/sosyal-medya/yolculuk-videosu-yapay-zeka.md):
 #   parca-2-yuruyus.mp4, parca-3-manzara-<dünya>.jpg, parca-4-on-katman-<dünya>.jpg
 # Hazırlık: yürüyüşten ve ön katmanlardan yeşil silinir (kadin-kareler/, on-katman-saydam-<dünya>.png; git'e girmez).
-# Ses: dünyaya göre kodla ortam sesi (I dalga, II rüzgâr, III kuş + arı, IV yaprak hışırtısı) + altında Grieg "Sabah" (Musopen, kamu malı kayıt).
+# Ses: dünyaya göre kodla ortam sesi (I dalga, II rüzgâr, III kuş + arı, IV yaprak hışırtısı, V cırcır böceği) + kapanışta ses imzası + altında Grieg "Sabah" (Musopen, kamu malı kayıt).
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 LANGS="${1:-tr,en}"
 D=docs/sosyal-medya/yolculuk-videosu
 TMP="${YOLCULUK_TMP:-${TMPDIR:-/tmp}/yolculuk-build}"; mkdir -p "$TMP"
 MUSIC=docs/sosyal-medya/muzik/grieg-sabah-musopen.mp3
+SIG=docs/sosyal-medya/muzik/stoikos-imza.mp3
 WORLDS=$(grep -o "{ id: '[a-z]*'" scripts/teaser/yolculuk.html | sed "s/{ id: '//; s/'//")
-NW=$(echo "$WORLDS" | wc -l); DUR=$((NW*10))
+NW=$(echo "$WORLDS" | wc -l); END=$((NW*10)); DUR=$((END+7))   # +7 sn kapanış
 echo "dünyalar: $(echo $WORLDS) · $DUR sn"
 
 # 1) Yeşil zemin
@@ -37,10 +38,11 @@ if [ -z "${SKIP_RENDER:-}" ]; then
 fi
 
 # 3) Ses: her dünyanın ortam sesi kendi 10 sn'sinde (geçişlerde 1,2 sn erir) + altında müzik.
-#    Ortam sesleri kodla: kontrol = dalga, sakinlik = rüzgâr, sabir = kuş cıvıltısı + arı vızıltısı, kayip = yaprak hışırtısı.
-python3 - "$DUR" $WORLDS > "$TMP/ses-filtre.txt" <<'PY'
+#    Ortam sesleri kodla: kontrol = dalga, sakinlik = rüzgâr, sabir = kuş cıvıltısı + arı vızıltısı, kayip = yaprak hışırtısı, yetinmek = cırcır böceği.
+#    Kapanışta logo ile Stoikos ses imzası.
+python3 - "$DUR" "$END" $WORLDS > "$TMP/ses-filtre.txt" <<'PY'
 import sys
-dur=int(sys.argv[1]); ws=sys.argv[2:]; n=len(ws)
+dur=int(sys.argv[1]); end=int(sys.argv[2]); ws=sys.argv[3:]; n=len(ws)
 def gate(i):
     a = "1" if i==0 else f"clip((t-{10*i-0.6})/1.2\\,0\\,1)"
     b = "1" if i==n-1 else f"clip(({10*(i+1)+0.6}-t)/1.2\\,0\\,1)"
@@ -48,6 +50,7 @@ def gate(i):
 src={
  'kontrol': f"anoisesrc=color=brown:amplitude=0.6:duration={dur}:sample_rate=48000",
  'sakinlik': f"anoisesrc=color=pink:amplitude=0.5:duration={dur}:sample_rate=48000",
+ 'yetinmek': f"aevalsrc='0.035*sin(2*PI*4300*t)*gt(sin(2*PI*29*t)\\\\,0)*gt(sin(2*PI*1.3*t)\\\\,0.2)+0.03*sin(2*PI*5100*t)*gt(sin(2*PI*33*t)\\\\,0)*gt(sin(2*PI*0.9*t+2)\\\\,0.3)':s=48000:d={dur}",
  'kayip': f"anoisesrc=color=pink:amplitude=0.5:duration={dur}:sample_rate=48000",
  'sabir': f"aevalsrc='0.22*sin(2*PI*(2700+900*sin(2*PI*15*t))*t)*gt(sin(2*PI*0.62*t+1)\\,0.93)+0.16*sin(2*PI*(3400+600*sin(2*PI*22*t))*t)*gt(sin(2*PI*0.41*t)\\,0.95)+0.05*sin(2*PI*185*t+3*sin(2*PI*6*t))+0.03*sin(2*PI*370*t)':s=48000:d={dur}",
 }
@@ -55,6 +58,7 @@ shape={
  'kontrol': "lowpass=f=900,volume='(0.35+0.3*sin(2*PI*t/5.2))*G':eval=frame",
  'sakinlik': "highpass=f=300,lowpass=f=2400,volume='(0.18+0.14*sin(2*PI*t/3.1)+0.06*sin(2*PI*t/1.3))*G':eval=frame",
  'sabir': "volume='0.9*G':eval=frame",
+ 'yetinmek': "volume='1.0*G':eval=frame",
  'kayip': "highpass=f=700,lowpass=f=4200,volume='(0.09+0.06*sin(2*PI*t/4.3)+0.05*gt(sin(2*PI*t*1.7)\\\\,0.6))*G':eval=frame",
 }
 ins=[]; parts=[]
@@ -62,13 +66,14 @@ for i,w in enumerate(ws):
     ins.append(f'-f lavfi -i "{src[w]}"')
     parts.append(f"[{i}:a]{shape[w].replace('G', '('+gate(i)+')')},pan=stereo|c0=c0|c1=c0[w{i}]")
 m=n
-parts.append(f"[{m}:a]atrim=0:{dur},asetpts=N/SR/TB,aresample=48000,volume=4dB,afade=t=in:d=2.5[m]")
-mix="".join(f"[w{i}]" for i in range(n))+"[m]"
-parts.append(f"{mix}amix=inputs={n+1}:normalize=0,afade=t=in:d=0.8,afade=t=out:st={dur-1}:d=1,loudnorm=I=-16:TP=-1.5:LRA=11[a]")
+parts.append(f"[{m}:a]atrim=0:{dur},asetpts=N/SR/TB,aresample=48000,volume=4dB,afade=t=in:d=2.5,afade=t=out:st={end+3}:d=3.5[m]")
+parts.append(f"[{m+1}:a]aresample=48000,volume=-6dB,adelay={end*1000+2400}|{end*1000+2400}[s]")   # logo ile ses imzası
+mix="".join(f"[w{i}]" for i in range(n))+"[m][s]"
+parts.append(f"{mix}amix=inputs={n+2}:normalize=0,afade=t=in:d=0.8,afade=t=out:st={dur-1}:d=1,loudnorm=I=-16:TP=-1.5:LRA=11[a]")
 print(" ".join(ins)); print(";".join(parts))
 PY
 INPUTS=$(sed -n 1p "$TMP/ses-filtre.txt"); FILTER=$(sed -n 2p "$TMP/ses-filtre.txt")
-eval ffmpeg -y -loglevel error $INPUTS -i "$MUSIC" -filter_complex "\"$FILTER\"" -map "[a]" -c:a aac -b:a 192k "$TMP/ses.m4a"
+eval ffmpeg -y -loglevel error $INPUTS -i "$MUSIC" -i "$SIG" -filter_complex "\"$FILTER\"" -map "[a]" -c:a aac -b:a 192k "$TMP/ses.m4a"
 
 IFS=, read -ra LS <<< "$LANGS"
 for l in "${LS[@]}"; do

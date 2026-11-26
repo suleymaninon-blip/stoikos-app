@@ -293,6 +293,53 @@ function brandBench(c, w, uo) {
   c.restore();
 }
 
+
+// ---------- V · Az ile Yetinmek ----------
+const RY = rng(71);
+const POLLEN = Array.from({ length: 60 }, () => ({ x: RY() * 1300, y: 200 + RY() * 700, r: 0.8 + RY() * 1.8, ph: RY() * 6.28, k: 0.4 + RY() }));
+const SMOKE = Array.from({ length: 22 }, (_, i) => ({ t0: i * 0.45, dx: (RY() - 0.5) * 14, r: 8 + RY() * 8 }));
+
+function fxYetinmek(c, lt, uo) {
+  c.save(); c.globalCompositeOperation = 'screen';
+  glow(c, ...P(1760 * K, 375 * K, uo), 320, 0.34 + 0.05 * Math.sin(lt * 0.6), '255,200,140');     // batan güneş
+  const [sx, sy] = P(1560 * K, 30 * K, uo);                                                        // ilk yıldız
+  glow(c, sx, sy, 14, 0.5 + 0.4 * Math.sin(lt * 2.4), '255,250,235');
+  // tarlanın üstünden geçen rüzgâr dalgası: başaklarda kayan ışık
+  for (let k = 0; k < 2; k++) {
+    const wx = ((lt * 170 + k * 700) % 1600) - 300;
+    const g = c.createLinearGradient(wx - 160, 0, wx + 160, 0);
+    g.addColorStop(0, 'rgba(255,220,150,0)'); g.addColorStop(0.5, 'rgba(255,220,150,0.16)'); g.addColorStop(1, 'rgba(255,220,150,0)');
+    c.fillStyle = g; c.fillRect(wx - 160, 400 * K * S, 320, 230 * K * S);
+  }
+  c.restore();
+  // fırın bacasından duman: yükselir, genişler, sağa kıvrılır, söner
+  const [cx, cy] = P(1222 * K, 338 * K, uo);
+  for (const p of SMOKE) {
+    const l = ((lt - p.t0) % 9.9 + 9.9) % 9.9; if (l > 5) continue;
+    const k = l / 5, y = cy - k * 330, x = cx + p.dx + Math.sin(l * 1.4 + p.t0) * 10 + k * k * 60;
+    const r = p.r + k * 26;
+    const g = c.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(232,222,226,${0.22 * (1 - k)})`); g.addColorStop(1, 'rgba(232,222,226,0)');
+    c.fillStyle = g; c.fillRect(x - r, y - r, 2 * r, 2 * r);
+  }
+  // polen
+  c.save(); c.globalCompositeOperation = 'screen';
+  for (const q of POLLEN) {
+    const x = ((q.x - 40 * q.k * lt) % 1300 + 1300) % 1300 - 110, y = q.y + Math.sin(lt * 0.9 + q.ph) * 16;
+    c.fillStyle = `rgba(255,226,160,${0.35 + 0.35 * Math.sin(lt * 1.6 + q.ph)})`; c.beginPath(); c.arc(x, y, q.r, 0, 2 * PI); c.fill();
+  }
+  c.restore();
+}
+
+// Kapının üstündeki tahta lentoya oyulmuş STOIKOS (önizleme 907, 318)
+function brandLintelWood(c, w, uo) {
+  const [x, y] = P(907 * K, 327 * K, uo); if (x < -200 || x > W + 200) return;
+  c.save(); c.font = '600 21px Cinzel'; c.textBaseline = 'alphabetic';
+  c.fillStyle = 'rgba(255,230,190,0.4)'; spaced(c, 'STOIKOS', x, y + 1.3, 4.5);
+  c.fillStyle = 'rgba(58,34,18,0.92)'; spaced(c, 'STOIKOS', x, y, 4.5);
+  c.restore();
+}
+
 const WORLDS = [
   { id: 'kontrol', coin: 'control', upStart: 250, upK: 0.8, loStart: 100, split: 636 * K, feet: 700 * K, fgTop: 1050,
     fx: fxKontrol, brand: brandShip, woman: () => ({ b: 1, s: 1, blue: 0, warm: 0 }), dust: '255,222,160' },
@@ -309,6 +356,8 @@ const WORLDS = [
   // Gemini resmin altını (src 944+) boyamamış: srcH 940 → resim biraz büyür, o şerit kadraj dışında kalır
   { id: 'kayip', coin: 'grief', upStart: 372, upK: 0.85, loStart: 100, split: 665 * K, feet: 692 * K, fgTop: 990, srcH: 940,
     fx: fxKayip, brand: brandBench, dust: '255,225,170', woman: () => ({ b: 0.98, s: 0.95, blue: 0, warm: 0.14 }) },
+  { id: 'yetinmek', coin: 'enough', upStart: 182, upK: 0.85, loStart: 100, split: 632 * K, feet: 690 * K, fgTop: 1035,
+    fx: fxYetinmek, brand: brandLintelWood, dust: '255,214,150', woman: () => ({ b: 1.02, s: 1.05, blue: 0, warm: 0.2 }) },
 ];
 for (const w of WORLDS) {
   w.pano = load(DIR + `parca-3-manzara-${w.id}.jpg`);
@@ -316,7 +365,9 @@ for (const w of WORLDS) {
   w.coinImg = load(`../../assets/traces/${w.coin}.webp`);
 }
 const N = WORLDS.length;
-const DUR = N * WD;
+const OUT = 7;                      // kapanış: beş sikke, logo, söz, adres
+const END = N * WD;                // son dünyanın bittiği an
+const DUR = END + OUT;
 
 const T = {
   tr: { worlds: [
@@ -324,13 +375,15 @@ const T = {
       { num: 'II', title: 'İÇ SAKİNLİK', q1: 'Dışarısı rüzgârlı;', q2: 'alev içeride sakin.' },
       { num: 'III', title: 'SABIR', q1: 'İncir bir saatte', q2: 'olgunlaşmaz.' },
       { num: 'IV', title: 'KAYIPLA YAŞAMAK', q1: 'Yaprak düşer;', q2: 'dal onu hatırlar.' },
-    ] },
+      { num: 'V', title: 'AZ İLE YETİNMEK', q1: 'Bir başak, bir ekmek.', q2: 'Yeter.' },
+    ], end1: 'Yürüdüğün her yol', end2: 'bir iz bırakır.' },
   en: { worlds: [
       { num: 'I', title: 'THE DICHOTOMY OF CONTROL', q1: 'You do not choose the sea;', q2: 'you hold the helm.' },
       { num: 'II', title: 'INNER CALM', q1: 'Wind outside;', q2: 'the flame within stays still.' },
       { num: 'III', title: 'PATIENCE', q1: 'A fig does not ripen', q2: 'in an hour.' },
       { num: 'IV', title: 'LIVING WITH LOSS', q1: 'The leaf falls;', q2: 'the branch remembers it.' },
-    ] },
+      { num: 'V', title: 'HAVING ENOUGH', q1: 'One ear, one loaf.', q2: 'Enough.' },
+    ], end1: 'Every path you walk', end2: 'leaves a trace.' },
 };
 let L = T.tr;
 
@@ -339,8 +392,9 @@ const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; 
 const BACK = [mk(W, BAND_H), mk(W, BAND_H)], FRONT = [mk(W, BAND_H), mk(W, BAND_H)];
 const WCV = mk(240, 330);
 
-const upOff = (w, lt) => w.upStart + w.upK * V * lt;
-const loOff = (w, lt) => w.loStart + V * lt;
+const maxOff = (w) => 2576 * (BAND_H / (w.srcH || SRC_H)) - W - 2;
+const upOff = (w, lt) => Math.min(maxOff(w), w.upStart + w.upK * V * lt);
+const loOff = (w, lt) => Math.min(maxOff(w), w.loStart + V * lt);
 
 function renderBack(c, w, lt) {
   useWorld(w);
@@ -464,7 +518,8 @@ const nodeX = (i) => PATH_X0 + (PATH_X1 - PATH_X0) * (i / (NODES - 1));
 const COIN_A = 7.2, COIN_L = 8.6;            // dünya içi: sikke belirir / durağa iner
 
 function drawHud(t) {
-  const a0 = ease(fade(t, 0.2, 1.2));
+  const hudA = 1 - ease(fade(t, END + 0.2, END + 1.0));   // kapanışta üst bölüm söner (sikkeler hariç)
+  const a0 = ease(fade(t, 0.2, 1.2)) * hudA;
   ctx.save(); ctx.globalAlpha = a0 * 0.9;
   ctx.font = '600 20px Cinzel'; ctx.textAlign = 'left'; ctx.fillStyle = '#d8c49a';
   const bw = (() => { let w = 0; for (const ch of 'STOIKOS') w += ctx.measureText(ch).width + 5; return w - 5; })();
@@ -478,7 +533,7 @@ function drawHud(t) {
     ctx.fillStyle = '#d8c49a'; ctx.font = '600 30px Cinzel'; spaced(ctx, `${L1.num} · ${L1.title}`, W / 2, 276, 6); ctx.restore();
   };
   const tin = i === 0 ? ease(fade(t, 0.3, 1.4)) : ease(fade(lt, 0.1, 1.0));
-  const tout = i + 1 < N ? 1 - ease(fade(lt, WD - 0.9, WD - 0.1)) : 1;
+  const tout = i + 1 < N ? 1 - ease(fade(lt, WD - 0.9, WD - 0.1)) : hudA;
   drawTitle(i, tin * tout);
 
   ctx.save(); ctx.globalAlpha = a0;
@@ -498,13 +553,35 @@ function drawHud(t) {
   ctx.fillStyle = g; ctx.fillRect(mx - 16, PATH_Y - 16, 32, 32);
   ctx.restore();
 
-  // kazanılmış sikkeler duraklarında
+  // kazanılmış sikkeler duraklarında; kapanışta ortaya inip yan yana dizilir
   for (let n = 0; n < N; n++) {
     const tl = n * WD + COIN_L; if (t < tl) continue;
-    ctx.drawImage(WORLDS[n].coinImg, nodeX(n) - 21, PATH_Y - 21, 42, 42);
+    const m = ease(fade(t, END + 0.9 + n * 0.12, END + 2.2 + n * 0.12));
+    const x = lerp(nodeX(n), W / 2 + (n - (N - 1) / 2) * 168, m), y = lerp(PATH_Y, 760, m), sz = lerp(42, 128, m);
+    if (m > 0) {
+      const h = ctx.createRadialGradient(x, y, sz * 0.3, x, y, sz);
+      h.addColorStop(0, `rgba(255,214,150,${0.22 * m})`); h.addColorStop(1, 'rgba(255,214,150,0)');
+      ctx.fillStyle = h; ctx.fillRect(x - sz, y - sz, 2 * sz, 2 * sz);
+    }
+    ctx.drawImage(WORLDS[n].coinImg, x - sz / 2, y - sz / 2, sz, sz);
     const k = fade(t, tl, tl + 0.8);
     if (k < 1) { ctx.save(); ctx.globalAlpha = 1 - k; ctx.strokeStyle = 'rgba(255,226,170,0.9)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(nodeX(n), PATH_Y, 22 + 30 * k, 0, 2 * PI); ctx.stroke(); ctx.restore(); }
   }
+}
+
+// Kapanış: sahne kararır → sikkeler dizilir → logo, STOIKOS, söz, adres
+function drawOutro(t) {
+  if (t < END) return;
+  const lm = ease(fade(t, END + 2.4, END + 3.4)), lw = ease(fade(t, END + 2.8, END + 3.8));
+  const q1 = ease(fade(t, END + 3.4, END + 4.4)), q2 = ease(fade(t, END + 3.9, END + 4.9)), u = ease(fade(t, END + 4.6, END + 5.4));
+  ctx.save();
+  ctx.globalAlpha = lm; drawMark(W / 2 - 60, 900 + 12 * (1 - lm), 120);
+  ctx.globalAlpha = lw; ctx.fillStyle = '#d8c49a'; ctx.font = '600 52px Cinzel'; ctx.textAlign = 'left'; spaced(ctx, 'STOIKOS', W / 2, 1110, 16);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#efe2c4'; ctx.font = 'italic 50px Cormorant';
+  ctx.globalAlpha = q1; ctx.fillText(L.end1, W / 2, 1230 - 8 * (1 - q1));
+  ctx.globalAlpha = q2; ctx.fillText(L.end2, W / 2, 1290 - 8 * (1 - q2));
+  ctx.globalAlpha = u * 0.85; ctx.fillStyle = '#b5a88f'; ctx.font = '30px Jost'; ctx.textAlign = 'left'; spaced(ctx, 'stoikos.app', W / 2, 1400, 3);
+  ctx.restore();
 }
 
 function drawCoinFlight(t) {
@@ -524,7 +601,7 @@ function drawCoinFlight(t) {
 
 function drawQuote(t) {
   const i = Math.min(N - 1, Math.floor(t / WD)), lt = t - i * WD, q = L.worlds[i];
-  const out = i + 1 < N ? 1 - ease(fade(lt, WD - 1.4, WD - 0.6)) : 1;
+  const out = i + 1 < N ? 1 - ease(fade(lt, WD - 1.4, WD - 0.6)) : 1 - ease(fade(lt, WD + 0.2, WD + 1.0));
   const a1 = ease(fade(lt, 2.6, 3.8)) * out, a2 = ease(fade(lt, 3.4, 4.6)) * out;
   ctx.save(); ctx.textAlign = 'center'; ctx.fillStyle = '#efe2c4'; ctx.font = 'italic 46px Cormorant';
   ctx.globalAlpha = a1; ctx.fillText(q.q1, W / 2, BAND_Y + BAND_H + 52 - 10 * (1 - a1));
@@ -536,9 +613,12 @@ function renderFrame(ms) {
   const t = ms / 1000;
   ctx.fillStyle = '#0b0907'; ctx.fillRect(0, 0, W, H);
   drawBand(t);
+  const bo = ease(fade(t, END + 0.3, END + 1.8));
+  if (bo > 0) { ctx.fillStyle = `rgba(11,9,7,${bo})`; ctx.fillRect(0, BAND_Y - 2, W, BAND_H + 4); }
   drawHud(t);
   drawQuote(t);
   drawCoinFlight(t);
+  drawOutro(t);
   const o = 1 - ease(fade(t, 0, 0.9));
   if (o > 0) { ctx.fillStyle = `rgba(0,0,0,${o})`; ctx.fillRect(0, 0, W, H); }
 }
