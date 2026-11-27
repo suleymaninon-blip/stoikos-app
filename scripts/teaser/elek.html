@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "Kontrol Eleği" videosu (1080×1920, 47 sn), 27 Kasım 2026 — "Yolculuk"/"Bir Stoacı Gün" düzeneğinden.
+     Yağmurlu sokak: kadının çevresinde 5 taş (uygulamanın örnekleri + "Yağmurun dinmesi"); kadın durur, ağırlaşır (hareket 1);
+     taşlar sırayla "Elimde değil" alıp düşer, uygulamadaki gibi altın toza döner, yağmur diner → güneşli bahçe: kadın durup
+     yüzünü güneşe kaldırır (hareket 2), Epiktetos (#86) → elini açar, son taş ("Sunuma hazırlanmak") avucuna konar:
+     "Bugünün adımı" (hareket 3) → uygulamanın Kontrol Eleği ekranı → logo. Metinler uygulamadaki sieve.* ile aynı.
+     Kadın: yürüyüş yolculuk-videosu/kadin-kareler/, hareketler elek-videosu/kareler-hareket-*/ (aynı kesit, aynı ölçek).
+     Arka plan kadının hızına bağlı (pan(t)): yürürken 120 px/sn, hareketlerde yavaşlayıp durur.
+     Çekim: bash scripts/social/elek-build.sh [tr,en] -->
+<style>
+  @font-face { font-family:'Cinzel'; font-weight:600;
+    src:url('../../node_modules/@expo-google-fonts/cinzel/Cinzel_600SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'Cormorant'; font-style:italic; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/cormorant-garamond/CormorantGaramond_400Regular_Italic.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:500;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_500Medium.ttf') format('truetype'); }
+  @font-face { font-family:'Jost'; font-weight:400;
+    src:url('../../node_modules/@expo-google-fonts/jost/Jost_400Regular.ttf') format('truetype'); }
+  * { margin:0; padding:0; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:#000; }
+  canvas { display:block; }
+  .pre { position:absolute; left:-999px; top:0; }
+  .img { position:absolute; left:-9999px; top:0; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<span class="pre" style="font-family:Cinzel;font-weight:600">S</span>
+<span class="pre" style="font-family:Cormorant;font-style:italic">S</span>
+<span class="pre" style="font-family:Jost">S</span>
+<span class="pre" style="font-family:Jost;font-weight:500">S</span>
+<div id="imgs"></div>
+<script>
+const W = 1080, H = 1920, PI = Math.PI;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const DIR = '../../docs/sosyal-medya/elek-videosu/';
+const WALK_DIR = '../../docs/sosyal-medya/yolculuk-videosu/';
+
+function load(src) {
+  const im = new Image(); im.className = 'img'; im.src = src;
+  document.getElementById('imgs').appendChild(im); return im;
+}
+const WALK = [];
+for (let i = 1; i <= 240; i++) WALK.push(load(WALK_DIR + 'kadin-kareler/' + String(i).padStart(3, '0') + '.png')); // 240×330, 24 fps
+const WALK_LOOP = 169;          // 169. kare ilk kareye en yakın → dikişsiz döngü
+const FEET_IN_IMG = 318;
+
+// --- yerleşim ---
+const BAND_Y = 360, BAND_H = 1040;
+const SRC_H = 1093, K = 2576 / 2000;
+const FEET_BAND = 900;              // kadının ayak çizgisi (şeritte, px): bütün dünyalarda AYNI — geçişte kadın yukarı/aşağı kaymasın
+let S = BAND_H / SRC_H;            // o an çizilen dünyanın ölçeği: yolu FEET_BAND'e oturtacak kadar (useWorld)
+const V = 120;                  // yol hızı px/sn = kadının adım hızı
+const WOMAN_X = 300;
+const FG_S = 0.45, FG_K = 1.7;
+const WD = 10, XF = 1.2;        // dünya süresi, geçiş (erime) süresi
+
+// --- yardımcılar ---
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const eout = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const fade = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function spaced(c, s, x, y, sp, align = 'center') {
+  let w = 0; for (const ch of s) w += c.measureText(ch).width + sp; w -= sp;
+  let cx = align === 'center' ? x - w / 2 : x;
+  for (const ch of s) { c.fillText(ch, cx, y); cx += c.measureText(ch).width + sp; }
+  return w;
+}
+function glow(c, x, y, r, a, rgb = '255,200,120') {
+  if (x < -r || x > W + r) return;
+  const g = c.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(0.35, `rgba(${rgb},${a * 0.35})`); g.addColorStop(1, `rgba(${rgb},0)`);
+  c.fillStyle = g; c.fillRect(x - r, y - r, 2 * r, 2 * r);
+}
+
+// ================= ZAMAN ÇİZELGESİ =================
+// Kadının bölümleri: yürüyüş (döngü) ya da hareket videosu (cut: kullanılan süre). Hareket başında 1 sn son adım.
+const SEGS = [
+  { kind: 'walk', t0: 0, t1: 3 },
+  { kind: 'act', clip: 0, t0: 3, cut: 7.0, rampOut: [6.0, 7.0] },     // ağırlık: 6. sn'de yeniden adım atar
+  { kind: 'walk', t0: 10, t1: 19 },
+  { kind: 'act', clip: 1, t0: 19, cut: 8.0 },                            // bırakış
+  { kind: 'walk', t0: 27, t1: 29, rampIn: 0.5 },
+  { kind: 'act', clip: 2, t0: 29, cut: 8.0 },                            // avuç
+];
+const SCENE_END = 37, APP_T0 = 36.6, APP_T1 = 41.8, END = 41.8, OUT = 5.2, DUR = END + OUT;
+const WORLD_SWITCH = 17, XF2 = 1.4;                                     // yağmur → bahçe
+const DROPS = [10.6, 12.0, 13.4, 14.8];                                  // taş 0,1,3,4 bırakılır
+const KEEP_T = 15.6;                                                    // taş 2: "Elimde"
+const PALM = { t0: 29 + 1.75, land: 29 + 2.55, close: 29 + 6.2 };       // avuç açık 1,7–6,3 sn
+const PALM_XY = [192, 96];                                              // avuç: kadın karesinde (240×330)
+
+const ACT_FRAMES = [[], [], []];
+['hareket-1-agirlik', 'hareket-2-birakis', 'hareket-3-avuc'].forEach((n, k) => {
+  for (let i = 1; i <= 240; i++) ACT_FRAMES[k].push(load(DIR + `kareler-${n}/` + String(i).padStart(3, '0') + '.png'));
+});
+
+function segAt(t) { let s = SEGS[0]; for (const g of SEGS) if (t >= g.t0) s = g; return s; }
+// kadının hızı (0..1): yürürken 1, hareketin ilk 1 sn'sinde yavaşlar, rampOut'ta yeniden hızlanır
+function speedAt(t) {
+  const g = segAt(t), c = t - g.t0;
+  if (t >= SCENE_END) return 0;
+  if (g.kind === 'walk') return g.rampIn ? ease(clamp(c / g.rampIn)) : 1;
+  if (c < 0.9) return 1 - ease(c / 0.9);
+  if (g.rampOut && c >= g.rampOut[0]) return 0.85 * ease((c - g.rampOut[0]) / (g.rampOut[1] - g.rampOut[0]));
+  return 0;
+}
+// pan(t): kat edilen yol (px), önceden toplanır
+const PAN_DT = 1 / 240, PAN = [0];
+for (let i = 1; i <= Math.ceil(DUR / PAN_DT) + 2; i++) PAN.push(PAN[i - 1] + V * speedAt((i - 0.5) * PAN_DT) * PAN_DT);
+const pan = (t) => { const f = clamp(t, 0, DUR) / PAN_DT, i = Math.floor(f); return lerp(PAN[i], PAN[i + 1] ?? PAN[i], f - i); };
+
+// ================= DÜNYALAR =================
+const P = (sx, sy, uo) => [sx * S - uo, sy * S];
+const scaleOf = (w) => FEET_BAND / w.feet;
+const useWorld = (w) => { S = scaleOf(w); };
+const D = (x, y, uo) => P(x * K, y * K, uo);
+function carve(c, x, y, size, sp, dark, light) {
+  c.save(); c.font = `600 ${size}px Cinzel`; c.textBaseline = 'alphabetic';
+  c.fillStyle = light; spaced(c, 'STOIKOS', x, y + 1.3, sp); c.fillStyle = dark; spaced(c, 'STOIKOS', x, y, sp); c.restore();
+}
+const pts = (seed, n, x0, x1, y0, y1) => { const r = rng(seed); return Array.from({ length: n }, () => ({ x: x0 + r() * (x1 - x0), y: y0 + r() * (y1 - y0), ph: r() * 6.28, sp: 1.2 + r() * 2.8, r: 0.7 + r() * 1.5 })); };
+
+// yağmurun şiddeti: her bırakılan taşla azalır, bahçede yok
+function rainK(t) {
+  if (t < DROPS[0]) return 1;
+  if (t < KEEP_T) return 1 - 0.8 * (t - DROPS[0]) / (KEEP_T - DROPS[0]);
+  if (t < 17.5) return 0.2 * (17.5 - t) / (17.5 - KEEP_T);
+  return 0;
+}
+const RIPPLES = pts(5, 26, 0, 1, 0, 1);
+function fxYagmur(c, lt, uo, t) {
+  c.save(); c.globalCompositeOperation = 'screen';
+  glow(c, ...D(1278, 140, uo), 110, 0.5 + 0.06 * Math.sin(t * 5), '255,214,150');          // sokak lambası
+  glow(c, ...D(1216, 365, uo), 40, 0.35, '255,214,150');
+  c.restore();
+}
+function brandYagmur(c, w, uo) {                                                          // kafenin tabelası: altın boya
+  const [x, y] = D(960, 268, uo); if (x < -300 || x > W + 300) return;
+  c.save(); c.font = '600 30px Cinzel'; c.textBaseline = 'alphabetic';
+  c.fillStyle = 'rgba(0,0,0,0.5)'; spaced(c, 'STOIKOS', x + 1, y + 1.5, 9);
+  c.fillStyle = 'rgba(214,180,112,0.92)'; spaced(c, 'STOIKOS', x, y, 9); c.restore();
+}
+const TREE_DROPS = pts(13, 30, 700, 1460, 120, 330);
+function fxBahce(c, lt, uo, t) {
+  const sun = 0.6 + 0.4 * ease(fade(t, 20, 23.5));                                       // bırakışta güneş açılır
+  c.save(); c.globalCompositeOperation = 'screen';
+  glow(c, ...D(1960, 230, uo), 420, 0.3 * sun, '255,236,190');
+  for (let i = 0; i < 4; i++) {
+    const a = (0.05 + 0.03 * Math.sin(t * 0.6 + i * 2)) * sun; const [bx] = D(1900, 0, uo);
+    const g = c.createLinearGradient(bx, 0, bx - 600, 700);
+    g.addColorStop(0, `rgba(255,240,200,${a})`); g.addColorStop(1, 'rgba(255,240,200,0)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(bx - i * 140, 0); c.lineTo(bx - i * 140 + 60, 0); c.lineTo(bx - 560 - i * 160, 720); c.lineTo(bx - 660 - i * 160, 720); c.fill();
+  }
+  c.restore();
+  for (const d of TREE_DROPS) {                                                            // ağaçtan düşen damlalar
+    const l = ((t * 0.9 + d.ph) % 2.2) / 2.2; const [x, y0] = D(d.x, d.y, uo); if (x < -5 || x > W + 5) continue;
+    const y = y0 + l * l * 260; c.fillStyle = `rgba(230,245,255,${0.7 * (1 - l)})`; c.beginPath(); c.ellipse(x, y, 1.5, 3, 0, 0, 2 * PI); c.fill();
+  }
+}
+function brandBahce(c, w, uo) { const [x, y] = D(1113, 421, uo); if (x > -150 && x < W + 150) carve(c, x, y, 17, 3.2, 'rgba(58,40,24,0.9)', 'rgba(255,236,210,0.35)'); }
+
+const WORLDS = [
+  { id: 'yagmur', upStart: 400, upK: 0.85, loStart: 100, split: 655 * K, feet: 722 * K, fgTop: 1040, fx: fxYagmur, brand: brandYagmur },
+  { id: 'bahce', upStart: 760, upK: 0.85, loStart: 200, split: 645 * K, feet: 722 * K, fgTop: 1030, fx: fxBahce, brand: brandBahce },
+];
+for (const w of WORLDS) { w.pano = load(DIR + `parca-3-manzara-${w.id}.jpg`); w.fg = load(DIR + `on-katman-saydam-${w.id}.png`); }
+const APP = {};
+
+const T = {
+  tr: { title: 'KONTROL ELEĞİ', stones: ['Yarınki toplantının sonucu', 'Başkalarının ne düşündüğü', 'Sunuma hazırlanmak', 'Kiranın artması', 'Yağmurun dinmesi'],
+    notMine: 'ELİMDE DEĞİL', mine: 'ELİMDE', focus: 'BUGÜNÜN ADIMI',
+    lines: [
+      { t0: 1.2, t1: 9.6, l: ['Zihnin mi dağıldı?'] },
+      { t0: 10.3, t1: 15.8, l: ['Hangisi senin elinde?'] },
+      { t0: 19.6, t1: 23.0, l: ['Bıraktıklarını bıraktın.'] },
+      { t0: 23.4, t1: 28.8, l: ['Bazı şeyler senin elinde, bazıları değil.', 'Huzur, ikisini ayırdığın an başlar.'], by: 'EPİKTETOS' },
+      { t0: 31.4, t1: 36.4, l: ['Pratik’te seni bekliyor.', 'Bugün bununla başla.'] },
+    ],
+    app: 'Kontrol Eleği · 30 saniye', end1: 'Zihnin mi dağıldı?', end2: 'Elinde olana dön.' },
+  en: { title: 'THE STOIC SIEVE', stones: ['How tomorrow’s meeting goes', 'What others think of me', 'Preparing my presentation', 'The rent going up', 'The rain stopping'],
+    notMine: 'NOT UP TO ME', mine: 'UP TO ME', focus: 'TODAY’S STEP',
+    lines: [
+      { t0: 1.2, t1: 9.6, l: ['Mind racing?'] },
+      { t0: 10.3, t1: 15.8, l: ['Which of these is up to you?'] },
+      { t0: 19.6, t1: 23.0, l: ['You’ve let it go.'] },
+      { t0: 23.4, t1: 28.8, l: ['Some things are in your power, some are not.', 'Peace begins the moment you tell them apart.'], by: 'EPICTETUS' },
+      { t0: 31.4, t1: 36.4, l: ['It’s waiting for you in Practice.', 'Start with this today.'] },
+    ],
+    app: 'The Stoic Sieve · 30 seconds', end1: 'Mind racing?', end2: 'Return to what is yours.' },
+};
+let L = T.tr, LANG = 'tr';
+
+// ================= ÇİZİM =================
+const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const BACK = [mk(W, BAND_H), mk(W, BAND_H)], FRONT = [mk(W, BAND_H), mk(W, BAND_H)];
+const WCV = mk(240, 330), WCV2 = mk(240, 330);
+const maxOff = (w) => 2576 * scaleOf(w) - W - 2;
+const worldPan = (i, t) => i === 0 ? pan(t) : pan(t) - pan(WORLD_SWITCH - XF2);
+function renderBack(c, w, d, t) {
+  useWorld(w); c.clearRect(0, 0, W, BAND_H);
+  const uo = Math.min(maxOff(w), w.upStart + w.upK * d), lo = Math.min(maxOff(w), w.loStart + d);
+  c.drawImage(w.pano, uo / S, 0, W / S, w.split, 0, 0, W, w.split * S);
+  w.fx(c, d / V, uo, t); w.brand(c, w, uo);
+  c.drawImage(w.pano, lo / S, w.split, W / S, SRC_H - w.split, 0, w.split * S, W, (SRC_H - w.split) * S);
+  if (SRC_H * S < BAND_H) c.drawImage(w.pano, lo / S, SRC_H - 14, W / S, 14, 0, SRC_H * S - 1, W, BAND_H - SRC_H * S + 1);
+  const y = w.split * S, sg = c.createLinearGradient(0, y - 6, 0, y + 6);
+  sg.addColorStop(0, 'rgba(40,32,26,0)'); sg.addColorStop(0.5, 'rgba(40,32,26,0.3)'); sg.addColorStop(1, 'rgba(40,32,26,0)');
+  c.fillStyle = sg; c.fillRect(0, y - 6, W, 12);
+}
+function renderFront(c, w, d) {
+  c.clearRect(0, 0, W, BAND_H);
+  const fo = w.loStart + FG_K * d, fw = 2576 * FG_S, fh = 1093 * FG_S, top = w.fgTop - BAND_Y;
+  c.save(); c.filter = 'blur(5px) brightness(0.8)';
+  for (let k = -1; k < 4; k++) {
+    const x = k * fw - (fo % fw); if (x > W || x + fw < 0) continue;
+    if (k % 2 === 0) c.drawImage(w.fg, x, top, fw, fh);
+    else { c.save(); c.translate(x + fw, top); c.scale(-1, 1); c.drawImage(w.fg, 0, 0, fw, fh); c.restore(); }
+  }
+  c.restore();
+}
+function worldsAt(t) {
+  const a = ease(fade(t, WORLD_SWITCH - XF2, WORLD_SWITCH));
+  if (a <= 0) return [{ i: 0, a: 1 }];
+  if (a >= 1) return [{ i: 1, a: 1 }];
+  return [{ i: 0, a: 1 }, { i: 1, a }];
+}
+
+// kadının o anki karesi (+ bölüm geçişinde 0,25 sn erime)
+function womanFrame(t) {
+  const g = segAt(t), c = t - g.t0;
+  if (g.kind === 'walk') return WALK[Math.floor(c * 24) % WALK_LOOP];
+  return ACT_FRAMES[g.clip][Math.min(Math.floor(g.cut * 24) - 1, Math.floor(c * 24))];
+}
+function drawWoman(t) {
+  const feet = BAND_Y + FEET_BAND;
+  const wa = clamp((t - (WORLD_SWITCH - XF2)) / XF2);              // yağmur → bahçe ışığı
+  const sun = ease(fade(t, 20, 23.5));
+  const p = { b: lerp(0.86, 1.03, wa), s: lerp(0.8, 1.02, wa), blue: lerp(0.12, 0, wa), warm: lerp(0, 0.08 + 0.1 * sun, wa) };
+  const g = segAt(t), idx = SEGS.indexOf(g), prev = SEGS[idx - 1];
+  const xf = prev && t - g.t0 < 0.25 ? 1 - (t - g.t0) / 0.25 : 0;
+  const paint = (cv, img) => {
+    const c = cv.getContext('2d'); c.clearRect(0, 0, 240, 330); c.globalCompositeOperation = 'source-over';
+    c.filter = `brightness(${p.b}) saturate(${p.s})`; c.drawImage(img, 0, 0); c.filter = 'none';
+    c.globalCompositeOperation = 'source-atop';
+    if (p.blue > 0) { c.fillStyle = `rgba(60,90,150,${p.blue})`; c.fillRect(0, 0, 240, 330); }
+    if (p.warm > 0) { const gr = c.createLinearGradient(240, 0, 60, 0); gr.addColorStop(0, `rgba(255,190,110,${p.warm})`); gr.addColorStop(1, 'rgba(255,190,110,0)'); c.fillStyle = gr; c.fillRect(0, 0, 240, 330); }
+  };
+  const sh = ctx.createRadialGradient(WOMAN_X + 120, feet + 2, 2, WOMAN_X + 120, feet + 2, 90);
+  sh.addColorStop(0, 'rgba(15,12,10,0.45)'); sh.addColorStop(1, 'rgba(15,12,10,0)');
+  ctx.save(); ctx.translate(0, feet); ctx.scale(1, 0.22); ctx.translate(0, -feet); ctx.fillStyle = sh; ctx.fillRect(WOMAN_X + 20, feet - 90, 200, 180); ctx.restore();
+  paint(WCV, womanFrame(t));
+  if (xf > 0) {
+    paint(WCV2, womanFrame(g.t0 - 0.001));
+    ctx.globalAlpha = xf; ctx.drawImage(WCV2, WOMAN_X, feet - FEET_IN_IMG); ctx.globalAlpha = 1 - xf;
+  }
+  ctx.drawImage(WCV, WOMAN_X, feet - FEET_IN_IMG); ctx.globalAlpha = 1;
+}
+
+// yağmur: yatık çizgiler (önde, hızlı) + yolda halkalar
+const RAIN = Array.from({ length: 260 }, (_, i) => { const r = rng(900 + i); return { x: r() * 1300, y: r() * BAND_H, l: 18 + r() * 26, v: 900 + r() * 500, a: 0.15 + r() * 0.3 }; });
+function drawRain(t) {
+  const k = rainK(t); if (k <= 0.01) return;
+  ctx.save(); ctx.lineCap = 'round';
+  for (let i = 0; i < RAIN.length; i++) {
+    if (i / RAIN.length > k) continue;
+    const d = RAIN[i]; const y = BAND_Y + ((d.y + d.v * t) % BAND_H), x = ((d.x - 0.22 * d.v * t) % 1300 + 1300) % 1300 - 110;
+    ctx.strokeStyle = `rgba(210,222,235,${d.a})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - d.l * 0.22, y + d.l); ctx.stroke();
+  }
+  for (let i = 0; i < RIPPLES.length * k; i++) {
+    const r = RIPPLES[i], l = ((t * 1.3 + r.ph) % 1.4) / 1.4;
+    const x = r.x * W, y = BAND_Y + FEET_BAND + 10 + r.y * 110;
+    ctx.strokeStyle = `rgba(220,230,240,${0.35 * (1 - l)})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, 4 + l * 22, 1.5 + l * 6, 0, 0, 2 * PI); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ---------- taşlar ----------
+const CX = WOMAN_X + 120, HY = BAND_Y + FEET_BAND - 310;
+const HOME = [[255, -40], [-195, -140], [250, 95], [-30, -205], [-225, 45]];   // tabeladaki STOIKOS'un altında kalsın
+const KEEP_POS = [170, 40];
+function pillPath(c, x, y, w, h) { const r = h / 2; c.beginPath(); c.moveTo(x - w / 2 + r, y - r); c.lineTo(x + w / 2 - r, y - r); c.arc(x + w / 2 - r, y, r, -PI / 2, PI / 2); c.lineTo(x - w / 2 + r, y + r); c.arc(x - w / 2 + r, y, r, PI / 2, 3 * PI / 2); c.closePath(); }
+function drawStone(x, y, label, heat, alpha, gold, scale = 1) {
+  ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.scale(scale, scale);
+  ctx.font = '500 21px Jost'; const w = ctx.measureText(label).width + 46, h = 52;
+  ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 6;
+  const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
+  const top = gold ? [236, 200, 128] : [lerp(118, 214, heat), lerp(124, 150, heat), lerp(132, 92, heat)];
+  const bot = gold ? [168, 128, 62] : [lerp(70, 150, heat), lerp(74, 90, heat), lerp(82, 50, heat)];
+  g.addColorStop(0, `rgb(${top.map(Math.round)})`); g.addColorStop(1, `rgb(${bot.map(Math.round)})`);
+  ctx.fillStyle = g; pillPath(ctx, 0, 0, w, h); ctx.fill(); ctx.shadowColor = 'transparent';
+  ctx.strokeStyle = gold ? 'rgba(255,240,200,0.7)' : 'rgba(255,255,255,0.18)'; ctx.lineWidth = 1.2; pillPath(ctx, 0, 0, w - 2, h - 2); ctx.stroke();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = gold ? 'rgba(60,40,14,0.95)' : 'rgba(245,240,230,0.95)'; ctx.fillText(label, 0, 1);
+  ctx.restore();
+}
+function drawTag(x, y, text, alpha, gold, sub) {
+  if (alpha <= 0) return;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.font = '500 15px Jost'; ctx.textAlign = 'left';
+  let w = 0; for (const ch of text) w += ctx.measureText(ch).width + 2.4; w -= 2.4;
+  let w2 = 0; if (sub) { ctx.font = '500 21px Jost'; w2 = ctx.measureText(sub).width; ctx.font = '500 15px Jost'; }
+  const pw = Math.max(w, w2) + 30, ph = sub ? 66 : 30, yy = sub ? y - 18 : y;
+  ctx.fillStyle = gold ? 'rgba(216,180,108,0.95)' : 'rgba(20,24,30,0.78)';
+  if (sub) { ctx.beginPath(); ctx.roundRect(x - pw / 2, yy - ph / 2, pw, ph, 16); ctx.fill(); } else { pillPath(ctx, x, yy, pw, ph); ctx.fill(); }
+  ctx.fillStyle = gold ? '#2a1c08' : '#e8dcc0'; ctx.textBaseline = 'middle';
+  spaced(ctx, text, x, sub ? yy - 14 : yy + 1, 2.4);
+  if (sub) { ctx.font = '500 21px Jost'; ctx.textAlign = 'center'; ctx.fillText(sub, x, yy + 13); }
+  ctx.restore();
+}
+const DUST = DROPS.map((d, k) => { const r = rng(300 + k); return Array.from({ length: 16 }, () => ({ vx: (r() - 0.5) * 120, vy: -60 - r() * 110, r: 1.2 + r() * 2.2, ph: r() * 6 })); });
+function drawStones(t) {
+  if (t >= SCENE_END + 0.2) return;
+  const bob = (i) => [Math.sin(t * 0.7 + i * 2) * 6, Math.sin(t * 1.2 + i) * 8 + (t > 3.5 && t < 10 ? 22 * ease(fade(t, 3.5, 5)) * (1 - ease(fade(t, 8.5, 10))) : 0)];
+  const order = [0, 1, 3, 4];
+  order.forEach((si, k) => {
+    const td = DROPS[k], [bx, by] = bob(si);
+    let x = CX + HOME[si][0] + bx, y = HY + HOME[si][1] + by, heat = 0, alpha = 1;
+    if (t >= td + 0.25) heat = ease(fade(t, td + 0.25, td + 0.7));
+    if (t >= td + 0.7) { const f = fade(t, td + 0.7, td + 1.2); y = lerp(y, BAND_Y + FEET_BAND - 10, f * f); alpha = 1 - ease(fade(t, td + 1.05, td + 1.3)); }
+    if (alpha > 0) drawStone(x, y, L.stones[si], heat, alpha, false);
+    drawTag(x, y - 46, L.notMine, ease(fade(t, td, td + 0.25)) * (1 - ease(fade(t, td + 0.7, td + 0.95))), false);
+    if (t > td + 1.15 && t < td + 2.6) {                                          // altın toz
+      const l = t - (td + 1.15);
+      ctx.save(); ctx.globalCompositeOperation = 'screen';
+      for (const p of DUST[k]) {
+        const px = x + p.vx * l, py = BAND_Y + FEET_BAND - 14 + p.vy * l + 25 * l * l, a = 0.9 * (1 - l / 1.45);
+        ctx.fillStyle = `rgba(255,214,140,${a})`; ctx.beginPath(); ctx.arc(px, py, p.r, 0, 2 * PI); ctx.fill();
+      }
+      ctx.restore();
+    }
+  });
+  // kalan taş
+  const [bx, by] = bob(2);
+  let x = CX + HOME[2][0] + bx, y = HY + HOME[2][1] + by, sc = 1, gold = 0;
+  const mv = ease(fade(t, KEEP_T, KEEP_T + 1.2));
+  x = lerp(x, CX + KEEP_POS[0] + bx, mv); y = lerp(y, HY + KEEP_POS[1] + by, mv);
+  gold = ease(fade(t, KEEP_T, KEEP_T + 0.6));
+  const palmX = WOMAN_X + PALM_XY[0], palmY = BAND_Y + FEET_BAND - FEET_IN_IMG + PALM_XY[1];
+  const fl = ease(fade(t, PALM.t0, PALM.land));
+  x = lerp(x, palmX, fl); y = lerp(y, palmY - 14, fl) - Math.sin(fl * PI) * 40; sc = lerp(1, 0.62, fl);
+  const close = ease(fade(t, PALM.close, PALM.close + 0.5));
+  const alpha = 1 - close;
+  if (gold > 0) {                                                                    // altın hale
+    const g = ctx.createRadialGradient(x, y, 4, x, y, 90 * sc + 30);
+    g.addColorStop(0, `rgba(255,214,140,${0.35 * gold * (1 - close * 0.6)})`); g.addColorStop(1, 'rgba(255,214,140,0)');
+    ctx.fillStyle = g; ctx.fillRect(x - 160, y - 160, 320, 320);
+  }
+  const lbl = 1 - ease(fade(t, PALM.t0 + 0.2, PALM.t0 + 0.5));                 // avuca giderken yazı söner, taş çakıl olur
+  if (alpha > 0) drawStone(x, y, lbl > 0.02 ? L.stones[2] : '', 0, alpha * (lbl > 0.02 ? lbl : 1), gold > 0.5, sc);
+  drawTag(x, y - 48, L.mine, ease(fade(t, KEEP_T, KEEP_T + 0.4)) * (1 - ease(fade(t, KEEP_T + 2.2, KEEP_T + 2.6))), true);
+  drawTag(palmX - 10, palmY - 92, L.focus, ease(fade(t, PALM.land, PALM.land + 0.4)) * (1 - ease(fade(t, PALM.close + 0.3, PALM.close + 0.8))), true, L.stones[2]);
+  if (close > 0 && close < 1) {                                                       // kapanan avuçta ışık
+    const g = ctx.createRadialGradient(palmX, palmY, 0, palmX, palmY, 60);
+    g.addColorStop(0, `rgba(255,226,170,${0.7 * (1 - close)})`); g.addColorStop(1, 'rgba(255,226,170,0)');
+    ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = g; ctx.fillRect(palmX - 60, palmY - 60, 120, 120); ctx.restore();
+  }
+}
+
+function drawBand(t) {
+  const act = worldsAt(t);
+  act.forEach((o, j) => { const w = WORLDS[o.i], d = worldPan(o.i, t); renderBack(BACK[j].getContext('2d'), w, d, t); renderFront(FRONT[j].getContext('2d'), w, d); });
+  ctx.save(); ctx.beginPath(); ctx.rect(0, BAND_Y, W, BAND_H); ctx.clip();
+  act.forEach((o, j) => { ctx.globalAlpha = o.a; ctx.drawImage(BACK[j], 0, BAND_Y); }); ctx.globalAlpha = 1;
+  if (act.length > 1) { const f = Math.sin(act[1].a * PI) * 0.12; ctx.fillStyle = `rgba(255,240,210,${f})`; ctx.fillRect(0, BAND_Y, W, BAND_H); }
+  drawWoman(t);
+  act.forEach((o, j) => { ctx.globalAlpha = o.a; ctx.drawImage(FRONT[j], 0, BAND_Y); }); ctx.globalAlpha = 1;
+  drawRain(t);
+  const vg = ctx.createRadialGradient(W / 2, BAND_Y + BAND_H * 0.45, 200, W / 2, BAND_Y + BAND_H * 0.45, 900);
+  vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(8,6,4,0.45)'); ctx.fillStyle = vg; ctx.fillRect(0, BAND_Y, W, BAND_H);
+  drawStones(t);
+  ctx.restore();
+  const top = ctx.createLinearGradient(0, BAND_Y, 0, BAND_Y + 90); top.addColorStop(0, '#0b0907'); top.addColorStop(1, 'rgba(11,9,7,0)'); ctx.fillStyle = top; ctx.fillRect(0, BAND_Y, W, 90);
+  const bot = ctx.createLinearGradient(0, BAND_Y + BAND_H - 110, 0, BAND_Y + BAND_H); bot.addColorStop(0, 'rgba(11,9,7,0)'); bot.addColorStop(1, '#0b0907'); ctx.fillStyle = bot; ctx.fillRect(0, BAND_Y + BAND_H - 110, W, 110);
+}
+
+const MARK_ARC = new Path2D('M296 688 H415 A232 232 0 1 1 609 688 H728');
+function drawMark(x, y, size) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(size / 640, size / 640); ctx.translate(-192, -162);
+  const orb = ctx.createRadialGradient(480, 430, 10, 512, 477, 128);
+  orb.addColorStop(0, '#f6e6c0'); orb.addColorStop(0.45, '#cfae6c'); orb.addColorStop(1, '#6e5530');
+  ctx.fillStyle = orb; ctx.beginPath(); ctx.arc(512, 477, 128, 0, 2 * PI); ctx.fill();
+  const gold = ctx.createLinearGradient(0, 250, 0, 760);
+  gold.addColorStop(0, '#f4e2b8'); gold.addColorStop(0.45, '#d4b376'); gold.addColorStop(1, '#9a7b44');
+  ctx.strokeStyle = gold; ctx.lineWidth = 40; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(MARK_ARC); ctx.restore();
+}
+function drawHud(t) {
+  const a = ease(fade(t, 0.2, 1.2)) * (1 - ease(fade(t, APP_T0, APP_T0 + 0.6)));
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha = a * 0.9; ctx.font = '600 20px Cinzel'; ctx.textAlign = 'left'; ctx.fillStyle = '#d8c49a';
+  let bw = 0; for (const ch of 'STOIKOS') bw += ctx.measureText(ch).width + 5; bw -= 5;
+  const x0 = (W - (36 + bw)) / 2; drawMark(x0, 202, 26); spaced(ctx, 'STOIKOS', x0 + 36, 222, 5, 'left');
+  ctx.globalAlpha = a; ctx.font = '600 30px Cinzel'; spaced(ctx, L.title, W / 2, 284, 7);
+  ctx.restore();
+}
+function drawLines(t) {
+  ctx.save(); ctx.textAlign = 'center';
+  for (const b of L.lines) {
+    if (t < b.t0 || t > b.t1 + 0.6) continue;
+    const many = b.l.length > 1;
+    b.l.forEach((line, k) => {
+      const a = ease(fade(t, b.t0 + k * 0.5, b.t0 + 1 + k * 0.5)) * (1 - ease(fade(t, b.t1 - 0.4, b.t1 + 0.4)));
+      ctx.globalAlpha = a; ctx.fillStyle = '#efe2c4'; ctx.font = `italic ${many ? 40 : 50}px Cormorant`;
+      ctx.fillText(line, W / 2, BAND_Y + BAND_H + 52 + k * 52 - 10 * (1 - a));
+    });
+    if (b.by) {
+      const a = ease(fade(t, b.t0 + 1.4, b.t0 + 2.2)) * (1 - ease(fade(t, b.t1 - 0.4, b.t1 + 0.4)));
+      ctx.globalAlpha = a * 0.8; ctx.font = '600 17px Cinzel'; ctx.fillStyle = '#c2a878'; ctx.textAlign = 'left'; spaced(ctx, b.by, W / 2, BAND_Y + BAND_H + 52 + b.l.length * 52 + 4, 4); ctx.textAlign = 'center';
+    }
+  }
+  ctx.restore();
+}
+function drawApp(t) {
+  if (t < APP_T0 || t > END + 0.6) return;
+  const a = ease(fade(t, APP_T0, APP_T0 + 0.9)) * (1 - ease(fade(t, END - 0.5, END + 0.3)));
+  ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(11,9,7,0.82)'; ctx.fillRect(0, 0, W, H);
+  const pw = 410, ph = pw * 1688 / 780, px = (W - pw) / 2, py = 330 + 14 * (1 - a);
+  ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 50; ctx.fillStyle = '#05070b';
+  ctx.beginPath(); ctx.roundRect(px - 14, py - 14, pw + 28, ph + 28, 54); ctx.fill(); ctx.shadowColor = 'transparent';
+  ctx.save(); ctx.beginPath(); ctx.roundRect(px, py, pw, ph, 42); ctx.clip(); ctx.drawImage(APP[LANG], px, py, pw, ph); ctx.restore();
+  ctx.strokeStyle = 'rgba(216,196,154,0.35)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect(px - 14, py - 14, pw + 28, ph + 28, 54); ctx.stroke();
+  ctx.fillStyle = '#d8c49a'; ctx.font = '600 26px Cinzel'; ctx.textAlign = 'left'; spaced(ctx, L.app.toUpperCase ? L.app : L.app, W / 2, py + ph + 80, 3);
+  ctx.restore();
+}
+function drawOutro(t) {
+  if (t < END) return;
+  const lm = ease(fade(t, END + 0.2, END + 1.2)), lw = ease(fade(t, END + 0.6, END + 1.6));
+  const q1 = ease(fade(t, END + 1.4, END + 2.4)), q2 = ease(fade(t, END + 2.0, END + 3.0)), u = ease(fade(t, END + 2.8, END + 3.6));
+  ctx.save();
+  ctx.globalAlpha = lm; drawMark(W / 2 - 60, 780 + 12 * (1 - lm), 120);
+  ctx.globalAlpha = lw; ctx.fillStyle = '#d8c49a'; ctx.font = '600 52px Cinzel'; ctx.textAlign = 'left'; spaced(ctx, 'STOIKOS', W / 2, 1110, 16);
+  ctx.textAlign = 'center'; ctx.fillStyle = '#efe2c4'; ctx.font = 'italic 50px Cormorant';
+  ctx.globalAlpha = q1; ctx.fillText(L.end1, W / 2, 1230 - 8 * (1 - q1));
+  ctx.globalAlpha = q2; ctx.fillText(L.end2, W / 2, 1290 - 8 * (1 - q2));
+  ctx.globalAlpha = u * 0.85; ctx.fillStyle = '#b5a88f'; ctx.font = '30px Jost'; ctx.textAlign = 'left'; spaced(ctx, 'stoikos.app', W / 2, 1400, 3);
+  ctx.restore();
+}
+
+function renderFrame(ms) {
+  const t = ms / 1000;
+  ctx.fillStyle = '#0b0907'; ctx.fillRect(0, 0, W, H);
+  if (t < END) {
+    drawBand(t); drawHud(t); drawLines(t); drawApp(t);
+  }
+  drawOutro(t);
+  const o = 1 - ease(fade(t, 0, 0.9));
+  if (o > 0) { ctx.fillStyle = `rgba(0,0,0,${o})`; ctx.fillRect(0, 0, W, H); }
+}
+async function init(lang) {
+  L = T[lang] || T.tr; LANG = T[lang] ? lang : 'tr';
+  APP.tr = load(DIR + 'uygulama-eleme-tr.png'); APP.en = load(DIR + 'uygulama-eleme-en.png');
+  await document.fonts.ready; renderFrame(0);
+}
+window.init = init; window.renderFrame = renderFrame; window.DURATION = DUR * 1000;
+</script>
+</body>
+</html>
