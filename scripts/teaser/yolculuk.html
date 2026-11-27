@@ -48,7 +48,8 @@ const FEET_IN_IMG = 318;
 // --- yerleşim ---
 const BAND_Y = 360, BAND_H = 1040;
 const SRC_H = 1093, K = 2576 / 2000;
-let S = BAND_H / SRC_H;            // o an çizilen dünyanın ölçeği (dünyanın srcH'sine göre; useWorld ile kurulur)
+const FEET_BAND = 900;              // kadının ayak çizgisi (şeritte, px): bütün dünyalarda AYNI — geçişte kadın yukarı/aşağı kaymasın
+let S = BAND_H / SRC_H;            // o an çizilen dünyanın ölçeği: yolu FEET_BAND'e oturtacak kadar (useWorld)
 const V = 120;                  // yol hızı px/sn = kadının adım hızı
 const WOMAN_X = 300;
 const FG_S = 0.45, FG_K = 1.7;
@@ -80,7 +81,8 @@ function glow(c, x, y, r, a, rgb = '255,200,120') {
 // fx/brand: c = bant tuvali (0,0 = şeridin sol üstü), uo = üst katman kayması (ekran px).
 // Kaynak noktayı (gerçek px) bant tuvaline çevir:
 const P = (sx, sy, uo) => [sx * S - uo, sy * S];
-const useWorld = (w) => { S = BAND_H / (w.srcH || SRC_H); };
+const scaleOf = (w) => FEET_BAND / w.feet;   // her manzara, yolu kadının ayaklarının altına gelecek kadar büyür/küçülür
+const useWorld = (w) => { S = scaleOf(w); };
 
 // ---------- I · Kontrol Dairesi ----------
 const RK = rng(11);
@@ -353,7 +355,7 @@ const WORLDS = [
     } },
   { id: 'sabir', coin: 'patience', upStart: 294, upK: 0.85, loStart: 100, split: 645 * K, feet: 718 * K, fgTop: 1040,
     fx: fxSabir, brand: brandBasket, dust: '255,238,185', woman: () => ({ b: 1.03, s: 1.02, blue: 0, warm: 0.08 }) },
-  // Gemini resmin altını (src 944+) boyamamış: srcH 940 → resim biraz büyür, o şerit kadraj dışında kalır
+  // Gemini resmin altını (src 944+) boyamamış: srcH 940 → altta kalan boşluk son satırlarla doldurulur (kararan kenarın ve ön katmanın altında)
   { id: 'kayip', coin: 'grief', upStart: 372, upK: 0.85, loStart: 100, split: 665 * K, feet: 692 * K, fgTop: 990, srcH: 940,
     fx: fxKayip, brand: brandBench, dust: '255,225,170', woman: () => ({ b: 0.98, s: 0.95, blue: 0, warm: 0.14 }) },
   { id: 'yetinmek', coin: 'enough', upStart: 182, upK: 0.85, loStart: 100, split: 632 * K, feet: 690 * K, fgTop: 1035,
@@ -392,7 +394,7 @@ const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; 
 const BACK = [mk(W, BAND_H), mk(W, BAND_H)], FRONT = [mk(W, BAND_H), mk(W, BAND_H)];
 const WCV = mk(240, 330);
 
-const maxOff = (w) => 2576 * (BAND_H / (w.srcH || SRC_H)) - W - 2;
+const maxOff = (w) => 2576 * scaleOf(w) - W - 2;
 const upOff = (w, lt) => Math.min(maxOff(w), w.upStart + w.upK * V * lt);
 const loOff = (w, lt) => Math.min(maxOff(w), w.loStart + V * lt);
 
@@ -403,8 +405,9 @@ function renderBack(c, w, lt) {
   c.drawImage(w.pano, uo / S, 0, W / S, w.split, 0, 0, W, w.split * S);
   w.fx(c, lt, uo);
   w.brand(c, w, uo);
-  const sh = w.srcH || SRC_H;          // resmin altı boyanmamışsa o şerit kadraj dışında kalır
+  const sh = w.srcH || SRC_H;          // resmin boyanmış son satırı
   c.drawImage(w.pano, lo / S, w.split, W / S, sh - w.split, 0, w.split * S, W, (sh - w.split) * S);
+  if (sh * S < BAND_H) c.drawImage(w.pano, lo / S, sh - 14, W / S, 14, 0, sh * S - 1, W, BAND_H - sh * S + 1);  // kalan boşluk (kararan kenarda)
   const y = w.split * S, sg = c.createLinearGradient(0, y - 6, 0, y + 6);
   sg.addColorStop(0, 'rgba(40,32,26,0)'); sg.addColorStop(0.5, 'rgba(40,32,26,0.3)'); sg.addColorStop(1, 'rgba(40,32,26,0)');
   c.fillStyle = sg; c.fillRect(0, y - 6, W, 12);
@@ -451,8 +454,7 @@ function drawWoman(t, act) {
     c.fillStyle = g; c.fillRect(0, 0, 240, 330);
   }
   // ayak çizgisi iki dünya arasında yumuşak geçer
-  const fpx = (w) => w.feet * BAND_H / (w.srcH || SRC_H);
-  const feet = BAND_Y + (act.length > 1 ? lerp(fpx(WORLDS[act[0].i]), fpx(WORLDS[act[1].i]), act[1].a) : fpx(WORLDS[act[0].i]));
+  const feet = BAND_Y + FEET_BAND;   // her dünyada aynı
   const sh = ctx.createRadialGradient(WOMAN_X + 120, feet + 2, 2, WOMAN_X + 120, feet + 2, 90);
   sh.addColorStop(0, 'rgba(15,12,10,0.45)'); sh.addColorStop(1, 'rgba(15,12,10,0)');
   ctx.save(); ctx.translate(0, feet); ctx.scale(1, 0.22); ctx.translate(0, -feet);
