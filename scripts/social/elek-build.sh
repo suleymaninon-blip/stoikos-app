@@ -39,7 +39,7 @@ ffmpeg -y -loglevel error \
   -i "$MUSIC" -i "$SIG" \
   -f lavfi -i "$(BELL 880)" -f lavfi -i "$(BELL 988)" -f lavfi -i "$(BELL 1047)" -f lavfi -i "$(BELL 1175)" -f lavfi -i "$(BELL 659)" \
   -filter_complex "\
-[0:a]highpass=f=400,lowpass=f=6000,volume='0.16*$RAIN':eval=frame,pan=stereo|c0=c0|c1=c0[rain];\
+[0:a]highpass=f=400,lowpass=f=6000,volume='0.075*$RAIN':eval=frame,pan=stereo|c0=c0|c1=c0[rain];\
 [1:a]highpass=f=500,lowpass=f=2500,volume='0.035*clip((t-16)/2\,0\,1)*clip(($END+2-t)/2\,0\,1)':eval=frame,pan=stereo|c0=c0|c1=c0[air];\
 [2:a]atrim=0:$DUR,asetpts=N/SR/TB,aresample=48000,volume=8dB,afade=t=in:d=1.2,afade=t=out:st=$(python3 -c "print($END+2.4)"):d=2.8[m];\
 [3:a]aresample=48000,volume=-4dB,adelay=$(python3 -c "print(int(($END+0.3)*1000))")|$(python3 -c "print(int(($END+0.3)*1000))")[s];\
