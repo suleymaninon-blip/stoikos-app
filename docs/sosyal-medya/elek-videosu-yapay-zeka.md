@@ -41,7 +41,7 @@ Light: fresh, bright, clean after-rain light from the right, sparkling droplets 
 - 5 taş: çakıl biçimli, gri, üstünde oyma yazı; kadının omzu hizasında süzülür. Düşerken uygulamadaki gibi ısınıp söner, 14 altın toz zerresi yükselir.
 - Kalan taş altına döner, "Bugünün adımı" etiketi; sonra uygulamanın Kontrol Eleği ekranı (web derlemesinden gerçek ekran görüntüsü).
 - STOIKOS: kafenin pirinç levhası (oyma), bahçe kapısının tahtası.
-- Müzik: Bach çello prelüdü (kamu malı), yumuşak ortam sesi (yağmur → kuş/esinti yok, yalnız yumuşak hava).
+- Müzik (kullanıcı: "aynısı olmasın"): Chopin, Prelüd Op. 28 No. 15 "Yağmur Damlası", Giorgi Latsabidze kaydı (Commons, kamu malı, atıf gerekmez); yalnız sakin açılış bölümü. Ortam: yağmur sesi → yumuşak hava.
 
 ---
 
