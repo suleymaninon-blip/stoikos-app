@@ -42,3 +42,38 @@ Light: fresh, bright, clean after-rain light from the right, sparkling droplets 
 - Kalan taş altına döner, "Bugünün adımı" etiketi; sonra uygulamanın Kontrol Eleği ekranı (web derlemesinden gerçek ekran görüntüsü).
 - STOIKOS: kafenin pirinç levhası (oyma), bahçe kapısının tahtası.
 - Müzik: Bach çello prelüdü (kamu malı), yumuşak ortam sesi (yağmur → kuş/esinti yok, yalnız yumuşak hava).
+
+---
+
+## Kadının hareketleri (kullanıcı isteği: "sürekli yürüyor, senaryoya uygun birkaç hareket")
+Yürüyüş (`yolculuk-videosu/parca-2-yuruyus.mp4`) gibi: **yeşil zemin, yan görünüş, kamera sabit**, 8 sn, Veo.
+Her biri için **yeni sohbet**, ilk kare olarak **Parça 1** (yeşil zeminli kadın, asıl boyut) yüklenir. Kadın bu anlarda
+durur; kurguda arka plan da onunla birlikte yavaşlayıp durur. Taşlar ve ışık kodla eklenir (videoda taş yok).
+Dosya adları: `elek-videosu/hareket-1-agirlik.mp4`, `hareket-2-birakis.mp4`, `hareket-3-avuc.mp4`.
+
+Ortak kalıp (her hareket komutunun başı):
+```
+Use the attached image as the FIRST FRAME and keep exactly the same woman, the same STYLE and the same flat chroma-key green background (#00B140) for the whole video.
+
+STYLE: a stylized 3D animated feature film look, soft rounded shapes, painterly textures, warm soft lighting.
+
+CAMERA: completely static, full-body side view, the woman stays in the same place in the frame the whole time. No zoom, no camera movement, no cuts.
+The background stays a perfectly flat uniform green (#00B140) for all 8 seconds: no floor, no shadows, no objects, no particles, no light changes.
+Nothing in her hands at any moment. No other people.
+Audio: no music, no spoken words in any language, only soft breathing.
+```
+
+### Hareket 1 · Ağırlık
+```
+ACTION (8 seconds): 0–1 s she takes one last slow step to the right and stops, facing right. 1–4 s her shoulders drop, she lowers her head and looks down at the ground, tired and heavy, and lets out a long slow breath. 4–6 s she stays still for a moment, eyes down. 6–8 s she slowly lifts her head again, looks ahead with quiet determination and takes the first slow step forward to the right.
+```
+
+### Hareket 2 · Bırakış
+```
+ACTION (8 seconds): 0–1 s she takes one last slow step to the right and stops, facing right. 1–3 s she closes her eyes and takes a slow, deep breath in, her chest rising. 3–6 s she gently lifts her face upward as if feeling warm sunlight on it, eyes still closed, and breathes out slowly; her shoulders relax. 6–8 s she opens her eyes and smiles softly, calm and light.
+```
+
+### Hareket 3 · Avuç
+```
+ACTION (8 seconds): 0–1 s she takes one last slow step to the right and stops, facing right. 1–3 s she slowly raises her right hand in front of her chest, palm open and facing up, at about chest height, a little in front of her body so the open palm is clearly visible from the side. 3–6 s she looks down at her open palm with a calm, small smile and holds the hand still (keep the palm completely empty). 6–8 s she gives one small nod, gently closes her hand into a soft fist and lowers it to her side.
+```
