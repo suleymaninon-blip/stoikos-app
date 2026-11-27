@@ -64,7 +64,7 @@ for i,w in enumerate(ws):
     ins.append(f'-f lavfi -i "anoisesrc=color={noise[w]}:amplitude=0.5:duration={dur}:sample_rate=48000:seed={11+i}"')
     parts.append(f"[{i}:a]{shape[w].replace('G', '('+gate(i)+')')},pan=stereo|c0=c0|c1=c0[w{i}]")
 m=n
-parts.append(f"[{m}:a]atrim=2.2:{dur+2.2},asetpts=N/SR/TB,aresample=48000,afade=t=in:d=1.5,afade=t=out:st={end+3}:d=3[m]")
+parts.append(f"[{m}:a]atrim=2.2:{dur+2.2},asetpts=N/SR/TB,aresample=48000,volume=8dB,afade=t=in:d=1.5,afade=t=out:st={end+3}:d=3[m]")
 parts.append(f"[{m+1}:a]aresample=48000,volume=-4dB,adelay={end*1000+2400}|{end*1000+2400}[s]")   # logo ile ses imzası
 mix="".join(f"[w{i}]" for i in range(n))+"[m][s]"
 parts.append(f"{mix}amix=inputs={n+2}:normalize=0,afade=t=in:d=0.8,afade=t=out:st={dur-1}:d=1[a]")
