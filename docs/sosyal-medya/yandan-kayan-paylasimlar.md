@@ -1,11 +1,24 @@
 # Yandan kayan üç video — Instagram paylaşım planı
 
-> Hazırlandı: 28 Kasım 2026. Videolar: **Yolculuk** (57 sn), **Bir Stoacı Gün** (46 sn), **Kontrol Eleği** (47 sn);
+> Hazırlandı: 28 Kasım 2026. ⏳ **Mağaza yayınını bekliyor** (kullanıcı kararı: "uygulamayı mağazaya yüklediğimde paylaşalım"). Videolar: **Yolculuk** (57 sn), **Bir Stoacı Gün** (46 sn), **Kontrol Eleği** (47 sn);
 > hepsi 1080×1920, TR + EN. Kapaklar her klasörde `kapak-tr.jpg` / `kapak-en.jpg`.
 > Hesap kuralı (CLAUDE.md): dünyaya hitap → **önce İngilizce açıklama**, altında kısa 🇹🇷 satır; TR video
 > WhatsApp/TikTok/TR reklam için. Yapay zekâ ile üretilen sahneler → yüklerken **"Yapay zekâ ile oluşturuldu"** etiketi.
 
-## Takvim (haftada bir, mevcut takvimin ardından)
+## Takvim — **uygulama mağazaya çıkınca** (28 Kasım 2026, kullanıcı kararı)
+Videolar mağaza bağlantısı hazır olunca paylaşılır: beğenen kişi profilden **hemen indirebilsin** (web sürümüne değil).
+Yayın günü önce profil bağlantısını App Store'a çevir, açıklamalardaki "Link in bio" aynen kalır.
+Gün 0 = uygulamanın App Store'da göründüğü gün.
+
+| # | Gün ve saat | Video | Neden bu sırada |
+|---|---|---|---|
+| 1 | **Gün 0 akşamı 20:00–21:00** (yayın günü) | **Yolculuk** — sabitle | En göz alıcısı; "artık App Store'da" duyurusuyla birlikte. Hikâyede mağaza bağlantısı çıkartması. |
+| 2 | **Gün 8, pazartesi sabahı 08:00–09:00** (yayından sonraki ilk tam haftanın pazartesisi) | **Bir Stoacı Gün** | Video şafakla açılıyor; izleyen kendi gününün başında görsün. |
+| 3 | **Gün 10–11, çarşamba akşamı 21:00–22:00** | **Kontrol Eleği** | Hafta ortası stresi; uygulamanın kendi aracını gösteriyor, indiren hemen deneyebilir. |
+
+(Gün 0 pazartesiye denk gelirse 1 ve 2'nin yerini değiştir: Bir Stoacı Gün yayın sabahı, Yolculuk o hafta pazar akşamı.)
+
+Eski sıralama (yayından bağımsız, haftada bir) aşağıdaki gerekçelerle aynı kalır:
 
 | # | Gün ve saat | Video | Neden bu sırada |
 |---|---|---|---|
