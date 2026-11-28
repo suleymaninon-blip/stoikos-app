@@ -17,7 +17,7 @@ import { Fonts } from '../../constants/theme';
 import { useTheme, useStyles, type Palette } from '../../constants/themeContext';
 import { MoonIcon, SettingsIcon } from '../../components/Icons';
 import { getTodaysQuote, getMoodQuote, MOOD_THEMES } from '../../constants/content';
-import { getPrograms, getProgress, Program } from '../../constants/programs';
+import { getPrograms, getProgress, getDoneAt, dayState, Program } from '../../constants/programs';
 import { useLang, localeOf, upper } from '../../constants/i18n';
 import { useStreak } from '../../hooks/useStreak';
 import { useReduceMotion } from '../../hooks/useReduceMotion';
@@ -42,7 +42,7 @@ const ALL_EXERCISE_IDS = ['neg_vis', 'intention', 'memento', 'review', 'gratitud
 const tint = (color: string, a: number) => color.replace(/[\d.]+\)\s*$/, `${a})`);
 
 // next: ilk tamamlanmamış gün (aradaki bir günün işareti geri alınmış olabilir; sayı yetmez)
-type Resume = { program: Program; done: number[]; next: number; started: boolean };
+type Resume = { program: Program; done: number[]; next: number; started: boolean; waiting?: boolean };
 
 // ── Kaldığın yer: yarım kalan program, yoksa başlanmamış ilk program ──
 // Alt menüde olmayan tek bölüm; eskiden listenin en sonundaydı (22 Ekim 2026).
@@ -50,7 +50,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
   const { C: Colors } = useTheme();
   const styles = useStyles(makeStyles);
   const { t } = useLang();
-  const { program, done, next, started } = resume;
+  const { program, done, next, started, waiting } = resume;   // waiting: sıradaki gün yarın açılır
   const day = program.days[Math.min(next, program.dayCount - 1)];
   const c = program.color;
 
@@ -64,7 +64,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
       onPress={() =>
         router.push({
           pathname: '/programs',
-          params: started ? { open: program.id, day: String(next) } : { open: program.id },
+          params: started && !waiting ? { open: program.id, day: String(next) } : { open: program.id },
         })
       }
     >
@@ -76,7 +76,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
         {started && (
           <View style={[styles.dayPill, { backgroundColor: tint(c, 0.14) }]}>
             <Text style={[styles.resumeDay, { color: tint(c, 1) }]}>
-              {t('programs.dayOf', { n: next + 1, total: program.dayCount })}
+              {waiting ? t('programs.opensTomorrow') : t('programs.dayOf', { n: next + 1, total: program.dayCount })}
             </Text>
           </View>
         )}
@@ -116,7 +116,7 @@ function ResumeCard({ resume }: { resume: Resume }) {
 
       {/* Metinlerde ok zaten var ("Bugünkü adımı aç →"); ayrıca ok çizilmez. */}
       <Text style={[styles.resumeCta, { color: tint(c, 1) }]}>
-        {t(started ? 'home.openStep' : 'home.startProgram')}
+        {waiting ? t('programs.tomorrowNote') : t(started ? 'home.openStep' : 'home.startProgram')}
       </Text>
     </CalmPressable>
   );
@@ -320,7 +320,8 @@ export default function HomeScreen() {
           programs.map(async (p) => {
             const done = await getProgress(p.id);
             const next = p.days.findIndex((_, i) => !done.includes(i));
-            return { program: p, done, next };
+            const waiting = next > 0 && dayState(done, await getDoneAt(p.id), next) === 'tomorrow';
+            return { program: p, done, next, waiting };
           })
         );
         const inProgress = all.find((x) => x.done.length > 0 && x.next >= 0);
