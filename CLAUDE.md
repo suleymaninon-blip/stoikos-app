@@ -128,7 +128,8 @@
 5. **TestFlight'ta gerçek cihazda denenecekler**: bildirimler (sabah/akşam/pazar/birlikte nefes/yeni program), kavram sesi, ikon ve açılış, İzler öneri kartının görsel olarak paylaşılması, Sağlık yazma, kilitli ekranda seans, duvar kağıdı kaydetme, `expo-document-picker` (yedekten geri yükle), `Intl.DisplayNames` (Hermes, nabız ülke adları), sistem pencerelerinin koyu kalması, **hafif titreşim** (yalnız Bilgelik tekerleği seçimi + egzersiz işareti; nefese değil; rahatsız ederse hiç eklenmez).
 6. **Google Play**: Android cihaz doğrulaması bekliyor (elde Android yok).
 7. **Kullanıcı tarafı**: avukat kontrolü (gizlilik + koşullar), marka tescili (Türkiye, 9+41+42, şekil + kelime, `docs/marka/`; yayından ve reklamdan önce), `config.ts` `storeUrl` (yayında), yaş anketi, kategori.
-8. **App Store öne çıkarılma başvurusu**: taslak `docs/apple-one-cikarilma.md`; TestFlight bağlantısıyla, yayından birkaç hafta önce.
+8. **Yayın günü paylaşımları** (28 Kasım 2026, kullanıcı kararı): Yolculuk, Bir Stoacı Gün, Kontrol Eleği videoları **mağaza bağlantısı hazır olunca** paylaşılır (önce profil bağlantısı → App Store). Plan, açıklamalar, kapaklar: `docs/sosyal-medya/yandan-kayan-paylasimlar.md`.
+9. **App Store öne çıkarılma başvurusu**: taslak `docs/apple-one-cikarilma.md`; TestFlight bağlantısıyla, yayından birkaç hafta önce.
 
 ### Karar / seçim bekleyen
 - **Hayat haftaları duvar kağıdı**: kullanıcı son hâli beğenmedi ("sonra kaldıralım ya da değiştirelim"). Ne beğenilmediğini sormadan değiştirme. Kaldırılırsa liste tarihçede (⚠️ `stoikos_weeks_sunday` bayrağını silip takvimi yeniden kur).
