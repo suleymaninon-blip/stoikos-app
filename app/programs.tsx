@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Fonts } from '../constants/theme';
 import { useTheme, useStyles, type Palette } from '../constants/themeContext';
 import { useLang, upper, localeOf } from '../constants/i18n';
-import { getPrograms, getUpcoming, getProgress, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
+import { getPrograms, getUpcoming, getProgress, getDoneAt, dayState, setDayDone, resetProgress, hasReflected, markReflected, Program } from '../constants/programs';
 import { appendToJournalToday } from '../constants/journal';
 import { usePlus } from '../constants/entitlement';
 import { ENFORCE_PLUS_GATE } from '../constants/config';
@@ -45,6 +45,7 @@ export default function ProgramsScreen() {
   const programs = getPrograms(lang);
   const upcoming = getUpcoming(lang);
   const [progress, setProgress] = useState<Record<string, number[]>>({});
+  const [doneAt, setDoneAt] = useState<Record<string, Record<number, string>>>({});
   const [openId, setOpenId] = useState<string | null>(null);
   const [dayIdx, setDayIdx] = useState<number | null>(null);
   const rootRef = useRef<View>(null);
@@ -80,7 +81,10 @@ export default function ProgramsScreen() {
       setPaywallOpen(false);
       setOpenId(id);
       setFromHome(true);
-      if (Number.isInteger(day) && day >= 0) setDayIdx(day);
+      // Gün henüz açılmadıysa (yarın açılır) pencere açılmaz; liste o günü notuyla gösterir.
+      if (Number.isInteger(day) && day >= 0) {
+        Promise.all([getProgress(id), getDoneAt(id)]).then(([d, at]) => { if (dayState(d, at, day) === 'open') setDayIdx(day); });
+      }
     }
   }, [params.open, params.day, plusOk, plusLoading]);
 
@@ -92,6 +96,8 @@ export default function ProgramsScreen() {
   const loadAll = useCallback(async () => {
     const entries = await Promise.all(programs.map(async (p) => [p.id, await getProgress(p.id)] as const));
     setProgress(Object.fromEntries(entries));
+    const ats = await Promise.all(programs.map(async (p) => [p.id, await getDoneAt(p.id)] as const));
+    setDoneAt(Object.fromEntries(ats));
     const flags = await Promise.all(programs.map(async (p) => [p.id, await hasReflected(p.id)] as const));
     setReflected(Object.fromEntries(flags));
   }, [lang]);
@@ -104,6 +110,7 @@ export default function ProgramsScreen() {
     const done = (progress[pid] || []).includes(idx);
     const next = await setDayDone(pid, idx, !done);
     setProgress((prev) => ({ ...prev, [pid]: next }));
+    getDoneAt(pid).then((at) => setDoneAt((prev) => ({ ...prev, [pid]: at })));
 
     // Bir yolculuk baştan sona bitti — değerlendirme istemi için ikinci
     // hak edilmiş an. (Geri alma işaretlenirken tetiklenmesin diye !done.)
@@ -123,10 +130,11 @@ export default function ProgramsScreen() {
 
   // Tamamlanmış gün her zaman açık kalır: önceki bir günün işareti geri alınınca sonraki
   // tamamlanmış gün kilitlenip kendi işaretini geri almak imkânsızlaşıyordu (29 Ekim 2026).
+  // Günde bir gün (28 Kasım 2026): önceki gün BUGÜN bittiyse sıradaki gün yarın açılır (dayState).
   function isUnlocked(pid: string, idx: number): boolean {
-    const d = progress[pid] || [];
-    return idx === 0 || d.includes(idx) || d.includes(idx - 1);
+    return dayState(progress[pid] || [], doneAt[pid] || {}, idx) === 'open';
   }
+  const opensTomorrow = (pid: string, idx: number) => dayState(progress[pid] || [], doneAt[pid] || {}, idx) === 'tomorrow';
 
   const isComplete = (p: Program) => (progress[p.id] || []).length === p.dayCount;
   // Mühür penceresindeki "Sıradaki" düğmesi: bitiş kartındaki "Sırada" ile aynı seçim.
@@ -278,6 +286,7 @@ export default function ProgramsScreen() {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.dayLabel}>{t('programs.day')} {i + 1}</Text>
                     <Text style={[styles.dayTitle, !unlocked && styles.dayTitleLocked]}>{d.title}</Text>
+                    {opensTomorrow(open.id, i) && <Text style={styles.dayTomorrow}>{t('programs.tomorrowNote')}</Text>}
                   </View>
                   {unlocked && <Text style={styles.dayChevron}>›</Text>}
                 </CalmPressable>
@@ -550,6 +559,7 @@ const makeStyles = (Colors: Palette) => StyleSheet.create({
   dayLabel: { fontFamily: Fonts.jostMedium, fontSize: 12, letterSpacing: 1.5, color: Colors.muted, marginBottom: 2 },
   dayTitle: { fontFamily: Fonts.jostMedium, fontSize: 16, color: Colors.text },
   dayTitleLocked: { color: Colors.muted, fontFamily: Fonts.jost },
+  dayTomorrow: { fontFamily: Fonts.jost, fontSize: 13, lineHeight: 18, color: Colors.sand2, marginTop: 4 },
   dayChevron: { fontSize: 20, color: Colors.stone4 },
 
   // Gün modal

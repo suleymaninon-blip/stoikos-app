@@ -797,11 +797,30 @@ export async function getProgress(id: string): Promise<number[]> {
 
 export async function setDayDone(id: string, day: number, done: boolean): Promise<number[]> {
   const cur = new Set(await getProgress(id));
-  if (done) { cur.add(day); reportPulse('program'); }
-  else cur.delete(day);
+  const at = await getDoneAt(id);
+  if (done) { cur.add(day); at[day] = dayKey(new Date()); reportPulse('program'); }
+  else { cur.delete(day); delete at[day]; }
   const arr = [...cur].sort((a, b) => a - b);
-  await AsyncStorage.setItem(KEY(id), JSON.stringify(arr));
+  await AsyncStorage.multiSet([[KEY(id), JSON.stringify(arr)], [DONE_AT_KEY(id), JSON.stringify(at)]]);
   return arr;
+}
+
+// ─── Günde bir gün (28 Kasım 2026, kullanıcı kararı) ─────
+// Her günün pratiği ve akşam sorusu o gün yaşansın diye: bir gün bitince sıradaki gün ancak
+// ERTESİ takvim gününde açılır. Hangi günün ne zaman bittiği ayrı tutulur (`stoikos_program_done_at_<id>`
+// = { gün: 'YYYY-MM-DD' }); tarihi olmayan eski kayıtlar (özellikten önce bitirilenler) kilitlemez.
+// Biten günler her zaman açıktır; programlar birbirini engellemez.
+const DONE_AT_KEY = (id: string) => `stoikos_program_done_at_${id}`;
+
+export async function getDoneAt(id: string): Promise<Record<number, string>> {
+  try { const raw = await AsyncStorage.getItem(DONE_AT_KEY(id)); return raw ? JSON.parse(raw) : {}; } catch { return {}; }
+}
+
+/** Sıradaki gün açık mı? 'open' · 'tomorrow' (önceki gün bugün bitti) · 'locked' (önceki gün bitmedi). */
+export function dayState(done: number[], doneAt: Record<number, string>, idx: number, now: Date = new Date()): 'open' | 'tomorrow' | 'locked' {
+  if (idx === 0 || done.includes(idx)) return 'open';
+  if (!done.includes(idx - 1)) return 'locked';
+  return doneAt[idx - 1] === dayKey(now) ? 'tomorrow' : 'open';
 }
 
 /**
@@ -815,7 +834,7 @@ export async function setDayDone(id: string, day: number, done: boolean): Promis
  * sonunda yeniden yazılabilmeli.
  */
 export async function resetProgress(id: string): Promise<void> {
-  await AsyncStorage.multiRemove([KEY(id), REFLECT_KEY(id)]);
+  await AsyncStorage.multiRemove([KEY(id), REFLECT_KEY(id), DONE_AT_KEY(id)]);
 }
 
 // ─── Kapanış yansıması (program başına bir kez sorulur) ───

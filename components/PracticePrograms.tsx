@@ -4,7 +4,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { Fonts } from '../constants/theme';
 import { useStyles, useTheme, type Palette } from '../constants/themeContext';
 import { localeOf, upper, useLang } from '../constants/i18n';
-import { getPrograms, getProgress, getUpcoming, type Program } from '../constants/programs';
+import { getPrograms, getProgress, getDoneAt, dayState, getUpcoming, type Program } from '../constants/programs';
 import { getTraces } from '../constants/traces';
 import { CalmPressable } from './CalmPressable';
 import { StaggerSection } from './StaggerSection';
@@ -19,7 +19,7 @@ import { PaperBg } from './PaperBg';
  */
 const tint = (color: string, a: number) => color.replace(/[\d.]+\)\s*$/, `${a})`);
 
-type Row = { p: Program; done: number[] };
+type Row = { p: Program; done: number[]; at?: Record<number, string> };
 
 export default function PracticePrograms() {
   const styles = useStyles(makeStyles);
@@ -32,7 +32,7 @@ export default function PracticePrograms() {
     let live = true;
     (async () => {
       const programs = getPrograms(lang);
-      const list = await Promise.all(programs.map(async (p) => ({ p, done: await getProgress(p.id) })));
+      const list = await Promise.all(programs.map(async (p) => ({ p, done: await getProgress(p.id), at: await getDoneAt(p.id) })));
       const rank = (r: Row) => (r.done.length > 0 && r.done.length < r.p.dayCount ? 0 : r.done.length === 0 ? 1 : 2);
       list.sort((a, b) => rank(a) - rank(b));
       const traces = await getTraces();
@@ -54,12 +54,13 @@ export default function PracticePrograms() {
     const { p, done } = current;
     let next = 0;
     while (done.includes(next) && next < p.dayCount - 1) next++;
+    const waiting = dayState(done, current.at || {}, next) === 'tomorrow';   // günde bir gün: sıradaki gün yarın açılır
     const c = p.color;
     resume = (
       <StaggerSection delay={60}>
         <Text style={styles.label}>{upper(t('home.resume'), lang)}</Text>
         <CalmPressable
-          onPress={() => open(p.id, next)}
+          onPress={() => open(p.id, waiting ? undefined : next)}
           style={[styles.resume, styles.cardShadow, { backgroundColor: tint(c, C.isDark ? 0.08 : 0.06), borderColor: tint(c, C.isDark ? 0.35 : 0.28) }]}
           accessibilityLabel={`${p.title}, ${t('programs.dayOf', { n: next + 1, total: p.dayCount })}`}
         >
@@ -82,7 +83,7 @@ export default function PracticePrograms() {
             ))}
           </View>
           <View style={[styles.cta, { backgroundColor: C.accent }]}>
-            <Text style={styles.ctaText}>{t('home.openStep')}</Text>
+            <Text style={styles.ctaText}>{waiting ? t('programs.opensTomorrow') : t('home.openStep')}</Text>
           </View>
         </CalmPressable>
       </StaggerSection>
